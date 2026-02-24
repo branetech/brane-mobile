@@ -3,10 +3,10 @@ import { useRequest } from "@/services/useRequest";
 import { getInitials } from "@/utils/helpers";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
-import { View, TouchableOpacity } from "react-native";
 import { Avatar } from "../avatar";
 import { ThemedText } from "../themed-text";
 import { Messages2, Notification } from "iconsax-react-native";
+import { TouchableOpacity, View } from "@idimma/rn-widget";
 
 export const HomeHeader = () => {
     // const { user } = useAppState();
@@ -41,8 +41,9 @@ export const HomeHeader = () => {
     // }, [notifications]);
   
     return (
-      <View >
+      <View row justify="space-between" w="100%" aligned>
         {/* Left: Avatar + Greeting */}
+        <View row gap={4} aligned>
         <TouchableOpacity
           
           onPress={() => router.push("/account")}
@@ -56,22 +57,24 @@ export const HomeHeader = () => {
             {getInitials("Tomi Balo")}
           </Avatar> */}
           <Avatar name="John Doe" size="lg" shape="rounded" />
-          <View>
-            <ThemedText>Good {timeOfDay} ☀️,</ThemedText>
-            <ThemedText>@{"Tomi Balo"}</ThemedText>
-          </View>
+         
         </TouchableOpacity>
+        <View>
+            <ThemedText>Good {timeOfDay} ☀️,</ThemedText>
+            <ThemedText type="defaultSemiBold">@{"Tomi Balo"}</ThemedText>
+          </View>
+        </View>
   
         {/* Right: Chat + Notifications */}
-        <View>
+        <View row gap={24}>
           <TouchableOpacity>
-            <Messages2 />
+            <Messages2 color='#0B0014' size={20}/>
           </TouchableOpacity>
   
           <TouchableOpacity
             onPress={() => router.push("/notification")}
           >
-            <Notification />
+            <Notification color='#0B0014' size={20}/>
             {/* {hasUnreadNotifications && (
               <View />
             )} */}

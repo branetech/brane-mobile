@@ -14,14 +14,16 @@ export default function TabLayout() {
         headerShown: false,
         tabBarShowLabel: true,
         tabBarIconStyle: { marginHorizontal: 'auto' },
+        
         tabBarStyle: Platform.select({
             ios: {
                 position: 'absolute',
                 height: 80,
                 paddingTop: 12,
+                backgroundColor: '#F7F7F8E5',
             },
             default: {
-                // backgroundColor: '#F7F7F8E5',
+                backgroundColor: '#F7F7F8E5',
                 height: 80,
                 paddingTop: 12,
             },

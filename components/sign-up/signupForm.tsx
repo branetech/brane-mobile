@@ -86,7 +86,7 @@ export function SignupForm({
   };
 
   return (
-    <View flex p={'6%'}>
+    <View flex px={'6%'}>
       <View gap={24}>
         <View gap={8} style={{ alignItems: "center" }}>
           <ThemedText type={"subtitle"}>Create your account</ThemedText>

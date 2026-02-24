@@ -49,7 +49,7 @@ export default function LoginScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <View style={{ flex: 1, justifyContent: "space-between", padding: '6%' }}>
+        <View style={{ flex: 1, justifyContent: "space-between", paddingHorizontal: '6%' }}>
           <View>
             <View style={{ gap: 30 }}>
               <View style={{ alignItems: "center", gap: 8 }}>

@@ -17,5 +17,6 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 20,
     position: 'relative',
+    paddingHorizontal: 24,
   },
 });
