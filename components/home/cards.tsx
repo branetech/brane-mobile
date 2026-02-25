@@ -1,4 +1,4 @@
-import { View } from "@idimma/rn-widget"
+import { Image, View } from "@idimma/rn-widget"
 import { TouchableOpacity, View as RNV, StyleSheet,  ImageBackground } from 'react-native';
 import { ThemedText } from '@/components/themed-text'; // adjust import as needed
 
@@ -18,6 +18,27 @@ export const CardStyle = ({children}: any) => {
         </View>
       </ImageBackground>
        </View>
+    )
+}
+
+export const LearnCard = () => {
+    return (
+        <View w='100%' h={80} p={16} radius={12} bg={'#FFFFFF'} flex={1}
+            style={{
+            shadowColor: "#0C0C0D",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 4,
+            overflow: "hidden"
+            }}
+          >
+            <View w='70%'>
+                <ThemedText type='defaultSemiBold' style={{fontSize: 12}}>Learn about Brane</ThemedText>
+                <ThemedText numberOfLines={2} style={{fontSize: 10, lineHeight: 13}}>For you to have a seamless experience we require some details.</ThemedText>
+            </View>
+            <Image source={require("@/assets/images/learn.png")} style={{ position: "absolute", right: 0, top: 0, width: 80, height: 110}}/>
+        </View>
     )
 }
 

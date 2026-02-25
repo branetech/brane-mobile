@@ -1,13 +1,12 @@
 import { useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import React from "react";
 import { ThemedText } from "../themed-text";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
-import { ImageBackground } from "react-native";
 import { usePreference } from "@/services/data";
-import { ChartSquare, Eye, EyeSlash, Mobile, Money, Wifi, WifiSquare } from "iconsax-react-native";
+import { ChartSquare, Eye, EyeSlash, Mobile, Money, WifiSquare } from "iconsax-react-native";
 import { priceFormatter } from "@/utils/helpers";
 import { BraneButton } from "../brane-button";
-import { CardStyle, ServicesCard } from "./cards";
+import { CardStyle, LearnCard, ServicesCard } from "./cards";
 import { EmptyState } from "../empty-state";
 
 export const HomeCard = () => {
@@ -117,8 +116,10 @@ export const HomeCard = () => {
         <ThemedText type='defaultSemiBold'>Learning Forum</ThemedText>
         <ThemedText type='link' style={{fontWeight: '800', fontSize: 14, textDecorationStyle: 'dashed', textDecorationColor: '#013D25'}}>See All</ThemedText>
         </View>
-        <View justified mt={24}> 
-          
+        <View justified gap={16} mb={60}> 
+          <LearnCard />
+          <LearnCard />
+          <LearnCard />
         </View>
       </View>
     );
