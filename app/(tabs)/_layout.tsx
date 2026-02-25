@@ -56,7 +56,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => <Receipt size={24} color={color} variant={focused ? 'Bold' : 'Outline'}/>,        }}
       />
        <Tabs.Screen
-        name="account"
+        name="(account)"
         options={{
           title: 'Account',
           tabBarIcon: ({ color, focused }) => <Profile size={24} color={color} variant={focused ? 'Bold' : 'Outline'}/>,        }}
