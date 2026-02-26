@@ -3,14 +3,15 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  View as RNView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
+    KeyboardAvoidingView,
+    Platform,
+    View as RNView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Back from "../Back";
@@ -111,7 +112,7 @@ export default function SetPinScreen({ back, onComplete }: Props) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <View flex>
+        <View flex style={{paddingHorizontal: "6%"}}>
           <Back onPress={back} />
 
           <View style={{ marginVertical: 24 }}>
@@ -190,6 +191,7 @@ export default function SetPinScreen({ back, onComplete }: Props) {
           onContinue={() => {
             setShowSuccess(false);
             onComplete();
+            router.replace("/home")
           }}
         />
       </KeyboardAvoidingView>

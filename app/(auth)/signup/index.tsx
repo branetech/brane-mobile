@@ -110,7 +110,6 @@ export default function SignupScreen() {
           back={() => setPage("setUsername")}
           onComplete={() => {
             console.log("PIN created successfully");
-            // router.replace("/home")
           }}
         />
       )}
