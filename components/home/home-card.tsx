@@ -31,7 +31,7 @@ export const HomeCard = () => {
             <ThemedText type='title' style={{color: '#fff'}}>{priceFormatter(10000)}</ThemedText>
             </View>
             <View gap={8} w='100%' aligned spaced row>
-                  <BraneButton text='Add Funds' onPress={() => {}} backgroundColor="#D2F1E4" textColor="#013D25" width={160} radius={32}/>
+                  <BraneButton text='Add Funds' onPress={() => {router.push('/add-funds')}} backgroundColor="#D2F1E4" textColor="#013D25" width={160} radius={32}/>
                   <BraneButton text='My Wallet' onPress={() => {}} backgroundColor="#D2F1E41A" textColor="#D3EBE1" width={160} radius={32}/>
             </View>
            </View>

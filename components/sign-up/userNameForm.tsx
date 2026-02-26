@@ -9,7 +9,7 @@ import React from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
-import Back from "../Back";
+import Back from "../back";
 import { ChangeUsername } from "../svg";
 
 type Props = {

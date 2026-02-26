@@ -1,13 +1,13 @@
 import { ThemedText } from "@/components/themed-text";
-import { View } from "@idimma/rn-widget";
-import Back from "../Back";
-import { FormInput, mapFormikProps } from "../formInput";
-import { Eye, EyeSlash, Lock } from "iconsax-react-native";
-import { BraneButton } from "../brane-button";
-import * as yup from "yup";
-import { KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { useFormHandler } from "@/hooks/use-formik";
+import { View } from "@idimma/rn-widget";
+import { Eye, EyeSlash, Lock } from "iconsax-react-native";
 import { useState } from "react";
+import { KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
+import * as yup from "yup";
+import Back from "../back";
+import { BraneButton } from "../brane-button";
+import { FormInput, mapFormikProps } from "../formInput";
 
 interface RegisterProps {
   onSubmitEmail: (data: any) => void;

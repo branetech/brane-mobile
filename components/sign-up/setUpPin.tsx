@@ -5,15 +5,15 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
 import React, { useRef, useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  View as RNView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
+    KeyboardAvoidingView,
+    Platform,
+    View as RNView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Back from "../Back";
+import Back from "../back";
 import { PinSuccessModal } from "./pinModal";
 
 type Props = {
