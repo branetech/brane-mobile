@@ -162,85 +162,33 @@ export interface Acc {
   content: Accn[];
 }
 
-export const accnt: Acc[] = [
+export const accnt = (): Acc[] => [
   {
     title: "My account",
     content: [
-      {
-        icon: <User />,
-        text: "Account Details",
-        routes: "account-details",
-      },
-      {
-        icon: <Profile2User />,
-        text: "Manage beneficiaries",
-        routes: "beneficiary",
-      },
-      {
-        icon: <TagUser />,
-        text: "Next of Kin details",
-        routes: "update-kin-details",
-      },
-      {
-        icon: <Verify />,
-        text: "Account verification",
-        routes: "account-verification",
-      },
-      {
-        icon: <Verify />,
-        text: "Bracs Investment Trigger",
-        routes: "bracs-investment-trigger",
-      },
+      { icon: <User size={20} color="#013D25" />, text: "Account Details", routes: "account-details" },
+      { icon: <Profile2User size={20} color="#013D25" />, text: "Manage beneficiaries", routes: "beneficiary" },
+      { icon: <TagUser size={20} color="#013D25" />, text: "Next of Kin details", routes: "update-kin-details" },
+      { icon: <Verify size={20} color="#013D25" />, text: "Account verification", routes: "account-verification" },
+      { icon: <Verify size={20} color="#013D25" />, text: "Bracs Investment Trigger", routes: "bracs-investment-trigger" },
     ],
   },
   {
     title: "Security & Privacy",
     content: [
-      {
-        icon: <Lock />,
-        text: "Change password",
-        routes: "change-password",
-      },
-      {
-        icon: <PasswordCheck />,
-        text: "Reset transaction PIN",
-        routes: "reset-transaction-pin",
-      },
-      {
-        icon: <UserOctagon />,
-        text: "Change username",
-        routes: "change-username",
-      },
+      { icon: <Lock size={20} color="#013D25" />, text: "Change password", routes: "change-password" },
+      { icon: <PasswordCheck size={20} color="#013D25" />, text: "Reset transaction PIN", routes: "reset-transaction-pin" },
+      { icon: <UserOctagon size={20} color="#013D25" />, text: "Change username", routes: "change-username" },
     ],
   },
   {
     title: "More",
     content: [
-      {
-        icon: <Setting3 />,
-        text: "Preferences",
-        routes: "preferences",
-      },
-      {
-        icon: <MessageQuestion />,
-        text: "Help desk",
-        routes: "help-desk",
-      },
-      {
-        icon: <Message2 />,
-        text: "Live chat",
-        routes: "chat",
-      },
-      {
-        icon: <Verify />,
-        text: "Terms & conditions",
-        routes: "terms-conditions",
-      },
-      {
-        icon: <Verify />,
-        text: "Privacy policy",
-        routes: "privacy-policy",
-      },
+      { icon: <Setting3 size={20} color="#013D25" />, text: "Preferences", routes: "preferences" },
+      { icon: <MessageQuestion size={20} color="#013D25" />, text: "Help desk", routes: "help-desk" },
+      { icon: <Message2 size={20} color="#013D25" />, text: "Live chat", routes: "chat" },
+      { icon: <Verify size={20} color="#013D25" />, text: "Terms & conditions", routes: "terms-conditions" },
+      { icon: <Verify size={20} color="#013D25" />, text: "Privacy policy", routes: "privacy-policy" },
     ],
   },
 ];

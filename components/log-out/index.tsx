@@ -28,7 +28,7 @@ const LogOutModal: React.FC<LogOutModalProps> = ({ isOpen, closeModal }) => {
           {/* Icon */}
           <View style={styles.iconWrapper}>
             <View style={styles.iconCircle}>
-              <ThemedText style={styles.iconText}>↩</ThemedText>
+              <ThemedText style={styles.iconText}>!</ThemedText>
             </View>
           </View>
 
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   iconText: {
     color: "#fff",
-    fontSize: 28,
+    fontSize: 20,
   },
   title: {
     fontSize: 16,

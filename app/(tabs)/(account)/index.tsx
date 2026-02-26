@@ -11,7 +11,7 @@ export default function AccountScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ThemedText type='subtitle'>Account</ThemedText>
-      <View style={{gap: 32, flex: 1, flexDirection: 'column'}}>
+      <View style={{gap: 10, flex: 1, flexDirection: 'column'}}>
         <View w='100%' px={12} gap={10} py={16} h={175} bg='#FFFDFA' radius={12} style={{borderColor: '#FFFAF0', borderWidth: 1}}>
           <View row spaced center>
             <View>
