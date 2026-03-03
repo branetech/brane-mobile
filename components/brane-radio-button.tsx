@@ -1,6 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { View, Pressable } from "@idimma/rn-widget";
+import { View, StyleSheet, Pressable } from "react-native";
 
 type RadioButtonProps = {
   selected: boolean;
@@ -8,28 +7,33 @@ type RadioButtonProps = {
   size?: number;
   color?: string;
   children?: React.ReactNode;
+  bg?: string;
 };
 
-export const RadioButton = ({
+export const BraneRadioButton = ({
   selected,
   onPress,
   size = 24,
   color = "#013D25",
   children,
+  bg
 }: RadioButtonProps) => {
   return (
-    <Pressable onPress={onPress} style={styles.wrapper}>
+    <Pressable onPress={onPress} style={[styles.wrapper, { backgroundColor: bg }]}>
       {/* Content */}
-      <View row aligned gap={10}>{children}</View>
+      <View style={styles.content}>{children}</View>
 
       {/* Radio */}
       <View
-        style={{
+        style={[
+          styles.outer,
+          {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
             borderColor: selected ? color : "#D1D5DB",
-          }}
-          w={size}
-          h={size}
-          radius={size / 2}
+          },
+        ]}
       >
         {selected && (
           <View
@@ -38,9 +42,6 @@ export const RadioButton = ({
               height: size * 0.55,
               borderRadius: (size * 0.55) / 2,
               backgroundColor: color,
-              borderWidth: 2,
-              alignItems: "center",
-              justifyContent: "center",
             }}
           />
         )}
@@ -52,12 +53,23 @@ export const RadioButton = ({
 const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
-    alignItems: "center",
+    // alignItems: "center",
     justifyContent: "space-between",
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#E5E7EB",
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
+  },
+  content: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  outer: {
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
