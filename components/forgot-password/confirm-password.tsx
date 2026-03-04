@@ -5,7 +5,7 @@ import { Eye, EyeSlash, Lock } from "iconsax-react-native";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import * as yup from "yup";
-import Back from "../back";
+import Back from "../Back";
 import { BraneButton } from "../brane-button";
 import { FormInput, mapFormikProps } from "../formInput";
 
@@ -15,7 +15,11 @@ interface RegisterProps {
   back: () => void;
 }
 
-export default function ConfirmPassword({ onSubmitEmail, isLoading, back }: RegisterProps) {
+export default function ConfirmPassword({
+  onSubmitEmail,
+  isLoading,
+  back,
+}: RegisterProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -28,7 +32,7 @@ export default function ConfirmPassword({ onSubmitEmail, isLoading, back }: Regi
         .required("Password field is mandatory")
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\.,_-])(?=.{8,})/,
-          "Your password must have at least 8 characters, a digit (0-9), an uppercase letter (A), a special character ($, @, etc.)"
+          "Your password must have at least 8 characters, a digit (0-9), an uppercase letter (A), a special character ($, @, etc.)",
         ),
       confirmPassword: yup
         .string()
@@ -51,7 +55,8 @@ export default function ConfirmPassword({ onSubmitEmail, isLoading, back }: Regi
           <View gap={8}>
             <ThemedText type={"subtitle"}>Create password</ThemedText>
             <ThemedText>
-              Choose a password that is unique to you. You will be able to login with this password
+              Choose a password that is unique to you. You will be able to login
+              with this password
             </ThemedText>
           </View>
           <View>
@@ -62,9 +67,11 @@ export default function ConfirmPassword({ onSubmitEmail, isLoading, back }: Regi
               secureTextEntry={!showPassword}
               rightContent={
                 <TouchableOpacity onPress={() => setShowPassword((p) => !p)}>
-                  {showPassword
-                    ? <EyeSlash size="20" color="#89888B" />
-                    : <Eye size="20" color="#89888B" />}
+                  {showPassword ? (
+                    <EyeSlash size="20" color="#89888B" />
+                  ) : (
+                    <Eye size="20" color="#89888B" />
+                  )}
                 </TouchableOpacity>
               }
               {...mapFormikProps("password", form)}
@@ -77,10 +84,14 @@ export default function ConfirmPassword({ onSubmitEmail, isLoading, back }: Regi
               placeholder="Enter password"
               secureTextEntry={!showConfirmPassword}
               rightContent={
-                <TouchableOpacity onPress={() => setShowConfirmPassword((p) => !p)}>
-                  {showConfirmPassword
-                    ? <EyeSlash size="20" color="#89888B" />
-                    : <Eye size="20" color="#89888B" />}
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPassword((p) => !p)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeSlash size="20" color="#89888B" />
+                  ) : (
+                    <Eye size="20" color="#89888B" />
+                  )}
                 </TouchableOpacity>
               }
               {...mapFormikProps("confirmPassword", form)}
@@ -90,9 +101,13 @@ export default function ConfirmPassword({ onSubmitEmail, isLoading, back }: Regi
             <ThemedText>
               Your password must have{" "}
               <ThemedText style={{ color: "#013D25", fontWeight: "500" }}>
-                at least 8 characters, a digit (0-9), an uppercase letter (A), a special character ($, @, etc.)
+                at least 8 characters, a digit (0-9), an uppercase letter (A), a
+                special character ($, @, etc.)
               </ThemedText>
-              <ThemedText style={{ fontWeight: "500", color: "#342A3B" }}> and match.</ThemedText>
+              <ThemedText style={{ fontWeight: "500", color: "#342A3B" }}>
+                {" "}
+                and match.
+              </ThemedText>
             </ThemedText>
           </View>
         </View>

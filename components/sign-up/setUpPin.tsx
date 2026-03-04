@@ -14,7 +14,8 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Back from "../back";
+
+import Back from "../Back";
 import { PinSuccessModal } from "./pinModal";
 
 type Props = {

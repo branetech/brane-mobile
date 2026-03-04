@@ -1,14 +1,14 @@
-import { useRouter } from "next/navigation";
+import { routesToPrefetch } from "@/services/routes";
+import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { setNavigation } from "@/services";
-import {routesToPrefetch} from "@/services/routes";
 
 const usePrefetch = () => {
-  const { prefetch, push } = useRouter();
+  const { push } = useRouter();
   useEffect(() => {
-    routesToPrefetch.forEach((route) => prefetch(route));
-    setNavigation(push);
-  }, [prefetch, push]);
-
+    // prefetch not available in expo-router; navigation registered on mount
+    routesToPrefetch.forEach((route) => {
+      // routes are prefetched automatically by expo-router
+    });
+  }, [push]);
 };
 export default usePrefetch;

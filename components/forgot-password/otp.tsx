@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/themed-text";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
-import Back from "../back";
+import Back from "../Back";
 import { BraneButton } from "../brane-button";
 import { OTPInput } from "../otp-input";
 

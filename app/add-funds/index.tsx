@@ -1,8 +1,8 @@
-import Back from "@/components/back";
+import Back from "@/components/Back";
 import { BraneRadioButton } from "@/components/brane-radio-button";
 import { BankIcon, CardIcon, USSD } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
-import { View, Text } from "@idimma/rn-widget";
+import { Text, View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { Bank, Coin, Coin1, Copy, ExportCurve } from "iconsax-react-native";
 import React, { useState } from "react";
@@ -22,7 +22,8 @@ export default function FundScreen() {
       </View>
 
       <ThemedText style={{ fontSize: 12 }}>
-        Fund your wallet by selecting your preferred method from the available options.
+        Fund your wallet by selecting your preferred method from the available
+        options.
       </ThemedText>
 
       <View gap={20}>
@@ -37,9 +38,20 @@ export default function FundScreen() {
           <View w="100%" gap={16}>
             <View row gap={8} aligned>
               <BankIcon />
-              <ThemedText style={{ color: "#0B0014" }}>Bank Transfer</ThemedText>
+              <ThemedText style={{ color: "#0B0014" }}>
+                Bank Transfer
+              </ThemedText>
             </View>
-            <View bg="#013D25" h={100} w="100%" radius={12} spaced aligned p={16} row>
+            <View
+              bg="#013D25"
+              h={100}
+              w="100%"
+              radius={12}
+              spaced
+              aligned
+              p={16}
+              row
+            >
               <View gap={4}>
                 <Text color="#fff">Wema bank</Text>
                 <Text color="#fff" fs={20} fw="bold">
@@ -78,7 +90,10 @@ export default function FundScreen() {
         {/* Bank Account */}
         <BraneRadioButton
           selected={selected === "account"}
-          onPress={() => setSelected("account")}
+          onPress={() => {
+            setSelected("account");
+            router.push("/add-funds/bank");
+          }}
           size={16}
           color="#013D25"
         >
