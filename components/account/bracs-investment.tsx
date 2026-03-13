@@ -458,34 +458,6 @@ const pieColors: Record<string, string> = {
   Gold: "#C5A022",
 };
 
-const toRadians = (degree: number) => (degree * Math.PI) / 180;
-
-const polarToCartesian = (
-  cx: number,
-  cy: number,
-  r: number,
-  angleDeg: number,
-) => {
-  const rad = toRadians(angleDeg - 90);
-  return {
-    x: cx + r * Math.cos(rad),
-    y: cy + r * Math.sin(rad),
-  };
-};
-
-const describeArc = (
-  cx: number,
-  cy: number,
-  r: number,
-  startAngle: number,
-  endAngle: number,
-) => {
-  const start = polarToCartesian(cx, cy, r, endAngle);
-  const end = polarToCartesian(cx, cy, r, startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y} Z`;
-};
-
 export const WealthAllocationSection = ({
   sectionTitle,
   chartTitle,

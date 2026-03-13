@@ -5,11 +5,13 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import { View } from "@idimma/rn-widget";
+import { useRouter } from "expo-router";
 import { ArrowRight2 } from "iconsax-react-native";
 import { View as RNView, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AccountScreen() {
+  const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const { user } = useAppState();
@@ -64,7 +66,7 @@ export default function AccountScreen() {
             </ThemedText>
           </View>
 
-          <TouchableOpacity onPress={() => {}} style={styles.kycLink}>
+          <TouchableOpacity onPress={() => router.push("/kyc")} style={styles.kycLink}>
             <ThemedText
               style={{ fontSize: 13, color: "#A28C34", fontWeight: "500" }}
             >

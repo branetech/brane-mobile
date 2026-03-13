@@ -38,6 +38,7 @@ export interface IUSER {
   hasEmail?: boolean;
   hasBvn?: boolean;
   hasBank?: boolean;
+  hasBanking?: boolean;
   hasPhoto?: boolean;
   hasLocation?: boolean;
   hasPhone?: boolean;
