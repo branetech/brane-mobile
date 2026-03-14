@@ -25,7 +25,7 @@ export default function SignupScreen() {
   const dispatch = useDispatch();
   const [page, setPage] = useReduxState<Page>("signup", "signupPage");
   const [otp, setOtp] = useReduxState("", "signupOtp");
-  const [plainOtp, setPlainOtp] = useState("");
+  const [, setPlainOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);

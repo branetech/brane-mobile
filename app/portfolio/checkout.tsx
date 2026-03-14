@@ -9,7 +9,6 @@ import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useAppState } from "@/redux/store";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
 import {
@@ -27,7 +26,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
-    StyleSheet
+    StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -39,7 +38,6 @@ export default function CheckoutScreen() {
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
-  const auth = useAppState("auth");
 
   const params = useLocalSearchParams();
   const ticker = String(params.ticker || "");
@@ -53,7 +51,6 @@ export default function CheckoutScreen() {
   const [paymentMethodId, setPaymentMethodId] = useState("wallet");
   const [walletBalance, setWalletBalance] = useState(0);
   const [pinVisible, setPinVisible] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const total = currentPrice * Number(quantity || 0);
 
@@ -108,7 +105,6 @@ export default function CheckoutScreen() {
 
   const handleSubmit = async () => {
     setPinVisible(false);
-    setIsSubmitting(true);
     showAppLoader({ message: "Processing purchase..." });
     try {
       await BaseRequest.post(STOCKS_SERVICE.BUY, {
@@ -121,7 +117,6 @@ export default function CheckoutScreen() {
     } catch (error) {
       catchError(error);
     } finally {
-      setIsSubmitting(false);
       hideAppLoader();
     }
   };

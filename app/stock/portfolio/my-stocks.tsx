@@ -9,11 +9,11 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -40,7 +40,6 @@ export default function MyStocksScreen() {
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
 
-  const [allStocks, setAllStocks] = useState<any[]>([]);
   const [ownedStocks, setOwnedStocks] = useState<OwnedStock[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -56,7 +55,6 @@ export default function MyStocksScreen() {
 
       const userHoldings = toArray(userStocksRes);
       const marketStocks = toArray(stocksRes);
-      setAllStocks(marketStocks);
 
       const merged: OwnedStock[] = userHoldings.map((holding: any) => {
         const ticker = String(
@@ -74,7 +72,9 @@ export default function MyStocksScreen() {
             marketStock?.companyName ||
             marketStock?.name ||
             ticker,
-          units: Number(holding?.units || holding?.quantity || holding?.shares || 0),
+          units: Number(
+            holding?.units || holding?.quantity || holding?.shares || 0,
+          ),
           currentPrice: Number(
             marketStock?.currentPrice ||
               marketStock?.price ||

@@ -6,20 +6,24 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
-import { hideAppLoader, priceFormatter, showAppLoader, showSuccess } from "@/utils/helpers";
+import {
+    hideAppLoader,
+    priceFormatter,
+    showAppLoader,
+    showSuccess,
+} from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View as RNView,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -54,9 +58,7 @@ export default function StockWithdrawScreen() {
     setIsLoadingBalance(true);
     try {
       const res: any = await BaseRequest.get(STOCKS_SERVICE.WALLET_BALANCE);
-      setStockWalletBalance(
-        Number(res?.data?.balance || res?.balance || 0),
-      );
+      setStockWalletBalance(Number(res?.data?.balance || res?.balance || 0));
     } catch (error) {
       catchError(error);
     } finally {
@@ -191,14 +193,10 @@ export default function StockWithdrawScreen() {
                 onPress={() => setSelectedAccount(item)}
               >
                 <View style={styles.accountInfo}>
-                  <ThemedText
-                    style={[styles.accountBank, { color: C.text }]}
-                  >
+                  <ThemedText style={[styles.accountBank, { color: C.text }]}>
                     {item?.bankName || item?.bank || "Bank"}
                   </ThemedText>
-                  <ThemedText
-                    style={[styles.accountNum, { color: C.muted }]}
-                  >
+                  <ThemedText style={[styles.accountNum, { color: C.muted }]}>
                     {item?.accountNumber || item?.number || ""}
                   </ThemedText>
                 </View>
@@ -241,24 +239,16 @@ export default function StockWithdrawScreen() {
           { label: "Amount", value: priceFormatter(Number(amount), 2) },
           {
             label: "Bank",
-            value:
-              selectedAccount?.bankName ||
-              selectedAccount?.bank ||
-              "Bank",
+            value: selectedAccount?.bankName || selectedAccount?.bank || "Bank",
           },
           {
             label: "Account Number",
             value:
-              selectedAccount?.accountNumber ||
-              selectedAccount?.number ||
-              "",
+              selectedAccount?.accountNumber || selectedAccount?.number || "",
           },
           {
             label: "Account Name",
-            value:
-              selectedAccount?.accountName ||
-              selectedAccount?.name ||
-              "",
+            value: selectedAccount?.accountName || selectedAccount?.name || "",
           },
         ].map((row, i, arr) => (
           <RNView

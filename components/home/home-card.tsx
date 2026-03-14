@@ -121,8 +121,6 @@ export const Quick = () => {
 };
 
 export const Transactions = () => {
-  const router = useRouter();
-
   return (
     <View w="100%" mt={24} gap={20} minH={260}>
       <View row spaced>
@@ -155,8 +153,6 @@ export const Transactions = () => {
 };
 
 export const Learning = () => {
-  const router = useRouter();
-
   return (
     <View w="100%" gap={16}>
       <View row spaced>

@@ -8,24 +8,22 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
 import {
-  hideAppLoader,
-  priceFormatter,
-  showAppLoader,
-  showError,
-  showSuccess,
+    hideAppLoader,
+    priceFormatter,
+    showAppLoader,
+    showError,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -50,15 +48,6 @@ const CABLE_IMAGES: Record<string, any> = {
   showmax: require("@/assets/images/network/showmax.png"),
 };
 
-const getCableKey = (id: string) => {
-  const k = id.toLowerCase();
-  if (k.includes("dstv")) return "dstv";
-  if (k.includes("gotv")) return "gotv";
-  if (k.includes("startimes")) return "startimes";
-  if (k.includes("showmax")) return "showmax";
-  return "";
-};
-
 export default function PayBillsScreen() {
   const router = useRouter();
   const rawScheme = useColorScheme();
@@ -76,14 +65,15 @@ export default function PayBillsScreen() {
   const [elProviders, setElProviders] = useState<any[]>([]);
   const [elProvider, setElProvider] = useState("");
   const [meterNumber, setMeterNumber] = useState("");
-  const [meterProduct, setMeterProduct] = useState<"prepaid" | "postpaid">("prepaid");
+  const [meterProduct, setMeterProduct] = useState<"prepaid" | "postpaid">(
+    "prepaid",
+  );
   const [elAmount, setElAmount] = useState("");
   const [elVerified, setElVerified] = useState(false);
   const [elAccountName, setElAccountName] = useState("");
   const [elVerifying, setElVerifying] = useState(false);
 
   // ─── Cable state ──────────────────────────────────────────────────────────
-  const [cableProviders, setCableProviders] = useState<any[]>([]);
   const [cableProvider, setCableProvider] = useState("");
   const [smartCard, setSmartCard] = useState("");
   const [cableVerified, setCableVerified] = useState(false);
@@ -102,13 +92,14 @@ export default function PayBillsScreen() {
   // Fetch providers on mount
   useEffect(() => {
     if (mode === "electricity") fetchElProviders();
-    else if (mode === "cable") fetchCableProviders();
     else if (mode === "betting") fetchBettingProviders();
   }, [mode]);
 
   const fetchElProviders = async () => {
     try {
-      const res: any = await BaseRequest.get(MOBILE_SERVICE.ELECTRICITY_GET_BILLER);
+      const res: any = await BaseRequest.get(
+        MOBILE_SERVICE.ELECTRICITY_GET_BILLER,
+      );
       const providerMap = res?.data?.providers || res?.providers || {};
       const list = Object.keys(providerMap).map((key) => ({
         id: key.toLowerCase(),
@@ -116,15 +107,6 @@ export default function PayBillsScreen() {
         description: String(providerMap[key]),
       }));
       setElProviders(list);
-    } catch (error) {
-      catchError(error);
-    }
-  };
-
-  const fetchCableProviders = async () => {
-    try {
-      const res: any = await BaseRequest.get(MOBILE_SERVICE.CABLE_SERVICE);
-      setCableProviders(toArray(res?.data || res));
     } catch (error) {
       catchError(error);
     }
@@ -144,7 +126,9 @@ export default function PayBillsScreen() {
       const res: any = await BaseRequest.get(
         MOBILE_SERVICE.BILLER_CODE(providerId),
       );
-      setCablePlans(toArray(res?.data?.variations || res?.variations || res?.data || res));
+      setCablePlans(
+        toArray(res?.data?.variations || res?.variations || res?.data || res),
+      );
     } catch (error) {
       catchError(error);
     }
@@ -213,9 +197,19 @@ export default function PayBillsScreen() {
   const canSubmit = useCallback(() => {
     if (mode === "electricity") return elVerified && !!elAmount;
     if (mode === "cable") return cableVerified && !!cablePlan;
-    if (mode === "betting") return !!bettingProvider && !!customerId && !!bettingAmount;
+    if (mode === "betting")
+      return !!bettingProvider && !!customerId && !!bettingAmount;
     return false;
-  }, [mode, elVerified, elAmount, cableVerified, cablePlan, bettingProvider, customerId, bettingAmount]);
+  }, [
+    mode,
+    elVerified,
+    elAmount,
+    cableVerified,
+    cablePlan,
+    bettingProvider,
+    customerId,
+    bettingAmount,
+  ]);
 
   const handleSubmit = async () => {
     setPinVisible(false);
@@ -238,7 +232,8 @@ export default function PayBillsScreen() {
           serviceId: cableProvider,
           smartCardNumber: smartCard,
           variationCode: cablePlan,
-          amount: cablePlanAmount || plan?.variation_amount || plan?.amount || 0,
+          amount:
+            cablePlanAmount || plan?.variation_amount || plan?.amount || 0,
           subscriptionType: plan?.subscription_type || "change",
         });
       } else if (mode === "betting") {
@@ -266,14 +261,20 @@ export default function PayBillsScreen() {
   const renderElectricity = () => (
     <>
       {/* Provider selector */}
-      <ThemedText style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}>
+      <ThemedText
+        style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}
+      >
         Electricity Provider
       </ThemedText>
       <View style={styles.providerGrid}>
         {elProviders.map((p) => (
           <TouchableOpacity
             key={p.id}
-            style={{ ...StyleSheet.flatten(styles.providerChip), borderColor: elProvider === p.id ? C.primary : C.border, backgroundColor: elProvider === p.id ? "#EAF8F1" : C.inputBg }}
+            style={{
+              ...StyleSheet.flatten(styles.providerChip),
+              borderColor: elProvider === p.id ? C.primary : C.border,
+              backgroundColor: elProvider === p.id ? "#EAF8F1" : C.inputBg,
+            }}
             onPress={() => {
               setElProvider(p.id);
               setElVerified(false);
@@ -281,7 +282,10 @@ export default function PayBillsScreen() {
             }}
           >
             <ThemedText
-              style={{ ...StyleSheet.flatten(styles.providerChipText), color: elProvider === p.id ? C.primary : C.text }}
+              style={{
+                ...StyleSheet.flatten(styles.providerChipText),
+                color: elProvider === p.id ? C.primary : C.text,
+              }}
             >
               {p.label}
             </ThemedText>
@@ -290,14 +294,20 @@ export default function PayBillsScreen() {
       </View>
 
       {/* Product selector */}
-      <ThemedText style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}>
+      <ThemedText
+        style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}
+      >
         Meter Type
       </ThemedText>
       <View style={styles.toggleRow}>
         {(["prepaid", "postpaid"] as const).map((pt) => (
           <TouchableOpacity
             key={pt}
-            style={{ ...StyleSheet.flatten(styles.toggleBtn), backgroundColor: meterProduct === pt ? C.primary : C.inputBg, borderColor: meterProduct === pt ? C.primary : C.border }}
+            style={{
+              ...StyleSheet.flatten(styles.toggleBtn),
+              backgroundColor: meterProduct === pt ? C.primary : C.inputBg,
+              borderColor: meterProduct === pt ? C.primary : C.border,
+            }}
             onPress={() => {
               setMeterProduct(pt);
               setElVerified(false);
@@ -305,7 +315,10 @@ export default function PayBillsScreen() {
             }}
           >
             <ThemedText
-              style={{ ...StyleSheet.flatten(styles.toggleBtnText), color: meterProduct === pt ? "#FFFFFF" : C.text }}
+              style={{
+                ...StyleSheet.flatten(styles.toggleBtnText),
+                color: meterProduct === pt ? "#FFFFFF" : C.text,
+              }}
             >
               {pt.charAt(0).toUpperCase() + pt.slice(1)}
             </ThemedText>
@@ -326,9 +339,20 @@ export default function PayBillsScreen() {
       />
 
       {elAccountName ? (
-        <View style={{ ...StyleSheet.flatten(styles.verifiedBanner), borderColor: "#09734C", backgroundColor: "#EAF8F1" }}>
+        <View
+          style={{
+            ...StyleSheet.flatten(styles.verifiedBanner),
+            borderColor: "#09734C",
+            backgroundColor: "#EAF8F1",
+          }}
+        >
           <TickCircle size={16} color="#09734C" variant="Bold" />
-          <ThemedText style={{ ...StyleSheet.flatten(styles.verifiedText), color: "#09734C" }}>
+          <ThemedText
+            style={{
+              ...StyleSheet.flatten(styles.verifiedText),
+              color: "#09734C",
+            }}
+          >
             {elAccountName}
           </ThemedText>
         </View>
@@ -348,18 +372,30 @@ export default function PayBillsScreen() {
 
       {elVerified && (
         <>
-          <ThemedText style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}>
+          <ThemedText
+            style={{
+              ...StyleSheet.flatten(styles.sectionLabel),
+              color: C.muted,
+            }}
+          >
             Amount
           </ThemedText>
           <View style={styles.presetRow}>
             {ELECTRICITY_AMOUNTS.map((a) => (
               <TouchableOpacity
                 key={a}
-                style={{ ...StyleSheet.flatten(styles.presetChip), borderColor: elAmount === a ? C.primary : C.border, backgroundColor: elAmount === a ? "#EAF8F1" : C.inputBg }}
+                style={{
+                  ...StyleSheet.flatten(styles.presetChip),
+                  borderColor: elAmount === a ? C.primary : C.border,
+                  backgroundColor: elAmount === a ? "#EAF8F1" : C.inputBg,
+                }}
                 onPress={() => setElAmount(a)}
               >
                 <ThemedText
-                  style={{ ...StyleSheet.flatten(styles.presetText), color: elAmount === a ? C.primary : C.text }}
+                  style={{
+                    ...StyleSheet.flatten(styles.presetText),
+                    color: elAmount === a ? C.primary : C.text,
+                  }}
                 >
                   {priceFormatter(Number(a))}
                 </ThemedText>
@@ -380,7 +416,9 @@ export default function PayBillsScreen() {
 
   const renderCable = () => (
     <>
-      <ThemedText style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}>
+      <ThemedText
+        style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}
+      >
         Cable Provider
       </ThemedText>
       <View style={styles.cableRow}>
@@ -390,7 +428,11 @@ export default function PayBillsScreen() {
           return (
             <TouchableOpacity
               key={key}
-              style={{ ...StyleSheet.flatten(styles.cableChip), borderColor: isSelected ? C.primary : C.border, backgroundColor: isSelected ? "#EAF8F1" : C.inputBg }}
+              style={{
+                ...StyleSheet.flatten(styles.cableChip),
+                borderColor: isSelected ? C.primary : C.border,
+                backgroundColor: isSelected ? "#EAF8F1" : C.inputBg,
+              }}
               onPress={() => {
                 setCableProvider(key);
                 setCableVerified(false);
@@ -399,9 +441,16 @@ export default function PayBillsScreen() {
                 setCablePlan("");
               }}
             >
-              <Image source={img} style={styles.cableImg} resizeMode="contain" />
+              <Image
+                source={img}
+                style={styles.cableImg}
+                resizeMode="contain"
+              />
               <ThemedText
-                style={{ ...StyleSheet.flatten(styles.cableLabel), color: isSelected ? C.primary : C.text }}
+                style={{
+                  ...StyleSheet.flatten(styles.cableLabel),
+                  color: isSelected ? C.primary : C.text,
+                }}
               >
                 {key.toUpperCase()}
               </ThemedText>
@@ -423,9 +472,20 @@ export default function PayBillsScreen() {
       />
 
       {cableAccountName ? (
-        <View style={{ ...StyleSheet.flatten(styles.verifiedBanner), borderColor: "#09734C", backgroundColor: "#EAF8F1" }}>
+        <View
+          style={{
+            ...StyleSheet.flatten(styles.verifiedBanner),
+            borderColor: "#09734C",
+            backgroundColor: "#EAF8F1",
+          }}
+        >
           <TickCircle size={16} color="#09734C" variant="Bold" />
-          <ThemedText style={{ ...StyleSheet.flatten(styles.verifiedText), color: "#09734C" }}>
+          <ThemedText
+            style={{
+              ...StyleSheet.flatten(styles.verifiedText),
+              color: "#09734C",
+            }}
+          >
             {cableAccountName}
           </ThemedText>
         </View>
@@ -445,40 +505,76 @@ export default function PayBillsScreen() {
 
       {cableVerified && cablePlans.length > 0 && (
         <>
-          <ThemedText style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}>
+          <ThemedText
+            style={{
+              ...StyleSheet.flatten(styles.sectionLabel),
+              color: C.muted,
+            }}
+          >
             Select Plan
           </ThemedText>
-          <View style={{ ...StyleSheet.flatten(styles.card), borderColor: C.border }}>
+          <View
+            style={{
+              ...StyleSheet.flatten(styles.card),
+              borderColor: C.border,
+            }}
+          >
             {cablePlans.map((plan, idx) => {
               const code = String(
-                plan?.variation_code || plan?.variationCode || plan?.id || `plan-${idx}`,
+                plan?.variation_code ||
+                  plan?.variationCode ||
+                  plan?.id ||
+                  `plan-${idx}`,
               );
               const label = String(plan?.name || plan?.plan || code);
-              const amount = Number(plan?.variation_amount || plan?.amount || 0);
+              const amount = Number(
+                plan?.variation_amount || plan?.amount || 0,
+              );
               const isSelected = cablePlan === code;
               return (
                 <TouchableOpacity
                   key={code}
-                  style={{ ...StyleSheet.flatten(styles.planRow), ...(idx < cablePlans.length - 1 ? StyleSheet.flatten(styles.planDivider) : {}) }}
+                  style={{
+                    ...StyleSheet.flatten(styles.planRow),
+                    ...(idx < cablePlans.length - 1
+                      ? StyleSheet.flatten(styles.planDivider)
+                      : {}),
+                  }}
                   onPress={() => {
                     setCablePlan(code);
                     setCablePlanAmount(amount);
                   }}
                 >
                   <View style={styles.planInfo}>
-                    <ThemedText style={{ ...StyleSheet.flatten(styles.planLabel), color: C.text }}>
+                    <ThemedText
+                      style={{
+                        ...StyleSheet.flatten(styles.planLabel),
+                        color: C.text,
+                      }}
+                    >
                       {label}
                     </ThemedText>
-                    <ThemedText style={{ ...StyleSheet.flatten(styles.planAmount), color: C.muted }}>
+                    <ThemedText
+                      style={{
+                        ...StyleSheet.flatten(styles.planAmount),
+                        color: C.muted,
+                      }}
+                    >
                       {priceFormatter(amount, 2)}
                     </ThemedText>
                   </View>
                   <View
-                    style={{ ...StyleSheet.flatten(styles.radio), borderColor: isSelected ? C.primary : C.border }}
+                    style={{
+                      ...StyleSheet.flatten(styles.radio),
+                      borderColor: isSelected ? C.primary : C.border,
+                    }}
                   >
                     {isSelected && (
                       <View
-                        style={{ ...StyleSheet.flatten(styles.radioInner), backgroundColor: C.primary }}
+                        style={{
+                          ...StyleSheet.flatten(styles.radioInner),
+                          backgroundColor: C.primary,
+                        }}
                       />
                     )}
                   </View>
@@ -493,21 +589,32 @@ export default function PayBillsScreen() {
 
   const renderBetting = () => (
     <>
-      <ThemedText style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}>
+      <ThemedText
+        style={{ ...StyleSheet.flatten(styles.sectionLabel), color: C.muted }}
+      >
         Betting Platform
       </ThemedText>
       <View style={styles.providerGrid}>
         {bettingProviders.map((p, idx) => {
-          const id = String(p?.serviceID || p?.id || p?.name || `bet-${idx}`).toLowerCase();
+          const id = String(
+            p?.serviceID || p?.id || p?.name || `bet-${idx}`,
+          ).toLowerCase();
           const label = String(p?.name || p?.label || id).toUpperCase();
           return (
             <TouchableOpacity
               key={id}
-              style={{ ...StyleSheet.flatten(styles.providerChip), borderColor: bettingProvider === id ? C.primary : C.border, backgroundColor: bettingProvider === id ? "#EAF8F1" : C.inputBg }}
+              style={{
+                ...StyleSheet.flatten(styles.providerChip),
+                borderColor: bettingProvider === id ? C.primary : C.border,
+                backgroundColor: bettingProvider === id ? "#EAF8F1" : C.inputBg,
+              }}
               onPress={() => setBettingProvider(id)}
             >
               <ThemedText
-                style={{ ...StyleSheet.flatten(styles.providerChipText), color: bettingProvider === id ? C.primary : C.text }}
+                style={{
+                  ...StyleSheet.flatten(styles.providerChipText),
+                  color: bettingProvider === id ? C.primary : C.text,
+                }}
               >
                 {label}
               </ThemedText>
@@ -536,10 +643,14 @@ export default function PayBillsScreen() {
   const renderSuccess = () => (
     <View style={styles.successContainer}>
       <TickCircle size={80} color="#09734C" variant="Bold" />
-      <ThemedText style={{ ...StyleSheet.flatten(styles.successTitle), color: C.text }}>
+      <ThemedText
+        style={{ ...StyleSheet.flatten(styles.successTitle), color: C.text }}
+      >
         Payment Successful!
       </ThemedText>
-      <ThemedText style={{ ...StyleSheet.flatten(styles.successSub), color: C.muted }}>
+      <ThemedText
+        style={{ ...StyleSheet.flatten(styles.successSub), color: C.muted }}
+      >
         Your {modeTitle[mode]} payment was processed successfully.
       </ThemedText>
       <View style={{ gap: 12, width: "100%", marginTop: 24 }}>
@@ -578,11 +689,18 @@ export default function PayBillsScreen() {
   );
 
   return (
-    <SafeAreaView style={{ ...StyleSheet.flatten(styles.screen), backgroundColor: C.background }}>
+    <SafeAreaView
+      style={{
+        ...StyleSheet.flatten(styles.screen),
+        backgroundColor: C.background,
+      }}
+    >
       {stage !== "success" && (
         <View style={styles.header}>
           <Back onPress={() => router.back()} />
-          <ThemedText style={{ ...StyleSheet.flatten(styles.headerTitle), color: C.text }}>
+          <ThemedText
+            style={{ ...StyleSheet.flatten(styles.headerTitle), color: C.text }}
+          >
             {modeTitle[mode as Mode] || "Pay Bills"}
           </ThemedText>
           <View style={{ width: 44 }} />

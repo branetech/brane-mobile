@@ -6,7 +6,12 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
-import { hideAppLoader, priceFormatter, showAppLoader, showSuccess } from "@/utils/helpers";
+import {
+  hideAppLoader,
+  priceFormatter,
+  showAppLoader,
+  showSuccess,
+} from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
@@ -44,7 +49,6 @@ export default function DividendWithdrawScreen() {
   const [amountError, setAmountError] = useState<string | undefined>();
   const [dividendBalance, setDividendBalance] = useState(0);
   const [accounts, setAccounts] = useState<any[]>([]);
-  const [selectedAccount, setSelectedAccount] = useState<any>(null);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(false);
 
@@ -100,7 +104,6 @@ export default function DividendWithdrawScreen() {
   };
 
   const handleSubmit = async (account: any) => {
-    setSelectedAccount(account);
     showAppLoader({ message: "Processing dividend withdrawal..." });
     try {
       await BaseRequest.post("/stocks-service/wallet/withdraw-dividend", {
@@ -227,8 +230,8 @@ export default function DividendWithdrawScreen() {
         Withdrawal Successful
       </ThemedText>
       <ThemedText style={[styles.successDesc, { color: C.muted }]}>
-        You&apos;ve successfully withdrawn {priceFormatter(Number(amount), 2)} in
-        dividends to your bank account.
+        You&apos;ve successfully withdrawn {priceFormatter(Number(amount), 2)}{" "}
+        in dividends to your bank account.
       </ThemedText>
       <BraneButton
         text="Done"

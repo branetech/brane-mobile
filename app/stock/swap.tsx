@@ -7,19 +7,24 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
-import { hideAppLoader, priceFormatter, showAppLoader, showSuccess } from "@/utils/helpers";
+import {
+    hideAppLoader,
+    priceFormatter,
+    showAppLoader,
+    showSuccess,
+} from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View as RNView,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -47,9 +52,7 @@ export default function BracsSwapScreen() {
   const [amount, setAmount] = useState("");
   const [amountError, setAmountError] = useState<string | undefined>();
   const [selectedAsset, setSelectedAsset] = useState<AssetType>("Stocks");
-  const [isLoading, setIsLoading] = useState(false);
   const [showPin, setShowPin] = useState(false);
-  const [swapResult, setSwapResult] = useState<any>(null);
 
   const fetchBracsBalance = useCallback(async () => {
     setIsLoadingBalance(true);
@@ -96,7 +99,6 @@ export default function BracsSwapScreen() {
           assetType: assetTypeToKey[selectedAsset],
         },
       );
-      setSwapResult(res?.data || res);
       hideAppLoader();
       showSuccess("BRACS swapped successfully");
       setStage("success");
@@ -259,7 +261,9 @@ export default function BracsSwapScreen() {
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Swap Successful!
       </ThemedText>
-      <View style={{ ...styles.previewCard, borderColor: C.border, width: "100%" }}>
+      <View
+        style={{ ...styles.previewCard, borderColor: C.border, width: "100%" }}
+      >
         {[
           { label: "Amount Swapped", value: `${amount} BRACS` },
           { label: "Asset Type", value: selectedAsset },
@@ -319,9 +323,7 @@ export default function BracsSwapScreen() {
       {stage === "preview" && renderPreview()}
       {stage === "pin" && (
         <View style={styles.flex}>
-          <ThemedText
-            style={[styles.pinHint, { color: C.muted }]}
-          >
+          <ThemedText style={[styles.pinHint, { color: C.muted }]}>
             Please confirm your transaction PIN to proceed.
           </ThemedText>
         </View>
