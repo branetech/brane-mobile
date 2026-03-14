@@ -92,13 +92,10 @@ export default function BracsSwapScreen() {
     setShowPin(false);
     showAppLoader({ message: "Processing swap..." });
     try {
-      const res: any = await BaseRequest.post(
-        STOCKS_SERVICE.WALLET_BALANCE_BREAKDOWN,
-        {
-          amount: Number(amount),
-          assetType: assetTypeToKey[selectedAsset],
-        },
-      );
+      await BaseRequest.post(STOCKS_SERVICE.WALLET_BALANCE_BREAKDOWN, {
+        amount: Number(amount),
+        assetType: assetTypeToKey[selectedAsset],
+      });
       hideAppLoader();
       showSuccess("BRACS swapped successfully");
       setStage("success");

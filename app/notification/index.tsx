@@ -3,7 +3,7 @@ import { EmptyState } from "@/components/empty-state";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import BaseRequest from "@/services";
+import BaseRequest, { catchError } from "@/services";
 import { formatDate } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { Notification as BellIcon } from "iconsax-react-native";
@@ -65,6 +65,8 @@ export default function NotificationScreen() {
       );
       const records = toArray(response).map(mapNotification);
       setNotifications(records);
+    } catch (error) {
+      catchError(error);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -83,6 +85,9 @@ export default function NotificationScreen() {
         return;
       }
       setSelected(mapNotification(data));
+    } catch (error) {
+      setSelected(null);
+      catchError(error);
     } finally {
       setIsDetailLoading(false);
     }

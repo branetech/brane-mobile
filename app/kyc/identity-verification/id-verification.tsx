@@ -16,14 +16,13 @@ export default function IdVerificationScreen() {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const [serialNumber, setSerialNumber] = useState("");
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { fetchData } = usePostBvn(setLoading, setSuccess, "nin");
+  const { fetchData } = usePostBvn(setLoading, () => {}, "nin");
 
   const onSubmit = async () => {
-    await fetchData({ serialNumber }, serialNumber);
-    if (success) router.replace("/kyc/identity-verification");
+    const ok = await fetchData({ serialNumber }, serialNumber);
+    if (ok) router.replace("/kyc/identity-verification");
   };
 
   return (

@@ -9,14 +9,21 @@ import { TRANSACTION_SERVICE } from "@/services/routes";
 import { formatDate, priceFormatter } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { Bank, Card, Devices, Eye, EyeSlash, Mobile } from "iconsax-react-native";
+import {
+    Bank,
+    Card,
+    Devices,
+    Eye,
+    EyeSlash,
+    Mobile,
+} from "iconsax-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -72,13 +79,17 @@ export default function WalletScreen() {
 
       const records = toArray(txRes)
         .slice(0, 5)
-        .map((item: any) => ({
-          id: String(item?.id ?? ""),
+        .map((item: any, index: number) => ({
+          id: String(
+            item?.id ??
+              item?.transactionId ??
+              `${item?.createdAt ?? "tx"}-${index}`,
+          ),
           description: String(
             item?.description ??
               item?.narration ??
               item?.transactionType ??
-              "Transaction"
+              "Transaction",
           ),
           date: formatDate(item?.createdAt, "MMM dd, yyyy"),
           amount: Number(item?.amount ?? 0),
@@ -171,7 +182,10 @@ export default function WalletScreen() {
       <View
         row
         aligned
-        style={StyleSheet.flatten([styles.sectionHeader, { justifyContent: "space-between" as const }])}
+        style={StyleSheet.flatten([
+          styles.sectionHeader,
+          { justifyContent: "space-between" as const },
+        ])}
       >
         <ThemedText type="defaultSemiBold" style={{ fontSize: 15 }}>
           Recent Transactions
@@ -204,7 +218,9 @@ export default function WalletScreen() {
       ) : (
         <FlatList
           data={transactions}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) =>
+            item.id || `${item.description}-${item.date}-${index}`
+          }
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={ListHeader}
@@ -224,7 +240,10 @@ export default function WalletScreen() {
           }
           renderItem={({ item }) => (
             <View
-              style={StyleSheet.flatten([styles.txRow, { borderColor: C.border }])}
+              style={StyleSheet.flatten([
+                styles.txRow,
+                { borderColor: C.border },
+              ])}
               row
               aligned
             >

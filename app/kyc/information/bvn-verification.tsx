@@ -16,14 +16,13 @@ export default function BvnVerificationScreen() {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const [bvn, setBvn] = useState("");
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { fetchData } = usePostBvn(setLoading, setSuccess, "bvn");
+  const { fetchData } = usePostBvn(setLoading, () => {}, "bvn");
 
   const onSubmit = async () => {
-    await fetchData({ bvn }, bvn);
-    if (success) router.replace("/kyc");
+    const ok = await fetchData({ bvn }, bvn);
+    if (ok) router.replace("/kyc");
   };
 
   return (

@@ -1,4 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRouter } from "expo-router";
 import {
     CardReceive,
@@ -81,18 +83,22 @@ const utilities: UtilityOption[] = [
 
 export default function UtiliScreen() {
   const router = useRouter();
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: C.background }]}>
       <View style={styles.headerRow}>
-        <ThemedText style={styles.title}>Bills & Utilities</ThemedText>
+        <ThemedText style={[styles.title, { color: C.text }]}>
+          Bills & Utilities
+        </ThemedText>
         <View style={styles.badge}>
           <KeyboardOpen size={14} color="#013D25" />
           <ThemedText style={styles.badgeText}>Pay fast</ThemedText>
         </View>
       </View>
 
-      <ThemedText style={styles.subtitle}>
+      <ThemedText style={[styles.subtitle, { color: C.muted }]}>
         Choose a utility service to continue.
       </ThemedText>
 
@@ -126,7 +132,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 12,
-    backgroundColor: "#FFFFFF",
   },
   headerRow: {
     flexDirection: "row",
@@ -136,11 +141,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#0B0014",
   },
   subtitle: {
     marginTop: 6,
-    color: "#7A7682",
     fontSize: 12,
     marginBottom: 16,
   },

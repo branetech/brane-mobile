@@ -1,19 +1,23 @@
 import {
-  auth,
-  setRefreshToken,
-  setToken,
-  setUser,
+    auth,
+    setRefreshToken,
+    setToken,
+    setUser,
 } from "@/redux/slice/auth-slice";
 import { RootState } from "@/redux/store";
-import { AUTH_SERVICE, MOBILE_SERVICE, STOCKS_SERVICE } from "@/services/routes";
 import {
-  formatPhoneNumber,
-  hideAppLoader,
-  onShowInsufficientFunds,
-  showAppLoader,
-  showError,
-  showSuccess,
-  UseNgnPhone,
+    AUTH_SERVICE,
+    MOBILE_SERVICE,
+    STOCKS_SERVICE,
+} from "@/services/routes";
+import {
+    formatPhoneNumber,
+    hideAppLoader,
+    onShowInsufficientFunds,
+    showAppLoader,
+    showError,
+    showSuccess,
+    UseNgnPhone,
 } from "@/utils/helpers";
 import { useRouter } from "expo-router"; // ✅ Changed from "next/navigation"
 import { useCallback, useMemo } from "react";
@@ -25,16 +29,22 @@ export const usePostBvn = (
   setIsLoading: any,
   setSuccessMessage: any,
   verificationType: any,
-  dob?: any
+  dob?: any,
 ) => {
   const fetchData = async (data: any, serialNumber: any) => {
     setIsLoading(true);
     try {
-      await BaseRequest.post(AUTH_SERVICE.IDENTITY, { serialNumber, verificationType });
+      await BaseRequest.post(AUTH_SERVICE.IDENTITY, {
+        serialNumber,
+        verificationType,
+      });
       setSuccessMessage(true);
+      return true;
     } catch (error: any) {
-      const {message} = parseNetworkError(error);
+      const { message } = parseNetworkError(error);
       showError(message);
+      return false;
+    } finally {
       setIsLoading(false);
     }
   };
@@ -73,7 +83,7 @@ export const usePostResetOtp = (setIsNewLoading: any, setStage: any) => {
       await BaseRequest.post("/auth-service/reset-username", { otp: data });
       setStage(2);
     } catch (error: any) {
-      const {message} = parseNetworkError(error);
+      const { message } = parseNetworkError(error);
       showError(message);
     }
     setIsNewLoading(false);
@@ -84,7 +94,7 @@ export const usePostResetOtp = (setIsNewLoading: any, setStage: any) => {
 export const usePostResetUsername = (
   setIsLoading: any,
   setStage: any,
-  otp: any
+  otp: any,
 ) => {
   const handleUsernameSubmit = async (data: any) => {
     try {
@@ -94,7 +104,7 @@ export const usePostResetUsername = (
       });
       setStage(3);
     } catch (error: any) {
-      const {message} = parseNetworkError(error);
+      const { message } = parseNetworkError(error);
       showError(message);
       setIsLoading(false);
     }
@@ -112,23 +122,30 @@ export const usePostOtp = ({
   const handleSubmitOtp = async (data: any) => {
     setIsOtpLoading(true);
     try {
-      const response = await BaseRequest.post("/auth-service/signup/verify-otp", {
-        phone: "+" + phone,
-        otp: data,
-      });
+      const response = await BaseRequest.post(
+        "/auth-service/signup/verify-otp",
+        {
+          phone: "+" + phone,
+          otp: data,
+        },
+      );
       const accessToken = response?.data?.authCredentials?.accessToken;
       dispatch(auth({ otp: data, token: accessToken }));
       setStage(3);
     } catch (error: any) {
       setIsOtpLoading(false);
-      const {message} = parseNetworkError(error);
+      const { message } = parseNetworkError(error);
       showError(message);
     }
   };
   return { handleSubmitOtp };
 };
 
-export const usePostUsername = ({ setIsUserNameLoading, setStage, setError }: any) => {
+export const usePostUsername = ({
+  setIsUserNameLoading,
+  setStage,
+  setError,
+}: any) => {
   const handleSubmitUsername = async (data: any) => {
     setIsUserNameLoading(true);
     try {
@@ -136,7 +153,7 @@ export const usePostUsername = ({ setIsUserNameLoading, setStage, setError }: an
       setStage(4);
     } catch (error: any) {
       setIsUserNameLoading(false);
-      const {message} = parseNetworkError(error);
+      const { message } = parseNetworkError(error);
       showError(message);
     }
   };
@@ -146,16 +163,23 @@ export const usePostUsername = ({ setIsUserNameLoading, setStage, setError }: an
 export const getTransactions = async () =>
   await BaseRequest.get("/transactions-service/transactions/user");
 
-export const useInAppOtp = ({ setIsNewLoading, setStage, setError, dispatch }: any) => {
+export const useInAppOtp = ({
+  setIsNewLoading,
+  setStage,
+  setError,
+  dispatch,
+}: any) => {
   const handleSubmitOtp = async (data: any) => {
     setIsNewLoading(true);
     try {
-      await BaseRequest.post("/auth-service/inapp-password-reset", { otp: data });
+      await BaseRequest.post("/auth-service/inapp-password-reset", {
+        otp: data,
+      });
       dispatch(setUser({ otp: data }));
       setStage(2);
     } catch (error: any) {
       setIsNewLoading(false);
-      const {message} = parseNetworkError(error);
+      const { message } = parseNetworkError(error);
       showError(message);
     }
   };
@@ -172,14 +196,19 @@ export const useDeleteOtp = ({ setIsNewLoading, dispatch }: any) => {
       router.push("/(tabs)");
     } catch (error: any) {
       setIsNewLoading(false);
-      const {message} = parseNetworkError(error);
+      const { message } = parseNetworkError(error);
       showError(message);
     }
   };
   return { handleSubmitOtp };
 };
 
-export const useInAppPasswordChange = ({ setIsLoading, setStage, setError, otp }: any) => {
+export const useInAppPasswordChange = ({
+  setIsLoading,
+  setStage,
+  setError,
+  otp,
+}: any) => {
   const handleSubmitPassword = async (data: {
     password: string;
     confirmPassword: string;
@@ -195,7 +224,7 @@ export const useInAppPasswordChange = ({ setIsLoading, setStage, setError, otp }
       setStage(3);
     } catch (error: any) {
       setIsLoading(false);
-      const {message} = parseNetworkError(error);
+      const { message } = parseNetworkError(error);
       showError(message);
     }
   };
@@ -205,13 +234,16 @@ export const useInAppPasswordChange = ({ setIsLoading, setStage, setError, otp }
 export const useBeneficiary = (type: any) => {
   const fetchData = async (data: any) => {
     try {
-      return await BaseRequest.post("/mobile-connectivity-service/beneficiaries", {
-        category: type,
-        phone: data.phoneNumber,
-        name: data.name,
-      });
+      return await BaseRequest.post(
+        "/mobile-connectivity-service/beneficiaries",
+        {
+          category: type,
+          phone: data.phoneNumber,
+          name: data.name,
+        },
+      );
     } catch (err) {
-      const {message} = parseNetworkError(err);
+      const { message } = parseNetworkError(err);
       return message;
     }
   };
@@ -219,20 +251,24 @@ export const useBeneficiary = (type: any) => {
 };
 
 export const usePostSellStocks = (setIsLoading: any, setStage: any) => {
-  const fetchData = async (tickerSymbol: any, quantity: any, sellTrigger: any) => {
+  const fetchData = async (
+    tickerSymbol: any,
+    quantity: any,
+    sellTrigger: any,
+  ) => {
     const data = { tickerSymbol, quantity, sellTrigger };
     setStage("confirm");
     setIsLoading(true);
     try {
       const sellStocks: any = await BaseRequest.post(
         "/stocks-service/customer-stocks/sell",
-        data
+        data,
       );
       showSuccess(sellStocks?.message);
       await onReloadData();
       setStage("success");
     } catch (err) {
-      const {message} = parseNetworkError(err);
+      const { message } = parseNetworkError(err);
       showError(message);
     } finally {
       setIsLoading(false);
@@ -261,7 +297,10 @@ export const usePreference = (showLoader = true) => {
         if (showLoader) showAppLoader();
         const pref = { metadata: { ...preference, ...updatedPreference } };
         dispatch(setUser({ ...user, preference: pref }));
-        const { data } = await BaseRequest.put("/auth-service/preference", pref);
+        const { data } = await BaseRequest.put(
+          "/auth-service/preference",
+          pref,
+        );
         dispatch(setUser({ ...user, preference: data }));
       } catch (err) {
         catchError(err);
@@ -269,7 +308,7 @@ export const usePreference = (showLoader = true) => {
         hideAppLoader();
       }
     },
-    [preference]
+    [preference],
   );
 
   const onToggleBalance = () =>
@@ -312,20 +351,23 @@ export const onTransactionPinCabelValidation = async ({
   });
 
   try {
-    const { message, data }: any = await BaseRequest.post(MOBILE_SERVICE.BUY_CABLE, {
-      serviceId,
-      billersCode,
-      phone: user?.phone,
-      amount: String(amount),
-      variationCode,
-      quantity,
-      subscription_type,
-    });
+    const { message, data }: any = await BaseRequest.post(
+      MOBILE_SERVICE.BUY_CABLE,
+      {
+        serviceId,
+        billersCode,
+        phone: user?.phone,
+        amount: String(amount),
+        variationCode,
+        quantity,
+        subscription_type,
+      },
+    );
     showSuccess(message);
     await onReloadData();
     return setRender("success");
   } catch (error: any) {
-    const {message} = parseNetworkError(error);
+    const { message } = parseNetworkError(error);
     if (String(message).includes("insufficient")) onShowInsufficientFunds();
     showError(message);
   } finally {
@@ -371,13 +413,20 @@ export const onTransactionPinElectricityValidation = async ({
   try {
     const { message, data }: any = await BaseRequest.post(
       MOBILE_SERVICE.ELECTRICITY_BUY,
-      { serviceId, billersCode, phone: user?.phone, amount: String(amount), variationCode, name }
+      {
+        serviceId,
+        billersCode,
+        phone: user?.phone,
+        amount: String(amount),
+        variationCode,
+        name,
+      },
     );
     showSuccess(message);
     setRender("success");
     return data;
   } catch (error: any) {
-    const {message} = parseNetworkError(error);
+    const { message } = parseNetworkError(error);
     if (message === "Insufficient wallet balance") onShowInsufficientFunds();
     setShowErrorModal(true);
     showError(message);
@@ -423,13 +472,20 @@ export const onTransactionPinBettingValidation = async ({
   try {
     const { message, data }: any = await BaseRequest.post(
       MOBILE_SERVICE.BETTING_BUY_SERVICE,
-      { serviceId, customerId, betType, phone: user?.phone, amount: String(amount), email: user?.email }
+      {
+        serviceId,
+        customerId,
+        betType,
+        phone: user?.phone,
+        amount: String(amount),
+        email: user?.email,
+      },
     );
     showSuccess(message);
     setRender("success");
     return data;
   } catch (error: any) {
-    const {message} = parseNetworkError(error);
+    const { message } = parseNetworkError(error);
     if (message === "Insufficient wallet balance") onShowInsufficientFunds();
     setShowErrorModal(true);
     showError(message);
@@ -480,7 +536,7 @@ export const onTransactionPinCheckoutValidation = async ({
     setRender("success");
     return data;
   } catch (error: any) {
-    const {message} = parseNetworkError(error);
+    const { message } = parseNetworkError(error);
     if (message === "Insufficient wallet balance") onShowInsufficientFunds();
     setShowErrorModal(true);
     showError(message);
@@ -531,7 +587,7 @@ export const onTransactionSellStockPinCheckout = async ({
     setRender("success");
     return data;
   } catch (error: any) {
-    const {message} = parseNetworkError(error);
+    const { message } = parseNetworkError(error);
     if (message === "Insufficient wallet balance") onShowInsufficientFunds();
     setShowErrorModal(true);
     showError(message);
@@ -597,7 +653,10 @@ export const onTransactionPinValidated = async ({
     }
 
     if (medium === "wallet") {
-      const walletResponse: any = await BaseRequest.post(baseServiceURL, payloadBase);
+      const walletResponse: any = await BaseRequest.post(
+        baseServiceURL,
+        payloadBase,
+      );
       showSuccess(walletResponse?.message);
       if (isAirtime && onReloadData) await onReloadData();
       return setRender("success");
@@ -641,7 +700,7 @@ export const onTransactionPinValidated = async ({
       return setRender("success");
     }
   } catch (error) {
-    const {message} = parseNetworkError(error);
+    const { message } = parseNetworkError(error);
     if (message === "Insufficient wallet balance") onShowInsufficientFunds();
     showError(message);
   } finally {
