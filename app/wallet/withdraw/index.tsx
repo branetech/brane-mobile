@@ -153,8 +153,8 @@ export default function WalletWithdrawScreen() {
                 styles.presetBtn,
                 {
                   backgroundColor:
-                    amount === String(preset) ? "#F4F1E2" : C.inputBg,
-                  borderColor: amount === String(preset) ? "#E4DBC0" : C.border,
+                    amount === String(preset) ? C.primary + "20" : C.inputBg,
+                  borderColor: amount === String(preset) ? C.primary : C.border,
                 },
               ]}
               onPress={() => {
@@ -185,7 +185,7 @@ export default function WalletWithdrawScreen() {
           text='Continue'
           onPress={handleContinueForm}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={scheme === "dark" ? "#fff" : "#D2F1E4"}
           height={52}
           radius={12}
         />
@@ -260,7 +260,7 @@ export default function WalletWithdrawScreen() {
 
   const renderStageSuccess = () => (
     <View style={styles.successWrap}>
-      <TickCircle size={72} color='#013D25' variant='Bold' />
+      <TickCircle size={72} color={C.primary} variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Withdrawal Successful
       </ThemedText>
@@ -272,7 +272,7 @@ export default function WalletWithdrawScreen() {
         text='Go Home'
         onPress={() => router.push("/(tabs)")}
         backgroundColor={C.primary}
-        textColor='#D2F1E4'
+        textColor={scheme === "dark" ? "#fff" : "#D2F1E4"}
         height={52}
         radius={12}
         width='80%'

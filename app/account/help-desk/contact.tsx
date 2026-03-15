@@ -28,19 +28,19 @@ export default function ContactScreen() {
 
   const contacts: ContactItem[] = [
     {
-      icon: <Call size={22} color='#013D25' variant='Bold' />,
+      icon: <Call size={22} color={C.primary} variant='Bold' />,
       label: "Phone",
       value: "+234 814 180 5564",
       onPress: () => Linking.openURL("tel:+2348141805564"),
     },
     {
-      icon: <Sms size={22} color='#013D25' variant='Bold' />,
+      icon: <Sms size={22} color={C.primary} variant='Bold' />,
       label: "Email",
       value: "info@getbrane.co",
       onPress: () => Linking.openURL("mailto:info@getbrane.co"),
     },
     {
-      icon: <Location size={22} color='#013D25' variant='Bold' />,
+      icon: <Location size={22} color={C.primary} variant='Bold' />,
       label: "Address",
       value: "188, Awolowo Road, Ikoyi, Lagos",
     },
@@ -69,9 +69,11 @@ export default function ContactScreen() {
               row
               aligned
             >
-              <View style={styles.iconWrap}>{item.icon}</View>
+              <View style={[styles.iconWrap, { backgroundColor: C.primary + "20" }]}>
+                {item.icon}
+              </View>
               <View style={styles.textWrap}>
-                <ThemedText style={[styles.label, { color: "#85808A" }]}>
+                <ThemedText style={[styles.label, { color: C.muted }]}>
                   {item.label}
                 </ThemedText>
                 <ThemedText style={styles.value}>{item.value}</ThemedText>
@@ -126,7 +128,6 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "#D2F1E4",
     alignItems: "center",
     justifyContent: "center",
   },

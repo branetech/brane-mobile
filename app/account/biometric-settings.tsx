@@ -203,7 +203,7 @@ export default function BiometricSettingsScreen() {
                 onValueChange={handleToggleBiometric}
                 disabled={isLoading}
                 trackColor={{ false: C.border, true: C.primary }}
-                thumbColor={isEnabled ? "#D2F1E4" : "#FFFFFF"}
+                thumbColor={isEnabled ? C.background : C.muted}
               />
             </View>
           </View>
