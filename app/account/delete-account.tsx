@@ -94,7 +94,9 @@ export default function DeleteAccountScreen() {
                       styles.reasonRow,
                       {
                         borderColor: isSelected ? C.primary : C.border,
-                        backgroundColor: isSelected ? C.primary + "20" : C.background,
+                        backgroundColor: isSelected
+                          ? C.primary + "20"
+                          : C.background,
                       },
                     ]}
                     onPress={() => setSelectedReason(reason)}
@@ -105,7 +107,14 @@ export default function DeleteAccountScreen() {
                         borderColor: isSelected ? C.primary : C.muted,
                       }}
                     >
-                      {isSelected && <View style={[styles.radioInner, { backgroundColor: C.primary }]} />}
+                      {isSelected && (
+                        <View
+                          style={[
+                            styles.radioInner,
+                            { backgroundColor: C.primary },
+                          ]}
+                        />
+                      )}
                     </View>
                     <ThemedText style={styles.reasonText}>{reason}</ThemedText>
                   </TouchableOpacity>

@@ -232,7 +232,10 @@ export default function UpdateKinDetailsScreen() {
                   What is your relationship
                 </ThemedText>
                 <Pressable
-                  style={[styles.selectField, { backgroundColor: C.inputBg, borderColor: C.border }]}
+                  style={[
+                    styles.selectField,
+                    { backgroundColor: C.inputBg, borderColor: C.border },
+                  ]}
                   onPress={() => setShowRelationshipModal(true)}
                 >
                   <ThemedText
@@ -269,7 +272,14 @@ export default function UpdateKinDetailsScreen() {
                   Next of Kin Phone number
                 </ThemedText>
                 <TextInput
-                  style={[styles.phoneField, { backgroundColor: C.inputBg, borderColor: C.border, color: C.text }]}
+                  style={[
+                    styles.phoneField,
+                    {
+                      backgroundColor: C.inputBg,
+                      borderColor: C.border,
+                      color: C.text,
+                    },
+                  ]}
                   placeholder='+234 70000 0000'
                   placeholderTextColor={C.muted}
                   keyboardType='phone-pad'
@@ -308,8 +318,21 @@ export default function UpdateKinDetailsScreen() {
           style={styles.modalBackdrop}
           onPress={() => setShowRelationshipModal(false)}
         >
-          <Pressable style={[styles.modalCard, { backgroundColor: C.inputBg, borderColor: C.border, borderWidth: 1 }]} onPress={() => {}}>
-            <ThemedText type='defaultSemiBold' style={[styles.modalTitle, { color: C.text }]}>
+          <Pressable
+            style={[
+              styles.modalCard,
+              {
+                backgroundColor: C.inputBg,
+                borderColor: C.border,
+                borderWidth: 1,
+              },
+            ]}
+            onPress={() => {}}
+          >
+            <ThemedText
+              type='defaultSemiBold'
+              style={[styles.modalTitle, { color: C.text }]}
+            >
               Select relationship
             </ThemedText>
             <ScrollView style={{ maxHeight: 280 }}>
@@ -343,8 +366,20 @@ export default function UpdateKinDetailsScreen() {
         onRequestClose={() => setShowSuccess(false)}
       >
         <View style={styles.successBackdrop}>
-          <View style={[styles.successCard, { backgroundColor: C.inputBg, borderColor: C.border, borderWidth: 1 }]}>
-            <ThemedText type='subtitle' style={[{ textAlign: "center", color: C.text }]}>
+          <View
+            style={[
+              styles.successCard,
+              {
+                backgroundColor: C.inputBg,
+                borderColor: C.border,
+                borderWidth: 1,
+              },
+            ]}
+          >
+            <ThemedText
+              type='subtitle'
+              style={[{ textAlign: "center", color: C.text }]}
+            >
               Successful
             </ThemedText>
             <ThemedText style={[styles.successText, { color: C.muted }]}>

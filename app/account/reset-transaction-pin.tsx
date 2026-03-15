@@ -104,7 +104,12 @@ export default function ResetTransactionPinScreen() {
           />
 
           {!!pinError && (
-            <ThemedText style={[styles.error, { color: C.primary === "#013D25" ? "#D92D20" : "#FF6B6B" }]}>
+            <ThemedText
+              style={[
+                styles.error,
+                { color: C.primary === "#013D25" ? "#D92D20" : "#FF6B6B" },
+              ]}
+            >
               {pinError}
             </ThemedText>
           )}

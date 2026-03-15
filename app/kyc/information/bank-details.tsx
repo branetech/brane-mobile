@@ -35,13 +35,18 @@ export default function KycBankDetailsScreen() {
       </View>
 
       <View style={styles.content}>
-        <View style={[styles.statusCard, { backgroundColor: C.inputBg, borderColor: C.border }]}>
+        <View
+          style={[
+            styles.statusCard,
+            { backgroundColor: C.inputBg, borderColor: C.border },
+          ]}
+        >
           <View row aligned gap={8}>
             <ThemedText type='defaultSemiBold'>Status</ThemedText>
             {hasLinkedBank ? (
-              <CheckCircle size={18} color="#027A48" />
+              <CheckCircle size={18} color='#027A48' />
             ) : (
-              <CloseCircle size={18} color="#B42318" />
+              <CloseCircle size={18} color='#B42318' />
             )}
           </View>
           <ThemedText

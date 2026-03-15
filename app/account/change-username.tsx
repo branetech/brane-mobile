@@ -134,8 +134,20 @@ export default function ChangeUsernameScreen() {
         onRequestClose={() => setSuccess(false)}
       >
         <View style={styles.overlay}>
-          <View style={[styles.card, { backgroundColor: C.background, borderColor: C.border, borderWidth: 1 }]}>
-            <ThemedText type='subtitle' style={[{ textAlign: "center", color: C.text }]}>
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: C.background,
+                borderColor: C.border,
+                borderWidth: 1,
+              },
+            ]}
+          >
+            <ThemedText
+              type='subtitle'
+              style={[{ textAlign: "center", color: C.text }]}
+            >
               Successful
             </ThemedText>
             <ThemedText

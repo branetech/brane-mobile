@@ -122,7 +122,11 @@ export default function ThemesScreen() {
                   borderColor: isSelected ? C.primary : C.muted,
                 }}
               >
-                {isSelected && <View style={[styles.radioInner, { backgroundColor: C.primary }]} />}
+                {isSelected && (
+                  <View
+                    style={[styles.radioInner, { backgroundColor: C.primary }]}
+                  />
+                )}
               </View>
             </TouchableOpacity>
           );

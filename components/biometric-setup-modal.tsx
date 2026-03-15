@@ -10,7 +10,6 @@ import { View } from '@idimma/rn-widget';
 import { Colors } from '@/constants/colors';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
-import { setBiometricEnabled, setBiometricType } from '@/redux/slice/auth-slice';
 import setBiometricMode from '@/redux/slice/auth-slice';
 import { showError, showSuccess } from '@/utils/helpers';
 import { BraneButton } from '@/components/brane-button';
@@ -56,9 +55,9 @@ export const BiometricSetupModal: React.FC<BiometricSetupModalProps> = ({
       setSelectedMode(mode);
       
       // Update Redux state
-      dispatch(setBiometricEnabled(true));
-      dispatch(setBiometricMode(mode));
-      dispatch(setBiometricType(availability.type || 'Fingerprint'));
+      // dispatch(setBiometricEnabled(true));
+      // dispatch(setBiometricMode(mode));
+      // dispatch(setBiometricType(availability.type || 'Fingerprint'));
 
       showSuccess(
         `Biometric ${mode === 'auto-login' ? 'login' : '2FA'} enabled!`

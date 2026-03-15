@@ -166,7 +166,7 @@ export default function AddCardScreen() {
           disabled={isDisabled || isLoading}
           loading={isLoading}
           backgroundColor={C.primary}
-          textColor="#FFFFFF"
+          textColor='#FFFFFF'
           height={48}
           radius={8}
           fontSize={14}

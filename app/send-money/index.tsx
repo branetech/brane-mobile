@@ -161,22 +161,22 @@ export default function SendMoneyScreen() {
           <BraneButton
             text='Next'
             onPress={handleNext}
-            backgroundColor='#013D25'
-            textColor='#D2F1E4'
+            backgroundColor={C.primary}
+            textColor={scheme === "dark" ? "#fff" : "#D2F1E4"}
             height={48}
             radius={8}
             fontSize={11}
           />
 
           <View style={styles.beneficiaryRow}>
-            <ThemedText style={styles.beneficiaryText}>
+            <ThemedText style={[styles.beneficiaryText, { color: C.muted }]}>
               Add to beneficiaries
             </ThemedText>
             <Switch
               value={addToBeneficiaries}
               onValueChange={setAddToBeneficiaries}
-              trackColor={{ false: "#E6E6E8", true: "#D2F1E4" }}
-              thumbColor={addToBeneficiaries ? "#013D25" : "#B9B9BD"}
+              trackColor={{ false: C.border, true: C.primary + "40" }}
+              thumbColor={addToBeneficiaries ? C.primary : C.muted}
             />
           </View>
         </View>

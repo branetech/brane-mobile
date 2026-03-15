@@ -23,7 +23,12 @@ const DetailRow = ({
   valueColor: string;
   borderColor: string;
 }) => (
-  <View style={[styles.row, { borderBottomColor: borderColor }]} row spaced aligned>
+  <View
+    style={[styles.row, { borderBottomColor: borderColor }]}
+    row
+    spaced
+    aligned
+  >
     <ThemedText style={[styles.label, { color: labelColor }]}>
       {label}
     </ThemedText>
@@ -47,7 +52,7 @@ export default function AccountDetailsScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={{ color: C.text }}>
+        <ThemedText type='subtitle' style={{ color: C.text }}>
           Account Details
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -55,49 +60,49 @@ export default function AccountDetailsScreen() {
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.avatarWrap}>
-          <Avatar name={fullName} src={user?.image} size={96} shape="circle" />
+          <Avatar name={fullName} src={user?.image} size={96} shape='circle' />
           <ThemedText style={[styles.avatarHint, { color: C.primary }]}>
             Profile Information
           </ThemedText>
         </View>
 
         <DetailRow
-          label="First Name"
+          label='First Name'
           value={user?.firstName}
           labelColor={C.muted}
           valueColor={C.text}
           borderColor={C.border}
         />
         <DetailRow
-          label="Last Name"
+          label='Last Name'
           value={user?.lastName}
           labelColor={C.muted}
           valueColor={C.text}
           borderColor={C.border}
         />
         <DetailRow
-          label="Phone Number"
+          label='Phone Number'
           value={user?.phone}
           labelColor={C.muted}
           valueColor={C.text}
           borderColor={C.border}
         />
         <DetailRow
-          label="Email Address"
+          label='Email Address'
           value={user?.email}
           labelColor={C.muted}
           valueColor={C.text}
           borderColor={C.border}
         />
         <DetailRow
-          label="Username"
+          label='Username'
           value={user?.username ? `@${user.username}` : undefined}
           labelColor={C.muted}
           valueColor={C.text}
           borderColor={C.border}
         />
         <DetailRow
-          label="Address"
+          label='Address'
           value={user?.houseAddress}
           labelColor={C.muted}
           valueColor={C.text}

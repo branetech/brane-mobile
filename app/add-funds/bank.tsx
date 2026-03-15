@@ -75,13 +75,22 @@ export default function FundWithBankScreen() {
             Fund Method
           </ThemedText>
 
-          <View style={[styles.methodContainer, { backgroundColor: C.inputBg, borderColor: C.border }]}>
+          <View
+            style={[
+              styles.methodContainer,
+              { backgroundColor: C.inputBg, borderColor: C.border },
+            ]}
+          >
             <View style={styles.subHeaderRow}>
-              <ThemedText style={[styles.addedText, { color: C.muted }]}>Added Banks</ThemedText>
+              <ThemedText style={[styles.addedText, { color: C.muted }]}>
+                Added Banks
+              </ThemedText>
               <TouchableOpacity activeOpacity={0.8}>
                 <View style={styles.addNewWrap}>
                   <Add size={12} color={C.primary} />
-                  <ThemedText style={[styles.addNewText, { color: C.primary }]}>Add New</ThemedText>
+                  <ThemedText style={[styles.addNewText, { color: C.primary }]}>
+                    Add New
+                  </ThemedText>
                 </View>
               </TouchableOpacity>
             </View>
@@ -95,12 +104,16 @@ export default function FundWithBankScreen() {
                   borderColor:
                     selectedBankId === BANK_ACCOUNT.id ? C.primary : C.border,
                   backgroundColor:
-                    selectedBankId === BANK_ACCOUNT.id ? C.primary + "15" : C.inputBg,
+                    selectedBankId === BANK_ACCOUNT.id
+                      ? C.primary + "15"
+                      : C.inputBg,
                 },
               ]}
             >
               <View style={styles.bankDetails}>
-                <View style={[styles.initialsBadge, { backgroundColor: "#E4580A" }]}>
+                <View
+                  style={[styles.initialsBadge, { backgroundColor: "#E4580A" }]}
+                >
                   <ThemedText style={styles.initialsText}>F</ThemedText>
                 </View>
                 <View>
@@ -118,14 +131,14 @@ export default function FundWithBankScreen() {
                   styles.radioCircle,
                   {
                     borderColor:
-                      selectedBankId === BANK_ACCOUNT.id
-                        ? C.primary
-                        : C.border,
+                      selectedBankId === BANK_ACCOUNT.id ? C.primary : C.border,
                   },
                 ]}
               >
                 {selectedBankId === BANK_ACCOUNT.id && (
-                  <View style={[styles.radioInner, { backgroundColor: C.primary }]} />
+                  <View
+                    style={[styles.radioInner, { backgroundColor: C.primary }]}
+                  />
                 )}
               </View>
             </TouchableOpacity>
@@ -152,14 +165,17 @@ export default function FundWithBankScreen() {
                 style={[
                   styles.presetBtn,
                   {
-                    backgroundColor: amount === preset ? C.primary + "20" : C.inputBg,
+                    backgroundColor:
+                      amount === preset ? C.primary + "20" : C.inputBg,
                     borderColor: amount === preset ? C.primary : C.border,
                   },
                 ]}
                 onPress={() => setAmount(preset)}
               >
                 <View style={styles.presetInner}>
-                  <View style={[styles.presetDot, { backgroundColor: C.primary }]} />
+                  <View
+                    style={[styles.presetDot, { backgroundColor: C.primary }]}
+                  />
                   <ThemedText
                     style={[
                       styles.presetText,
@@ -177,7 +193,7 @@ export default function FundWithBankScreen() {
 
       <View style={styles.footer}>
         <BraneButton
-          text={loading ? 'Processing...' : 'Fund Account'}
+          text={loading ? "Processing..." : "Fund Account"}
           onPress={handleFundAccount}
           loading={loading}
           disabled={!isFundEnabled}

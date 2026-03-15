@@ -6,7 +6,6 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useFormHandler } from "@/hooks/use-formik";
 import BaseRequest, { parseNetworkError } from "@/services";
-import { AUTH_SERVICE } from "@/services/routes";
 import { showError, showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
@@ -34,12 +33,9 @@ export default function BvnVerificationScreen() {
     onSubmit: async (data) => {
       setIsLoading(true);
       try {
-        const response: any = await BaseRequest.post(
-          "/auth-service/kyc/bvn",
-          {
-            bvn: data.bvn,
-          }
-        );
+        const response: any = await BaseRequest.post("/auth-service/kyc/bvn", {
+          bvn: data.bvn,
+        });
 
         if (response?.data?.verified || response?.verified) {
           showSuccess("BVN verified successfully");
@@ -60,14 +56,14 @@ export default function BvnVerificationScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={[styles.title, { color: C.text }]}>
+        <ThemedText type='subtitle' style={[styles.title, { color: C.text }]}>
           BVN Verification
         </ThemedText>
         <View style={{ width: 44 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ThemedText type="subtitle" style={[{ color: C.text }]}>
+        <ThemedText type='subtitle' style={[{ color: C.text }]}>
           Add Your BVN
         </ThemedText>
         <ThemedText
@@ -78,9 +74,9 @@ export default function BvnVerificationScreen() {
         </ThemedText>
 
         <FormInput
-          labelText="BVN"
-          placeholder="Enter your 11-digit BVN"
-          keyboardType="number-pad"
+          labelText='BVN'
+          placeholder='Enter your 11-digit BVN'
+          keyboardType='number-pad'
           maxLength={11}
           {...mapFormikProps("bvn", form)}
         />
@@ -99,7 +95,7 @@ export default function BvnVerificationScreen() {
           disabled={isDisabled || isLoading}
           loading={isLoading}
           backgroundColor={C.primary}
-          textColor="#FFFFFF"
+          textColor='#FFFFFF'
           height={50}
           radius={10}
         />
@@ -110,7 +106,7 @@ export default function BvnVerificationScreen() {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1
+    flex: 1,
   },
   header: {
     flexDirection: "row",

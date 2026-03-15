@@ -69,7 +69,9 @@ export default function ContactScreen() {
               row
               aligned
             >
-              <View style={[styles.iconWrap, { backgroundColor: C.primary + "20" }]}>
+              <View
+                style={[styles.iconWrap, { backgroundColor: C.primary + "20" }]}
+              >
                 {item.icon}
               </View>
               <View style={styles.textWrap}>
