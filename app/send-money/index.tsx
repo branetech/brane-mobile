@@ -72,7 +72,7 @@ export default function SendMoneyScreen() {
       setFormValues((prev) => ({
         ...prev,
         accountNumber: nextAccount,
-        recipientName: nextAccount.length === 10 ? "Oluwatosin Solomon" : "",
+        recipientName: nextAccount.length === 10 ? "" : "", // TODO: Fetch recipient name from API
       }));
       setErrors((prev) => ({
         ...prev,
@@ -146,7 +146,7 @@ export default function SendMoneyScreen() {
 
             <ThemedText style={styles.helperText}>Recipient Name</ThemedText>
             <FormInput
-              placeholder="Oluwatosin Solomon"
+              placeholder="Enter recipient name"
               value={formValues.recipientName}
               onChangeText={(value) => handleChange("recipientName", value)}
               error={errors.recipientName}
