@@ -11,7 +11,7 @@ import {
     Money,
     WifiSquare,
 } from "iconsax-react-native";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Text } from "react-native";
 import { BraneButton } from "../brane-button";
 import { EmptyState } from "../empty-state";
@@ -32,7 +32,7 @@ export const HomeCard = () => {
     try {
       setIsLoading(true);
       const response: any = await BaseRequest.get(
-        "/transactions-service/wallet/balance"
+        "/transactions-service/wallet/balance",
       );
       const balanceAmount = response?.data?.balance || response?.balance || 0;
       setBalance(balanceAmount);
@@ -45,48 +45,48 @@ export const HomeCard = () => {
   };
 
   return (
-    <View w="100%" mt={8}>
+    <View w='100%' mt={8}>
       <CardStyle>
-        <View spaced flex={1} h="100%">
-          <View gap={8} w="100%" aligned>
-            <View justified w="100%" row aligned gap={6}>
+        <View spaced flex={1} h='100%'>
+          <View gap={8} w='100%' aligned>
+            <View justified w='100%' row aligned gap={6}>
               <ThemedText style={{ color: "#D3EBE1" }}>
                 Total Balance
               </ThemedText>
               <TouchableOpacity onPress={onToggleBalance}>
                 {showBalance ? (
-                  <Eye color="#D3EBE1" size={16} />
+                  <Eye color='#D3EBE1' size={16} />
                 ) : (
-                  <EyeSlash color="#D3EBE1" size={16} />
+                  <EyeSlash color='#D3EBE1' size={16} />
                 )}
               </TouchableOpacity>
             </View>
             <View row aligned>
               {isLoading ? (
-                <ActivityIndicator size="small" color="#D3EBE1" />
+                <ActivityIndicator size='small' color='#D3EBE1' />
               ) : (
-                <ThemedText type="title" style={{ color: "#fff" }}>
+                <ThemedText type='title' style={{ color: "#fff" }}>
                   {showBalance ? priceFormatter(balance) : "••••••"}
                 </ThemedText>
               )}
             </View>
           </View>
-          <View gap={8} w="100%" aligned spaced row>
+          <View gap={8} w='100%' aligned spaced row>
             <BraneButton
-              text="Add Funds"
+              text='Add Funds'
               onPress={() => {
                 router.push("/add-funds");
               }}
-              backgroundColor="#D2F1E4"
-              textColor="#013D25"
+              backgroundColor='#D2F1E4'
+              textColor='#013D25'
               width={160}
               radius={32}
             />
             <BraneButton
-              text="My Wallet"
-              onPress={() => {}}
-              backgroundColor="#D2F1E41A"
-              textColor="#D3EBE1"
+              text='My Wallet'
+              onPress={() => router.push("/wallet")}
+              backgroundColor='#D2F1E41A'
+              textColor='#D3EBE1'
               width={160}
               radius={32}
             />
@@ -101,14 +101,14 @@ export const Quick = () => {
   const router = useRouter();
 
   return (
-    <View w="100%" mt={24} gap={20}>
-      <ThemedText type="defaultSemiBold">Quick Actions</ThemedText>
+    <View w='100%' mt={24} gap={20}>
+      <ThemedText type='defaultSemiBold'>Quick Actions</ThemedText>
       <View row gap={8}>
         <ServicesCard
-          variant="full"
-          title="Airtime & Data"
-          icon={<Mobile size={16} color="#013D25" />}
-          bg="#D3EBE1"
+          variant='full'
+          title='Airtime & Data'
+          icon={<Mobile size={16} color='#013D25' />}
+          bg='#D3EBE1'
           height={88}
           onPress={() =>
             router.push({
@@ -116,34 +116,34 @@ export const Quick = () => {
               params: { service: "airtime" },
             })
           }
-          iconBg="#E1F4EC"
+          iconBg='#E1F4EC'
         />
         <ServicesCard
-          variant="full"
-          title="Send Money"
-          icon={<Money size={16} color="#013D25" />}
-          bg="#FFF4EB"
+          variant='full'
+          title='Send Money'
+          icon={<Money size={16} color='#013D25' />}
+          bg='#FFF4EB'
           height={88}
           onPress={() => router.push("/send-money")}
-          iconBg="#FFDFC2"
+          iconBg='#FFDFC2'
         />
         <ServicesCard
-          variant="full"
-          title="Bills & Services"
-          icon={<WifiSquare size={16} color="#013D25" />}
-          bg="#F5F1E0"
+          variant='full'
+          title='Bills & Services'
+          icon={<WifiSquare size={16} color='#013D25' />}
+          bg='#F5F1E0'
           height={88}
           onPress={() => router.push("/utilities")}
-          iconBg="#E7DCB1"
+          iconBg='#E7DCB1'
         />
         <ServicesCard
-          variant="full"
-          title="Wealth Investment"
-          icon={<ChartSquare size={16} color="#013D25" />}
-          bg="#E1FFF3"
+          variant='full'
+          title='Wealth Investment'
+          icon={<ChartSquare size={16} color='#013D25' />}
+          bg='#E1FFF3'
           height={88}
-          onPress={() => console.log("Airtime pressed")}
-          iconBg="#AFFEDE"
+          onPress={() => router.push("/stock")}
+          iconBg='#AFFEDE'
         />
       </View>
     </View>
@@ -163,15 +163,15 @@ export const Transactions = () => {
     try {
       setIsLoading(true);
       const response: any = await BaseRequest.get(
-        "/transactions-service/transactions/user?perPage=5"
+        "/transactions-service/transactions/user?perPage=5",
       );
       const transactionList = Array.isArray(response?.data)
         ? response.data
         : Array.isArray(response?.data?.data)
-        ? response.data.data
-        : Array.isArray(response)
-        ? response
-        : [];
+          ? response.data.data
+          : Array.isArray(response)
+            ? response
+            : [];
       setTransactions(transactionList);
     } catch (error) {
       catchError(error);
@@ -182,12 +182,12 @@ export const Transactions = () => {
   };
 
   return (
-    <View w="100%" mt={24} gap={20} minH={260}>
+    <View w='100%' mt={24} gap={20} minH={260}>
       <View row spaced>
-        <ThemedText type="defaultSemiBold">Recent Transaction</ThemedText>
+        <ThemedText type='defaultSemiBold'>Recent Transaction</ThemedText>
         <TouchableOpacity onPress={() => router.push("/(tabs)/transactions")}>
           <ThemedText
-            type="link"
+            type='link'
             style={{
               fontWeight: "800",
               fontSize: 14,
@@ -201,13 +201,22 @@ export const Transactions = () => {
       </View>
 
       {isLoading ? (
-        <View style={{ justifyContent: "center", alignItems: "center", minHeight: 150 }}>
-          <ActivityIndicator size="small" color="#013D25" />
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: 150,
+          }}
+        >
+          <ActivityIndicator size='small' color='#013D25' />
         </View>
       ) : transactions.length > 0 ? (
         <View gap={12}>
           {transactions.map((transaction: any) => (
-            <TransactionCardDisplay key={transaction.id} transaction={transaction} />
+            <TransactionCardDisplay
+              key={transaction.id}
+              transaction={transaction}
+            />
           ))}
         </View>
       ) : (
@@ -243,7 +252,7 @@ const TransactionCardDisplay = ({ transaction }: any) => {
   };
 
   const amount = Math.abs(transaction.amount || 0);
-  const isDebit = (transaction.type === "debit") || (transaction.amount < 0);
+  const isDebit = transaction.type === "debit" || transaction.amount < 0;
 
   return (
     <TouchableOpacity
@@ -259,17 +268,21 @@ const TransactionCardDisplay = ({ transaction }: any) => {
         borderColor: "#E6E4E8",
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", flex: 1, gap: 12 }}>
+      <View
+        style={{ flexDirection: "row", alignItems: "center", flex: 1, gap: 12 }}
+      >
         <Text style={{ fontSize: 24 }}>
           {getTransactionIcon(transaction.servicetype || transaction.type)}
         </Text>
         <View style={{ flex: 1 }}>
           <ThemedText
-            type="defaultSemiBold"
+            type='defaultSemiBold'
             numberOfLines={1}
             style={{ fontSize: 13 }}
           >
-            {transaction.description || transaction.servicetype || "Transaction"}
+            {transaction.description ||
+              transaction.servicetype ||
+              "Transaction"}
           </ThemedText>
           <ThemedText
             style={{ fontSize: 11, color: "#85808A", marginTop: 2 }}
@@ -286,7 +299,7 @@ const TransactionCardDisplay = ({ transaction }: any) => {
         </View>
       </View>
       <ThemedText
-        type="defaultSemiBold"
+        type='defaultSemiBold'
         style={{
           color: isDebit ? "#CB010B" : "#013D25",
           fontSize: 13,
@@ -300,11 +313,11 @@ const TransactionCardDisplay = ({ transaction }: any) => {
 
 export const Learning = () => {
   return (
-    <View w="100%" gap={16}>
+    <View w='100%' gap={16}>
       <View row spaced>
-        <ThemedText type="defaultSemiBold">Learning Forum</ThemedText>
+        <ThemedText type='defaultSemiBold'>Learning Forum</ThemedText>
         <ThemedText
-          type="link"
+          type='link'
           style={{
             fontWeight: "800",
             fontSize: 14,
