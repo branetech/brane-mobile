@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -7,10 +7,10 @@ import { useRouter } from "expo-router";
 import { Call, Location, Sms } from "iconsax-react-native";
 import React from "react";
 import {
-    Linking,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -28,19 +28,19 @@ export default function ContactScreen() {
 
   const contacts: ContactItem[] = [
     {
-      icon: <Call size={22} color="#013D25" variant="Bold" />,
+      icon: <Call size={22} color='#013D25' variant='Bold' />,
       label: "Phone",
       value: "+234 814 180 5564",
       onPress: () => Linking.openURL("tel:+2348141805564"),
     },
     {
-      icon: <Sms size={22} color="#013D25" variant="Bold" />,
+      icon: <Sms size={22} color='#013D25' variant='Bold' />,
       label: "Email",
       value: "info@getbrane.co",
       onPress: () => Linking.openURL("mailto:info@getbrane.co"),
     },
     {
-      icon: <Location size={22} color="#013D25" variant="Bold" />,
+      icon: <Location size={22} color='#013D25' variant='Bold' />,
       label: "Address",
       value: "188, Awolowo Road, Ikoyi, Lagos",
     },
@@ -50,7 +50,7 @@ export default function ContactScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={styles.headerTitle}>
+        <ThemedText type='subtitle' style={styles.headerTitle}>
           Contact Us
         </ThemedText>
         <View style={{ width: 44 }} />

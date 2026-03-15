@@ -1,10 +1,15 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { ArrowRight2, Devices, Electricity, I3Dcube } from "iconsax-react-native";
+import {
+  ArrowRight2,
+  Devices,
+  Electricity,
+  I3Dcube,
+} from "iconsax-react-native";
 import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -50,7 +55,7 @@ export default function PayBillsScreen() {
       {/* Header */}
       <View style={styles.header} row aligned>
         <Back />
-        <ThemedText type="subtitle" style={styles.headerTitle}>
+        <ThemedText type='subtitle' style={styles.headerTitle}>
           Pay Bills
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -79,10 +84,10 @@ export default function PayBillsScreen() {
                 ])}
                 center
               >
-                <Icon size={22} color={iconColor} variant="Bold" />
+                <Icon size={22} color={iconColor} variant='Bold' />
               </View>
 
-              <ThemedText type="defaultSemiBold" style={styles.label}>
+              <ThemedText type='defaultSemiBold' style={styles.label}>
                 {label}
               </ThemedText>
 

@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { EmptyState } from "@/components/empty-state";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -58,7 +58,7 @@ export default function LeaderboardScreen() {
       try {
         const response: any = await BaseRequest.get(
           "/gamification-service/leaderboard",
-          { params: { period } }
+          { params: { period } },
         );
         const records = toArray(response).map((item: any, index: number) => ({
           id: String(item?.id ?? index),
@@ -75,7 +75,7 @@ export default function LeaderboardScreen() {
         setIsRefreshing(false);
       }
     },
-    [period]
+    [period],
   );
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function LeaderboardScreen() {
   const filtered = entries.filter(
     (e) =>
       e.name.toLowerCase().includes(search.toLowerCase()) ||
-      e.school.toLowerCase().includes(search.toLowerCase())
+      e.school.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -93,7 +93,7 @@ export default function LeaderboardScreen() {
       {/* Header */}
       <View style={styles.header} row aligned>
         <Back />
-        <ThemedText type="subtitle" style={styles.headerTitle}>
+        <ThemedText type='subtitle' style={styles.headerTitle}>
           Leaderboard
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -135,7 +135,7 @@ export default function LeaderboardScreen() {
       >
         <TextInput
           style={[styles.searchInput, { color: C.text }]}
-          placeholder="Search by name or school…"
+          placeholder='Search by name or school…'
           placeholderTextColor={C.muted}
           value={search}
           onChangeText={setSearch}
@@ -143,7 +143,7 @@ export default function LeaderboardScreen() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator style={styles.loader} size="large" color="#013D25" />
+        <ActivityIndicator style={styles.loader} size='large' color='#013D25' />
       ) : (
         <FlatList
           data={filtered}
@@ -154,7 +154,7 @@ export default function LeaderboardScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchLeaderboard(true)}
-              tintColor="#013D25"
+              tintColor='#013D25'
             />
           }
           ListEmptyComponent={
@@ -196,7 +196,7 @@ export default function LeaderboardScreen() {
                 </View>
 
                 <View style={styles.entryInfo} gap={2}>
-                  <ThemedText type="defaultSemiBold" style={{ fontSize: 14 }}>
+                  <ThemedText type='defaultSemiBold' style={{ fontSize: 14 }}>
                     {item.name}
                   </ThemedText>
                   <ThemedText style={{ fontSize: 12, color: C.muted }}>

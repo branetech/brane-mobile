@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -8,23 +8,23 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
 import {
-    hideAppLoader,
-    priceFormatter,
-    showAppLoader,
-    showSuccess,
+  hideAppLoader,
+  priceFormatter,
+  showAppLoader,
+  showSuccess,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
-    View as RNView,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  View as RNView,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -118,7 +118,7 @@ export default function BracsSwapScreen() {
         <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
           <ThemedText style={styles.balanceLabelText}>BRACS Balance</ThemedText>
           {isLoadingBalance ? (
-            <ActivityIndicator color="#fff" size="small" />
+            <ActivityIndicator color='#fff' size='small' />
           ) : (
             <ThemedText style={styles.balanceAmount}>
               {bracsBalance.toFixed(4)} BRACS
@@ -132,8 +132,8 @@ export default function BracsSwapScreen() {
             From (BRACS)
           </ThemedText>
           <FormInput
-            placeholder="Amount to swap"
-            keyboardType="number-pad"
+            placeholder='Amount to swap'
+            keyboardType='number-pad'
             value={amount}
             onChangeText={(v) => {
               setAmount(v.replace(/\D/g, ""));
@@ -178,10 +178,10 @@ export default function BracsSwapScreen() {
       </ScrollView>
       <View style={styles.footer}>
         <BraneButton
-          text="Preview Swap"
+          text='Preview Swap'
           onPress={handlePreview}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
         />
@@ -228,22 +228,22 @@ export default function BracsSwapScreen() {
       </View>
       <View style={styles.previewButtons}>
         <BraneButton
-          text="Back"
+          text='Back'
           onPress={() => setStage("form")}
-          backgroundColor="#D2F1E4"
+          backgroundColor='#D2F1E4'
           textColor={C.primary}
           height={52}
           radius={12}
           style={styles.halfBtn}
         />
         <BraneButton
-          text="Confirm Swap"
+          text='Confirm Swap'
           onPress={() => {
             setStage("pin");
             setShowPin(true);
           }}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
           style={styles.halfBtn}
@@ -254,7 +254,7 @@ export default function BracsSwapScreen() {
 
   const renderSuccess = () => (
     <View style={styles.successWrap}>
-      <TickCircle size={72} color="#013D25" variant="Bold" />
+      <TickCircle size={72} color='#013D25' variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Swap Successful!
       </ThemedText>
@@ -289,13 +289,13 @@ export default function BracsSwapScreen() {
         ))}
       </View>
       <BraneButton
-        text="Done"
+        text='Done'
         onPress={() => router.push("/stock/breakdown")}
         backgroundColor={C.primary}
-        textColor="#D2F1E4"
+        textColor='#D2F1E4'
         height={52}
         radius={12}
-        width="80%"
+        width='80%'
       />
     </View>
   );

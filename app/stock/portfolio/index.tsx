@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -199,10 +199,10 @@ export default function StockPortfolioScreen() {
             </TouchableOpacity>
           </View>
           <BraneButton
-            text="Withdraw"
+            text='Withdraw'
             onPress={() => router.push("/stock/withdraw")}
-            backgroundColor="#D2F1E4"
-            textColor="#013D25"
+            backgroundColor='#D2F1E4'
+            textColor='#013D25'
             height={36}
             radius={10}
             width={118}
@@ -252,9 +252,9 @@ export default function StockPortfolioScreen() {
             style={styles.eyeBtn}
           >
             {hideBalance ? (
-              <EyeSlash size={20} color="#D2F1E4" />
+              <EyeSlash size={20} color='#D2F1E4' />
             ) : (
-              <Eye size={20} color="#D2F1E4" />
+              <Eye size={20} color='#D2F1E4' />
             )}
           </TouchableOpacity>
         </View>
@@ -351,10 +351,10 @@ export default function StockPortfolioScreen() {
       })}
 
       <BraneButton
-        text="My Stocks"
+        text='My Stocks'
         onPress={() => router.push("/stock/portfolio/my-stocks")}
         backgroundColor={C.primary}
-        textColor="#D2F1E4"
+        textColor='#D2F1E4'
         height={52}
         radius={12}
       />

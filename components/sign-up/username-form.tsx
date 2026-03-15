@@ -9,7 +9,7 @@ import React from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
-import Back from "../Back";
+import Back from "../back";
 import { ChangeUsername } from "../svg";
 
 type Props = {
@@ -51,7 +51,7 @@ export default function SetUsernameScreen({
         <View flex style={{ paddingHorizontal: "6%" }}>
           <Back onPress={back} />
           <View style={{ marginTop: 24, marginBottom: 24 }}>
-            <ThemedText type="subtitle">Create your username</ThemedText>
+            <ThemedText type='subtitle'>Create your username</ThemedText>
             <ThemedText style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>
               Choose a username that is unique to you.
             </ThemedText>
@@ -68,12 +68,12 @@ export default function SetUsernameScreen({
             rightContent={
               form.values.username.trim().length > 2 &&
               !form.errors.username && (
-                <ChangeUsername size={20} color="#008753" />
+                <ChangeUsername size={20} color='#008753' />
               )
             }
-            placeholder="Enter your username"
+            placeholder='Enter your username'
             placeholderTextColor={C.muted}
-            autoCapitalize="none"
+            autoCapitalize='none'
             {...mapFormikProps("username", form)}
             onChangeText={(val) => {
               const formatted = val.replace(/\s/g, "");
@@ -97,7 +97,7 @@ export default function SetUsernameScreen({
             style={{ flex: 1, justifyContent: "flex-end", marginBottom: 16 }}
           >
             <BraneButton
-              text="Set Username"
+              text='Set Username'
               onPress={() => form.handleSubmit()}
               disabled={isDisabled || isLoading}
               loading={isLoading}

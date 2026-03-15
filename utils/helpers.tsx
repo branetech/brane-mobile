@@ -14,20 +14,14 @@ export const getSchoolInitials = (name: string): string => {
   return String(school?.code || getInitials(name)).toUpperCase();
 };
 
-// Extend Number prototype
-declare global {
-  interface Number {
-    format(n: number, x?: number): string;
-  }
+// Number formatting utility
+export function formatNumberWithCommas(value: number, n: number, x: number = 3): string {
+  const re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
+  return value.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');
 }
 
-Number.prototype.format = function (n: number, x: number = 3) {
-  let re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
-  return Number(this).toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');
-};
-
 export const priceFormatter = (value?: number, dec = 0): string => 
-  `₦${Number(value || 0).format(dec)}`;
+  `₦${formatNumberWithCommas(Number(value || 0), dec)}`;
 
 // Toast notifications for React Native
 export const showSuccess = (description: string, message: string = 'Success') => 

@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -49,16 +49,11 @@ export default function BracsSubBreakdownScreen() {
         const res: any = await BaseRequest.get(
           STOCKS_SERVICE.BREAKDOWN(assetId),
         );
-        
+
         const data = res?.data || res;
         setBracsData(data);
         setAllocations(
-          toArray(
-            data?.allocations ||
-              data?.breakdown ||
-              data?.items ||
-              data,
-          ),
+          toArray(data?.allocations || data?.breakdown || data?.items || data),
         );
       } catch (error) {
         catchError(error);
@@ -75,17 +70,21 @@ export default function BracsSubBreakdownScreen() {
   }, [fetchBreakdown]);
 
   const totalBracs = Number(
-    bracsData?.totalBracs ||
-      bracsData?.bracsPoints ||
-      bracsData?.balance ||
-      0,
+    bracsData?.totalBracs || bracsData?.bracsPoints || bracsData?.balance || 0,
   );
 
   return (
-    <SafeAreaView style={{ ...StyleSheet.flatten(styles.screen), backgroundColor: C.background }}>
+    <SafeAreaView
+      style={{
+        ...StyleSheet.flatten(styles.screen),
+        backgroundColor: C.background,
+      }}
+    >
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
-        <ThemedText style={{ ...StyleSheet.flatten(styles.headerTitle), color: C.text }}>
+        <ThemedText
+          style={{ ...StyleSheet.flatten(styles.headerTitle), color: C.text }}
+        >
           BRACS Breakdown
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -106,28 +105,64 @@ export default function BracsSubBreakdownScreen() {
           }
         >
           {/* Summary */}
-          <View style={{ ...StyleSheet.flatten(styles.summaryCard), borderColor: C.border }}>
-            <ThemedText style={{ ...StyleSheet.flatten(styles.summaryLabel), color: C.muted }}>
+          <View
+            style={{
+              ...StyleSheet.flatten(styles.summaryCard),
+              borderColor: C.border,
+            }}
+          >
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.summaryLabel),
+                color: C.muted,
+              }}
+            >
               Asset
             </ThemedText>
-            <ThemedText style={{ ...StyleSheet.flatten(styles.summaryName), color: C.text }}>
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.summaryName),
+                color: C.text,
+              }}
+            >
               {bracsData?.name ||
                 bracsData?.assetName ||
                 bracsData?.tickerSymbol ||
                 assetId.toUpperCase()}
             </ThemedText>
-            <ThemedText style={{ ...StyleSheet.flatten(styles.summaryLabel), color: C.muted, marginTop: 8 }}>
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.summaryLabel),
+                color: C.muted,
+                marginTop: 8,
+              }}
+            >
               Total BRACS Points
             </ThemedText>
-            <ThemedText style={{ ...StyleSheet.flatten(styles.summaryPoints), color: C.primary }}>
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.summaryPoints),
+                color: C.primary,
+              }}
+            >
               {totalBracs.toFixed(4)}
             </ThemedText>
           </View>
 
           {/* Allocations */}
           {allocations.length > 0 && (
-            <View style={{ ...StyleSheet.flatten(styles.card), borderColor: C.border }}>
-              <ThemedText style={{ ...StyleSheet.flatten(styles.sectionTitle), color: C.text }}>
+            <View
+              style={{
+                ...StyleSheet.flatten(styles.card),
+                borderColor: C.border,
+              }}
+            >
+              <ThemedText
+                style={{
+                  ...StyleSheet.flatten(styles.sectionTitle),
+                  color: C.text,
+                }}
+              >
                 Allocations
               </ThemedText>
               {allocations.map((item, idx) => {
@@ -146,31 +181,52 @@ export default function BracsSubBreakdownScreen() {
                 return (
                   <View
                     key={idx}
-                    style={{ ...StyleSheet.flatten(styles.allocationRow), ...(idx < allocations.length - 1 ? StyleSheet.flatten(styles.rowDivider) : {}) }}
+                    style={{
+                      ...StyleSheet.flatten(styles.allocationRow),
+                      ...(idx < allocations.length - 1
+                        ? StyleSheet.flatten(styles.rowDivider)
+                        : {}),
+                    }}
                   >
                     {/* Progress bar */}
                     <View style={styles.rowTop}>
                       <ThemedText
-                        style={{ ...StyleSheet.flatten(styles.allocationName), color: C.text }}
+                        style={{
+                          ...StyleSheet.flatten(styles.allocationName),
+                          color: C.text,
+                        }}
                       >
                         {name}
                       </ThemedText>
                       <ThemedText
-                        style={{ ...StyleSheet.flatten(styles.allocationPct), color: C.primary }}
+                        style={{
+                          ...StyleSheet.flatten(styles.allocationPct),
+                          color: C.primary,
+                        }}
                       >
                         {percentage.toFixed(1)}%
                       </ThemedText>
                     </View>
                     <View
-                      style={{ ...StyleSheet.flatten(styles.progressTrack), backgroundColor: C.border }}
+                      style={{
+                        ...StyleSheet.flatten(styles.progressTrack),
+                        backgroundColor: C.border,
+                      }}
                     >
                       <View
-                        style={{ ...StyleSheet.flatten(styles.progressFill), width: `${Math.min(percentage, 100)}%`, backgroundColor: C.primary }}
+                        style={{
+                          ...StyleSheet.flatten(styles.progressFill),
+                          width: `${Math.min(percentage, 100)}%`,
+                          backgroundColor: C.primary,
+                        }}
                       />
                     </View>
                     {value > 0 && (
                       <ThemedText
-                        style={{ ...StyleSheet.flatten(styles.allocationValue), color: C.muted }}
+                        style={{
+                          ...StyleSheet.flatten(styles.allocationValue),
+                          color: C.muted,
+                        }}
                       >
                         {priceFormatter(value, 2)}
                       </ThemedText>
@@ -183,7 +239,12 @@ export default function BracsSubBreakdownScreen() {
 
           {allocations.length === 0 && !isLoading && (
             <View style={styles.emptyWrap}>
-              <ThemedText style={{ ...StyleSheet.flatten(styles.emptyText), color: C.muted }}>
+              <ThemedText
+                style={{
+                  ...StyleSheet.flatten(styles.emptyText),
+                  color: C.muted,
+                }}
+              >
                 No breakdown data available
               </ThemedText>
             </View>

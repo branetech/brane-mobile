@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -8,10 +8,10 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    ScrollView,
-    StyleSheet,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -92,7 +92,7 @@ export default function AboutManagedPortfolioScreen() {
         <Back
           onPress={() => router.push("/account/bracs-investment-trigger")}
         />
-        <ThemedText type="subtitle" style={styles.title}>
+        <ThemedText type='subtitle' style={styles.title}>
           MANAGED WEALTH
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -100,7 +100,7 @@ export default function AboutManagedPortfolioScreen() {
 
       {loading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size="small" color="#013D25" />
+          <ActivityIndicator size='small' color='#013D25' />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.content}>
@@ -108,7 +108,7 @@ export default function AboutManagedPortfolioScreen() {
             <ThemedText style={styles.tabText}>About</ThemedText>
           </View>
 
-          <ThemedText type="subtitle" style={styles.headline}>
+          <ThemedText type='subtitle' style={styles.headline}>
             Managed Bracs & Wealth Investment
           </ThemedText>
 
@@ -130,7 +130,7 @@ export default function AboutManagedPortfolioScreen() {
             <View style={styles.pickList}>
               {topPicks.map((pick) => (
                 <View key={pick.tickerSymbol} style={styles.pickCard}>
-                  <ThemedText type="defaultSemiBold">
+                  <ThemedText type='defaultSemiBold'>
                     {pick.tickerSymbol.toUpperCase()}
                   </ThemedText>
                   <ThemedText style={[styles.pickSubText, { color: C.muted }]}>
@@ -154,7 +154,7 @@ export default function AboutManagedPortfolioScreen() {
             {staticAllocationData.map((item) => (
               <View key={item.asset} style={styles.allocRow} row spaced aligned>
                 <ThemedText>{item.asset}</ThemedText>
-                <ThemedText type="defaultSemiBold">
+                <ThemedText type='defaultSemiBold'>
                   {item.percentage}%
                 </ThemedText>
               </View>

@@ -1,16 +1,23 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
 import { showSuccess } from "@/utils/helpers";
-import { SearchNormal1, Trash } from "iconsax-react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
+import { SearchNormal1, Trash } from "iconsax-react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  TextInput,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Beneficiary = {
   id: string;
@@ -60,15 +67,18 @@ export default function ManageBeneficiaryScreen() {
     }
   }, []);
 
-  const onDeleteBeneficiary = useCallback(async (item: Beneficiary) => {
-    try {
-      await BaseRequest.delete(`${MOBILE_SERVICE.BENEFICIARY}/${item.id}`);
-      showSuccess("Beneficiary deleted successfully");
-      fetchBeneficiaries(true);
-    } catch (error) {
-      catchError(error);
-    }
-  }, [fetchBeneficiaries]);
+  const onDeleteBeneficiary = useCallback(
+    async (item: Beneficiary) => {
+      try {
+        await BaseRequest.delete(`${MOBILE_SERVICE.BENEFICIARY}/${item.id}`);
+        showSuccess("Beneficiary deleted successfully");
+        fetchBeneficiaries(true);
+      } catch (error) {
+        catchError(error);
+      }
+    },
+    [fetchBeneficiaries],
+  );
 
   useEffect(() => {
     fetchBeneficiaries();
@@ -81,7 +91,9 @@ export default function ManageBeneficiaryScreen() {
       return (
         item.name.toLowerCase().includes(q) ||
         item.phone.toLowerCase().includes(q) ||
-        String(item.category || "").toLowerCase().includes(q)
+        String(item.category || "")
+          .toLowerCase()
+          .includes(q)
       );
     });
   }, [beneficiaries, search]);
@@ -90,16 +102,18 @@ export default function ManageBeneficiaryScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={styles.title}>Manage Beneficiaries</ThemedText>
+        <ThemedText type='subtitle' style={styles.title}>
+          Manage Beneficiaries
+        </ThemedText>
         <View style={{ width: 44 }} />
       </View>
 
       <View style={styles.searchWrap} row aligned>
-        <SearchNormal1 size={18} color="#85808A" />
+        <SearchNormal1 size={18} color='#85808A' />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search name or phone"
-          placeholderTextColor="#85808A"
+          placeholder='Search name or phone'
+          placeholderTextColor='#85808A'
           value={search}
           onChangeText={setSearch}
         />
@@ -107,7 +121,7 @@ export default function ManageBeneficiaryScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size="small" color="#013D25" />
+          <ActivityIndicator size='small' color='#013D25' />
         </View>
       ) : (
         <FlatList
@@ -115,22 +129,34 @@ export default function ManageBeneficiaryScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           refreshControl={
-            <RefreshControl refreshing={isRefreshing} onRefresh={() => fetchBeneficiaries(true)} />
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={() => fetchBeneficiaries(true)}
+            />
           }
           ListEmptyComponent={
-            <ThemedText style={[styles.emptyText, { color: C.muted }]}>No beneficiaries found.</ThemedText>
+            <ThemedText style={[styles.emptyText, { color: C.muted }]}>
+              No beneficiaries found.
+            </ThemedText>
           }
           renderItem={({ item }) => (
             <View style={styles.card} row aligned spaced>
               <View style={{ flex: 1 }}>
-                <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
-                <ThemedText style={[styles.meta, { color: C.muted }]}>{item.phone}</ThemedText>
+                <ThemedText type='defaultSemiBold'>{item.name}</ThemedText>
+                <ThemedText style={[styles.meta, { color: C.muted }]}>
+                  {item.phone}
+                </ThemedText>
                 {!!item.category && (
-                  <ThemedText style={[styles.meta, { color: C.muted }]}>{item.category}</ThemedText>
+                  <ThemedText style={[styles.meta, { color: C.muted }]}>
+                    {item.category}
+                  </ThemedText>
                 )}
               </View>
-              <Pressable style={styles.deleteButton} onPress={() => onDeleteBeneficiary(item)}>
-                <Trash size={16} color="#CB010B" />
+              <Pressable
+                style={styles.deleteButton}
+                onPress={() => onDeleteBeneficiary(item)}
+              >
+                <Trash size={16} color='#CB010B' />
               </Pressable>
             </View>
           )}

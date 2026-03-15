@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -77,18 +77,14 @@ export default function BracsBreakdownIndexScreen() {
   }, [fetchBracs]);
 
   const bracsBalance = Number(
-    bracsData?.balance ||
-      bracsData?.bracsBalance ||
-      bracsData?.totalBracs ||
-      0,
+    bracsData?.balance || bracsData?.bracsBalance || bracsData?.totalBracs || 0,
   );
 
   const getNetworkBracs = (ticker: string): number => {
-    const found = networkBreakdown.find(
-      (n: any) =>
-        String(n?.ticker || n?.network || n?.name || "")
-          .toLowerCase()
-          .includes(ticker.toLowerCase()),
+    const found = networkBreakdown.find((n: any) =>
+      String(n?.ticker || n?.network || n?.name || "")
+        .toLowerCase()
+        .includes(ticker.toLowerCase()),
     );
     return Number(found?.bracs || found?.earned || found?.balance || 0);
   };
@@ -125,19 +121,14 @@ export default function BracsBreakdownIndexScreen() {
                   Total BRACS Balance
                 </ThemedText>
                 <ThemedText style={styles.balanceAmount}>
-                  {hideBalance
-                    ? "••••••"
-                    : `${bracsBalance.toFixed(4)} BRACS`}
+                  {hideBalance ? "••••••" : `${bracsBalance.toFixed(4)} BRACS`}
                 </ThemedText>
                 {bracsData?.estimatedValue != null && (
                   <ThemedText style={styles.balanceSubText}>
                     ≈{" "}
                     {hideBalance
                       ? "••••••"
-                      : priceFormatter(
-                          Number(bracsData.estimatedValue),
-                          2,
-                        )}
+                      : priceFormatter(Number(bracsData.estimatedValue), 2)}
                   </ThemedText>
                 )}
               </View>
@@ -146,9 +137,9 @@ export default function BracsBreakdownIndexScreen() {
                 style={styles.eyeBtn}
               >
                 {hideBalance ? (
-                  <EyeSlash size={22} color="#D2F1E4" />
+                  <EyeSlash size={22} color='#D2F1E4' />
                 ) : (
-                  <Eye size={22} color="#D2F1E4" />
+                  <Eye size={22} color='#D2F1E4' />
                 )}
               </TouchableOpacity>
             </View>
@@ -172,9 +163,7 @@ export default function BracsBreakdownIndexScreen() {
                     },
                   ]}
                   onPress={() =>
-                    router.push(
-                      `/stock/breakdown/${network.ticker}` as any,
-                    )
+                    router.push(`/stock/breakdown/${network.ticker}` as any)
                   }
                 >
                   <View
@@ -193,14 +182,10 @@ export default function BracsBreakdownIndexScreen() {
                     </ThemedText>
                   </View>
                   <View style={styles.networkMeta}>
-                    <ThemedText
-                      style={[styles.networkName, { color: C.text }]}
-                    >
+                    <ThemedText style={[styles.networkName, { color: C.text }]}>
                       {network.name}
                     </ThemedText>
-                    <ThemedText
-                      style={[styles.networkSub, { color: C.muted }]}
-                    >
+                    <ThemedText style={[styles.networkSub, { color: C.muted }]}>
                       BRACS Earned
                     </ThemedText>
                   </View>
@@ -219,10 +204,10 @@ export default function BracsBreakdownIndexScreen() {
 
           {/* Convert BRACS */}
           <BraneButton
-            text="Convert BRACS"
+            text='Convert BRACS'
             onPress={() => router.push("/stock/swap")}
             backgroundColor={C.primary}
-            textColor="#D2F1E4"
+            textColor='#D2F1E4'
             height={52}
             radius={12}
           />

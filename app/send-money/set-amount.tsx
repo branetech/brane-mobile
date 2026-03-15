@@ -1,9 +1,9 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import {
-    PaymentMethodSelector,
-    type PaymentOption,
+  PaymentMethodSelector,
+  type PaymentOption,
 } from "@/components/payment-method-selector";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
@@ -14,13 +14,13 @@ import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    Dimensions,
-    Modal,
-    View as RNView,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    TouchableOpacity,
+  Dimensions,
+  Modal,
+  View as RNView,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -150,8 +150,8 @@ export default function SendMoneySetAmountScreen() {
             ))}
           </View>
           <FormInput
-            placeholder="Enter custom amount"
-            keyboardType="number-pad"
+            placeholder='Enter custom amount'
+            keyboardType='number-pad'
             value={amount}
             onChangeText={(value) => {
               setAmount(value.replace(/\D/g, ""));
@@ -168,7 +168,7 @@ export default function SendMoneySetAmountScreen() {
         </ThemedText>
         <View style={styles.remarkWrap}>
           <FormInput
-            placeholder="Select Plan"
+            placeholder='Select Plan'
             value={remark}
             onChangeText={(value) => {
               setRemark(value);
@@ -186,13 +186,13 @@ export default function SendMoneySetAmountScreen() {
 
       <View style={styles.footer}>
         <BraneButton
-          text="Continue"
+          text='Continue'
           onPress={() => {
             if (!validate()) return;
             setShowConfirmSheet(true);
           }}
-          backgroundColor="#013D25"
-          textColor="#D2F1E4"
+          backgroundColor='#013D25'
+          textColor='#D2F1E4'
           height={48}
           radius={8}
           fontSize={11}
@@ -202,7 +202,7 @@ export default function SendMoneySetAmountScreen() {
       <Modal
         visible={showConfirmSheet}
         transparent
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setShowConfirmSheet(false)}
       >
         <RNView style={styles.sheetOverlay}>
@@ -241,23 +241,23 @@ export default function SendMoneySetAmountScreen() {
 
             <RNView style={styles.sheetButtons}>
               <BraneButton
-                text="Not This Account"
+                text='Not This Account'
                 onPress={() => setShowConfirmSheet(false)}
-                backgroundColor="#D2F1E4"
-                textColor="#013D25"
+                backgroundColor='#D2F1E4'
+                textColor='#013D25'
                 height={48}
                 radius={24}
                 style={styles.halfBtn}
                 fontSize={12}
               />
               <BraneButton
-                text="Confirm"
+                text='Confirm'
                 onPress={() => {
                   setShowConfirmSheet(false);
                   setShowSummarySheet(true);
                 }}
-                backgroundColor="#013D25"
-                textColor="#D2F1E4"
+                backgroundColor='#013D25'
+                textColor='#D2F1E4'
                 height={48}
                 radius={24}
                 style={styles.halfBtn}
@@ -271,7 +271,7 @@ export default function SendMoneySetAmountScreen() {
       <Modal
         visible={showSummarySheet}
         transparent
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setShowSummarySheet(false)}
       >
         <RNView style={styles.sheetOverlay}>
@@ -339,13 +339,13 @@ export default function SendMoneySetAmountScreen() {
             </ScrollView>
 
             <BraneButton
-              text="Buy Airtime"
+              text='Buy Airtime'
               onPress={() => {
                 setShowSummarySheet(false);
                 setShowPinValidator(true);
               }}
-              backgroundColor="#013D25"
-              textColor="#D2F1E4"
+              backgroundColor='#013D25'
+              textColor='#D2F1E4'
               height={52}
               radius={8}
               fontSize={14}
@@ -366,9 +366,9 @@ export default function SendMoneySetAmountScreen() {
 
       <SuccessModal
         visible={showSuccessModal}
-        title="Transaction Successful"
+        title='Transaction Successful'
         description={`You've successfully sent ₦${Number(amount || 0).toLocaleString("en-NG")}.`}
-        actionText="Dismiss"
+        actionText='Dismiss'
         onAction={() => {
           setShowSuccessModal(false);
           router.replace("/(tabs)");

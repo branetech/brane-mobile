@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/themed-text";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
-import Back from "../Back";
+import Back from "../back";
 import { BraneButton } from "../brane-button";
 import { OTPInput } from "../otp-input";
 
@@ -74,7 +74,7 @@ export default function OTP({
             disabled={buttonDisabled}
             loading={isLoading}
             text={"Proceed"}
-            textColor="#D2F1E4"
+            textColor='#D2F1E4'
             height={52}
             radius={12}
             onPress={() => onSubmitEmail(localOtp)}

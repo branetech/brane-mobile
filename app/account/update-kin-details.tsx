@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -11,12 +11,12 @@ import { useRouter } from "expo-router";
 import { ArrowDown2, TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    Modal,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
@@ -189,7 +189,7 @@ export default function UpdateKinDetailsScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.push("/(tabs)/(account)")} />
-        <ThemedText type="subtitle" style={styles.title}>
+        <ThemedText type='subtitle' style={styles.title}>
           Next of Kin
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -203,7 +203,7 @@ export default function UpdateKinDetailsScreen() {
         <>
           <ScrollView
             contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps='handled'
           >
             <ThemedText style={[styles.helperText, { color: C.muted }]}>
               Your next of kin (NOK) is your closest living relative. We&apos;ll
@@ -212,16 +212,16 @@ export default function UpdateKinDetailsScreen() {
 
             <View gap={12} style={{ marginTop: 18 }}>
               <FormInput
-                labelText="Next Of Kin First Name"
-                placeholder="Enter first name"
+                labelText='Next Of Kin First Name'
+                placeholder='Enter first name'
                 value={form.firstName}
                 onChangeText={(value) => updateField("firstName", value)}
                 error={errors.firstName}
               />
 
               <FormInput
-                labelText="Next Of Kin Last Name"
-                placeholder="Enter last name"
+                labelText='Next Of Kin Last Name'
+                placeholder='Enter last name'
                 value={form.lastName}
                 onChangeText={(value) => updateField("lastName", value)}
                 error={errors.lastName}
@@ -232,19 +232,20 @@ export default function UpdateKinDetailsScreen() {
                   What is your relationship
                 </ThemedText>
                 <Pressable
-                  style={styles.selectField}
+                  style={[styles.selectField, { backgroundColor: C.inputBg, borderColor: C.border }]}
                   onPress={() => setShowRelationshipModal(true)}
                 >
                   <ThemedText
-                    style={
+                    style={[
                       form.relationship
                         ? styles.selectText
-                        : styles.selectPlaceholder
-                    }
+                        : styles.selectPlaceholder,
+                      { color: form.relationship ? C.text : "#999" },
+                    ]}
                   >
                     {selectedRelationshipLabel}
                   </ThemedText>
-                  <ArrowDown2 size={16} color="#85808A" />
+                  <ArrowDown2 size={16} color={C.muted} />
                 </Pressable>
                 {!!errors.relationship && (
                   <ThemedText style={styles.errorText}>
@@ -254,10 +255,10 @@ export default function UpdateKinDetailsScreen() {
               </View>
 
               <FormInput
-                labelText="Next Of Kin Email Address"
-                placeholder="Enter email address"
-                keyboardType="email-address"
-                autoCapitalize="none"
+                labelText='Next Of Kin Email Address'
+                placeholder='Enter email address'
+                keyboardType='email-address'
+                autoCapitalize='none'
                 value={form.email}
                 onChangeText={(value) => updateField("email", value)}
                 error={errors.email}
@@ -268,10 +269,10 @@ export default function UpdateKinDetailsScreen() {
                   Next of Kin Phone number
                 </ThemedText>
                 <TextInput
-                  style={styles.phoneField}
-                  placeholder="+234 70000 0000"
-                  placeholderTextColor="#999"
-                  keyboardType="phone-pad"
+                  style={[styles.phoneField, { backgroundColor: C.inputBg, borderColor: C.border, color: C.text }]}
+                  placeholder='+234 70000 0000'
+                  placeholderTextColor={C.muted}
+                  keyboardType='phone-pad'
                   value={form.phone}
                   onChangeText={(value) => updateField("phone", value)}
                 />
@@ -300,15 +301,15 @@ export default function UpdateKinDetailsScreen() {
       <Modal
         visible={showRelationshipModal}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setShowRelationshipModal(false)}
       >
         <Pressable
           style={styles.modalBackdrop}
           onPress={() => setShowRelationshipModal(false)}
         >
-          <Pressable style={styles.modalCard} onPress={() => {}}>
-            <ThemedText type="defaultSemiBold" style={styles.modalTitle}>
+          <Pressable style={[styles.modalCard, { backgroundColor: C.inputBg, borderColor: C.border, borderWidth: 1 }]} onPress={() => {}}>
+            <ThemedText type='defaultSemiBold' style={[styles.modalTitle, { color: C.text }]}>
               Select relationship
             </ThemedText>
             <ScrollView style={{ maxHeight: 280 }}>
@@ -317,16 +318,16 @@ export default function UpdateKinDetailsScreen() {
                 return (
                   <TouchableOpacity
                     key={item.value}
-                    style={styles.optionRow}
+                    style={[styles.optionRow, { borderBottomColor: C.border }]}
                     onPress={() => {
                       updateField("relationship", item.value);
                       setShowRelationshipModal(false);
                     }}
                   >
-                    <ThemedText style={styles.optionText}>
+                    <ThemedText style={[styles.optionText, { color: C.text }]}>
                       {item.label}
                     </ThemedText>
-                    {selected && <TickCircle size={18} color="#013D25" />}
+                    {selected && <TickCircle size={18} color={C.primary} />}
                   </TouchableOpacity>
                 );
               })}
@@ -338,19 +339,19 @@ export default function UpdateKinDetailsScreen() {
       <Modal
         visible={showSuccess}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setShowSuccess(false)}
       >
         <View style={styles.successBackdrop}>
-          <View style={styles.successCard}>
-            <ThemedText type="subtitle" style={{ textAlign: "center" }}>
+          <View style={[styles.successCard, { backgroundColor: C.inputBg, borderColor: C.border, borderWidth: 1 }]}>
+            <ThemedText type='subtitle' style={[{ textAlign: "center", color: C.text }]}>
               Successful
             </ThemedText>
             <ThemedText style={[styles.successText, { color: C.muted }]}>
               Next of Kin details updated successfully.
             </ThemedText>
             <BraneButton
-              text="Proceed"
+              text='Proceed'
               onPress={() => {
                 setShowSuccess(false);
                 router.push("/(tabs)");
@@ -400,8 +401,6 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#F7F7F8",
-    backgroundColor: "#F7F7F8",
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
@@ -409,7 +408,6 @@ const styles = StyleSheet.create({
   },
   selectText: {
     fontSize: 14,
-    color: "#0B0014",
   },
   selectPlaceholder: {
     fontSize: 14,
@@ -419,10 +417,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#F7F7F8",
-    backgroundColor: "#F7F7F8",
     paddingHorizontal: 12,
-    color: "#0B0014",
     fontSize: 14,
   },
   errorText: {
@@ -442,7 +437,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   modalCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 14,
     padding: 14,
   },
@@ -455,7 +449,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderBottomColor: "#F7F7F8",
   },
   optionText: {
     fontSize: 14,
@@ -467,7 +460,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   successCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 14,
     padding: 20,
   },

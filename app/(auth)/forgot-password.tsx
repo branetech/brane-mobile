@@ -5,15 +5,18 @@ import { useReduxState } from "@/redux/useReduxState";
 import BaseRequest, { parseNetworkError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
 import { formatPhoneNumber, showError, showSuccess } from "@/utils/helpers";
-import { useRouter } from "expo-router";
 import { View } from "@idimma/rn-widget";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 
 type Page = "forgotPassword" | "otp" | "createPassword";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
-  const [page, setPage] = useReduxState<Page>("forgotPassword", "forgotPassword");
+  const [page, setPage] = useReduxState<Page>(
+    "forgotPassword",
+    "forgotPassword",
+  );
   const [otp, setOtp] = useReduxState("otp-page", "");
   const [isResending, setIsResending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +65,9 @@ export default function ForgotPasswordScreen() {
   const handleResendOtp = async () => {
     try {
       setIsResending(true);
-      await BaseRequest.post(AUTH_SERVICE.PASSWORD_RESET, { phone: phoneNumber });
+      await BaseRequest.post(AUTH_SERVICE.PASSWORD_RESET, {
+        phone: phoneNumber,
+      });
       showSuccess("New OTP sent successfully");
     } catch (error: any) {
       const { message } = parseNetworkError(error);
@@ -72,7 +77,10 @@ export default function ForgotPasswordScreen() {
     }
   };
 
-  const handlePasswordReset = async (data: { password: string; confirmPassword: string }) => {
+  const handlePasswordReset = async (data: {
+    password: string;
+    confirmPassword: string;
+  }) => {
     try {
       setIsLoading(true);
 

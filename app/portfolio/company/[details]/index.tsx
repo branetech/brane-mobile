@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -10,11 +10,11 @@ import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -155,17 +155,17 @@ export default function CompanyDetailsScreen() {
               }}
             >
               <InfoRow
-                label="Exchange"
+                label='Exchange'
                 value={String(stock?.exchange || stock?.stockExchange || "-")}
                 C={C}
               />
               <InfoRow
-                label="Sector"
+                label='Sector'
                 value={String(stock?.sector || stock?.industry || "-")}
                 C={C}
               />
               <InfoRow
-                label="Current Price"
+                label='Current Price'
                 value={priceFormatter(
                   Number(stock?.currentPrice || stock?.price || 0),
                   2,
@@ -191,7 +191,7 @@ export default function CompanyDetailsScreen() {
               }}
             >
               <InfoRow
-                label="Market Cap"
+                label='Market Cap'
                 value={priceFormatter(
                   Number(stock?.marketCap || stock?.mktCap || 0),
                   2,
@@ -199,7 +199,7 @@ export default function CompanyDetailsScreen() {
                 C={C}
               />
               <InfoRow
-                label="P/E Ratio"
+                label='P/E Ratio'
                 value={
                   stock?.peRatio != null
                     ? String(Number(stock.peRatio).toFixed(2))
@@ -208,7 +208,7 @@ export default function CompanyDetailsScreen() {
                 C={C}
               />
               <InfoRow
-                label="52-Week High"
+                label='52-Week High'
                 value={priceFormatter(
                   Number(stock?.week52High || stock?.yearHigh || 0),
                   2,
@@ -216,7 +216,7 @@ export default function CompanyDetailsScreen() {
                 C={C}
               />
               <InfoRow
-                label="52-Week Low"
+                label='52-Week Low'
                 value={priceFormatter(
                   Number(stock?.week52Low || stock?.yearLow || 0),
                   2,
@@ -224,12 +224,12 @@ export default function CompanyDetailsScreen() {
                 C={C}
               />
               <InfoRow
-                label="Volume"
+                label='Volume'
                 value={String(stock?.volume || "-")}
                 C={C}
               />
               <InfoRow
-                label="Avg Volume"
+                label='Avg Volume'
                 value={String(stock?.avgVolume || "-")}
                 C={C}
               />
@@ -240,7 +240,7 @@ export default function CompanyDetailsScreen() {
 
       <View style={styles.footer}>
         <BraneButton
-          text="Buy Stock"
+          text='Buy Stock'
           onPress={() =>
             router.push({
               pathname: "/portfolio/checkout",
@@ -248,10 +248,10 @@ export default function CompanyDetailsScreen() {
             })
           }
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
-          width="100%"
+          width='100%'
         />
       </View>
     </SafeAreaView>

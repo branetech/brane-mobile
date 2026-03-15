@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -66,7 +66,9 @@ export default function StockMarketScreen() {
     try {
       const [stockRes, topRes]: [any, any] = await Promise.all([
         BaseRequest.get(STOCKS_SERVICE.STOCKS),
-        BaseRequest.get(STOCKS_SERVICE.ASSET_PICKER).catch(() => ({ data: [] })),
+        BaseRequest.get(STOCKS_SERVICE.ASSET_PICKER).catch(() => ({
+          data: [],
+        })),
       ]);
       setAllStocks(toArray(stockRes));
       setTopPicks(toArray(topRes));
@@ -108,7 +110,9 @@ export default function StockMarketScreen() {
   });
 
   const renderStockItem = ({ item }: { item: any }) => {
-    const changePercent = Number(item?.changePercent || item?.percentChange || 0);
+    const changePercent = Number(
+      item?.changePercent || item?.percentChange || 0,
+    );
     const isPositive = changePercent >= 0;
     const changeColor = isPositive ? "#09734C" : "#D50000";
     return (
@@ -284,9 +288,7 @@ export default function StockMarketScreen() {
               {/* Top Picks */}
               {topPicks.length > 0 && (
                 <View style={styles.topPicksSection}>
-                  <ThemedText
-                    style={[styles.sectionTitle, { color: C.text }]}
-                  >
+                  <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
                     Top Picks
                   </ThemedText>
                   <ScrollView
@@ -304,7 +306,10 @@ export default function StockMarketScreen() {
                           key={i}
                           style={[
                             styles.topPickCard,
-                            { borderColor: C.border, backgroundColor: C.inputBg },
+                            {
+                              borderColor: C.border,
+                              backgroundColor: C.inputBg,
+                            },
                           ]}
                           onPress={() =>
                             router.push(
@@ -313,29 +318,18 @@ export default function StockMarketScreen() {
                           }
                         >
                           <ThemedText
-                            style={[
-                              styles.topPickTicker,
-                              { color: C.primary },
-                            ]}
+                            style={[styles.topPickTicker, { color: C.primary }]}
                           >
-                            {String(
-                              item?.tickerSymbol || "",
-                            ).toUpperCase()}
+                            {String(item?.tickerSymbol || "").toUpperCase()}
                           </ThemedText>
                           <ThemedText
-                            style={[
-                              styles.topPickName,
-                              { color: C.muted },
-                            ]}
+                            style={[styles.topPickName, { color: C.muted }]}
                             numberOfLines={1}
                           >
                             {item?.companyName || item?.name || ""}
                           </ThemedText>
                           <ThemedText
-                            style={[
-                              styles.topPickPrice,
-                              { color: C.text },
-                            ]}
+                            style={[styles.topPickPrice, { color: C.text }]}
                           >
                             {priceFormatter(
                               Number(item?.currentPrice || item?.price || 0),

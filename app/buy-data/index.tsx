@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -8,10 +8,10 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
 import { hideAppLoader, priceFormatter, showAppLoader } from "@/utils/helpers";
+import { View as WidgetView } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import { View as WidgetView } from "@idimma/rn-widget";
 import {
   ActivityIndicator,
   Image,
@@ -76,7 +76,7 @@ export default function BuyDataScreen() {
     setSelectedPlan(null);
     try {
       const res = await BaseRequest.get(
-        `${MOBILE_SERVICE.DATA_PLANS}?serviceId=${network}`
+        `${MOBILE_SERVICE.DATA_PLANS}?serviceId=${network}`,
       );
       setPlans(toArray(res.data));
     } catch (error) {
@@ -95,8 +95,7 @@ export default function BuyDataScreen() {
     setSelectedNetwork(network);
   };
 
-  const canContinue =
-    !!phone && phone.length >= 10 && !!selectedPlan;
+  const canContinue = !!phone && phone.length >= 10 && !!selectedPlan;
 
   const handleSubmit = async () => {
     if (!selectedPlan) return;
@@ -135,8 +134,12 @@ export default function BuyDataScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
-            <Back onPress={() => (stage === "preview" ? setStage("form") : router.back())} />
-            <ThemedText type="subtitle" style={styles.headerTitle}>
+            <Back
+              onPress={() =>
+                stage === "preview" ? setStage("form") : router.back()
+              }
+            />
+            <ThemedText type='subtitle' style={styles.headerTitle}>
               Buy Data
             </ThemedText>
             <View style={{ width: 44 }} />
@@ -144,13 +147,13 @@ export default function BuyDataScreen() {
 
           <ScrollView
             contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps='handled'
             showsVerticalScrollIndicator={false}
           >
             {/* ── FORM ── */}
             {stage === "form" && (
               <>
-                <ThemedText type="defaultSemiBold">Select Network</ThemedText>
+                <ThemedText type='defaultSemiBold'>Select Network</ThemedText>
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -176,7 +179,7 @@ export default function BuyDataScreen() {
                         <Image
                           source={networkImages[n.id]}
                           style={styles.networkLogo}
-                          resizeMode="contain"
+                          resizeMode='contain'
                         />
                         <ThemedText
                           style={[
@@ -192,18 +195,18 @@ export default function BuyDataScreen() {
                 </ScrollView>
 
                 <FormInput
-                  labelText="Phone Number"
+                  labelText='Phone Number'
                   value={phone}
                   onChangeText={setPhone}
-                  keyboardType="phone-pad"
-                  placeholder="08012345678"
+                  keyboardType='phone-pad'
+                  placeholder='08012345678'
                 />
 
-                <ThemedText type="defaultSemiBold">Select Data Plan</ThemedText>
+                <ThemedText type='defaultSemiBold'>Select Data Plan</ThemedText>
 
                 {loadingPlans ? (
                   <View style={styles.loaderWrap}>
-                    <ActivityIndicator color="#013D25" />
+                    <ActivityIndicator color='#013D25' />
                     <ThemedText style={{ color: C.muted, fontSize: 13 }}>
                       Loading plans…
                     </ThemedText>
@@ -256,7 +259,7 @@ export default function BuyDataScreen() {
                 )}
 
                 <BraneButton
-                  text="Continue"
+                  text='Continue'
                   onPress={() => setStage("preview")}
                   disabled={!canContinue}
                   style={styles.button}
@@ -267,32 +270,44 @@ export default function BuyDataScreen() {
             {/* ── PREVIEW ── */}
             {stage === "preview" && selectedPlan && (
               <>
-                <ThemedText type="defaultSemiBold" style={{ marginBottom: 8 }}>
+                <ThemedText type='defaultSemiBold' style={{ marginBottom: 8 }}>
                   Confirm Purchase
                 </ThemedText>
 
                 <View
-                  style={{ ...styles.summaryCard, backgroundColor: C.inputBackground, borderColor: C.border }}
+                  style={{
+                    ...styles.summaryCard,
+                    backgroundColor: C.inputBackground,
+                    borderColor: C.border,
+                  }}
                 >
                   <SummaryRow
-                    label="Network"
+                    label='Network'
                     value={selectedNetwork.toUpperCase()}
                     C={C}
                   />
-                  <View style={{ ...styles.divider, backgroundColor: C.border }} />
-                  <SummaryRow label="Phone" value={phone} C={C} />
-                  <View style={{ ...styles.divider, backgroundColor: C.border }} />
-                  <SummaryRow label="Plan" value={selectedPlan.name} C={C} />
-                  <View style={{ ...styles.divider, backgroundColor: C.border }} />
+                  <View
+                    style={{ ...styles.divider, backgroundColor: C.border }}
+                  />
+                  <SummaryRow label='Phone' value={phone} C={C} />
+                  <View
+                    style={{ ...styles.divider, backgroundColor: C.border }}
+                  />
+                  <SummaryRow label='Plan' value={selectedPlan.name} C={C} />
+                  <View
+                    style={{ ...styles.divider, backgroundColor: C.border }}
+                  />
                   <SummaryRow
-                    label="Amount"
-                    value={priceFormatter(Number(selectedPlan.variation_amount))}
+                    label='Amount'
+                    value={priceFormatter(
+                      Number(selectedPlan.variation_amount),
+                    )}
                     C={C}
                   />
                 </View>
 
                 <BraneButton
-                  text="Confirm & Pay"
+                  text='Confirm & Pay'
                   onPress={() => {
                     setStage("pin");
                     setPinVisible(true);
@@ -300,10 +315,10 @@ export default function BuyDataScreen() {
                   style={styles.button}
                 />
                 <BraneButton
-                  text="Go Back"
+                  text='Go Back'
                   onPress={() => setStage("form")}
                   backgroundColor={C.inputBackground}
-                  textColor="#013D25"
+                  textColor='#013D25'
                   style={styles.secondaryButton}
                 />
               </>
@@ -312,15 +327,15 @@ export default function BuyDataScreen() {
             {/* ── SUCCESS ── */}
             {stage === "success" && selectedPlan && (
               <View style={{ ...styles.successWrap, gap: 12 }}>
-                <TickCircle size={72} color="#013D25" variant="Bold" />
-                <ThemedText type="subtitle" style={{ textAlign: "center" }}>
+                <TickCircle size={72} color='#013D25' variant='Bold' />
+                <ThemedText type='subtitle' style={{ textAlign: "center" }}>
                   Data Purchase Successful!
                 </ThemedText>
                 <ThemedText style={[styles.successSub, { color: C.muted }]}>
                   {selectedPlan.name} sent to {phone}
                 </ThemedText>
                 <BraneButton
-                  text="Done"
+                  text='Done'
                   onPress={() => router.replace("/(tabs)")}
                   style={styles.successButton}
                 />
@@ -345,7 +360,7 @@ function SummaryRow({
   return (
     <WidgetView style={styles.summaryRow} row aligned>
       <ThemedText style={{ color: C.muted, fontSize: 13 }}>{label}</ThemedText>
-      <ThemedText type="defaultSemiBold" style={{ fontSize: 14 }}>
+      <ThemedText type='defaultSemiBold' style={{ fontSize: 14 }}>
         {value}
       </ThemedText>
     </WidgetView>

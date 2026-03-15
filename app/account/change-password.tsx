@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { OTPInput } from "@/components/otp-input";
@@ -11,7 +11,12 @@ import { showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type PasswordForm = {
@@ -96,33 +101,38 @@ export default function ChangePasswordScreen() {
       >
         <View style={styles.header} row aligned>
           <Back onPress={() => router.back()} />
-          <ThemedText type="subtitle" style={styles.headerTitle}>
+          <ThemedText type='subtitle' style={styles.headerTitle}>
             Change Password
           </ThemedText>
           <View style={{ width: 44 }} />
         </View>
 
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps='handled'
+        >
           {stage === 1 && (
             <>
-              <ThemedText type="defaultSemiBold">Verify user</ThemedText>
-              <ThemedText style={[styles.subText, { color: C.muted }]}>Enter the 6-digit code sent to your phone.</ThemedText>
+              <ThemedText type='defaultSemiBold'>Verify user</ThemedText>
+              <ThemedText style={[styles.subText, { color: C.muted }]}>
+                Enter the 6-digit code sent to your phone.
+              </ThemedText>
               <View style={{ marginTop: 20 }}>
                 <OTPInput onComplete={setOtp} />
               </View>
               <BraneButton
-                text="Continue"
+                text='Continue'
                 onPress={onSubmitOtp}
                 loading={loading}
                 disabled={!otp || otp.length < 6}
                 style={styles.button}
               />
               <BraneButton
-                text="Resend OTP"
+                text='Resend OTP'
                 onPress={onResendOtp}
                 loading={loading}
-                backgroundColor="#F7F7F8"
-                textColor="#013D25"
+                backgroundColor='#F7F7F8'
+                textColor='#013D25'
                 style={styles.secondaryButton}
               />
             </>
@@ -130,36 +140,49 @@ export default function ChangePasswordScreen() {
 
           {stage === 2 && (
             <>
-              <ThemedText type="defaultSemiBold">Set new password</ThemedText>
-              <ThemedText style={[styles.subText, { color: C.muted }]}>Use at least 8 characters and confirm your new password.</ThemedText>
+              <ThemedText type='defaultSemiBold'>Set new password</ThemedText>
+              <ThemedText style={[styles.subText, { color: C.muted }]}>
+                Use at least 8 characters and confirm your new password.
+              </ThemedText>
               <View gap={12} style={{ marginTop: 16 }}>
                 <FormInput
-                  labelText="Current password"
+                  labelText='Current password'
                   secureTextEntry
                   value={form.oldPassword}
-                  onChangeText={(value) => setForm((prev) => ({ ...prev, oldPassword: value }))}
+                  onChangeText={(value) =>
+                    setForm((prev) => ({ ...prev, oldPassword: value }))
+                  }
                 />
                 <FormInput
-                  labelText="New password"
+                  labelText='New password'
                   secureTextEntry
                   value={form.password}
-                  onChangeText={(value) => setForm((prev) => ({ ...prev, password: value }))}
-                  error={form.password && form.password.length < 8 ? "Password must be at least 8 characters" : undefined}
+                  onChangeText={(value) =>
+                    setForm((prev) => ({ ...prev, password: value }))
+                  }
+                  error={
+                    form.password && form.password.length < 8
+                      ? "Password must be at least 8 characters"
+                      : undefined
+                  }
                 />
                 <FormInput
-                  labelText="Confirm new password"
+                  labelText='Confirm new password'
                   secureTextEntry
                   value={form.confirmPassword}
-                  onChangeText={(value) => setForm((prev) => ({ ...prev, confirmPassword: value }))}
+                  onChangeText={(value) =>
+                    setForm((prev) => ({ ...prev, confirmPassword: value }))
+                  }
                   error={
-                    form.confirmPassword && form.password !== form.confirmPassword
+                    form.confirmPassword &&
+                    form.password !== form.confirmPassword
                       ? "Passwords do not match"
                       : undefined
                   }
                 />
               </View>
               <BraneButton
-                text="Change Password"
+                text='Change Password'
                 onPress={onSubmitPassword}
                 loading={loading}
                 disabled={!canSubmitPassword}
@@ -170,10 +193,12 @@ export default function ChangePasswordScreen() {
 
           {stage === 3 && (
             <View style={styles.successWrap}>
-              <ThemedText type="subtitle">Successful</ThemedText>
-              <ThemedText style={[styles.subText, { color: C.muted }]}>Password change was successful.</ThemedText>
+              <ThemedText type='subtitle'>Successful</ThemedText>
+              <ThemedText style={[styles.subText, { color: C.muted }]}>
+                Password change was successful.
+              </ThemedText>
               <BraneButton
-                text="Dismiss"
+                text='Dismiss'
                 onPress={() => router.push("/(tabs)")}
                 style={styles.button}
               />

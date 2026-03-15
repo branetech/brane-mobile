@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -81,7 +81,7 @@ export default function FAQsScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={styles.headerTitle}>
+        <ThemedText type='subtitle' style={styles.headerTitle}>
           FAQs
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -109,9 +109,9 @@ export default function FAQsScreen() {
               >
                 <ThemedText style={styles.question}>{faq.q}</ThemedText>
                 {isExpanded ? (
-                  <Minus size={20} color="#013D25" />
+                  <Minus size={20} color='#013D25' />
                 ) : (
-                  <Add size={20} color="#85808A" />
+                  <Add size={20} color='#85808A' />
                 )}
               </TouchableOpacity>
 

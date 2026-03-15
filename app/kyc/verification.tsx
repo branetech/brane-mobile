@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -86,15 +86,15 @@ export default function KycVerificationScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <ThemedText type="subtitle">Personal information</ThemedText>
+        <ThemedText type='subtitle'>Personal information</ThemedText>
         <ThemedText style={[styles.help, { color: C.muted }]}>
           We need your details to verify your identity.
         </ThemedText>
 
         <View style={{ marginTop: 16, gap: 10 }}>
           <FormInput
-            labelText="Legal First Name"
-            placeholder="Enter your first name"
+            labelText='Legal First Name'
+            placeholder='Enter your first name'
             value={form.firstName}
             onChangeText={(value) =>
               setForm((prev: any) => ({ ...prev, firstName: value }))
@@ -102,8 +102,8 @@ export default function KycVerificationScreen() {
             error={errors.firstName}
           />
           <FormInput
-            labelText="Legal Last Name"
-            placeholder="Enter your last name"
+            labelText='Legal Last Name'
+            placeholder='Enter your last name'
             value={form.lastName}
             onChangeText={(value) =>
               setForm((prev: any) => ({ ...prev, lastName: value }))
@@ -111,8 +111,8 @@ export default function KycVerificationScreen() {
             error={errors.lastName}
           />
           <FormInput
-            labelText="House Address"
-            placeholder="Enter your house address"
+            labelText='House Address'
+            placeholder='Enter your house address'
             value={form.houseAddress}
             onChangeText={(value) =>
               setForm((prev: any) => ({ ...prev, houseAddress: value }))
@@ -149,7 +149,7 @@ export default function KycVerificationScreen() {
 
       <View style={styles.footer}>
         <BraneButton
-          text="Proceed"
+          text='Proceed'
           onPress={onSubmit}
           loading={loading}
           disabled={!canSubmit || loading}

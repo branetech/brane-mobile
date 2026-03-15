@@ -1,9 +1,9 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import {
-    PaymentMethodSelector,
-    type PaymentOption,
+  PaymentMethodSelector,
+  type PaymentOption,
 } from "@/components/payment-method-selector";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
@@ -11,39 +11,39 @@ import { TransactionPinValidator } from "@/components/transaction-pin-validator"
 import { useAppState } from "@/redux/store";
 import BaseRequest, { parseNetworkError } from "@/services";
 import {
-    onTransactionPinBettingValidation,
-    onTransactionPinCabelValidation,
-    onTransactionPinElectricityValidation,
-    onTransactionPinValidated,
+  onTransactionPinBettingValidation,
+  onTransactionPinCabelValidation,
+  onTransactionPinElectricityValidation,
+  onTransactionPinValidated,
 } from "@/services/data";
 import {
-    AUTH_SERVICE,
-    MOBILE_SERVICE,
-    PAYMENT_CALLBACK_URL,
-    STOCKS_SERVICE,
-    TRANSACTION_SERVICE,
+  AUTH_SERVICE,
+  MOBILE_SERVICE,
+  PAYMENT_CALLBACK_URL,
+  STOCKS_SERVICE,
+  TRANSACTION_SERVICE,
 } from "@/services/routes";
 import { showError } from "@/utils/helpers";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
-    Add,
-    ArrowDown2,
-    CloseCircle,
-    Mobile,
-    SearchNormal1,
-    WifiSquare,
+  Add,
+  ArrowDown2,
+  CloseCircle,
+  Mobile,
+  SearchNormal1,
+  WifiSquare,
 } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -933,7 +933,7 @@ export default function UtilitySelectScreen() {
 
       {isFetchingMeta ? (
         <View style={styles.fullPageLoader}>
-          <ActivityIndicator size="large" color="#013D25" />
+          <ActivityIndicator size='large' color='#013D25' />
           <ThemedText style={styles.loadingText}>
             Loading services...
           </ThemedText>
@@ -958,7 +958,7 @@ export default function UtilitySelectScreen() {
                   <Mobile
                     size={16}
                     color={service === "airtime" ? "#013D25" : "#7F7F86"}
-                    variant="Outline"
+                    variant='Outline'
                   />
                   <ThemedText
                     style={[
@@ -980,7 +980,7 @@ export default function UtilitySelectScreen() {
                   <WifiSquare
                     size={16}
                     color={service === "data" ? "#013D25" : "#7F7F86"}
-                    variant="Outline"
+                    variant='Outline'
                   />
                   <ThemedText
                     style={[
@@ -1020,7 +1020,7 @@ export default function UtilitySelectScreen() {
                             NETWORK_IMAGES.mtn
                           }
                           style={styles.networkLogo}
-                          resizeMode="contain"
+                          resizeMode='contain'
                         />
                         <ThemedText
                           style={[
@@ -1050,16 +1050,16 @@ export default function UtilitySelectScreen() {
                   <ThemedText style={styles.phonePrefix}>+234</ThemedText>
                   <TextInput
                     style={styles.inlineInputText}
-                    placeholder="Enter phone number"
-                    placeholderTextColor="#A9A9AE"
-                    keyboardType="number-pad"
+                    placeholder='Enter phone number'
+                    placeholderTextColor='#A9A9AE'
+                    keyboardType='number-pad'
                     value={phone}
                     onChangeText={(value) => {
                       setPhone(value.replace(/[^0-9+]/g, ""));
                       setPhoneError(undefined);
                     }}
                   />
-                  <Add size={18} color="#9B9BA2" variant="Outline" />
+                  <Add size={18} color='#9B9BA2' variant='Outline' />
                 </View>
                 {phoneError ? (
                   <ThemedText style={styles.errorText}>{phoneError}</ThemedText>
@@ -1084,13 +1084,13 @@ export default function UtilitySelectScreen() {
                   <View style={styles.searchRow}>
                     <SearchNormal1
                       size={16}
-                      color="#88888F"
-                      variant="Outline"
+                      color='#88888F'
+                      variant='Outline'
                     />
                     <TextInput
                       style={styles.searchInput}
-                      placeholder="Search by name or phone number"
-                      placeholderTextColor="#A9A9AE"
+                      placeholder='Search by name or phone number'
+                      placeholderTextColor='#A9A9AE'
                       value={beneficiarySearch}
                       onChangeText={setBeneficiarySearch}
                     />
@@ -1164,9 +1164,9 @@ export default function UtilitySelectScreen() {
                   <ThemedText style={styles.currencyPrefix}>₦</ThemedText>
                   <TextInput
                     style={styles.inlineInputText}
-                    placeholder="Enter custom amount"
-                    placeholderTextColor="#A9A9AE"
-                    keyboardType="number-pad"
+                    placeholder='Enter custom amount'
+                    placeholderTextColor='#A9A9AE'
+                    keyboardType='number-pad'
                     value={amount}
                     onChangeText={(value) => {
                       setAmount(value.replace(/\D/g, ""));
@@ -1205,7 +1205,7 @@ export default function UtilitySelectScreen() {
                         </ThemedText>
                       ) : null}
                     </View>
-                    <ArrowDown2 size={18} color="#6E6E75" />
+                    <ArrowDown2 size={18} color='#6E6E75' />
                   </TouchableOpacity>
                 ) : (
                   <ThemedText style={styles.emptyBeneficiaryText}>
@@ -1248,7 +1248,7 @@ export default function UtilitySelectScreen() {
 
                 <ThemedText style={styles.label}>Customer ID</ThemedText>
                 <FormInput
-                  placeholder="Enter customer ID"
+                  placeholder='Enter customer ID'
                   value={customerId}
                   onChangeText={(value) => {
                     setCustomerId(value);
@@ -1261,8 +1261,8 @@ export default function UtilitySelectScreen() {
 
                 <ThemedText style={styles.label}>Amount</ThemedText>
                 <FormInput
-                  placeholder="Enter amount"
-                  keyboardType="number-pad"
+                  placeholder='Enter amount'
+                  keyboardType='number-pad'
                   value={amount}
                   onChangeText={(value) => {
                     setAmount(value.replace(/\D/g, ""));
@@ -1301,7 +1301,7 @@ export default function UtilitySelectScreen() {
                           <Image
                             source={source}
                             style={styles.cableLogo}
-                            resizeMode="contain"
+                            resizeMode='contain'
                           />
                         ) : null}
                         <ThemedText
@@ -1326,7 +1326,7 @@ export default function UtilitySelectScreen() {
                   Smart Card / IUC Number
                 </ThemedText>
                 <FormInput
-                  placeholder="Enter smart card number"
+                  placeholder='Enter smart card number'
                   value={cardNumber}
                   onChangeText={(value) => {
                     setCardNumber(value.replace(/\D/g, ""));
@@ -1338,7 +1338,7 @@ export default function UtilitySelectScreen() {
                 />
 
                 <BraneButton
-                  text="Verify card"
+                  text='Verify card'
                   onPress={async () => {
                     if (!cardNumber || cardNumber.length < 6) {
                       setCardError("Enter a valid smart card / IUC number");
@@ -1366,8 +1366,8 @@ export default function UtilitySelectScreen() {
                   }}
                   height={38}
                   radius={8}
-                  backgroundColor="#D2F1E4"
-                  textColor="#013D25"
+                  backgroundColor='#D2F1E4'
+                  textColor='#013D25'
                   fontSize={11}
                   style={styles.verifyBtn}
                 />
@@ -1404,7 +1404,7 @@ export default function UtilitySelectScreen() {
                         </ThemedText>
                       ) : null}
                     </View>
-                    <ArrowDown2 size={18} color="#6E6E75" />
+                    <ArrowDown2 size={18} color='#6E6E75' />
                   </TouchableOpacity>
                 ) : (
                   <ThemedText style={styles.emptyBeneficiaryText}>
@@ -1440,7 +1440,7 @@ export default function UtilitySelectScreen() {
                         </ThemedText>
                       ) : null}
                     </View>
-                    <ArrowDown2 size={18} color="#6E6E75" />
+                    <ArrowDown2 size={18} color='#6E6E75' />
                   </TouchableOpacity>
                 ) : (
                   <ThemedText style={styles.emptyBeneficiaryText}>
@@ -1475,7 +1475,7 @@ export default function UtilitySelectScreen() {
 
                 <ThemedText style={styles.fieldLabel}>Meter Number</ThemedText>
                 <FormInput
-                  placeholder="Enter meter number"
+                  placeholder='Enter meter number'
                   value={meterNumber}
                   onChangeText={(value) => {
                     setMeterNumber(value.replace(/\D/g, ""));
@@ -1487,7 +1487,7 @@ export default function UtilitySelectScreen() {
                 />
 
                 <BraneButton
-                  text="Verify meter"
+                  text='Verify meter'
                   onPress={async () => {
                     if (!meterNumber || meterNumber.length < 6) {
                       setCardError("Enter a valid meter number");
@@ -1519,8 +1519,8 @@ export default function UtilitySelectScreen() {
                   }}
                   height={38}
                   radius={8}
-                  backgroundColor="#D2F1E4"
-                  textColor="#013D25"
+                  backgroundColor='#D2F1E4'
+                  textColor='#013D25'
                   fontSize={11}
                   style={styles.verifyBtn}
                 />
@@ -1570,9 +1570,9 @@ export default function UtilitySelectScreen() {
                   <ThemedText style={styles.currencyPrefix}>₦</ThemedText>
                   <TextInput
                     style={styles.inlineInputText}
-                    placeholder="Enter custom amount"
-                    placeholderTextColor="#A9A9AE"
-                    keyboardType="number-pad"
+                    placeholder='Enter custom amount'
+                    placeholderTextColor='#A9A9AE'
+                    keyboardType='number-pad'
                     value={amount}
                     onChangeText={(value) => {
                       setAmount(value.replace(/\D/g, ""));
@@ -1625,7 +1625,7 @@ export default function UtilitySelectScreen() {
                   Reference Number
                 </ThemedText>
                 <FormInput
-                  placeholder="Enter reference number"
+                  placeholder='Enter reference number'
                   value={transportReference}
                   onChangeText={(value) => {
                     setTransportReference(value);
@@ -1658,7 +1658,7 @@ export default function UtilitySelectScreen() {
                         </ThemedText>
                       ) : null}
                     </View>
-                    <ArrowDown2 size={18} color="#6E6E75" />
+                    <ArrowDown2 size={18} color='#6E6E75' />
                   </TouchableOpacity>
                 ) : (
                   <ThemedText style={styles.emptyBeneficiaryText}>
@@ -1688,8 +1688,8 @@ export default function UtilitySelectScreen() {
                 if (!validateForm()) return;
                 setShowPinValidator(true);
               }}
-              backgroundColor="#013D25"
-              textColor="#D2F1E4"
+              backgroundColor='#013D25'
+              textColor='#D2F1E4'
               height={48}
               radius={8}
               loading={isSubmitting}
@@ -1718,9 +1718,9 @@ export default function UtilitySelectScreen() {
 
       <SuccessModal
         visible={showSuccess}
-        title="Transaction Successful"
+        title='Transaction Successful'
         description={`Your ${service} payment of ₦${Number(amountToPay || 0).toLocaleString("en-NG")} has been processed.`}
-        actionText="Done"
+        actionText='Done'
         onAction={() => {
           setShowSuccess(false);
           router.back();
@@ -1730,7 +1730,7 @@ export default function UtilitySelectScreen() {
       <Modal
         visible={showDataPlanModal}
         transparent
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setShowDataPlanModal(false)}
       >
         <TouchableOpacity
@@ -1748,7 +1748,7 @@ export default function UtilitySelectScreen() {
                 Select Data Plan
               </ThemedText>
               <TouchableOpacity onPress={() => setShowDataPlanModal(false)}>
-                <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+                <CloseCircle size={18} color='#6E6E75' variant='Outline' />
               </TouchableOpacity>
             </View>
 
@@ -1797,7 +1797,7 @@ export default function UtilitySelectScreen() {
       <Modal
         visible={showElectricityProviderModal}
         transparent
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setShowElectricityProviderModal(false)}
       >
         <TouchableOpacity
@@ -1815,7 +1815,7 @@ export default function UtilitySelectScreen() {
               <TouchableOpacity
                 onPress={() => setShowElectricityProviderModal(false)}
               >
-                <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+                <CloseCircle size={18} color='#6E6E75' variant='Outline' />
               </TouchableOpacity>
             </View>
 
@@ -1847,7 +1847,7 @@ export default function UtilitySelectScreen() {
                       <Image
                         source={logo}
                         style={styles.providerModalLogo}
-                        resizeMode="contain"
+                        resizeMode='contain'
                       />
                     ) : null}
                     <View style={styles.providerModalTextWrap}>
@@ -1873,7 +1873,7 @@ export default function UtilitySelectScreen() {
       <Modal
         visible={showTransportPlanModal}
         transparent
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setShowTransportPlanModal(false)}
       >
         <TouchableOpacity
@@ -1893,7 +1893,7 @@ export default function UtilitySelectScreen() {
               <TouchableOpacity
                 onPress={() => setShowTransportPlanModal(false)}
               >
-                <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+                <CloseCircle size={18} color='#6E6E75' variant='Outline' />
               </TouchableOpacity>
             </View>
 
@@ -1943,7 +1943,7 @@ export default function UtilitySelectScreen() {
       <Modal
         visible={showCablePlanModal}
         transparent
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setShowCablePlanModal(false)}
       >
         <TouchableOpacity
@@ -1961,7 +1961,7 @@ export default function UtilitySelectScreen() {
                 Select Subscription Plan
               </ThemedText>
               <TouchableOpacity onPress={() => setShowCablePlanModal(false)}>
-                <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+                <CloseCircle size={18} color='#6E6E75' variant='Outline' />
               </TouchableOpacity>
             </View>
 

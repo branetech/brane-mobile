@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -7,7 +7,12 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
-import { hideAppLoader, priceFormatter, showAppLoader, showSuccess } from "@/utils/helpers";
+import {
+  hideAppLoader,
+  priceFormatter,
+  showAppLoader,
+  showSuccess,
+} from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
@@ -129,7 +134,7 @@ export default function WalletWithdrawScreen() {
         <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
           <ThemedText style={styles.balanceLabel}>Wallet Balance</ThemedText>
           {isLoadingBalance ? (
-            <ActivityIndicator color="#fff" size="small" />
+            <ActivityIndicator color='#fff' size='small' />
           ) : (
             <ThemedText style={styles.balanceValue}>
               {priceFormatter(walletBalance, 2)}
@@ -149,8 +154,7 @@ export default function WalletWithdrawScreen() {
                 {
                   backgroundColor:
                     amount === String(preset) ? "#F4F1E2" : C.inputBg,
-                  borderColor:
-                    amount === String(preset) ? "#E4DBC0" : C.border,
+                  borderColor: amount === String(preset) ? "#E4DBC0" : C.border,
                 },
               ]}
               onPress={() => {
@@ -165,8 +169,8 @@ export default function WalletWithdrawScreen() {
           ))}
         </View>
         <FormInput
-          placeholder="Enter amount"
-          keyboardType="number-pad"
+          placeholder='Enter amount'
+          keyboardType='number-pad'
           value={amount}
           onChangeText={(v) => {
             setAmount(v.replace(/\D/g, ""));
@@ -178,10 +182,10 @@ export default function WalletWithdrawScreen() {
       </ScrollView>
       <View style={styles.footer}>
         <BraneButton
-          text="Continue"
+          text='Continue'
           onPress={handleContinueForm}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
         />
@@ -256,22 +260,22 @@ export default function WalletWithdrawScreen() {
 
   const renderStageSuccess = () => (
     <View style={styles.successWrap}>
-      <TickCircle size={72} color="#013D25" variant="Bold" />
+      <TickCircle size={72} color='#013D25' variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Withdrawal Successful
       </ThemedText>
       <ThemedText style={[styles.successDesc, { color: C.muted }]}>
-        You&apos;ve successfully withdrawn {priceFormatter(Number(amount), 2)} to
-        your bank account.
+        You&apos;ve successfully withdrawn {priceFormatter(Number(amount), 2)}{" "}
+        to your bank account.
       </ThemedText>
       <BraneButton
-        text="Go Home"
+        text='Go Home'
         onPress={() => router.push("/(tabs)")}
         backgroundColor={C.primary}
-        textColor="#D2F1E4"
+        textColor='#D2F1E4'
         height={52}
         radius={12}
-        width="80%"
+        width='80%'
       />
     </View>
   );
@@ -297,10 +301,10 @@ export default function WalletWithdrawScreen() {
       {stage === "pin" && (
         <View style={styles.flex}>
           <BraneButton
-            text="Confirm with PIN"
+            text='Confirm with PIN'
             onPress={() => setShowPin(true)}
             backgroundColor={C.primary}
-            textColor="#D2F1E4"
+            textColor='#D2F1E4'
             height={52}
             radius={12}
             style={styles.pinTriggerBtn}
@@ -319,10 +323,9 @@ export default function WalletWithdrawScreen() {
         onResetPin={() => router.push("/account/reset-transaction-pin")}
         onValidatePin={async (pin) => {
           try {
-            await BaseRequest.post(
-              "/auth-service/validate-transaction-pin",
-              { pin },
-            );
+            await BaseRequest.post("/auth-service/validate-transaction-pin", {
+              pin,
+            });
             return true;
           } catch {
             return false;

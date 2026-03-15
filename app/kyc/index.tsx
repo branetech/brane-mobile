@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import KycItem from "@/components/kyc/kyc-item";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -20,35 +20,35 @@ export default function KycScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back onPress={() => router.push("/(tabs)/(account)")} />
-        <ThemedText type="subtitle">KYC Requirements</ThemedText>
+        <ThemedText type='subtitle'>KYC Requirements</ThemedText>
         <Pressable style={{ width: 24 }} />
       </View>
 
       <View style={styles.content}>
         <KycItem
-          title="Person Information"
-          icon={<Profile2User size={20} color="#013D25" />}
+          title='Person Information'
+          icon={<Profile2User size={20} color='#013D25' />}
           isVerified={!!user?.hasName}
           onPress={() => router.push("/kyc/verification")}
         />
 
         <KycItem
-          title="Banking Information"
-          icon={<Card size={20} color="#013D25" />}
+          title='Banking Information'
+          icon={<Card size={20} color='#013D25' />}
           isVerified={!!user?.hasBanking}
           onPress={() => router.push("/kyc/information")}
         />
 
         <KycItem
-          title="Verify your identity"
-          icon={<User size={20} color="#013D25" />}
+          title='Verify your identity'
+          icon={<User size={20} color='#013D25' />}
           isVerified={!!user?.identityKyc}
           onPress={() => router.push("/kyc/identity-verification")}
         />
 
         <KycItem
-          title="Next of kin details"
-          icon={<UserTag size={20} color="#013D25" />}
+          title='Next of kin details'
+          icon={<UserTag size={20} color='#013D25' />}
           isVerified={!!user?.hasNextOfKin}
           onPress={() => router.push("/kyc/kin-details")}
         />

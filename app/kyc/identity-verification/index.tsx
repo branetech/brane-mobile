@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import KycItem from "@/components/kyc/kyc-item";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -23,7 +23,7 @@ export default function IdentityVerificationScreen() {
       </View>
 
       <View style={styles.content}>
-        <ThemedText type="subtitle">Verify your Identity</ThemedText>
+        <ThemedText type='subtitle'>Verify your Identity</ThemedText>
         <ThemedText style={[styles.help, { color: C.muted }]}>
           Identity verification is a crucial step in ensuring the security and
           legitimacy of your account.
@@ -31,24 +31,24 @@ export default function IdentityVerificationScreen() {
 
         <View style={{ marginTop: 12 }}>
           <KycItem
-            title="ID Verification"
-            icon={<DocumentText1 size={20} color="#013D25" />}
+            title='ID Verification'
+            icon={<DocumentText1 size={20} color='#013D25' />}
             isVerified={!!user?.hasIdentity && !!user?.hasBvn}
             onPress={() =>
               router.push("/kyc/identity-verification/id-verification")
             }
           />
           <KycItem
-            title="Passport Photograph"
-            icon={<ProfileCircle size={20} color="#013D25" />}
+            title='Passport Photograph'
+            icon={<ProfileCircle size={20} color='#013D25' />}
             isVerified={!!user?.hasPhoto}
             onPress={() =>
               router.push("/kyc/identity-verification/photograph-verification")
             }
           />
           <KycItem
-            title="Address Verification"
-            icon={<Location size={20} color="#013D25" />}
+            title='Address Verification'
+            icon={<Location size={20} color='#013D25' />}
             isVerified={!!user?.hasLocation}
             onPress={() =>
               router.push("/kyc/identity-verification/address-verification")

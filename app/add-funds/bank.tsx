@@ -1,10 +1,11 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import BaseRequest, { catchError } from "@/services";
 import { useRouter } from "expo-router";
 import { Add } from "iconsax-react-native";
 import React, { useState } from "react";
@@ -33,9 +34,27 @@ export default function FundWithBankScreen() {
     BANK_ACCOUNT.id,
   );
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const isFundEnabled = !!amount && !!selectedBankId;
+  const isFundEnabled = !!amount && !!selectedBankId && !loading;
   const formattedAmount = Number(amount || 0).toLocaleString("en-NG");
+
+  const handleFundAccount = async () => {
+    if (!isFundEnabled) return;
+    setLoading(true);
+    try {
+      await BaseRequest.post("/payment/fund-wallet", {
+        amount: parseFloat(amount),
+        bankAccountId: selectedBankId,
+        method: "bank_transfer",
+      });
+      setShowSuccessModal(true);
+    } catch (error) {
+      catchError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
@@ -56,13 +75,13 @@ export default function FundWithBankScreen() {
             Fund Method
           </ThemedText>
 
-          <View style={styles.methodContainer}>
+          <View style={[styles.methodContainer, { backgroundColor: C.inputBg, borderColor: C.border }]}>
             <View style={styles.subHeaderRow}>
-              <ThemedText style={styles.addedText}>Added Banks</ThemedText>
+              <ThemedText style={[styles.addedText, { color: C.muted }]}>Added Banks</ThemedText>
               <TouchableOpacity activeOpacity={0.8}>
                 <View style={styles.addNewWrap}>
-                  <Add size={12} color="#013D25" />
-                  <ThemedText style={styles.addNewText}>Add New</ThemedText>
+                  <Add size={12} color={C.primary} />
+                  <ThemedText style={[styles.addNewText, { color: C.primary }]}>Add New</ThemedText>
                 </View>
               </TouchableOpacity>
             </View>
@@ -74,21 +93,21 @@ export default function FundWithBankScreen() {
                 styles.bankRow,
                 {
                   borderColor:
-                    selectedBankId === BANK_ACCOUNT.id ? "#E4DDCC" : "#E8E8E8",
+                    selectedBankId === BANK_ACCOUNT.id ? C.primary : C.border,
                   backgroundColor:
-                    selectedBankId === BANK_ACCOUNT.id ? "#F3F0E4" : "#FFFFFF",
+                    selectedBankId === BANK_ACCOUNT.id ? C.primary + "15" : C.inputBg,
                 },
               ]}
             >
               <View style={styles.bankDetails}>
-                <View style={styles.initialsBadge}>
+                <View style={[styles.initialsBadge, { backgroundColor: "#E4580A" }]}>
                   <ThemedText style={styles.initialsText}>F</ThemedText>
                 </View>
                 <View>
                   <ThemedText style={[styles.bankName, { color: C.text }]}>
                     {BANK_ACCOUNT.name}
                   </ThemedText>
-                  <ThemedText style={styles.bankMeta}>
+                  <ThemedText style={[styles.bankMeta, { color: C.muted }]}>
                     {BANK_ACCOUNT.bank} · {BANK_ACCOUNT.accountNumber}
                   </ThemedText>
                 </View>
@@ -100,13 +119,13 @@ export default function FundWithBankScreen() {
                   {
                     borderColor:
                       selectedBankId === BANK_ACCOUNT.id
-                        ? "#1E5B41"
-                        : "#D0D0D0",
+                        ? C.primary
+                        : C.border,
                   },
                 ]}
               >
                 {selectedBankId === BANK_ACCOUNT.id && (
-                  <View style={styles.radioInner} />
+                  <View style={[styles.radioInner, { backgroundColor: C.primary }]} />
                 )}
               </View>
             </TouchableOpacity>
@@ -118,8 +137,8 @@ export default function FundWithBankScreen() {
             Fund Amount
           </ThemedText>
           <FormInput
-            placeholder="Enter amount"
-            keyboardType="number-pad"
+            placeholder='Enter amount'
+            keyboardType='number-pad'
             value={amount}
             onChangeText={setAmount}
             inputContainerStyle={styles.amountInputContainer}
@@ -133,18 +152,18 @@ export default function FundWithBankScreen() {
                 style={[
                   styles.presetBtn,
                   {
-                    backgroundColor: amount === preset ? "#F4F1E2" : "#FFFFFF",
-                    borderColor: amount === preset ? "#E4DBC0" : "#ECECEC",
+                    backgroundColor: amount === preset ? C.primary + "20" : C.inputBg,
+                    borderColor: amount === preset ? C.primary : C.border,
                   },
                 ]}
                 onPress={() => setAmount(preset)}
               >
                 <View style={styles.presetInner}>
-                  <View style={styles.presetDot} />
+                  <View style={[styles.presetDot, { backgroundColor: C.primary }]} />
                   <ThemedText
                     style={[
                       styles.presetText,
-                      { color: amount === preset ? "#013D25" : "#111111" },
+                      { color: amount === preset ? C.primary : C.text },
                     ]}
                   >
                     ₦ {preset}
@@ -158,25 +177,21 @@ export default function FundWithBankScreen() {
 
       <View style={styles.footer}>
         <BraneButton
-          text="Fund Account"
-          onPress={() => {
-            if (!isFundEnabled) return;
-            setShowSuccessModal(true);
-          }}
-          backgroundColor={isFundEnabled ? "#013D25" : "#C5E8D9"}
-          textColor={isFundEnabled ? "#FFFFFF" : "#2A6D53"}
+          text={loading ? 'Processing...' : 'Fund Account'}
+          onPress={handleFundAccount}
+          loading={loading}
+          disabled={!isFundEnabled}
           height={48}
           radius={8}
           fontSize={12}
-          disabled={false}
         />
       </View>
 
       <SuccessModal
         visible={showSuccessModal}
-        title="Transaction Successful"
+        title='Transaction Successful'
         description={`You've successfully funded your account with ₦${formattedAmount}.`}
-        actionText="Dismiss"
+        actionText='Dismiss'
         onAction={() => {
           setShowSuccessModal(false);
           router.replace("/(tabs)");
@@ -216,10 +231,8 @@ const styles = StyleSheet.create({
   },
   methodContainer: {
     borderWidth: 1,
-    borderColor: "#EDEDED",
     borderRadius: 10,
     padding: 10,
-    backgroundColor: "#FFFFFF",
   },
   subHeaderRow: {
     flexDirection: "row",
@@ -229,7 +242,6 @@ const styles = StyleSheet.create({
   },
   addedText: {
     fontSize: 10,
-    color: "#8E8E93",
   },
   addNewWrap: {
     flexDirection: "row",
@@ -238,7 +250,6 @@ const styles = StyleSheet.create({
   },
   addNewText: {
     fontSize: 10,
-    color: "#013D25",
   },
   bankRow: {
     height: 56,
@@ -258,7 +269,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#E4580A",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -273,7 +283,6 @@ const styles = StyleSheet.create({
   },
   bankMeta: {
     fontSize: 8,
-    color: "#8E8E93",
     marginTop: 2,
   },
   radioCircle: {
@@ -283,23 +292,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
   },
   radioInner: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#013D25",
   },
   amountInputContainer: {
     height: 36,
     borderRadius: 8,
-    borderColor: "#F0F0F0",
     marginBottom: 10,
   },
   amountInputText: {
     fontSize: 12,
-    color: "#0B0014",
   },
   presetRow: {
     flexDirection: "row",
@@ -320,7 +325,6 @@ const styles = StyleSheet.create({
     width: 3,
     height: 3,
     borderRadius: 2,
-    backgroundColor: "#0B0014",
   },
   presetText: {
     fontSize: 11,

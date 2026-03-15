@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -41,18 +41,18 @@ export default function PreferencesScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle">Preferences</ThemedText>
+        <ThemedText type='subtitle'>Preferences</ThemedText>
         <View style={{ width: 44 }} />
       </View>
 
       <View style={styles.content}>
         <PrefRow
-          title="Show account balance"
+          title='Show account balance'
           value={!!showBalance}
           onToggle={() => handlePreference({ showBalance: !showBalance })}
         />
         <PrefRow
-          title="Transaction sound"
+          title='Transaction sound'
           value={!!transactionSound}
           onToggle={() =>
             handlePreference({ transactionSound: !transactionSound })

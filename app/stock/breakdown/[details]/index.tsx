@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -51,12 +51,7 @@ export default function BracsBreakdownScreen() {
         const data = res?.data || res;
         setBracsData(data);
         setAllocations(
-          toArray(
-            data?.allocations ||
-              data?.breakdown ||
-              data?.stocks ||
-              data,
-          ),
+          toArray(data?.allocations || data?.breakdown || data?.stocks || data),
         );
       } catch (error) {
         catchError(error);
@@ -73,20 +68,22 @@ export default function BracsBreakdownScreen() {
   }, [fetchBracs]);
 
   const totalBracs = Number(
-    bracsData?.totalBracs ||
-      bracsData?.balance ||
-      bracsData?.bracsBalance ||
-      0,
+    bracsData?.totalBracs || bracsData?.balance || bracsData?.bracsBalance || 0,
   );
-  const totalValue = Number(
-    bracsData?.totalValue || bracsData?.value || 0,
-  );
+  const totalValue = Number(bracsData?.totalValue || bracsData?.value || 0);
 
   return (
-    <SafeAreaView style={{ ...StyleSheet.flatten(styles.screen), backgroundColor: C.background }}>
+    <SafeAreaView
+      style={{
+        ...StyleSheet.flatten(styles.screen),
+        backgroundColor: C.background,
+      }}
+    >
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
-        <ThemedText style={{ ...StyleSheet.flatten(styles.headerTitle), color: C.text }}>
+        <ThemedText
+          style={{ ...StyleSheet.flatten(styles.headerTitle), color: C.text }}
+        >
           {String(network).toUpperCase()} BRACS
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -107,41 +104,82 @@ export default function BracsBreakdownScreen() {
           }
         >
           {/* Summary card */}
-          <View style={{ ...StyleSheet.flatten(styles.summaryCard), borderColor: C.border }}>
-            <ThemedText style={{ ...StyleSheet.flatten(styles.summaryLabel), color: C.muted }}>
+          <View
+            style={{
+              ...StyleSheet.flatten(styles.summaryCard),
+              borderColor: C.border,
+            }}
+          >
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.summaryLabel),
+                color: C.muted,
+              }}
+            >
               BRACS Points Earned
             </ThemedText>
-            <ThemedText style={{ ...StyleSheet.flatten(styles.summaryValue), color: C.text }}>
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.summaryValue),
+                color: C.text,
+              }}
+            >
               {totalBracs.toFixed(4)}
             </ThemedText>
-            <ThemedText style={{ ...StyleSheet.flatten(styles.summaryLabel), color: C.muted, marginTop: 8 }}>
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.summaryLabel),
+                color: C.muted,
+                marginTop: 8,
+              }}
+            >
               Estimated Value
             </ThemedText>
-            <ThemedText style={{ ...StyleSheet.flatten(styles.summaryValue), color: C.primary }}>
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.summaryValue),
+                color: C.primary,
+              }}
+            >
               {priceFormatter(totalValue, 2)}
             </ThemedText>
           </View>
 
           {/* Allocation list */}
           {allocations.length > 0 && (
-            <View style={{ ...StyleSheet.flatten(styles.card), borderColor: C.border }}>
-              <ThemedText style={{ ...StyleSheet.flatten(styles.sectionTitle), color: C.text }}>
+            <View
+              style={{
+                ...StyleSheet.flatten(styles.card),
+                borderColor: C.border,
+              }}
+            >
+              <ThemedText
+                style={{
+                  ...StyleSheet.flatten(styles.sectionTitle),
+                  color: C.text,
+                }}
+              >
                 Allocation Details
               </ThemedText>
               {allocations.map((item, idx) => (
-                <AllocationRow key={idx} item={item} C={C} isLast={idx === allocations.length - 1} />
+                <AllocationRow
+                  key={idx}
+                  item={item}
+                  C={C}
+                  isLast={idx === allocations.length - 1}
+                />
               ))}
             </View>
           )}
 
           <BraneButton
-            text="Convert BRACS"
+            text='Convert BRACS'
             onPress={() => router.push("/stock/swap")}
             backgroundColor={C.primary}
-            textColor="#D2F1E4"
+            textColor='#D2F1E4'
             height={52}
             radius={12}
-            width="100%"
+            width='100%'
           />
         </ScrollView>
       )}
@@ -166,23 +204,50 @@ function AllocationRow({
   const points = Number(item?.bracs || item?.bracsPoints || item?.points || 0);
 
   return (
-    <View style={{ ...StyleSheet.flatten(styles.allocationRow), ...(!isLast ? { borderBottomWidth: 1, borderBottomColor: "#EFEFF1" } : {}) }}>
+    <View
+      style={{
+        ...StyleSheet.flatten(styles.allocationRow),
+        ...(!isLast
+          ? { borderBottomWidth: 1, borderBottomColor: "#EFEFF1" }
+          : {}),
+      }}
+    >
       <View style={styles.allocationLeft}>
-        <ThemedText style={{ ...StyleSheet.flatten(styles.allocationName), color: C.text }}>
+        <ThemedText
+          style={{
+            ...StyleSheet.flatten(styles.allocationName),
+            color: C.text,
+          }}
+        >
           {name}
         </ThemedText>
         {points > 0 && (
-          <ThemedText style={{ ...StyleSheet.flatten(styles.allocationSub), color: C.muted }}>
+          <ThemedText
+            style={{
+              ...StyleSheet.flatten(styles.allocationSub),
+              color: C.muted,
+            }}
+          >
             {points.toFixed(4)} pts
           </ThemedText>
         )}
       </View>
       <View style={styles.allocationRight}>
-        <ThemedText style={{ ...StyleSheet.flatten(styles.allocationPct), color: C.primary }}>
+        <ThemedText
+          style={{
+            ...StyleSheet.flatten(styles.allocationPct),
+            color: C.primary,
+          }}
+        >
           {percentage.toFixed(1)}%
         </ThemedText>
         {value > 0 && (
-          <ThemedText style={{ ...StyleSheet.flatten(styles.allocationVal), color: C.muted }}>
+          <ThemedText
+            style={{
+              ...StyleSheet.flatten(styles.allocationVal),
+              color: C.muted,
+            }}
+          >
             {priceFormatter(value, 2)}
           </ThemedText>
         )}

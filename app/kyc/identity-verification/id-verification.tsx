@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -32,16 +32,16 @@ export default function IdVerificationScreen() {
       </View>
 
       <View style={styles.content}>
-        <ThemedText type="subtitle">ID Verification</ThemedText>
+        <ThemedText type='subtitle'>ID Verification</ThemedText>
         <ThemedText style={[styles.help, { color: C.muted }]}>
           Enter your NIN to complete identity verification.
         </ThemedText>
 
         <View style={{ marginTop: 16 }}>
           <FormInput
-            labelText="NIN"
-            placeholder="Enter NIN"
-            keyboardType="number-pad"
+            labelText='NIN'
+            placeholder='Enter NIN'
+            keyboardType='number-pad'
             value={serialNumber}
             onChangeText={(value) =>
               setSerialNumber(value.replace(/[^\d]/g, "").slice(0, 11))
@@ -52,7 +52,7 @@ export default function IdVerificationScreen() {
 
       <View style={styles.footer}>
         <BraneButton
-          text="Proceed to Verify"
+          text='Proceed to Verify'
           onPress={onSubmit}
           loading={loading}
           disabled={!serialNumber || serialNumber.length < 11}
