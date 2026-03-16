@@ -11,10 +11,10 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -104,12 +104,7 @@ export default function ResetTransactionPinScreen() {
           />
 
           {!!pinError && (
-            <ThemedText
-              style={[
-                styles.error,
-                { color: C.primary === "#013D25" ? "#D92D20" : "#FF6B6B" },
-              ]}
-            >
+            <ThemedText style={[styles.error, { color: "#D50000" }]}>
               {pinError}
             </ThemedText>
           )}

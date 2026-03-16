@@ -7,23 +7,23 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
 import {
-  hideAppLoader,
-  priceFormatter,
-  showAppLoader,
-  showSuccess,
+    hideAppLoader,
+    priceFormatter,
+    showAppLoader,
+    showSuccess,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  View as RNView,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -131,7 +131,7 @@ export default function StockWithdrawScreen() {
       >
         {/* Stock Wallet Balance */}
         <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
-          <ThemedText style={styles.balanceLabelText}>
+          <ThemedText style={[styles.balanceLabelText, { color: C.googleBg }]}>
             Stock Wallet Balance
           </ThemedText>
           {isLoadingBalance ? (
@@ -221,7 +221,7 @@ export default function StockWithdrawScreen() {
           text='Continue'
           onPress={handleContinueForm}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.googleBg}
           height={52}
           radius={12}
         />
@@ -274,7 +274,7 @@ export default function StockWithdrawScreen() {
         <BraneButton
           text='Back'
           onPress={() => setStage("form")}
-          backgroundColor='#D2F1E4'
+          backgroundColor={C.googleBg}
           textColor={C.primary}
           height={52}
           radius={12}
@@ -285,7 +285,7 @@ export default function StockWithdrawScreen() {
           onPress={handleSubmit}
           loading={isSubmitting}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.googleBg}
           height={52}
           radius={12}
           style={styles.halfBtn}
@@ -296,7 +296,7 @@ export default function StockWithdrawScreen() {
 
   const renderSuccess = () => (
     <View style={styles.successWrap}>
-      <TickCircle size={72} color='#013D25' variant='Bold' />
+      <TickCircle size={72} color={C.primary} variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Withdrawal Successful
       </ThemedText>
@@ -307,7 +307,7 @@ export default function StockWithdrawScreen() {
         text='Done'
         onPress={() => router.push("/(tabs)/portfolio")}
         backgroundColor={C.primary}
-        textColor='#D2F1E4'
+        textColor={C.googleBg}
         height={52}
         radius={12}
         width='80%'
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 6,
   },
-  balanceLabelText: { fontSize: 12, color: "#D2F1E4" },
+  balanceLabelText: { fontSize: 12 },
   balanceAmount: { fontSize: 28, fontWeight: "800", color: "#fff" },
   fieldLabel: { fontSize: 12, marginBottom: 4 },
   input: { height: 48, borderRadius: 8 },

@@ -8,10 +8,10 @@ import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -81,7 +81,7 @@ export default function NotificationDetailScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size='small' color='#013D25' />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : (
         <ScrollView
@@ -91,7 +91,7 @@ export default function NotificationDetailScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchDetail(true)}
-              tintColor='#013D25'
+              tintColor={C.primary}
             />
           }
         >

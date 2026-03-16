@@ -13,18 +13,27 @@ const PrefRow = ({
   title,
   value,
   onToggle,
+  C,
 }: {
   title: string;
   value: boolean;
   onToggle: () => void;
+  C: (typeof Colors)["light"];
 }) => {
   return (
-    <View style={styles.row} row aligned spaced>
-      <ThemedText style={styles.rowText}>{title}</ThemedText>
+    <View
+      style={[styles.row, { borderBottomColor: C.border }]}
+      row
+      aligned
+      spaced
+    >
+      <ThemedText style={[styles.rowText, { color: C.text }]}>
+        {title}
+      </ThemedText>
       <Switch
         value={value}
         onValueChange={onToggle}
-        trackColor={{ false: "#D0D5DD", true: "#013D25" }}
+        trackColor={{ false: C.border, true: C.primary }}
       />
     </View>
   );
@@ -50,6 +59,7 @@ export default function PreferencesScreen() {
           title='Show account balance'
           value={!!showBalance}
           onToggle={() => handlePreference({ showBalance: !showBalance })}
+          C={C}
         />
         <PrefRow
           title='Transaction sound'
@@ -57,16 +67,19 @@ export default function PreferencesScreen() {
           onToggle={() =>
             handlePreference({ transactionSound: !transactionSound })
           }
+          C={C}
         />
 
         <TouchableOpacity
-          style={styles.themeBtn}
+          style={[styles.themeBtn, { borderColor: C.border }]}
           activeOpacity={0.85}
           onPress={() =>
             handlePreference({ theme: scheme === "dark" ? "light" : "dark" })
           }
         >
-          <ThemedText style={styles.themeLabel}>Toggle app theme</ThemedText>
+          <ThemedText style={[styles.themeLabel, { color: C.text }]}>
+            Toggle app theme
+          </ThemedText>
           <ThemedText style={[styles.themeValue, { color: C.tint }]}>
             {scheme === "dark" ? "Dark" : "Light"}
           </ThemedText>
@@ -85,18 +98,16 @@ const styles = StyleSheet.create({
   },
   content: { paddingHorizontal: 16, paddingTop: 16 },
   row: {
-    borderBottomColor: "#F1F2F4",
     borderBottomWidth: 1,
     paddingVertical: 14,
   },
-  rowText: { fontSize: 14, color: "#0B0014" },
+  rowText: { fontSize: 14 },
   themeBtn: {
     marginTop: 20,
     borderWidth: 1,
-    borderColor: "#E4E7EC",
     borderRadius: 10,
     padding: 12,
   },
-  themeLabel: { color: "#344054", marginBottom: 4 },
+  themeLabel: { marginBottom: 4 },
   themeValue: { fontWeight: "700" },
 });
