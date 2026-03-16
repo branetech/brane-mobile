@@ -44,12 +44,12 @@ export default function HelpDeskScreen() {
 
       <ScrollView contentContainerStyle={styles.content}>
         <TouchableOpacity
-          style={styles.contactCard}
+          style={[styles.contactCard, { borderColor: C.border }]}
           activeOpacity={0.85}
           onPress={() => router.push("/support")}
         >
           <ThemedText type='defaultSemiBold'>Open Support Center</ThemedText>
-          <ThemedText style={styles.subText}>
+          <ThemedText style={[styles.subText, { color: C.muted }]}>
             Chat with support and browse frequently asked questions.
           </ThemedText>
         </TouchableOpacity>
@@ -57,20 +57,24 @@ export default function HelpDeskScreen() {
         {FAQS.map((item, index) => {
           const expanded = open === index;
           return (
-            <View key={item.q} style={styles.faqItem}>
+            <View key={item.q} style={[styles.faqItem, { borderBottomColor: C.border }]}>
               <TouchableOpacity
                 style={styles.faqHeader}
                 onPress={() => setOpen(expanded ? null : index)}
               >
-                <ThemedText style={styles.faqTitle}>{item.q}</ThemedText>
+                <ThemedText style={[styles.faqTitle, { color: C.text }]}>
+                  {item.q}
+                </ThemedText>
                 {expanded ? (
-                  <Minus size={16} color='#013D25' />
+                  <Minus size={16} color={C.primary} />
                 ) : (
-                  <Add size={16} color='#013D25' />
+                  <Add size={16} color={C.primary} />
                 )}
               </TouchableOpacity>
               {expanded && (
-                <ThemedText style={styles.faqBody}>{item.a}</ThemedText>
+                <ThemedText style={[styles.faqBody, { color: C.muted }]}>
+                  {item.a}
+                </ThemedText>
               )}
             </View>
           );
@@ -90,15 +94,13 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24 },
   contactCard: {
     borderWidth: 1,
-    borderColor: "#E4E7EC",
     borderRadius: 12,
     padding: 14,
     marginBottom: 14,
   },
-  subText: { color: "#667085", marginTop: 4, fontSize: 12 },
+  subText: { marginTop: 4, fontSize: 12 },
   faqItem: {
     borderBottomWidth: 1,
-    borderBottomColor: "#F2F4F7",
     paddingVertical: 12,
   },
   faqHeader: {
@@ -107,6 +109,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  faqTitle: { flex: 1, color: "#101828" },
-  faqBody: { marginTop: 8, color: "#475467", fontSize: 12, lineHeight: 18 },
+  faqTitle: { flex: 1 },
+  faqBody: { marginTop: 8, fontSize: 12, lineHeight: 18 },
 });
