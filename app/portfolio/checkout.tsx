@@ -188,7 +188,7 @@ export default function CheckoutScreen() {
           text='Continue'
           onPress={handleContinue}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.googleBg}
           height={52}
           radius={12}
           width='100%'
@@ -236,7 +236,7 @@ export default function CheckoutScreen() {
           text='Confirm Purchase'
           onPress={() => setPinVisible(true)}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.googleBg}
           height={52}
           radius={12}
           width='100%'
@@ -256,7 +256,7 @@ export default function CheckoutScreen() {
 
   const renderSuccess = () => (
     <View style={styles.successContainer}>
-      <TickCircle size={80} color='#09734C' variant='Bold' />
+      <TickCircle size={80} color={C.primary} variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Purchase Successful!
       </ThemedText>
@@ -269,7 +269,7 @@ export default function CheckoutScreen() {
           text='View Portfolio'
           onPress={() => router.push("/(tabs)/portfolio")}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.googleBg}
           height={52}
           radius={12}
           width='100%'
