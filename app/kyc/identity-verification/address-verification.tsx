@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import UploadMethodItem from "@/components/kyc/upload-method-item";
 import { ThemedText } from "@/components/themed-text";
@@ -7,8 +7,8 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import BaseRequest, { catchError } from "@/services";
 import { View } from "@idimma/rn-widget";
-import { DocumentText1 } from "iconsax-react-native";
 import { useRouter } from "expo-router";
+import { DocumentText1 } from "iconsax-react-native";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -53,7 +53,7 @@ export default function AddressVerificationScreen() {
       </View>
 
       <View style={styles.content}>
-        <ThemedText type="subtitle">Address Verification</ThemedText>
+        <ThemedText type='subtitle'>Address Verification</ThemedText>
         <ThemedText style={[styles.help, { color: C.muted }]}>
           We need to verify your location for accuracy and authenticity
           purposes.
@@ -64,8 +64,8 @@ export default function AddressVerificationScreen() {
         </ThemedText>
 
         <UploadMethodItem
-          title="Utility Bill"
-          icon={<DocumentText1 size={20} color="#013D25" />}
+          title='Utility Bill'
+          icon={<DocumentText1 size={20} color='#013D25' />}
           selected={selectedOption === "utility"}
           onSelect={() => setSelectedOption("utility")}
           onFileChange={setFileUri}
@@ -75,7 +75,7 @@ export default function AddressVerificationScreen() {
 
       <View style={styles.footer}>
         <BraneButton
-          text="Proceed to Verify"
+          text='Proceed to Verify'
           onPress={onVerify}
           loading={loading}
           disabled={!fileUri}

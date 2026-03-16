@@ -1,5 +1,5 @@
-import Back from "@/components/Back";
 import { Avatar } from "@/components/avatar";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -10,10 +10,31 @@ import React from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Row = ({ label, value }: { label: string; value?: string | null }) => (
-  <View style={styles.row} row spaced aligned>
-    <ThemedText style={styles.label}>{label}</ThemedText>
-    <ThemedText style={styles.value}>{value || "-"}</ThemedText>
+const DetailRow = ({
+  label,
+  value,
+  labelColor,
+  valueColor,
+  borderColor,
+}: {
+  label: string;
+  value?: string | null;
+  labelColor: string;
+  valueColor: string;
+  borderColor: string;
+}) => (
+  <View
+    style={[styles.row, { borderBottomColor: borderColor }]}
+    row
+    spaced
+    aligned
+  >
+    <ThemedText style={[styles.label, { color: labelColor }]}>
+      {label}
+    </ThemedText>
+    <ThemedText style={[styles.value, { color: valueColor }]}>
+      {value || "-"}
+    </ThemedText>
   </View>
 );
 
@@ -31,30 +52,67 @@ export default function AccountDetailsScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle">Account details</ThemedText>
+        <ThemedText type='subtitle' style={{ color: C.text }}>
+          Account Details
+        </ThemedText>
         <View style={{ width: 44 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.avatarWrap}>
-          <Avatar name={fullName} src={user?.image} size={96} shape="circle" />
-          <ThemedText style={styles.avatarHint}>Profile details</ThemedText>
+          <Avatar name={fullName} src={user?.image} size={96} shape='circle' />
+          <ThemedText style={[styles.avatarHint, { color: C.primary }]}>
+            Profile Information
+          </ThemedText>
         </View>
 
-        <Row label="First Name" value={user?.firstName || undefined} />
-        <Row label="Last Name" value={user?.lastName || undefined} />
-        <Row label="Phone Number" value={user?.phone || undefined} />
-        <Row label="Email Address" value={user?.email || undefined} />
-        <Row
-          label="Username"
-          value={user?.username ? `@${user.username}` : undefined}
+        <DetailRow
+          label='First Name'
+          value={user?.firstName}
+          labelColor={C.muted}
+          valueColor={C.text}
+          borderColor={C.border}
         />
-        <Row label="Address" value={user?.houseAddress || undefined} />
+        <DetailRow
+          label='Last Name'
+          value={user?.lastName}
+          labelColor={C.muted}
+          valueColor={C.text}
+          borderColor={C.border}
+        />
+        <DetailRow
+          label='Phone Number'
+          value={user?.phone}
+          labelColor={C.muted}
+          valueColor={C.text}
+          borderColor={C.border}
+        />
+        <DetailRow
+          label='Email Address'
+          value={user?.email}
+          labelColor={C.muted}
+          valueColor={C.text}
+          borderColor={C.border}
+        />
+        <DetailRow
+          label='Username'
+          value={user?.username ? `@${user.username}` : undefined}
+          labelColor={C.muted}
+          valueColor={C.text}
+          borderColor={C.border}
+        />
+        <DetailRow
+          label='Address'
+          value={user?.houseAddress}
+          labelColor={C.muted}
+          valueColor={C.text}
+          borderColor={C.border}
+        />
 
-        <View style={styles.note}>
-          <ThemedText style={styles.noteText}>
-            For account information concerns, please send an email to
-            contact@getbrane.co for edits.
+        <View style={[styles.note, { backgroundColor: C.inputBg }]}>
+          <ThemedText style={[styles.noteText, { color: C.muted }]}>
+            For account information changes, please contact our support team at
+            support@getbrane.co
           </ThemedText>
         </View>
       </ScrollView>
@@ -76,37 +134,33 @@ const styles = StyleSheet.create({
   },
   avatarWrap: {
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 24,
     gap: 8,
   },
   avatarHint: {
-    color: "#013D25",
     fontSize: 13,
+    fontWeight: "500",
   },
   row: {
     borderBottomWidth: 1,
-    borderBottomColor: "#F7F7F8",
-    paddingVertical: 12,
+    paddingVertical: 14,
   },
   label: {
-    color: "#85808A",
     fontSize: 13,
   },
   value: {
-    color: "#0B0014",
     fontSize: 13,
     marginLeft: 10,
     flex: 1,
     textAlign: "right",
   },
   note: {
-    marginTop: 16,
-    backgroundColor: "#F0FAF6",
+    marginTop: 24,
     borderRadius: 12,
-    padding: 12,
+    padding: 14,
   },
   noteText: {
-    color: "#342A3B",
     fontSize: 12,
+    lineHeight: 18,
   },
 });

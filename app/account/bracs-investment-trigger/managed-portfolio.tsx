@@ -1,5 +1,5 @@
-import Back from "@/components/Back";
 import { RiskDisclosureModal } from "@/components/account/bracs-investment";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -42,12 +42,12 @@ export default function ManagedPortfolioScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <ImageBackground
         source={require("@/assets/images/network/CoverInvestment.png")}
-        resizeMode="cover"
+        resizeMode='cover'
         style={styles.bg}
       >
         <View style={styles.header} row aligned>
           <Back onPress={() => router.back()} />
-          <ThemedText type="subtitle" style={styles.title}>
+          <ThemedText type='subtitle' style={styles.title}>
             Bracs Investment Trigger
           </ThemedText>
           <View style={{ width: 44 }} />
@@ -57,10 +57,10 @@ export default function ManagedPortfolioScreen() {
           <Image
             source={require("@/assets/images/network/invest-brane.png")}
             style={styles.heroImage}
-            resizeMode="cover"
+            resizeMode='cover'
           />
 
-          <ThemedText type="subtitle" style={styles.headline}>
+          <ThemedText type='subtitle' style={styles.headline}>
             Let Expert Manage and Grow Your Wealth From Every Spending
           </ThemedText>
           <ThemedText style={styles.copy}>
@@ -91,7 +91,7 @@ export default function ManagedPortfolioScreen() {
           </ThemedText>
 
           <BraneButton
-            text="Proceed"
+            text='Proceed'
             onPress={() => setShowTerms(true)}
             loading={loading}
             style={styles.button}

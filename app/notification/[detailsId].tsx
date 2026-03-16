@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -47,7 +47,7 @@ export default function NotificationDetailScreen() {
       else setIsLoading(true);
       try {
         const response: any = await BaseRequest.get(
-          `/notification-service/notifications/${detailsId}`
+          `/notification-service/notifications/${detailsId}`,
         );
         const data = response?.data || response;
         if (Array.isArray(data) && data[0]) {
@@ -62,7 +62,7 @@ export default function NotificationDetailScreen() {
         setIsRefreshing(false);
       }
     },
-    [detailsId]
+    [detailsId],
   );
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function NotificationDetailScreen() {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned spaced>
         <Back />
-        <ThemedText type="defaultSemiBold" style={styles.headerTitle}>
+        <ThemedText type='defaultSemiBold' style={styles.headerTitle}>
           Notification
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -81,7 +81,7 @@ export default function NotificationDetailScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size="small" color="#013D25" />
+          <ActivityIndicator size='small' color='#013D25' />
         </View>
       ) : (
         <ScrollView
@@ -91,14 +91,14 @@ export default function NotificationDetailScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchDetail(true)}
-              tintColor="#013D25"
+              tintColor='#013D25'
             />
           }
         >
           {detail ? (
             <>
               <ThemedText
-                type="subtitle"
+                type='subtitle'
                 style={[styles.title, { color: C.text }]}
               >
                 {detail.title}
@@ -111,7 +111,9 @@ export default function NotificationDetailScreen() {
               </ThemedText>
             </>
           ) : (
-            <ThemedText style={{ color: C.muted, textAlign: "center", marginTop: 40 }}>
+            <ThemedText
+              style={{ color: C.muted, textAlign: "center", marginTop: 40 }}
+            >
               Notification not found.
             </ThemedText>
           )}

@@ -1,9 +1,9 @@
-import Back from "@/components/Back";
 import {
-    OptionRow,
-    SallyConfigModal,
-    SallyIntroModal,
+  OptionRow,
+  SallyConfigModal,
+  SallyIntroModal,
 } from "@/components/account/bracs-investment";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -169,7 +169,7 @@ export default function BracsInvestmentTriggerScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.push("/(tabs)/(account)")} />
-        <ThemedText type="subtitle" style={styles.title}>
+        <ThemedText type='subtitle' style={styles.title}>
           Bracs Investment Trigger
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -182,7 +182,7 @@ export default function BracsInvestmentTriggerScreen() {
 
         {loading ? (
           <View style={styles.loaderWrap}>
-            <ActivityIndicator size="small" color="#013D25" />
+            <ActivityIndicator size='small' color='#013D25' />
           </View>
         ) : (
           <View style={styles.card}>

@@ -1,7 +1,7 @@
 import { BraneButton } from "@/components/brane-button";
 import { FormInput, mapFormikProps } from "@/components/formInput";
 import { PhoneInput } from "@/components/phone-input";
-import { VerifyMethodModal } from "@/components/sign-up/verificationModal";
+import { VerifyMethodModal } from "@/components/sign-up/verification-modal";
 import { PassWrd } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -12,6 +12,7 @@ import { router } from "expo-router";
 import { Eye, EyeSlash } from "iconsax-react-native";
 import { useState } from "react";
 import * as yup from "yup";
+import ContinueWithGoogle from "../continue-with-google";
 
 type SignupFormProps = {
   initialValues: {
@@ -248,20 +249,7 @@ export function SignupForm({
           </ThemedText>
           <View style={{ flex: 1, height: 1, backgroundColor: C.border }} />
         </View>
-        <BraneButton
-          text="Continue with Google"
-          textColor={C.primary}
-          backgroundColor={C.googleBg}
-          onPress={() => console.log("Google Login")}
-          height={52}
-          radius={12}
-          leftIcon={
-            <Image
-              source={require("@/assets/images/Google.png")}
-              style={{ width: 18, height: 18 }}
-            />
-          }
-        />
+       <ContinueWithGoogle action="Continue with Google"/>
       </View>
       <View style={{ alignItems: "center", marginTop: 32 }}>
         <ThemedText style={{ fontSize: 12, color: C.muted }}>

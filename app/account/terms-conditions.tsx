@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -26,7 +26,7 @@ export default function TermsConditionsScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle">Terms & Conditions</ThemedText>
+        <ThemedText type='subtitle'>Terms & Conditions</ThemedText>
         <View style={{ width: 44 }} />
       </View>
 

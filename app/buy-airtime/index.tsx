@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -12,13 +12,13 @@ import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -95,7 +95,7 @@ export default function BuyAirtimeScreen() {
                 stage === "preview" ? setStage("form") : router.back()
               }
             />
-            <ThemedText type="subtitle" style={styles.headerTitle}>
+            <ThemedText type='subtitle' style={styles.headerTitle}>
               Buy Airtime
             </ThemedText>
             <View style={{ width: 44 }} />
@@ -103,13 +103,13 @@ export default function BuyAirtimeScreen() {
 
           <ScrollView
             contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps='handled'
             showsVerticalScrollIndicator={false}
           >
             {/* ── FORM ── */}
             {stage === "form" && (
               <>
-                <ThemedText type="defaultSemiBold">Select Network</ThemedText>
+                <ThemedText type='defaultSemiBold'>Select Network</ThemedText>
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -135,7 +135,7 @@ export default function BuyAirtimeScreen() {
                         <Image
                           source={networkImages[n.id]}
                           style={styles.networkLogo}
-                          resizeMode="contain"
+                          resizeMode='contain'
                         />
                         <ThemedText
                           style={[
@@ -152,19 +152,19 @@ export default function BuyAirtimeScreen() {
 
                 <View style={{ marginTop: 4, gap: 14 }}>
                   <FormInput
-                    labelText="Phone Number"
+                    labelText='Phone Number'
                     value={phone}
                     onChangeText={setPhone}
-                    keyboardType="phone-pad"
-                    placeholder="08012345678"
+                    keyboardType='phone-pad'
+                    placeholder='08012345678'
                   />
 
                   <FormInput
-                    labelText="Amount (₦)"
+                    labelText='Amount (₦)'
                     value={amount}
                     onChangeText={setAmount}
-                    keyboardType="number-pad"
-                    placeholder="Enter amount"
+                    keyboardType='number-pad'
+                    placeholder='Enter amount'
                   />
                 </View>
 
@@ -197,7 +197,7 @@ export default function BuyAirtimeScreen() {
                 </View>
 
                 <BraneButton
-                  text="Continue"
+                  text='Continue'
                   onPress={() => setStage("preview")}
                   disabled={!canContinue}
                   style={styles.button}
@@ -208,7 +208,7 @@ export default function BuyAirtimeScreen() {
             {/* ── PREVIEW ── */}
             {stage === "preview" && (
               <>
-                <ThemedText type="defaultSemiBold" style={{ marginBottom: 8 }}>
+                <ThemedText type='defaultSemiBold' style={{ marginBottom: 8 }}>
                   Confirm Purchase
                 </ThemedText>
 
@@ -220,26 +220,26 @@ export default function BuyAirtimeScreen() {
                   }}
                 >
                   <SummaryRow
-                    label="Network"
+                    label='Network'
                     value={selectedNetwork.toUpperCase()}
                     C={C}
                   />
                   <View
                     style={{ ...styles.divider, backgroundColor: C.border }}
                   />
-                  <SummaryRow label="Phone" value={phone} C={C} />
+                  <SummaryRow label='Phone' value={phone} C={C} />
                   <View
                     style={{ ...styles.divider, backgroundColor: C.border }}
                   />
                   <SummaryRow
-                    label="Amount"
+                    label='Amount'
                     value={priceFormatter(Number(amount))}
                     C={C}
                   />
                 </View>
 
                 <BraneButton
-                  text="Confirm & Pay"
+                  text='Confirm & Pay'
                   onPress={() => {
                     setStage("pin");
                     setPinVisible(true);
@@ -247,10 +247,10 @@ export default function BuyAirtimeScreen() {
                   style={styles.button}
                 />
                 <BraneButton
-                  text="Go Back"
+                  text='Go Back'
                   onPress={() => setStage("form")}
                   backgroundColor={C.inputBackground}
-                  textColor="#013D25"
+                  textColor='#013D25'
                   style={styles.secondaryButton}
                 />
               </>
@@ -259,15 +259,15 @@ export default function BuyAirtimeScreen() {
             {/* ── SUCCESS ── */}
             {stage === "success" && (
               <View style={{ ...styles.successWrap, gap: 12 }}>
-                <TickCircle size={72} color="#013D25" variant="Bold" />
-                <ThemedText type="subtitle" style={{ textAlign: "center" }}>
+                <TickCircle size={72} color='#013D25' variant='Bold' />
+                <ThemedText type='subtitle' style={{ textAlign: "center" }}>
                   Airtime Purchase Successful!
                 </ThemedText>
                 <ThemedText style={[styles.successSub, { color: C.muted }]}>
                   {priceFormatter(Number(amount))} airtime sent to {phone}
                 </ThemedText>
                 <BraneButton
-                  text="Done"
+                  text='Done'
                   onPress={() => router.replace("/(tabs)")}
                   style={styles.successButton}
                 />
@@ -292,7 +292,7 @@ function SummaryRow({
   return (
     <View style={styles.summaryRow}>
       <ThemedText style={{ color: C.muted, fontSize: 13 }}>{label}</ThemedText>
-      <ThemedText type="defaultSemiBold" style={{ fontSize: 14 }}>
+      <ThemedText type='defaultSemiBold' style={{ fontSize: 14 }}>
         {value}
       </ThemedText>
     </View>

@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -30,7 +30,8 @@ const toArray = (v: any): any[] => {
 
 const getTransactionTypeColor = (type: string) => {
   const t = String(type || "").toLowerCase();
-  if (t.includes("buy") || t.includes("purchase")) return { color: "#09734C", bg: "#EAF8F1" };
+  if (t.includes("buy") || t.includes("purchase"))
+    return { color: "#09734C", bg: "#EAF8F1" };
   if (t.includes("sell")) return { color: "#D50000", bg: "#FDECEC" };
   return { color: "#B5760A", bg: "#FFF7E8" };
 };
@@ -90,14 +91,19 @@ export default function StockTransactionScreen() {
     const txType = String(
       item?.transactionType || item?.type || item?.action || "-",
     );
-    const amount = Number(item?.amount || item?.totalAmount || item?.price || 0);
+    const amount = Number(
+      item?.amount || item?.totalAmount || item?.price || 0,
+    );
     const quantity = Number(item?.quantity || item?.units || 0);
     const date = item?.createdAt || item?.date || item?.transactionDate;
     const typeColors = getTransactionTypeColor(txType);
 
     return (
       <TouchableOpacity
-        style={{ ...StyleSheet.flatten(styles.listItem), borderColor: C.border }}
+        style={{
+          ...StyleSheet.flatten(styles.listItem),
+          borderColor: C.border,
+        }}
         activeOpacity={0.7}
         onPress={() =>
           router.push({
@@ -108,33 +114,52 @@ export default function StockTransactionScreen() {
       >
         <View style={styles.itemLeft}>
           <View
-            style={{ ...StyleSheet.flatten(styles.typePill), backgroundColor: typeColors.bg }}
+            style={{
+              ...StyleSheet.flatten(styles.typePill),
+              backgroundColor: typeColors.bg,
+            }}
           >
             <ThemedText
-              style={{ ...StyleSheet.flatten(styles.typeText), color: typeColors.color }}
+              style={{
+                ...StyleSheet.flatten(styles.typeText),
+                color: typeColors.color,
+              }}
             >
               {txType.toUpperCase()}
             </ThemedText>
           </View>
-          <ThemedText style={{ ...StyleSheet.flatten(styles.companyName), color: C.text }}>
+          <ThemedText
+            style={{ ...StyleSheet.flatten(styles.companyName), color: C.text }}
+          >
             {companyName}
           </ThemedText>
           {!!ticker && (
-            <ThemedText style={{ ...StyleSheet.flatten(styles.tickerText), color: C.muted }}>
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.tickerText),
+                color: C.muted,
+              }}
+            >
               {ticker.toUpperCase()}
             </ThemedText>
           )}
           {quantity > 0 && (
-            <ThemedText style={{ ...StyleSheet.flatten(styles.quantity), color: C.muted }}>
+            <ThemedText
+              style={{ ...StyleSheet.flatten(styles.quantity), color: C.muted }}
+            >
               {quantity} {quantity === 1 ? "unit" : "units"}
             </ThemedText>
           )}
         </View>
         <View style={styles.itemRight}>
-          <ThemedText style={{ ...StyleSheet.flatten(styles.amount), color: C.text }}>
+          <ThemedText
+            style={{ ...StyleSheet.flatten(styles.amount), color: C.text }}
+          >
             {priceFormatter(amount, 2)}
           </ThemedText>
-          <ThemedText style={{ ...StyleSheet.flatten(styles.dateText), color: C.muted }}>
+          <ThemedText
+            style={{ ...StyleSheet.flatten(styles.dateText), color: C.muted }}
+          >
             {formatDate(String(date || ""), "MMM dd, yyyy")}
           </ThemedText>
         </View>
@@ -154,58 +179,121 @@ export default function StockTransactionScreen() {
 
     return (
       <View style={styles.detailContent}>
-        <View style={{ ...StyleSheet.flatten(styles.detailCard), borderColor: C.border }}>
-          <ThemedText style={{ ...StyleSheet.flatten(styles.detailTitle), color: C.muted }}>
-            {singleTx?.companyName || singleTx?.stockName || "Stock Transaction"}
+        <View
+          style={{
+            ...StyleSheet.flatten(styles.detailCard),
+            borderColor: C.border,
+          }}
+        >
+          <ThemedText
+            style={{
+              ...StyleSheet.flatten(styles.detailTitle),
+              color: C.muted,
+            }}
+          >
+            {singleTx?.companyName ||
+              singleTx?.stockName ||
+              "Stock Transaction"}
           </ThemedText>
-          <ThemedText style={{ ...StyleSheet.flatten(styles.detailAmount), color: C.text }}>
+          <ThemedText
+            style={{
+              ...StyleSheet.flatten(styles.detailAmount),
+              color: C.text,
+            }}
+          >
             {priceFormatter(amount, 2)}
           </ThemedText>
           <View
-            style={{ ...StyleSheet.flatten(styles.typePill), backgroundColor: typeColors.bg }}
+            style={{
+              ...StyleSheet.flatten(styles.typePill),
+              backgroundColor: typeColors.bg,
+            }}
           >
-            <ThemedText style={{ ...StyleSheet.flatten(styles.typeText), color: typeColors.color }}>
+            <ThemedText
+              style={{
+                ...StyleSheet.flatten(styles.typeText),
+                color: typeColors.color,
+              }}
+            >
               {txType.toUpperCase()}
             </ThemedText>
           </View>
         </View>
 
-        <View style={{ ...StyleSheet.flatten(styles.detailRows), borderColor: C.border }}>
-          <DetailRow label="Ticker" value={String(singleTx?.tickerSymbol || singleTx?.ticker || "-")} C={C} />
+        <View
+          style={{
+            ...StyleSheet.flatten(styles.detailRows),
+            borderColor: C.border,
+          }}
+        >
           <DetailRow
-            label="Quantity"
+            label='Ticker'
+            value={String(singleTx?.tickerSymbol || singleTx?.ticker || "-")}
+            C={C}
+          />
+          <DetailRow
+            label='Quantity'
             value={String(singleTx?.quantity || singleTx?.units || "-")}
             C={C}
           />
-          <DetailRow label="Price per Unit" value={priceFormatter(Number(singleTx?.pricePerUnit || singleTx?.unitPrice || 0), 2)} C={C} />
-          <DetailRow label="Total Amount" value={priceFormatter(amount, 2)} C={C} />
-          <DetailRow label="Status" value={String(singleTx?.status || "-")} C={C} />
           <DetailRow
-            label="Date"
-            value={formatDate(String(singleTx?.createdAt || singleTx?.date || ""), "MMMM dd, yyyy | hh:mm a")}
+            label='Price per Unit'
+            value={priceFormatter(
+              Number(singleTx?.pricePerUnit || singleTx?.unitPrice || 0),
+              2,
+            )}
             C={C}
           />
-          <DetailRow label="Reference" value={String(singleTx?.id || singleTx?._id || "-")} C={C} />
+          <DetailRow
+            label='Total Amount'
+            value={priceFormatter(amount, 2)}
+            C={C}
+          />
+          <DetailRow
+            label='Status'
+            value={String(singleTx?.status || "-")}
+            C={C}
+          />
+          <DetailRow
+            label='Date'
+            value={formatDate(
+              String(singleTx?.createdAt || singleTx?.date || ""),
+              "MMMM dd, yyyy | hh:mm a",
+            )}
+            C={C}
+          />
+          <DetailRow
+            label='Reference'
+            value={String(singleTx?.id || singleTx?._id || "-")}
+            C={C}
+          />
         </View>
 
         <BraneButton
-          text="Buy More Stocks"
+          text='Buy More Stocks'
           onPress={() => router.push("/stock")}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
-          width="100%"
+          width='100%'
         />
       </View>
     );
   };
 
   return (
-    <SafeAreaView style={{ ...StyleSheet.flatten(styles.screen), backgroundColor: C.background }}>
+    <SafeAreaView
+      style={{
+        ...StyleSheet.flatten(styles.screen),
+        backgroundColor: C.background,
+      }}
+    >
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
-        <ThemedText style={{ ...StyleSheet.flatten(styles.headerTitle), color: C.text }}>
+        <ThemedText
+          style={{ ...StyleSheet.flatten(styles.headerTitle), color: C.text }}
+        >
           {isAll ? "Stock Transactions" : "Transaction Detail"}
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -218,9 +306,7 @@ export default function StockTransactionScreen() {
       ) : isAll ? (
         <FlatList
           data={transactions}
-          keyExtractor={(item, idx) =>
-            String(item?.id || item?._id || idx)
-          }
+          keyExtractor={(item, idx) => String(item?.id || item?._id || idx)}
           renderItem={renderListItem}
           contentContainerStyle={styles.listContent}
           refreshControl={
@@ -231,7 +317,12 @@ export default function StockTransactionScreen() {
           }
           ListEmptyComponent={
             <View style={styles.emptyWrap}>
-              <ThemedText style={{ ...StyleSheet.flatten(styles.emptyText), color: C.muted }}>
+              <ThemedText
+                style={{
+                  ...StyleSheet.flatten(styles.emptyText),
+                  color: C.muted,
+                }}
+              >
                 No stock transactions found
               </ThemedText>
             </View>
@@ -266,10 +357,14 @@ function DetailRow({
 }) {
   return (
     <View style={styles.detailRow}>
-      <ThemedText style={{ ...StyleSheet.flatten(styles.detailLabel), color: C.muted }}>
+      <ThemedText
+        style={{ ...StyleSheet.flatten(styles.detailLabel), color: C.muted }}
+      >
         {label}
       </ThemedText>
-      <ThemedText style={{ ...StyleSheet.flatten(styles.detailValue), color: C.text }}>
+      <ThemedText
+        style={{ ...StyleSheet.flatten(styles.detailValue), color: C.text }}
+      >
         {value || "-"}
       </ThemedText>
     </View>

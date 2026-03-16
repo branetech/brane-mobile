@@ -1,10 +1,11 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRequest } from "@/services/useRequest";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
+import { CheckCircle, CloseCircle } from "iconsax-react-native";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,13 +30,25 @@ export default function KycBankDetailsScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle">Bank Verification</ThemedText>
+        <ThemedText type='subtitle'>Bank Verification</ThemedText>
         <View style={{ width: 44 }} />
       </View>
 
       <View style={styles.content}>
-        <View style={styles.statusCard}>
-          <ThemedText type="defaultSemiBold">Status</ThemedText>
+        <View
+          style={[
+            styles.statusCard,
+            { backgroundColor: C.inputBg, borderColor: C.border },
+          ]}
+        >
+          <View row aligned gap={8}>
+            <ThemedText type='defaultSemiBold'>Status</ThemedText>
+            {hasLinkedBank ? (
+              <CheckCircle size={18} color='#027A48' />
+            ) : (
+              <CloseCircle size={18} color='#B42318' />
+            )}
+          </View>
           <ThemedText
             style={[
               styles.status,
@@ -68,7 +81,6 @@ const styles = StyleSheet.create({
   },
   statusCard: {
     borderWidth: 1,
-    borderColor: "#E4E7EC",
     borderRadius: 12,
     padding: 14,
     gap: 8,

@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { OTPInput } from "@/components/otp-input";
@@ -12,11 +12,11 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    ScrollView,
-    StyleSheet,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -77,14 +77,14 @@ export default function ChangeUsernameScreen() {
       >
         <View style={styles.header} row aligned>
           <Back onPress={() => router.back()} />
-          <ThemedText type="subtitle">Change Username</ThemedText>
+          <ThemedText type='subtitle'>Change Username</ThemedText>
           <View style={{ width: 44 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>
           {stage === 1 ? (
             <>
-              <ThemedText type="defaultSemiBold">Verify user</ThemedText>
+              <ThemedText type='defaultSemiBold'>Verify user</ThemedText>
               <ThemedText style={[styles.text, { color: C.muted }]}>
                 Enter the 6-digit code sent to your email/phone.
               </ThemedText>
@@ -92,31 +92,31 @@ export default function ChangeUsernameScreen() {
                 <OTPInput onComplete={setOtp} />
               </View>
               <BraneButton
-                text="Proceed"
+                text='Proceed'
                 onPress={onVerifyOtp}
                 loading={loading}
                 disabled={otp.length < 6}
                 style={styles.btn}
               />
               <BraneButton
-                text="Resend OTP"
+                text='Resend OTP'
                 onPress={onResend}
-                backgroundColor="#F7F7F8"
-                textColor="#013D25"
+                backgroundColor={C.inputBg}
+                textColor={C.primary}
                 style={{ marginTop: 10 }}
               />
             </>
           ) : (
             <>
               <FormInput
-                labelText="Username"
-                placeholder="Enter new username"
-                autoCapitalize="none"
+                labelText='Username'
+                placeholder='Enter new username'
+                autoCapitalize='none'
                 value={username}
                 onChangeText={setUsername}
               />
               <BraneButton
-                text="Save Username"
+                text='Save Username'
                 onPress={onSubmitUsername}
                 loading={loading}
                 disabled={!username.trim()}
@@ -130,12 +130,24 @@ export default function ChangeUsernameScreen() {
       <Modal
         visible={success}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setSuccess(false)}
       >
         <View style={styles.overlay}>
-          <View style={styles.card}>
-            <ThemedText type="subtitle" style={{ textAlign: "center" }}>
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: C.background,
+                borderColor: C.border,
+                borderWidth: 1,
+              },
+            ]}
+          >
+            <ThemedText
+              type='subtitle'
+              style={[{ textAlign: "center", color: C.text }]}
+            >
               Successful
             </ThemedText>
             <ThemedText
@@ -147,7 +159,7 @@ export default function ChangeUsernameScreen() {
               Username change was successful.
             </ThemedText>
             <BraneButton
-              text="Dismiss"
+              text='Dismiss'
               onPress={() => router.push("/(tabs)")}
               style={{ marginTop: 16 }}
             />
@@ -174,5 +186,5 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,.35)",
     paddingHorizontal: 20,
   },
-  card: { backgroundColor: "#fff", borderRadius: 12, padding: 18 },
+  card: { borderRadius: 12, padding: 18 },
 });

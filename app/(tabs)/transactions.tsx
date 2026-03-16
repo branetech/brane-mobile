@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import BaseRequest from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -8,14 +8,14 @@ import { useRouter } from "expo-router";
 import { SearchNormal1, Setting3 } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    Modal,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Modal,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -114,16 +114,16 @@ export default function TransactionScreen() {
         <Back onPress={() => router.back()} />
         <ThemedText style={styles.title}>Transaction History</ThemedText>
         <TouchableOpacity onPress={() => setShowFilterModal(true)}>
-          <Setting3 size={20} color="#0B0014" variant="Outline" />
+          <Setting3 size={20} color='#0B0014' variant='Outline' />
         </TouchableOpacity>
       </View>
 
       <View style={styles.searchRow}>
-        <SearchNormal1 size={16} color="#7A7A80" variant="Outline" />
+        <SearchNormal1 size={16} color='#7A7A80' variant='Outline' />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search transactions"
-          placeholderTextColor="#A4A4AA"
+          placeholder='Search transactions'
+          placeholderTextColor='#A4A4AA'
           value={search}
           onChangeText={setSearch}
           onSubmitEditing={() => fetchTransactions()}
@@ -132,7 +132,7 @@ export default function TransactionScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color="#013D25" />
+          <ActivityIndicator color='#013D25' />
         </View>
       ) : (
         <ScrollView
@@ -205,7 +205,7 @@ export default function TransactionScreen() {
         </ScrollView>
       )}
 
-      <Modal visible={showFilterModal} transparent animationType="slide">
+      <Modal visible={showFilterModal} transparent animationType='slide'>
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}

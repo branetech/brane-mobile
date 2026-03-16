@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { EmptyState } from "@/components/empty-state";
 import { ThemedText } from "@/components/themed-text";
@@ -57,11 +57,13 @@ export default function BankAccountScreen() {
     else setIsLoading(true);
     try {
       const response: any = await BaseRequest.get(
-        TRANSACTION_SERVICE.BENEFICIARIES
+        TRANSACTION_SERVICE.BENEFICIARIES,
       );
       const records = toArray(response).map((item: any, index: number) => ({
         id: String(item?.id ?? item?._id ?? index),
-        bankName: String(item?.bankName ?? item?.bank ?? item?.institution ?? "Bank"),
+        bankName: String(
+          item?.bankName ?? item?.bank ?? item?.institution ?? "Bank",
+        ),
         accountNumber: String(item?.accountNumber ?? item?.account ?? ""),
         accountName: String(item?.accountName ?? item?.name ?? ""),
       }));
@@ -80,7 +82,7 @@ export default function BankAccountScreen() {
     setIsDeleting(true);
     try {
       await BaseRequest.delete(
-        `${TRANSACTION_SERVICE.BENEFICIARIES}/${pendingDelete.id}`
+        `${TRANSACTION_SERVICE.BENEFICIARIES}/${pendingDelete.id}`,
       );
       showSuccess("Bank account removed successfully");
       setPendingDelete(null);
@@ -98,17 +100,25 @@ export default function BankAccountScreen() {
 
   const renderItem = useCallback(
     ({ item }: { item: IBankAccount }) => (
-      <View style={StyleSheet.flatten([styles.card, { borderColor: C.border }])} row aligned spaced>
+      <View
+        style={StyleSheet.flatten([styles.card, { borderColor: C.border }])}
+        row
+        aligned
+        spaced
+      >
         <View
-          style={StyleSheet.flatten([styles.bankIcon, { backgroundColor: C.googleBg }])}
-          align="center"
-          justify="center"
+          style={StyleSheet.flatten([
+            styles.bankIcon,
+            { backgroundColor: C.googleBg },
+          ])}
+          align='center'
+          justify='center'
         >
-          <Bank size={20} color="#013D25" variant="TwoTone" />
+          <Bank size={20} color='#013D25' variant='TwoTone' />
         </View>
         <View style={{ flex: 1, marginLeft: 12 }}>
           <ThemedText
-            type="defaultSemiBold"
+            type='defaultSemiBold'
             style={{ fontSize: 14, color: C.text }}
           >
             {item.bankName}
@@ -125,18 +135,18 @@ export default function BankAccountScreen() {
           activeOpacity={0.7}
           onPress={() => setPendingDelete(item)}
         >
-          <Trash size={18} color="#CB010B" variant="TwoTone" />
+          <Trash size={18} color='#CB010B' variant='TwoTone' />
         </TouchableOpacity>
       </View>
     ),
-    [C]
+    [C],
   );
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned spaced>
         <Back />
-        <ThemedText type="defaultSemiBold" style={styles.headerTitle}>
+        <ThemedText type='defaultSemiBold' style={styles.headerTitle}>
           Bank Accounts
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -144,7 +154,7 @@ export default function BankAccountScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size="small" color="#013D25" />
+          <ActivityIndicator size='small' color='#013D25' />
         </View>
       ) : (
         <FlatList
@@ -156,7 +166,7 @@ export default function BankAccountScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchAccounts(true)}
-              tintColor="#013D25"
+              tintColor='#013D25'
             />
           }
           renderItem={renderItem}
@@ -165,7 +175,7 @@ export default function BankAccountScreen() {
               <EmptyState>
                 <View style={{ gap: 4, alignItems: "center" }}>
                   <ThemedText
-                    type="defaultSemiBold"
+                    type='defaultSemiBold'
                     style={{ fontSize: 14, color: C.text }}
                   >
                     No bank accounts added
@@ -182,7 +192,7 @@ export default function BankAccountScreen() {
                   </ThemedText>
                 </View>
                 <BraneButton
-                  text="Add Bank Account"
+                  text='Add Bank Account'
                   onPress={() => router.push("/add-funds/bank")}
                   width={200}
                   style={{ marginTop: 8 }}
@@ -196,9 +206,9 @@ export default function BankAccountScreen() {
       {accounts.length > 0 && (
         <View style={styles.fab}>
           <BraneButton
-            text="Add Bank Account"
+            text='Add Bank Account'
             onPress={() => router.push("/add-funds/bank")}
-            leftIcon={<Add size={18} color="#fff" />}
+            leftIcon={<Add size={18} color='#fff' />}
           />
         </View>
       )}
@@ -207,15 +217,18 @@ export default function BankAccountScreen() {
       <Modal
         visible={!!pendingDelete}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setPendingDelete(null)}
       >
         <View style={styles.modalOverlay}>
           <View
-            style={StyleSheet.flatten([styles.modalCard, { backgroundColor: C.background }])}
+            style={StyleSheet.flatten([
+              styles.modalCard,
+              { backgroundColor: C.background },
+            ])}
           >
             <ThemedText
-              type="defaultSemiBold"
+              type='defaultSemiBold'
               style={{ fontSize: 16, color: C.text, textAlign: "center" }}
             >
               Remove Bank Account
@@ -233,12 +246,15 @@ export default function BankAccountScreen() {
             </ThemedText>
             <View style={styles.modalActions} row>
               <TouchableOpacity
-                style={[styles.modalBtn, { borderColor: C.border, borderWidth: 1 }]}
+                style={[
+                  styles.modalBtn,
+                  { borderColor: C.border, borderWidth: 1 },
+                ]}
                 activeOpacity={0.7}
                 onPress={() => setPendingDelete(null)}
               >
                 <ThemedText
-                  type="defaultSemiBold"
+                  type='defaultSemiBold'
                   style={{ fontSize: 14, color: C.text }}
                 >
                   Cancel
@@ -251,10 +267,10 @@ export default function BankAccountScreen() {
                 disabled={isDeleting}
               >
                 {isDeleting ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size='small' color='#fff' />
                 ) : (
                   <ThemedText
-                    type="defaultSemiBold"
+                    type='defaultSemiBold'
                     style={{ fontSize: 14, color: "#fff" }}
                   >
                     Remove

@@ -1,8 +1,8 @@
-import Back from "@/components/Back";
 import {
-    AllocationSliderRow,
-    OptionRow,
+  AllocationSliderRow,
+  OptionRow,
 } from "@/components/account/bracs-investment";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -106,7 +106,7 @@ export default function BracsAllocationScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={styles.title}>
+        <ThemedText type='subtitle' style={styles.title}>
           Bracs Allocation
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -114,7 +114,7 @@ export default function BracsAllocationScreen() {
 
       {fetching ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size="small" color="#013D25" />
+          <ActivityIndicator size='small' color='#013D25' />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.content}>
@@ -125,28 +125,28 @@ export default function BracsAllocationScreen() {
 
           <View style={styles.sliderCardWrap}>
             <AllocationSliderRow
-              label="Stock assets"
+              label='Stock assets'
               value={allocation.stockAsset}
               onChange={(next) =>
                 setAllocation((prev) => ({ ...prev, stockAsset: next }))
               }
             />
             <AllocationSliderRow
-              label="Gold assets"
+              label='Gold assets'
               value={allocation.goldAsset}
               onChange={(next) =>
                 setAllocation((prev) => ({ ...prev, goldAsset: next }))
               }
             />
             <AllocationSliderRow
-              label="Fixed income"
+              label='Fixed income'
               value={allocation.fixedIncome}
               onChange={(next) =>
                 setAllocation((prev) => ({ ...prev, fixedIncome: next }))
               }
             />
             <AllocationSliderRow
-              label="Index funds"
+              label='Index funds'
               value={allocation.indexFund}
               onChange={(next) =>
                 setAllocation((prev) => ({ ...prev, indexFund: next }))
@@ -162,15 +162,15 @@ export default function BracsAllocationScreen() {
 
           <View style={styles.aiOptionWrap}>
             <OptionRow
-              title="AI Recommended Trades"
-              description="Enable or disable AI recommended trades"
+              title='AI Recommended Trades'
+              description='Enable or disable AI recommended trades'
               isSelected={isAiTradesEnabled}
               onPress={() => setIsAiTradesEnabled((prev) => !prev)}
             />
           </View>
 
           <BraneButton
-            text="Save Settings"
+            text='Save Settings'
             onPress={onSave}
             loading={loading}
             disabled={!isValid}

@@ -5,17 +5,17 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
 import React, { useRef, useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    View as RNView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  View as RNView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import Back from "../Back";
-import { PinSuccessModal } from "./pinModal";
+import Back from "../back";
+import { PinSuccessModal } from "./pin-modal";
 
 type Props = {
   back: () => void;
@@ -128,7 +128,7 @@ export default function SetPinScreen({
           <Back onPress={back} />
 
           <View style={{ marginVertical: 24 }}>
-            <ThemedText type="subtitle">Set-up Transaction Pin</ThemedText>
+            <ThemedText type='subtitle'>Set-up Transaction Pin</ThemedText>
             <ThemedText style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>
               Create and confirm your 6-digit transaction pin
             </ThemedText>
@@ -152,7 +152,7 @@ export default function SetPinScreen({
               }
             }}
             style={styles.hiddenInput}
-            keyboardType="number-pad"
+            keyboardType='number-pad'
             autoFocus
           />
 
@@ -187,14 +187,14 @@ export default function SetPinScreen({
               }
             }}
             style={styles.hiddenInput}
-            keyboardType="number-pad"
+            keyboardType='number-pad'
           />
 
           <View
             style={{ flex: 1, justifyContent: "flex-end", marginBottom: 24 }}
           >
             <BraneButton
-              text="Set Pin"
+              text='Set Pin'
               onPress={handleSetPin}
               disabled={isButtonDisabled || isLoading}
               loading={isLoading}

@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -38,7 +38,7 @@ export default function HelpDeskScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle">Help Desk</ThemedText>
+        <ThemedText type='subtitle'>Help Desk</ThemedText>
         <View style={{ width: 44 }} />
       </View>
 
@@ -48,7 +48,7 @@ export default function HelpDeskScreen() {
           activeOpacity={0.85}
           onPress={() => router.push("/support")}
         >
-          <ThemedText type="defaultSemiBold">Open Support Center</ThemedText>
+          <ThemedText type='defaultSemiBold'>Open Support Center</ThemedText>
           <ThemedText style={styles.subText}>
             Chat with support and browse frequently asked questions.
           </ThemedText>
@@ -64,9 +64,9 @@ export default function HelpDeskScreen() {
               >
                 <ThemedText style={styles.faqTitle}>{item.q}</ThemedText>
                 {expanded ? (
-                  <Minus size={16} color="#013D25" />
+                  <Minus size={16} color='#013D25' />
                 ) : (
-                  <Add size={16} color="#013D25" />
+                  <Add size={16} color='#013D25' />
                 )}
               </TouchableOpacity>
               {expanded && (

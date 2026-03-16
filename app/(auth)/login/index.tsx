@@ -1,4 +1,5 @@
 import { BraneButton } from "@/components/brane-button";
+import ContinueWithGoogle from "@/components/continue-with-google";
 import { FormInput, mapFormikProps } from "@/components/formInput";
 import { PhoneInput } from "@/components/phone-input";
 import { PassWrd } from "@/components/svg";
@@ -6,6 +7,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useFormHandler } from "@/hooks/use-formik";
+import { useBiometricAuth } from "@/hooks/useBiometricAuth";
 import { setRefreshToken, setToken, setUser } from "@/redux/slice/auth-slice";
 import BaseRequest, { parseNetworkError } from "@/services";
 import { formatPhoneNumber, showError } from "@/utils/helpers";
@@ -26,6 +28,58 @@ export default function LoginScreen() {
   const C = Colors[themeKey];
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { isLoading: isBiometricLoading, availability, authenticate, retrieveCredentials } = useBiometricAuth();
+
+  const handleBiometricLogin = async () => {
+    try {
+      setIsLoading(true);
+
+      // Authenticate with biometric
+      const authResult = await authenticate();
+      if (!authResult.success) {
+        showError(authResult.error || "Biometric authentication failed");
+        return;
+      }
+
+      // Retrieve stored credentials
+      const credentialsResult = await retrieveCredentials();
+      if (credentialsResult.error || !credentialsResult.credentials) {
+        showError("No stored credentials found. Please login manually.");
+        return;
+      }
+
+      // Login with retrieved credentials
+      const payload = {
+        phone: credentialsResult.credentials.phoneNumber,
+        password: credentialsResult.credentials.password,
+      };
+
+      const response: any = await BaseRequest.post(
+        "/auth-service/signin",
+        payload,
+      );
+      const authCredentials =
+        response?.data?.authCredentials || response?.authCredentials;
+      const user = response?.data
+        ? { ...response.data, authCredentials: undefined }
+        : response;
+
+      if (!authCredentials?.accessToken) {
+        showError("Unable to complete login. Please try again.");
+        return;
+      }
+
+      dispatch(setUser(user));
+      dispatch(setToken(authCredentials.accessToken));
+      dispatch(setRefreshToken(authCredentials.refreshToken || null));
+      router.replace("/(tabs)");
+    } catch (error: any) {
+      const { message } = parseNetworkError(error);
+      showError(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const { form, isDisabled } = useFormHandler({
     initialValues: { phone: "", password: "" },
@@ -108,7 +162,7 @@ export default function LoginScreen() {
                   <PhoneInput
                     value={form.values.phone}
                     onPhoneChange={(val) => form.setFieldValue("phone", val)}
-                    placeholder="8092738 223776"
+                    placeholder='8092738 223776'
                   />
                 </View>
 
@@ -124,21 +178,21 @@ export default function LoginScreen() {
                         size={20}
                       />
                     }
-                    placeholder="Enter password"
+                    placeholder='Enter password'
                     secureTextEntry={!showPassword}
                     rightContent={
                       <TouchableOpacity
                         onPress={() => setShowPassword((p) => !p)}
                       >
                         {showPassword ? (
-                          <EyeSlash size="20" color={C.muted} />
+                          <EyeSlash size='20' color={C.muted} />
                         ) : (
-                          <Eye size="20" color={C.muted} />
+                          <Eye size='20' color={C.muted} />
                         )}
                       </TouchableOpacity>
                     }
                     {...mapFormikProps("password", form)}
-                    labelText="Password"
+                    labelText='Password'
                   />
                   <TouchableOpacity
                     onPress={() => router.push("/(auth)/forgot-password")}
@@ -167,7 +221,7 @@ export default function LoginScreen() {
                 }}
               >
                 <BraneButton
-                  text="Login"
+                  text='Login'
                   onPress={() => form.handleSubmit()}
                   disabled={isDisabled || isLoading}
                   loading={isLoading}
@@ -177,23 +231,27 @@ export default function LoginScreen() {
                   radius={12}
                   style={{ flex: 1, marginRight: 12 }}
                 />
-                <TouchableOpacity
-                  style={{
-                    width: 52,
-                    height: 52,
-                    borderRadius: 12,
-                    borderWidth: 1,
-                    borderColor: C.fingerBorder,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    opacity: 0.4,
-                  }}
-                >
-                  <Image
-                    source={require("@/assets/images/finger-scan.png")}
-                    style={{ width: 32, height: 32 }}
-                  />
-                </TouchableOpacity>
+                {availability.available && (
+                  <TouchableOpacity
+                    onPress={handleBiometricLogin}
+                    disabled={isLoading || isBiometricLoading}
+                    style={{
+                      width: 52,
+                      height: 52,
+                      borderRadius: 12,
+                      borderWidth: 1,
+                      borderColor: C.fingerBorder,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      opacity: isLoading || isBiometricLoading ? 0.6 : 1,
+                    }}
+                  >
+                    <Image
+                      source={require("@/assets/images/finger-scan.png")}
+                      style={{ width: 32, height: 32 }}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
 
               <View
@@ -225,21 +283,7 @@ export default function LoginScreen() {
                 />
               </View>
 
-              <BraneButton
-                text="Continue with Google"
-                textColor={C.primary}
-                backgroundColor={C.googleBg}
-                onPress={() => console.log("Google Login")}
-                height={52}
-                radius={12}
-                leftIcon={
-                  <Image
-                    source={require("@/assets/images/Google.png")}
-                    style={{ width: 18, height: 18 }}
-                  />
-                }
-                fontSize={14}
-              />
+              <ContinueWithGoogle action='Continue with Google' />
 
               <View style={{ alignItems: "center", marginTop: 32 }}>
                 <ThemedText style={{ fontSize: 12, color: C.muted }}>

@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { SuccessModal } from "@/components/success-modal";
@@ -76,11 +76,11 @@ export default function CardScreen() {
             {savedCards.length === 0 ? (
               <BraneButton
                 style={styles.addNewCardBtn}
-                backgroundColor="#C5E8D9"
-                text="Add New Card"
+                backgroundColor='#C5E8D9'
+                text='Add New Card'
                 onPress={() => router.push("/add-funds/add-card")}
-                leftIcon={<Add size={14} color="#013D25" />}
-                textColor="#013D25"
+                leftIcon={<Add size={14} color='#013D25' />}
+                textColor='#013D25'
                 fontSize={12}
                 radius={8}
                 height={36}
@@ -136,8 +136,8 @@ export default function CardScreen() {
             Fund Amount
           </ThemedText>
           <FormInput
-            placeholder="Enter amount"
-            keyboardType="number-pad"
+            placeholder='Enter amount'
+            keyboardType='number-pad'
             value={amount}
             onChangeText={setAmount}
             inputContainerStyle={styles.amountInputContainer}
@@ -176,7 +176,7 @@ export default function CardScreen() {
       {savedCards.length > 0 && (
         <View style={[styles.footer, { borderTopColor: C.border }]}>
           <BraneButton
-            text="Fund Wallet"
+            text='Fund Wallet'
             onPress={() => {
               if (!amount || !selectedCard) return;
               handleFund();
@@ -193,9 +193,9 @@ export default function CardScreen() {
 
       <SuccessModal
         visible={showSuccessModal}
-        title="Transaction Successful"
+        title='Transaction Successful'
         description={`You've successfully funded your account with ₦${formattedAmount}.`}
-        actionText="Dismiss"
+        actionText='Dismiss'
         onAction={() => {
           setShowSuccessModal(false);
           router.replace("/(tabs)");

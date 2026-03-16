@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import BaseRequest from "@/services";
@@ -8,12 +8,12 @@ import { ITransactionDetail } from "@/utils/index";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -104,7 +104,7 @@ export default function TransactionDetailScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color="#013D25" />
+          <ActivityIndicator color='#013D25' />
         </View>
       ) : (
         <ScrollView
@@ -143,61 +143,61 @@ export default function TransactionDetailScreen() {
 
           <View style={styles.detailsCard}>
             <DetailRow
-              title="Reference ID"
+              title='Reference ID'
               value={String(transaction?.id || "-")}
             />
             <DetailRow
-              title="Date & Time"
+              title='Date & Time'
               value={formatDate(
                 transaction?.createdAt,
                 "MMMM dd, yyyy | hh:mm a",
               )}
             />
             <DetailRow
-              title="Transaction Type"
+              title='Transaction Type'
               value={String(transaction?.transactionType || "-")}
             />
             <DetailRow
-              title="Recipient"
+              title='Recipient'
               value={String(transaction?.sentTo || "-")}
             />
             <DetailRow
-              title="Service Charge"
+              title='Service Charge'
               value={priceFormatter(Number(transaction?.serviceCharge || 0))}
             />
             <DetailRow
-              title="Amount"
+              title='Amount'
               value={priceFormatter(Number(transaction?.amount || 0))}
             />
 
             {branePayload?.serviceID ? (
               <DetailRow
-                title="Service ID"
+                title='Service ID'
                 value={String(branePayload.serviceID)}
               />
             ) : null}
             {branePayload?.variation_code ? (
               <DetailRow
-                title="Variation Code"
+                title='Variation Code'
                 value={String(branePayload.variation_code)}
               />
             ) : null}
             {meta?.token ? (
-              <DetailRow title="Token" value={String(meta.token)} />
+              <DetailRow title='Token' value={String(meta.token)} />
             ) : null}
           </View>
 
           {buyAgainRoute ? (
             <BraneButton
-              text="Buy Again"
+              text='Buy Again'
               onPress={() =>
                 router.push({
                   pathname: "/bills-utilities/select",
                   params: { service: buyAgainRoute },
                 })
               }
-              backgroundColor="#013D25"
-              textColor="#D2F1E4"
+              backgroundColor='#013D25'
+              textColor='#D2F1E4'
               height={48}
               radius={10}
             />

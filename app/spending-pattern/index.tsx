@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -17,7 +17,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type Period = "daily" | "weekly" | "monthly" | "yearly";
-type ServiceFilter = "all" | "airtime" | "data" | "electricity" | "cable" | "betting";
+type ServiceFilter =
+  | "all"
+  | "airtime"
+  | "data"
+  | "electricity"
+  | "cable"
+  | "betting";
 
 type SpendingEntry = {
   id?: string;
@@ -130,11 +136,10 @@ export default function SpendingPatternScreen() {
   const filteredEntries =
     selectedFilter === "all"
       ? entries
-      : entries.filter(
-          (e) =>
-            (e.category ?? e.service ?? "")
-              .toLowerCase()
-              .includes(selectedFilter)
+      : entries.filter((e) =>
+          (e.category ?? e.service ?? "")
+            .toLowerCase()
+            .includes(selectedFilter),
         );
 
   // Build bar chart data from entries (grouped by service/category)
@@ -150,7 +155,7 @@ export default function SpendingPatternScreen() {
       {/* Header */}
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={styles.headerTitle}>
+        <ThemedText type='subtitle' style={styles.headerTitle}>
           Spending Pattern
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -196,7 +201,7 @@ export default function SpendingPatternScreen() {
 
         {loading ? (
           <View style={styles.loaderWrap}>
-            <ActivityIndicator color="#013D25" size="large" />
+            <ActivityIndicator color='#013D25' size='large' />
             <ThemedText style={{ color: C.muted, marginTop: 10 }}>
               Loading spending data…
             </ThemedText>
@@ -206,25 +211,31 @@ export default function SpendingPatternScreen() {
             {/* Summary cards */}
             <View style={styles.summaryRow} row gap={12}>
               <View
-                style={{ ...styles.summaryCard, backgroundColor: "#D2F1E4", flex: 1 }}
+                style={{
+                  ...styles.summaryCard,
+                  backgroundColor: "#D2F1E4",
+                  flex: 1,
+                }}
                 gap={4}
               >
-                <ThemedText style={styles.summaryLabel}>
-                  Total Spent
-                </ThemedText>
-                <ThemedText type="subtitle" style={styles.summaryValue}>
+                <ThemedText style={styles.summaryLabel}>Total Spent</ThemedText>
+                <ThemedText type='subtitle' style={styles.summaryValue}>
                   {priceFormatter(totalSpent)}
                 </ThemedText>
               </View>
 
               <View
-                style={{ ...styles.summaryCard, backgroundColor: "#FFF3DB", flex: 1 }}
+                style={{
+                  ...styles.summaryCard,
+                  backgroundColor: "#FFF3DB",
+                  flex: 1,
+                }}
                 gap={4}
               >
                 <ThemedText style={styles.summaryLabel}>
                   Transactions
                 </ThemedText>
-                <ThemedText type="subtitle" style={styles.summaryValue}>
+                <ThemedText type='subtitle' style={styles.summaryValue}>
                   {transactionCount ?? 0}
                 </ThemedText>
               </View>
@@ -233,10 +244,16 @@ export default function SpendingPatternScreen() {
             {/* Bar visualisation */}
             {Object.keys(barGroups).length > 0 && (
               <View
-                style={{ ...styles.barCard, backgroundColor: C.inputBackground, borderColor: C.border }}
+                style={{
+                  ...styles.barCard,
+                  backgroundColor: C.inputBackground,
+                  borderColor: C.border,
+                }}
                 gap={12}
               >
-                <ThemedText type="defaultSemiBold">Breakdown by Service</ThemedText>
+                <ThemedText type='defaultSemiBold'>
+                  Breakdown by Service
+                </ThemedText>
                 {Object.entries(barGroups).map(([key, value]) => {
                   const pct = (value / maxBarValue) * 100;
                   const barColor =
@@ -245,7 +262,12 @@ export default function SpendingPatternScreen() {
                     <View key={key} gap={4}>
                       <View style={styles.barLabelRow} row aligned>
                         <ThemedText
-                          style={{ fontSize: 12, textTransform: "capitalize", color: C.text, flex: 1 }}
+                          style={{
+                            fontSize: 12,
+                            textTransform: "capitalize",
+                            color: C.text,
+                            flex: 1,
+                          }}
                         >
                           {key}
                         </ThemedText>
@@ -254,10 +276,17 @@ export default function SpendingPatternScreen() {
                         </ThemedText>
                       </View>
                       <View
-                        style={{ ...styles.barTrack, backgroundColor: C.border }}
+                        style={{
+                          ...styles.barTrack,
+                          backgroundColor: C.border,
+                        }}
                       >
                         <View
-                          style={{ ...styles.barFill, width: `${pct}%` as any, backgroundColor: barColor }}
+                          style={{
+                            ...styles.barFill,
+                            width: `${pct}%` as any,
+                            backgroundColor: barColor,
+                          }}
                         />
                       </View>
                     </View>
@@ -303,7 +332,7 @@ export default function SpendingPatternScreen() {
             </ScrollView>
 
             {/* Spending entries list */}
-            <ThemedText type="defaultSemiBold">Recent Spending</ThemedText>
+            <ThemedText type='defaultSemiBold'>Recent Spending</ThemedText>
 
             {filteredEntries.length === 0 ? (
               <View style={styles.emptyWrap}>
@@ -315,18 +344,27 @@ export default function SpendingPatternScreen() {
               <View gap={8}>
                 {filteredEntries.map((entry, idx) => {
                   const key = (
-                    entry.category ?? entry.service ?? "other"
+                    entry.category ??
+                    entry.service ??
+                    "other"
                   ).toLowerCase();
                   const dotColor = SERVICE_BAR_COLORS[key] ?? "#013D25";
                   return (
                     <View
                       key={entry.id ?? String(idx)}
-                      style={{ ...styles.entryRow, backgroundColor: C.inputBackground, borderColor: C.border }}
+                      style={{
+                        ...styles.entryRow,
+                        backgroundColor: C.inputBackground,
+                        borderColor: C.border,
+                      }}
                       row
                       aligned
                     >
                       <View
-                        style={{ ...styles.entryDot, backgroundColor: dotColor }}
+                        style={{
+                          ...styles.entryDot,
+                          backgroundColor: dotColor,
+                        }}
                       />
                       <View style={{ flex: 1 }} gap={2}>
                         <ThemedText
@@ -337,18 +375,19 @@ export default function SpendingPatternScreen() {
                             color: C.text,
                           }}
                         >
-                          {entry.description ?? entry.category ?? entry.service ?? "Transaction"}
+                          {entry.description ??
+                            entry.category ??
+                            entry.service ??
+                            "Transaction"}
                         </ThemedText>
                         {!!entry.date && (
-                          <ThemedText
-                            style={{ fontSize: 11, color: C.muted }}
-                          >
+                          <ThemedText style={{ fontSize: 11, color: C.muted }}>
                             {entry.date}
                           </ThemedText>
                         )}
                       </View>
                       <ThemedText
-                        type="defaultSemiBold"
+                        type='defaultSemiBold'
                         style={{ fontSize: 14, color: C.text }}
                       >
                         {priceFormatter(entry.amount)}

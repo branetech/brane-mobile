@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -8,11 +8,11 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Switch,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -72,7 +72,7 @@ export default function SendMoneyScreen() {
       setFormValues((prev) => ({
         ...prev,
         accountNumber: nextAccount,
-        recipientName: nextAccount.length === 10 ? "Oluwatosin Solomon" : "",
+        recipientName: nextAccount.length === 10 ? "" : "", // TODO: Fetch recipient name from API
       }));
       setErrors((prev) => ({
         ...prev,
@@ -125,8 +125,8 @@ export default function SendMoneyScreen() {
 
           <View style={styles.form}>
             <FormInput
-              placeholder="0127277063"
-              keyboardType="number-pad"
+              placeholder='0127277063'
+              keyboardType='number-pad'
               value={formValues.accountNumber}
               onChangeText={(value) => handleChange("accountNumber", value)}
               error={errors.accountNumber}
@@ -136,7 +136,7 @@ export default function SendMoneyScreen() {
 
             <ThemedText style={styles.helperText}>Bank</ThemedText>
             <FormInput
-              placeholder="Guaranty Trust Bank"
+              placeholder='Guaranty Trust Bank'
               value={formValues.bankName}
               onChangeText={(value) => handleChange("bankName", value)}
               error={errors.bankName}
@@ -146,7 +146,7 @@ export default function SendMoneyScreen() {
 
             <ThemedText style={styles.helperText}>Recipient Name</ThemedText>
             <FormInput
-              placeholder="Oluwatosin Solomon"
+              placeholder='Enter recipient name'
               value={formValues.recipientName}
               onChangeText={(value) => handleChange("recipientName", value)}
               error={errors.recipientName}
@@ -159,24 +159,24 @@ export default function SendMoneyScreen() {
 
         <View style={styles.footer}>
           <BraneButton
-            text="Next"
+            text='Next'
             onPress={handleNext}
-            backgroundColor="#013D25"
-            textColor="#D2F1E4"
+            backgroundColor={C.primary}
+            textColor={scheme === "dark" ? "#fff" : "#D2F1E4"}
             height={48}
             radius={8}
             fontSize={11}
           />
 
           <View style={styles.beneficiaryRow}>
-            <ThemedText style={styles.beneficiaryText}>
+            <ThemedText style={[styles.beneficiaryText, { color: C.muted }]}>
               Add to beneficiaries
             </ThemedText>
             <Switch
               value={addToBeneficiaries}
               onValueChange={setAddToBeneficiaries}
-              trackColor={{ false: "#E6E6E8", true: "#D2F1E4" }}
-              thumbColor={addToBeneficiaries ? "#013D25" : "#B9B9BD"}
+              trackColor={{ false: C.border, true: C.primary + "40" }}
+              thumbColor={addToBeneficiaries ? C.primary : C.muted}
             />
           </View>
         </View>

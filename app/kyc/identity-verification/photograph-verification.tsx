@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import UploadMethodItem from "@/components/kyc/upload-method-item";
 import { ThemedText } from "@/components/themed-text";
@@ -7,8 +7,8 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import BaseRequest, { catchError } from "@/services";
 import { View } from "@idimma/rn-widget";
-import { ProfileCircle } from "iconsax-react-native";
 import { useRouter } from "expo-router";
+import { ProfileCircle } from "iconsax-react-native";
 import React, { useState } from "react";
 import { Modal, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -50,22 +50,25 @@ export default function PhotographVerificationScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}> 
+    <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
       </View>
 
       <View style={styles.content}>
-        <ThemedText type="subtitle">Passport Verification</ThemedText>
-        <ThemedText style={[styles.help, { color: C.muted }]}> 
-          We need your passport photograph to verify your identity for accuracy and authenticity purposes.
+        <ThemedText type='subtitle'>Passport Verification</ThemedText>
+        <ThemedText style={[styles.help, { color: C.muted }]}>
+          We need your passport photograph to verify your identity for accuracy
+          and authenticity purposes.
         </ThemedText>
 
-        <ThemedText style={styles.sectionTitle}>Select Verification Method</ThemedText>
+        <ThemedText style={styles.sectionTitle}>
+          Select Verification Method
+        </ThemedText>
 
         <UploadMethodItem
-          title="Upload Passport"
-          icon={<ProfileCircle size={20} color="#013D25" />}
+          title='Upload Passport'
+          icon={<ProfileCircle size={20} color='#013D25' />}
           selected={selectedOption === "uploadPassport"}
           onSelect={() => setSelectedOption("uploadPassport")}
           onFileChange={setFileUri}
@@ -75,7 +78,7 @@ export default function PhotographVerificationScreen() {
 
       <View style={styles.footer}>
         <BraneButton
-          text="Proceed to Verify"
+          text='Proceed to Verify'
           onPress={onVerify}
           loading={loading}
           disabled={!fileUri}
@@ -84,15 +87,22 @@ export default function PhotographVerificationScreen() {
         />
       </View>
 
-      <Modal visible={success} transparent animationType="fade" onRequestClose={() => setSuccess(false)}>
+      <Modal
+        visible={success}
+        transparent
+        animationType='fade'
+        onRequestClose={() => setSuccess(false)}
+      >
         <View style={styles.successOverlay}>
           <View style={styles.successCard}>
-            <ThemedText type="subtitle" style={{ textAlign: "center" }}>Successful</ThemedText>
-            <ThemedText style={[styles.successText, { color: C.muted }]}> 
+            <ThemedText type='subtitle' style={{ textAlign: "center" }}>
+              Successful
+            </ThemedText>
+            <ThemedText style={[styles.successText, { color: C.muted }]}>
               Your passport has been submitted for verification.
             </ThemedText>
             <BraneButton
-              text="Proceed"
+              text='Proceed'
               onPress={() => {
                 setSuccess(false);
                 router.push("/kyc/identity-verification");

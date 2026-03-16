@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -11,10 +11,10 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -64,7 +64,7 @@ export default function ResetTransactionPinScreen() {
       >
         <View style={styles.header} row aligned>
           <Back onPress={() => router.back()} />
-          <ThemedText type="subtitle">Reset Transaction PIN</ThemedText>
+          <ThemedText type='subtitle'>Reset Transaction PIN</ThemedText>
           <View style={{ width: 44 }} />
         </View>
 
@@ -74,41 +74,48 @@ export default function ResetTransactionPinScreen() {
           </ThemedText>
 
           <FormInput
-            labelText="Current PIN"
-            placeholder="Enter current PIN"
+            labelText='Current PIN'
+            placeholder='Enter current PIN'
             value={oldPin}
             onChangeText={setOldPin}
-            keyboardType="number-pad"
+            keyboardType='number-pad'
             secureTextEntry
             maxLength={4}
           />
 
           <FormInput
-            labelText="New PIN"
-            placeholder="Enter new PIN"
+            labelText='New PIN'
+            placeholder='Enter new PIN'
             value={newPin}
             onChangeText={setNewPin}
-            keyboardType="number-pad"
+            keyboardType='number-pad'
             secureTextEntry
             maxLength={4}
           />
 
           <FormInput
-            labelText="Confirm PIN"
-            placeholder="Re-enter new PIN"
+            labelText='Confirm PIN'
+            placeholder='Re-enter new PIN'
             value={confirmPin}
             onChangeText={setConfirmPin}
-            keyboardType="number-pad"
+            keyboardType='number-pad'
             secureTextEntry
             maxLength={4}
           />
 
           {!!pinError && (
-            <ThemedText style={styles.error}>{pinError}</ThemedText>
+            <ThemedText
+              style={[
+                styles.error,
+                { color: C.primary === "#013D25" ? "#D92D20" : "#FF6B6B" },
+              ]}
+            >
+              {pinError}
+            </ThemedText>
           )}
 
           <BraneButton
-            text="Update PIN"
+            text='Update PIN'
             onPress={onSubmit}
             disabled={!canSubmit}
             loading={loading}
@@ -129,5 +136,5 @@ const styles = StyleSheet.create({
   },
   content: { paddingHorizontal: 16, paddingTop: 16 },
   help: { fontSize: 12, marginBottom: 8 },
-  error: { color: "#D92D20", marginTop: 8, fontSize: 12 },
+  error: { marginTop: 8, fontSize: 12 },
 });

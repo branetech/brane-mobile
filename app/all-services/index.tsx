@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -7,10 +7,10 @@ import { useRouter } from "expo-router";
 import { ArrowRight2 } from "iconsax-react-native";
 import React, { useMemo, useState } from "react";
 import {
-    SectionList,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
+  SectionList,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -200,7 +200,7 @@ export default function AllServicesScreen() {
       {/* Header */}
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={styles.headerTitle}>
+        <ThemedText type='subtitle' style={styles.headerTitle}>
           All Services
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -218,12 +218,12 @@ export default function AllServicesScreen() {
       >
         <TextInput
           style={[styles.searchInput, { color: C.text }]}
-          placeholder="Search services…"
+          placeholder='Search services…'
           placeholderTextColor={C.muted}
           value={query}
           onChangeText={setQuery}
-          returnKeyType="search"
-          clearButtonMode="while-editing"
+          returnKeyType='search'
+          clearButtonMode='while-editing'
         />
       </View>
 
@@ -235,7 +235,7 @@ export default function AllServicesScreen() {
         showsVerticalScrollIndicator={false}
         renderSectionHeader={({ section }) => (
           <ThemedText
-            type="defaultSemiBold"
+            type='defaultSemiBold'
             style={[styles.sectionTitle, { color: C.muted }]}
           >
             {section.title}

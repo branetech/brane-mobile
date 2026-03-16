@@ -4,7 +4,7 @@ import { View } from "@idimma/rn-widget";
 import { Sms } from "iconsax-react-native";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import * as yup from "yup";
-import Back from "../Back";
+import Back from "../back";
 import { BraneButton } from "../brane-button";
 import { FormInput, mapFormikProps } from "../formInput";
 
@@ -56,8 +56,8 @@ export default function ForgotPassword({
           <View>
             <FormInput
               labelText={"Email address"}
-              leftContent={<Sms size="20" color="#89888B" />}
-              placeholder="Enter email address"
+              leftContent={<Sms size='20' color='#89888B' />}
+              placeholder='Enter email address'
               {...mapFormikProps("email", form)}
             />
           </View>
@@ -67,7 +67,7 @@ export default function ForgotPassword({
             disabled={buttonDisabled}
             loading={isLoading}
             text={"Send Reset Code"}
-            textColor="#D2F1E4"
+            textColor='#D2F1E4'
             onPress={() => {
               form.handleSubmit();
             }}

@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { EmptyState } from "@/components/empty-state";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -9,11 +9,11 @@ import { View } from "@idimma/rn-widget";
 import { Notification as BellIcon } from "iconsax-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -106,7 +106,7 @@ export default function NotificationScreen() {
       >
         <View style={styles.header}>
           <Back onPress={() => setSelected(null)} />
-          <ThemedText type="defaultSemiBold" style={styles.headerTitle}>
+          <ThemedText type='defaultSemiBold' style={styles.headerTitle}>
             Notification
           </ThemedText>
           <View style={{ width: 44 }} />
@@ -114,12 +114,12 @@ export default function NotificationScreen() {
 
         {isDetailLoading ? (
           <View style={styles.loaderWrap}>
-            <ActivityIndicator size="small" color="#013D25" />
+            <ActivityIndicator size='small' color='#013D25' />
           </View>
         ) : (
           <View style={styles.detailContent}>
             <ThemedText
-              type="subtitle"
+              type='subtitle'
               style={{ color: C.text, lineHeight: 28 }}
             >
               {selected.title}
@@ -142,7 +142,7 @@ export default function NotificationScreen() {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back />
-        <ThemedText type="defaultSemiBold" style={styles.headerTitle}>
+        <ThemedText type='defaultSemiBold' style={styles.headerTitle}>
           Notification
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -150,7 +150,7 @@ export default function NotificationScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size="small" color="#013D25" />
+          <ActivityIndicator size='small' color='#013D25' />
         </View>
       ) : hasNotifications ? (
         <ScrollView
@@ -181,7 +181,7 @@ export default function NotificationScreen() {
             >
               <ThemedText style={styles.cardDate}>{item.date}</ThemedText>
               <ThemedText
-                type="defaultSemiBold"
+                type='defaultSemiBold'
                 style={{ color: C.text, fontSize: 14, marginTop: 4 }}
                 numberOfLines={2}
               >
@@ -204,10 +204,10 @@ export default function NotificationScreen() {
       ) : (
         <View style={styles.emptyWrapper}>
           <EmptyState>
-            <BellIcon variant="TwoTone" size={24} color="#013D25" />
+            <BellIcon variant='TwoTone' size={24} color='#013D25' />
             <View style={{ gap: 4, alignItems: "center" }}>
               <ThemedText
-                type="defaultSemiBold"
+                type='defaultSemiBold'
                 style={{ fontSize: 14, color: C.text }}
               >
                 No new notification

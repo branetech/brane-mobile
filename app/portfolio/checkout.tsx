@@ -1,9 +1,9 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import {
-    PaymentMethodSelector,
-    type PaymentOption,
+  PaymentMethodSelector,
+  type PaymentOption,
 } from "@/components/payment-method-selector";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
@@ -12,21 +12,21 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
 import {
-    hideAppLoader,
-    priceFormatter,
-    showAppLoader,
-    showError,
+  hideAppLoader,
+  priceFormatter,
+  showAppLoader,
+  showError,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -128,7 +128,7 @@ export default function CheckoutScreen() {
     >
       <ScrollView
         contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps='handled'
       >
         <View
           style={{
@@ -146,7 +146,7 @@ export default function CheckoutScreen() {
             Current Price
           </ThemedText>
           {isFetchingPrice ? (
-            <ActivityIndicator size="small" color={C.primary} />
+            <ActivityIndicator size='small' color={C.primary} />
           ) : (
             <ThemedText style={[styles.value, { color: C.text }]}>
               {priceFormatter(currentPrice, 2)}
@@ -155,11 +155,11 @@ export default function CheckoutScreen() {
         </View>
 
         <FormInput
-          labelText="Quantity"
-          placeholder="Enter number of units"
+          labelText='Quantity'
+          placeholder='Enter number of units'
           value={quantity}
           onChangeText={(v) => setQuantity(v.replace(/\D/g, ""))}
-          keyboardType="numeric"
+          keyboardType='numeric'
         />
 
         {Number(quantity) > 0 && (
@@ -185,13 +185,13 @@ export default function CheckoutScreen() {
         />
 
         <BraneButton
-          text="Continue"
+          text='Continue'
           onPress={handleContinue}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
-          width="100%"
+          width='100%'
           disabled={!quantity || Number(quantity) <= 0}
         />
       </ScrollView>
@@ -204,25 +204,25 @@ export default function CheckoutScreen() {
         style={{ ...StyleSheet.flatten(styles.card), borderColor: C.border }}
       >
         <PreviewRow
-          label="Stock"
+          label='Stock'
           value={companyName || stockData?.name || ticker}
           C={C}
         />
-        <PreviewRow label="Ticker" value={ticker.toUpperCase()} C={C} />
-        <PreviewRow label="Quantity" value={`${quantity} units`} C={C} />
+        <PreviewRow label='Ticker' value={ticker.toUpperCase()} C={C} />
+        <PreviewRow label='Quantity' value={`${quantity} units`} C={C} />
         <PreviewRow
-          label="Price per Unit"
+          label='Price per Unit'
           value={priceFormatter(currentPrice, 2)}
           C={C}
         />
         <PreviewRow
-          label="Total Amount"
+          label='Total Amount'
           value={priceFormatter(total, 2)}
           C={C}
           highlighted
         />
         <PreviewRow
-          label="Payment Method"
+          label='Payment Method'
           value={
             paymentOptions.find((o) => o.id === paymentMethodId)?.label ||
             paymentMethodId
@@ -233,22 +233,22 @@ export default function CheckoutScreen() {
 
       <View style={{ gap: 12 }}>
         <BraneButton
-          text="Confirm Purchase"
+          text='Confirm Purchase'
           onPress={() => setPinVisible(true)}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
-          width="100%"
+          width='100%'
         />
         <BraneButton
-          text="Go Back"
+          text='Go Back'
           onPress={() => setStage("form")}
-          backgroundColor="transparent"
+          backgroundColor='transparent'
           textColor={C.primary}
           height={52}
           radius={12}
-          width="100%"
+          width='100%'
         />
       </View>
     </ScrollView>
@@ -256,7 +256,7 @@ export default function CheckoutScreen() {
 
   const renderSuccess = () => (
     <View style={styles.successContainer}>
-      <TickCircle size={80} color="#09734C" variant="Bold" />
+      <TickCircle size={80} color='#09734C' variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Purchase Successful!
       </ThemedText>
@@ -266,22 +266,22 @@ export default function CheckoutScreen() {
       </ThemedText>
       <View style={{ gap: 12, width: "100%", marginTop: 24 }}>
         <BraneButton
-          text="View Portfolio"
+          text='View Portfolio'
           onPress={() => router.push("/(tabs)/portfolio")}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
-          width="100%"
+          width='100%'
         />
         <BraneButton
-          text="Go Home"
+          text='Go Home'
           onPress={() => router.push("/(tabs)")}
-          backgroundColor="transparent"
+          backgroundColor='transparent'
           textColor={C.primary}
           height={52}
           radius={12}
-          width="100%"
+          width='100%'
         />
       </View>
     </View>

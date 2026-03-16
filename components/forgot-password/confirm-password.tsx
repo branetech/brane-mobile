@@ -5,7 +5,7 @@ import { Eye, EyeSlash, Lock } from "iconsax-react-native";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import * as yup from "yup";
-import Back from "../Back";
+import Back from "../back";
 import { BraneButton } from "../brane-button";
 import { FormInput, mapFormikProps } from "../formInput";
 
@@ -62,15 +62,15 @@ export default function ConfirmPassword({
           <View>
             <FormInput
               labelText={"Password"}
-              leftContent={<Lock size="20" color="#89888B" />}
-              placeholder="Enter password"
+              leftContent={<Lock size='20' color='#89888B' />}
+              placeholder='Enter password'
               secureTextEntry={!showPassword}
               rightContent={
                 <TouchableOpacity onPress={() => setShowPassword((p) => !p)}>
                   {showPassword ? (
-                    <EyeSlash size="20" color="#89888B" />
+                    <EyeSlash size='20' color='#89888B' />
                   ) : (
-                    <Eye size="20" color="#89888B" />
+                    <Eye size='20' color='#89888B' />
                   )}
                 </TouchableOpacity>
               }
@@ -80,17 +80,17 @@ export default function ConfirmPassword({
           <View>
             <FormInput
               labelText={"Confirm Password"}
-              leftContent={<Lock size="20" color="#89888B" />}
-              placeholder="Enter password"
+              leftContent={<Lock size='20' color='#89888B' />}
+              placeholder='Enter password'
               secureTextEntry={!showConfirmPassword}
               rightContent={
                 <TouchableOpacity
                   onPress={() => setShowConfirmPassword((p) => !p)}
                 >
                   {showConfirmPassword ? (
-                    <EyeSlash size="20" color="#89888B" />
+                    <EyeSlash size='20' color='#89888B' />
                   ) : (
-                    <Eye size="20" color="#89888B" />
+                    <Eye size='20' color='#89888B' />
                   )}
                 </TouchableOpacity>
               }
@@ -116,7 +116,7 @@ export default function ConfirmPassword({
             disabled={buttonDisabled}
             loading={isLoading}
             text={"Reset Password"}
-            textColor="#D2F1E4"
+            textColor='#D2F1E4'
             onPress={() => form.handleSubmit()}
           />
         </View>

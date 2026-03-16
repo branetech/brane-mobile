@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { EmptyState } from "@/components/empty-state";
 import { ThemedText } from "@/components/themed-text";
@@ -38,8 +38,7 @@ const toArray = (v: any): any[] => {
   return [];
 };
 
-const maskCardNumber = (last4: string): string =>
-  `●●●●  ●●●●  ●●●●  ${last4}`;
+const maskCardNumber = (last4: string): string => `●●●●  ●●●●  ●●●●  ${last4}`;
 
 const formatExpiry = (month: string, year: string): string => {
   if (!month && !year) return "";
@@ -65,9 +64,15 @@ export default function SavedCardsScreen() {
       const records = toArray(response).map((item: any, index: number) => ({
         id: String(item?.id ?? item?._id ?? index),
         last4: String(item?.last4 ?? item?.lastFour ?? item?.last_four ?? ""),
-        cardType: String(item?.cardType ?? item?.card_type ?? item?.brand ?? item?.type ?? ""),
-        expiryMonth: String(item?.expiryMonth ?? item?.expiry_month ?? item?.exp_month ?? ""),
-        expiryYear: String(item?.expiryYear ?? item?.expiry_year ?? item?.exp_year ?? ""),
+        cardType: String(
+          item?.cardType ?? item?.card_type ?? item?.brand ?? item?.type ?? "",
+        ),
+        expiryMonth: String(
+          item?.expiryMonth ?? item?.expiry_month ?? item?.exp_month ?? "",
+        ),
+        expiryYear: String(
+          item?.expiryYear ?? item?.expiry_year ?? item?.exp_year ?? "",
+        ),
         bank: String(item?.bank ?? item?.bankName ?? item?.issuer ?? ""),
       }));
       setCards(records);
@@ -85,7 +90,7 @@ export default function SavedCardsScreen() {
     setIsDeleting(true);
     try {
       await BaseRequest.delete(
-        TRANSACTION_SERVICE.DELETE_SINGLE_CARD(pendingDelete.id)
+        TRANSACTION_SERVICE.DELETE_SINGLE_CARD(pendingDelete.id),
       );
       showSuccess("Card removed successfully");
       setPendingDelete(null);
@@ -103,17 +108,25 @@ export default function SavedCardsScreen() {
 
   const renderItem = useCallback(
     ({ item }: { item: ISavedCard }) => (
-      <View style={StyleSheet.flatten([styles.card, { borderColor: C.border }])} row aligned spaced>
+      <View
+        style={StyleSheet.flatten([styles.card, { borderColor: C.border }])}
+        row
+        aligned
+        spaced
+      >
         <View
-          style={StyleSheet.flatten([styles.cardIcon, { backgroundColor: C.googleBg }])}
-          align="center"
-          justify="center"
+          style={StyleSheet.flatten([
+            styles.cardIcon,
+            { backgroundColor: C.googleBg },
+          ])}
+          align='center'
+          justify='center'
         >
-          <Card size={20} color="#013D25" variant="TwoTone" />
+          <Card size={20} color='#013D25' variant='TwoTone' />
         </View>
         <View style={{ flex: 1, marginLeft: 12 }}>
           <ThemedText
-            type="defaultSemiBold"
+            type='defaultSemiBold'
             style={{ fontSize: 13, color: C.text, letterSpacing: 1 }}
           >
             {maskCardNumber(item.last4)}
@@ -141,18 +154,18 @@ export default function SavedCardsScreen() {
           activeOpacity={0.7}
           onPress={() => setPendingDelete(item)}
         >
-          <Trash size={18} color="#CB010B" variant="TwoTone" />
+          <Trash size={18} color='#CB010B' variant='TwoTone' />
         </TouchableOpacity>
       </View>
     ),
-    [C]
+    [C],
   );
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned spaced>
         <Back />
-        <ThemedText type="defaultSemiBold" style={styles.headerTitle}>
+        <ThemedText type='defaultSemiBold' style={styles.headerTitle}>
           Saved Cards
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -160,7 +173,7 @@ export default function SavedCardsScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size="small" color="#013D25" />
+          <ActivityIndicator size='small' color='#013D25' />
         </View>
       ) : (
         <FlatList
@@ -172,7 +185,7 @@ export default function SavedCardsScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchCards(true)}
-              tintColor="#013D25"
+              tintColor='#013D25'
             />
           }
           renderItem={renderItem}
@@ -181,7 +194,7 @@ export default function SavedCardsScreen() {
               <EmptyState>
                 <View style={{ gap: 4, alignItems: "center" }}>
                   <ThemedText
-                    type="defaultSemiBold"
+                    type='defaultSemiBold'
                     style={{ fontSize: 14, color: C.text }}
                   >
                     No saved cards
@@ -198,7 +211,7 @@ export default function SavedCardsScreen() {
                   </ThemedText>
                 </View>
                 <BraneButton
-                  text="Add Card"
+                  text='Add Card'
                   onPress={() => router.push("/add-funds/add-card")}
                   width={160}
                   style={{ marginTop: 8 }}
@@ -212,9 +225,9 @@ export default function SavedCardsScreen() {
       {cards.length > 0 && (
         <View style={styles.fab}>
           <BraneButton
-            text="Add Card"
+            text='Add Card'
             onPress={() => router.push("/add-funds/add-card")}
-            leftIcon={<Add size={18} color="#fff" />}
+            leftIcon={<Add size={18} color='#fff' />}
           />
         </View>
       )}
@@ -223,15 +236,18 @@ export default function SavedCardsScreen() {
       <Modal
         visible={!!pendingDelete}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setPendingDelete(null)}
       >
         <View style={styles.modalOverlay}>
           <View
-            style={StyleSheet.flatten([styles.modalCard, { backgroundColor: C.background }])}
+            style={StyleSheet.flatten([
+              styles.modalCard,
+              { backgroundColor: C.background },
+            ])}
           >
             <ThemedText
-              type="defaultSemiBold"
+              type='defaultSemiBold'
               style={{ fontSize: 16, color: C.text, textAlign: "center" }}
             >
               Remove Card
@@ -257,7 +273,7 @@ export default function SavedCardsScreen() {
                 onPress={() => setPendingDelete(null)}
               >
                 <ThemedText
-                  type="defaultSemiBold"
+                  type='defaultSemiBold'
                   style={{ fontSize: 14, color: C.text }}
                 >
                   Cancel
@@ -270,10 +286,10 @@ export default function SavedCardsScreen() {
                 disabled={isDeleting}
               >
                 {isDeleting ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size='small' color='#fff' />
                 ) : (
                   <ThemedText
-                    type="defaultSemiBold"
+                    type='defaultSemiBold'
                     style={{ fontSize: 14, color: "#fff" }}
                   >
                     Remove

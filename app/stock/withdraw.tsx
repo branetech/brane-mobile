@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -7,23 +7,23 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
 import {
-    hideAppLoader,
-    priceFormatter,
-    showAppLoader,
-    showSuccess,
+  hideAppLoader,
+  priceFormatter,
+  showAppLoader,
+  showSuccess,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
-    View as RNView,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  View as RNView,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -135,7 +135,7 @@ export default function StockWithdrawScreen() {
             Stock Wallet Balance
           </ThemedText>
           {isLoadingBalance ? (
-            <ActivityIndicator color="#fff" size="small" />
+            <ActivityIndicator color='#fff' size='small' />
           ) : (
             <ThemedText style={styles.balanceAmount}>
               {priceFormatter(stockWalletBalance, 2)}
@@ -148,8 +148,8 @@ export default function StockWithdrawScreen() {
           Amount to Withdraw
         </ThemedText>
         <FormInput
-          placeholder="Enter amount"
-          keyboardType="number-pad"
+          placeholder='Enter amount'
+          keyboardType='number-pad'
           value={amount}
           onChangeText={(v) => {
             setAmount(v.replace(/\D/g, ""));
@@ -218,10 +218,10 @@ export default function StockWithdrawScreen() {
       </ScrollView>
       <View style={styles.footer}>
         <BraneButton
-          text="Continue"
+          text='Continue'
           onPress={handleContinueForm}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
         />
@@ -272,20 +272,20 @@ export default function StockWithdrawScreen() {
       </View>
       <View style={styles.confirmButtons}>
         <BraneButton
-          text="Back"
+          text='Back'
           onPress={() => setStage("form")}
-          backgroundColor="#D2F1E4"
+          backgroundColor='#D2F1E4'
           textColor={C.primary}
           height={52}
           radius={12}
           style={styles.halfBtn}
         />
         <BraneButton
-          text="Withdraw"
+          text='Withdraw'
           onPress={handleSubmit}
           loading={isSubmitting}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
           style={styles.halfBtn}
@@ -296,7 +296,7 @@ export default function StockWithdrawScreen() {
 
   const renderSuccess = () => (
     <View style={styles.successWrap}>
-      <TickCircle size={72} color="#013D25" variant="Bold" />
+      <TickCircle size={72} color='#013D25' variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Withdrawal Successful
       </ThemedText>
@@ -304,13 +304,13 @@ export default function StockWithdrawScreen() {
         {priceFormatter(Number(amount), 2)} has been sent to your bank account.
       </ThemedText>
       <BraneButton
-        text="Done"
+        text='Done'
         onPress={() => router.push("/(tabs)/portfolio")}
         backgroundColor={C.primary}
-        textColor="#D2F1E4"
+        textColor='#D2F1E4'
         height={52}
         radius={12}
-        width="80%"
+        width='80%'
       />
     </View>
   );

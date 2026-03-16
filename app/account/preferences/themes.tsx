@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -48,7 +48,7 @@ export default function ThemesScreen() {
   const currentTheme = useSelector((state: any) => state.themes.currentTheme);
 
   const getIcon = (value: ThemeValue, isSelected: boolean) => {
-    const color = isSelected ? "#013D25" : "#85808A";
+    const color = isSelected ? C.primary : C.muted;
     const props = { size: 22, color, variant: "Bold" as const };
     switch (value) {
       case "system":
@@ -75,7 +75,7 @@ export default function ThemesScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={styles.headerTitle}>
+        <ThemedText type='subtitle' style={styles.headerTitle}>
           Theme
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -94,7 +94,7 @@ export default function ThemesScreen() {
               style={[
                 styles.option,
                 {
-                  borderColor: isSelected ? "#013D25" : C.border,
+                  borderColor: isSelected ? C.primary : C.border,
                   backgroundColor: C.background,
                 },
               ]}
@@ -103,7 +103,7 @@ export default function ThemesScreen() {
               <View
                 style={{
                   ...styles.iconWrap,
-                  backgroundColor: isSelected ? "#D2F1E4" : C.border,
+                  backgroundColor: isSelected ? C.primary + "20" : C.inputBg,
                 }}
               >
                 {getIcon(value, isSelected)}
@@ -111,7 +111,7 @@ export default function ThemesScreen() {
 
               <View style={styles.textWrap}>
                 <ThemedText style={styles.optionTitle}>{title}</ThemedText>
-                <ThemedText style={[styles.optionDesc, { color: "#85808A" }]}>
+                <ThemedText style={[styles.optionDesc, { color: C.muted }]}>
                   {description}
                 </ThemedText>
               </View>
@@ -119,10 +119,14 @@ export default function ThemesScreen() {
               <View
                 style={{
                   ...styles.radioOuter,
-                  borderColor: isSelected ? "#013D25" : "#85808A",
+                  borderColor: isSelected ? C.primary : C.muted,
                 }}
               >
-                {isSelected && <View style={styles.radioInner} />}
+                {isSelected && (
+                  <View
+                    style={[styles.radioInner, { backgroundColor: C.primary }]}
+                  />
+                )}
               </View>
             </TouchableOpacity>
           );
@@ -188,6 +192,5 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#013D25",
   },
 });

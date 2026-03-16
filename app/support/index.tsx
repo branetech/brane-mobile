@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -6,15 +6,15 @@ import { useRouter } from "expo-router";
 import { Add, Minus, SearchNormal1, Send } from "iconsax-react-native";
 import React, { useMemo, useRef, useState } from "react";
 import {
-    ImageBackground,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -56,9 +56,9 @@ const FAQRow = ({
     >
       <ThemedText style={styles.faqText}>{text}</ThemedText>
       {expanded ? (
-        <Minus size={16} color="#013D25" />
+        <Minus size={16} color='#013D25' />
       ) : (
-        <Add size={16} color="#013D25" />
+        <Add size={16} color='#013D25' />
       )}
     </TouchableOpacity>
   );
@@ -93,8 +93,8 @@ const DocumentedSupportModal = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      presentationStyle="fullScreen"
+      animationType='slide'
+      presentationStyle='fullScreen'
       onRequestClose={onClose}
     >
       <SafeAreaView
@@ -109,7 +109,7 @@ const DocumentedSupportModal = ({
           contentContainerStyle={styles.docScrollContent}
         >
           <ThemedText
-            type="subtitle"
+            type='subtitle'
             style={[styles.docTitle, { color: C.text }]}
           >
             How to Put My Bracs To Work
@@ -120,7 +120,7 @@ const DocumentedSupportModal = ({
           </ThemedText>
 
           <ThemedText
-            type="subtitle"
+            type='subtitle'
             style={[styles.docSubHeader, { color: C.text }]}
           >
             Another Subheader
@@ -175,8 +175,8 @@ const LiveChatModal = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      presentationStyle="fullScreen"
+      animationType='slide'
+      presentationStyle='fullScreen'
       onRequestClose={onClose}
     >
       <SafeAreaView
@@ -231,8 +231,8 @@ const LiveChatModal = ({
             <TextInput
               value={input}
               onChangeText={setInput}
-              placeholder="I have always wanted to be a wing man"
-              placeholderTextColor="#8E8E93"
+              placeholder='I have always wanted to be a wing man'
+              placeholderTextColor='#8E8E93'
               style={styles.chatInput}
               multiline
             />
@@ -241,7 +241,7 @@ const LiveChatModal = ({
               activeOpacity={0.85}
               style={styles.chatSendBtn}
             >
-              <Send size={14} color="#FFFFFF" />
+              <Send size={14} color='#FFFFFF' />
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -271,7 +271,7 @@ export default function SupportScreen() {
     <ImageBackground
       source={require("@/assets/images/Home Screen Populated 1.png")}
       style={styles.screen}
-      resizeMode="contain"
+      resizeMode='contain'
     >
       <SafeAreaView style={styles.screenInner}>
         <View style={styles.greenTopBlock}>
@@ -292,12 +292,12 @@ export default function SupportScreen() {
           <ThemedText style={styles.heroQuestion}>How Can We Help?</ThemedText>
 
           <View style={styles.searchWrap}>
-            <SearchNormal1 size={14} color="#9AA4A0" />
+            <SearchNormal1 size={14} color='#9AA4A0' />
             <TextInput
               value={search}
               onChangeText={setSearch}
-              placeholder="Search anything"
-              placeholderTextColor="#9AA4A0"
+              placeholder='Search anything'
+              placeholderTextColor='#9AA4A0'
               style={styles.searchInput}
             />
           </View>

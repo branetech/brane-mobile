@@ -1,7 +1,7 @@
 import OTP from "@/components/forgot-password/otp";
-import SetPinScreen from "@/components/sign-up/setUpPin";
-import { SignupForm } from "@/components/sign-up/signupForm";
-import SetUsernameScreen from "@/components/sign-up/userNameForm";
+import SetPinScreen from "@/components/sign-up/setup-pin";
+import { SignupForm } from "@/components/sign-up/signup-form";
+import SetUsernameScreen from "@/components/sign-up/username-form";
 import { setRefreshToken, setToken, setUser } from "@/redux/slice/auth-slice";
 import { useReduxState } from "@/redux/useReduxState";
 import BaseRequest, { parseNetworkError } from "@/services";

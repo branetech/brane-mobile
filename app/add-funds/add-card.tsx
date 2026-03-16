@@ -1,14 +1,18 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
-import { FormInput } from "@/components/formInput";
+import { FormInput, mapFormikProps } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useFormHandler } from "@/hooks/use-formik";
+import BaseRequest, { parseNetworkError } from "@/services";
+import { showError, showSuccess } from "@/utils/helpers";
 import { useRouter } from "expo-router";
 import { Eye, EyeSlash, InfoCircle } from "iconsax-react-native";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as yup from "yup";
 
 type Scheme = "light" | "dark";
 
@@ -18,25 +22,60 @@ export default function AddCardScreen() {
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
   const [showPin, setShowPin] = useState(false);
-  const [cardNumber, setCardNumber] = useState("");
-  const [validPeriod, setValidPeriod] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [cardPin, setCardPin] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const isFormValid =
-    cardNumber.trim().length >= 4 &&
-    validPeriod.trim().length > 0 &&
-    cvv.trim().length > 0 &&
-    cardPin.trim().length > 0;
+  const { form, isDisabled } = useFormHandler({
+    initialValues: {
+      cardNumber: "",
+      expiryDate: "",
+      cvv: "",
+      cardPin: "",
+      cardholder: "",
+    },
+    validationSchema: yup.object().shape({
+      cardNumber: yup
+        .string()
+        .matches(/^\d{13,19}$/, "Card number must be 13-19 digits")
+        .required("Card number is required"),
+      expiryDate: yup
+        .string()
+        .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, "Format: MM/YY")
+        .required("Expiry date is required"),
+      cvv: yup
+        .string()
+        .matches(/^\d{3,4}$/, "CVV must be 3-4 digits")
+        .required("CVV is required"),
+      cardholder: yup
+        .string()
+        .min(3, "Cardholder name is required")
+        .required("Cardholder name is required"),
+      cardPin: yup
+        .string()
+        .matches(/^\d{4,6}$/, "Card PIN must be 4-6 digits")
+        .required("Card PIN is required"),
+    }),
+    onSubmit: async (data) => {
+      setIsLoading(true);
+      try {
+        // Call API to save card
+        await BaseRequest.post("/payment/add-card", {
+          cardNumber: data.cardNumber,
+          expiryDate: data.expiryDate,
+          cvv: data.cvv,
+          cardholder: data.cardholder,
+          cardPin: data.cardPin,
+        });
 
-  const handleAddCard = () => {
-    if (cardNumber.length >= 4) {
-      router.push({
-        pathname: "/add-funds/card",
-        params: { newCard: cardNumber.slice(-4) },
-      });
-    }
-  };
+        showSuccess("Card added successfully");
+        router.push("/saved-cards");
+      } catch (error: any) {
+        const { message } = parseNetworkError(error);
+        showError(message || "Failed to add card");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+  });
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
@@ -52,17 +91,25 @@ export default function AddCardScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <ThemedText style={styles.bvnText}>
+        <ThemedText style={[styles.bvnText, { color: C.muted }]}>
           Your bank card has to be linked to your BVN for security purpose
         </ThemedText>
 
         <View style={styles.form}>
           <FormInput
-            labelText="Card Number"
-            placeholder="Enter your card number"
-            keyboardType="number-pad"
-            value={cardNumber}
-            onChangeText={setCardNumber}
+            labelText='Cardholder Name'
+            placeholder='Enter name as shown on card'
+            {...mapFormikProps("cardholder", form)}
+            containerStyle={styles.inputGroup}
+            inputContainerStyle={styles.inputContainer}
+            inputStyle={styles.inputText}
+          />
+
+          <FormInput
+            labelText='Card Number'
+            placeholder='Enter your card number'
+            keyboardType='number-pad'
+            {...mapFormikProps("cardNumber", form)}
             containerStyle={styles.inputGroup}
             inputContainerStyle={styles.inputContainer}
             inputStyle={styles.inputText}
@@ -70,22 +117,20 @@ export default function AddCardScreen() {
 
           <View style={styles.row}>
             <FormInput
-              labelText="Valid Period"
-              placeholder="MM/YY"
-              keyboardType="number-pad"
-              value={validPeriod}
-              onChangeText={setValidPeriod}
+              labelText='Expiry Date'
+              placeholder='MM/YY'
+              keyboardType='number-pad'
+              {...mapFormikProps("expiryDate", form)}
               containerStyle={[styles.inputGroup, styles.flex]}
               inputContainerStyle={styles.inputContainer}
               inputStyle={styles.inputText}
             />
             <FormInput
-              labelText="CVV"
-              placeholder="Enter CVV"
-              keyboardType="number-pad"
-              value={cvv}
-              onChangeText={setCvv}
-              rightContent={<InfoCircle size={14} color="#8E8E93" />}
+              labelText='CVV'
+              placeholder='Enter CVV'
+              keyboardType='number-pad'
+              rightContent={<InfoCircle size={14} color={C.muted} />}
+              {...mapFormikProps("cvv", form)}
               containerStyle={[styles.inputGroup, styles.flex]}
               inputContainerStyle={styles.inputContainer}
               inputStyle={styles.inputText}
@@ -93,41 +138,38 @@ export default function AddCardScreen() {
           </View>
 
           <FormInput
-            labelText="Card Pin"
-            placeholder="xxxx"
-            keyboardType="number-pad"
-            value={cardPin}
-            onChangeText={setCardPin}
+            labelText='Card PIN'
+            placeholder='xxxx'
+            keyboardType='number-pad'
             secureTextEntry={!showPin}
             rightContent={
               <TouchableOpacity onPress={() => setShowPin(!showPin)}>
                 {showPin ? (
-                  <Eye size={14} color="#8E8E93" />
+                  <EyeSlash size={14} color={C.muted} />
                 ) : (
-                  <EyeSlash size={14} color="#8E8E93" />
+                  <Eye size={14} color={C.muted} />
                 )}
               </TouchableOpacity>
             }
+            {...mapFormikProps("cardPin", form)}
             containerStyle={styles.inputGroup}
             inputContainerStyle={styles.inputContainer}
             inputStyle={styles.inputText}
           />
         </View>
       </ScrollView>
+
       <View style={[styles.footer, { borderTopColor: C.border }]}>
         <BraneButton
-          text="Add Card"
-          onPress={() => {
-            if (!isFormValid) return;
-            handleAddCard();
-          }}
-          style={styles.addCardBtn}
-          backgroundColor={isFormValid ? "#013D25" : "#C5E8D9"}
-          textColor={isFormValid ? "#FFFFFF" : "#2A6D53"}
-          disabled={false}
+          text={isLoading ? "Adding Card..." : "Add Card"}
+          onPress={() => form.handleSubmit()}
+          disabled={isDisabled || isLoading}
+          loading={isLoading}
+          backgroundColor={C.primary}
+          textColor='#FFFFFF'
           height={48}
           radius={8}
-          fontSize={11}
+          fontSize={14}
         />
       </View>
     </SafeAreaView>

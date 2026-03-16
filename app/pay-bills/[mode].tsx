@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -8,22 +8,22 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
 import {
-    hideAppLoader,
-    priceFormatter,
-    showAppLoader,
-    showError,
+  hideAppLoader,
+  priceFormatter,
+  showAppLoader,
+  showError,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -327,15 +327,15 @@ export default function PayBillsScreen() {
       </View>
 
       <FormInput
-        labelText="Meter Number"
-        placeholder="Enter meter number"
+        labelText='Meter Number'
+        placeholder='Enter meter number'
         value={meterNumber}
         onChangeText={(v) => {
           setMeterNumber(v);
           setElVerified(false);
           setElAccountName("");
         }}
-        keyboardType="numeric"
+        keyboardType='numeric'
       />
 
       {elAccountName ? (
@@ -346,7 +346,7 @@ export default function PayBillsScreen() {
             backgroundColor: "#EAF8F1",
           }}
         >
-          <TickCircle size={16} color="#09734C" variant="Bold" />
+          <TickCircle size={16} color='#09734C' variant='Bold' />
           <ThemedText
             style={{
               ...StyleSheet.flatten(styles.verifiedText),
@@ -360,11 +360,11 @@ export default function PayBillsScreen() {
         <BraneButton
           text={elVerifying ? "Verifying…" : "Verify Meter"}
           onPress={handleVerifyMeter}
-          backgroundColor="#013D25"
-          textColor="#D2F1E4"
+          backgroundColor='#013D25'
+          textColor='#D2F1E4'
           height={44}
           radius={10}
-          width="100%"
+          width='100%'
           loading={elVerifying}
           disabled={!meterNumber || !elProvider}
         />
@@ -403,11 +403,11 @@ export default function PayBillsScreen() {
             ))}
           </View>
           <FormInput
-            labelText="Or enter amount"
-            placeholder="₦ 0.00"
+            labelText='Or enter amount'
+            placeholder='₦ 0.00'
             value={elAmount}
             onChangeText={(v) => setElAmount(v.replace(/\D/g, ""))}
-            keyboardType="numeric"
+            keyboardType='numeric'
           />
         </>
       )}
@@ -444,7 +444,7 @@ export default function PayBillsScreen() {
               <Image
                 source={img}
                 style={styles.cableImg}
-                resizeMode="contain"
+                resizeMode='contain'
               />
               <ThemedText
                 style={{
@@ -460,15 +460,15 @@ export default function PayBillsScreen() {
       </View>
 
       <FormInput
-        labelText="SmartCard / IUC Number"
-        placeholder="Enter card number"
+        labelText='SmartCard / IUC Number'
+        placeholder='Enter card number'
         value={smartCard}
         onChangeText={(v) => {
           setSmartCard(v);
           setCableVerified(false);
           setCableAccountName("");
         }}
-        keyboardType="numeric"
+        keyboardType='numeric'
       />
 
       {cableAccountName ? (
@@ -479,7 +479,7 @@ export default function PayBillsScreen() {
             backgroundColor: "#EAF8F1",
           }}
         >
-          <TickCircle size={16} color="#09734C" variant="Bold" />
+          <TickCircle size={16} color='#09734C' variant='Bold' />
           <ThemedText
             style={{
               ...StyleSheet.flatten(styles.verifiedText),
@@ -493,11 +493,11 @@ export default function PayBillsScreen() {
         <BraneButton
           text={cableVerifying ? "Verifying…" : "Verify Card"}
           onPress={handleVerifyCable}
-          backgroundColor="#013D25"
-          textColor="#D2F1E4"
+          backgroundColor='#013D25'
+          textColor='#D2F1E4'
           height={44}
           radius={10}
-          width="100%"
+          width='100%'
           loading={cableVerifying}
           disabled={!smartCard || !cableProvider}
         />
@@ -624,25 +624,25 @@ export default function PayBillsScreen() {
       </View>
 
       <FormInput
-        labelText="Customer ID / User ID"
-        placeholder="Enter your betting user ID"
+        labelText='Customer ID / User ID'
+        placeholder='Enter your betting user ID'
         value={customerId}
         onChangeText={setCustomerId}
       />
 
       <FormInput
-        labelText="Amount"
-        placeholder="₦ 0.00"
+        labelText='Amount'
+        placeholder='₦ 0.00'
         value={bettingAmount}
         onChangeText={(v) => setBettingAmount(v.replace(/\D/g, ""))}
-        keyboardType="numeric"
+        keyboardType='numeric'
       />
     </>
   );
 
   const renderSuccess = () => (
     <View style={styles.successContainer}>
-      <TickCircle size={80} color="#09734C" variant="Bold" />
+      <TickCircle size={80} color='#09734C' variant='Bold' />
       <ThemedText
         style={{ ...StyleSheet.flatten(styles.successTitle), color: C.text }}
       >
@@ -655,16 +655,16 @@ export default function PayBillsScreen() {
       </ThemedText>
       <View style={{ gap: 12, width: "100%", marginTop: 24 }}>
         <BraneButton
-          text="Go Home"
+          text='Go Home'
           onPress={() => router.push("/(tabs)")}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
-          width="100%"
+          width='100%'
         />
         <BraneButton
-          text="Pay Another Bill"
+          text='Pay Another Bill'
           onPress={() => {
             setStage("form");
             setElVerified(false);
@@ -678,11 +678,11 @@ export default function PayBillsScreen() {
             setCustomerId("");
             setBettingAmount("");
           }}
-          backgroundColor="transparent"
+          backgroundColor='transparent'
           textColor={C.primary}
           height={52}
           radius={12}
-          width="100%"
+          width='100%'
         />
       </View>
     </View>
@@ -714,7 +714,7 @@ export default function PayBillsScreen() {
         >
           <ScrollView
             contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps='handled'
           >
             {mode === "electricity" && renderElectricity()}
             {mode === "cable" && renderCable()}
@@ -722,13 +722,13 @@ export default function PayBillsScreen() {
 
             {canSubmit() && (
               <BraneButton
-                text="Proceed"
+                text='Proceed'
                 onPress={() => setPinVisible(true)}
                 backgroundColor={C.primary}
-                textColor="#D2F1E4"
+                textColor='#D2F1E4'
                 height={52}
                 radius={12}
-                width="100%"
+                width='100%'
                 loading={isLoading}
               />
             )}

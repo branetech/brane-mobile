@@ -29,27 +29,50 @@ export default function AccountScreen() {
 
   const header = (
     <RNView style={styles.headerWrapper}>
-      <ThemedText type="subtitle" style={styles.pageTitle}>
+      <ThemedText type='subtitle' style={styles.pageTitle}>
         Account
       </ThemedText>
 
-      <View w="100%" style={styles.profileCard} bg="#FFFDFA">
-        <View row spaced aligned w="100%">
+      <View
+        w='100%'
+        style={[
+          styles.profileCard,
+          { backgroundColor: C.inputBg, borderColor: C.border },
+        ]}
+      >
+        <View row spaced aligned w='100%'>
           <View gap={2}>
-            <ThemedText type="subtitle" style={styles.userName}>
+            <ThemedText
+              type='subtitle'
+              style={[styles.userName, { color: C.text }]}
+            >
               {displayName}
             </ThemedText>
             <ThemedText style={{ fontSize: 13, color: C.muted }}>
               {username}
             </ThemedText>
           </View>
-          <Avatar name={displayName} src={user?.image} size="lg" shape="circle" />
+          <Avatar
+            name={displayName}
+            src={user?.image}
+            size='lg'
+            shape='circle'
+          />
         </View>
 
-        <View w="100%" style={styles.kycCard} bg="#FFFFFF">
-          <View row spaced aligned w="100%">
+        <View
+          w='100%'
+          style={[
+            styles.kycCard,
+            { backgroundColor: C.background, borderColor: C.border },
+          ]}
+        >
+          <View row spaced aligned w='100%'>
             <View style={{ flex: 1 }}>
-              <ThemedText type="defaultSemiBold" style={{ fontSize: 13 }}>
+              <ThemedText
+                type='defaultSemiBold'
+                style={[{ fontSize: 13, color: C.text }]}
+              >
                 Complete Your KYC
               </ThemedText>
               <ThemedText
@@ -59,20 +82,23 @@ export default function AccountScreen() {
               </ThemedText>
             </View>
             <ThemedText
-              type="defaultSemiBold"
-              style={{ fontSize: 13, color: "#013D25", marginLeft: 8 }}
+              type='defaultSemiBold'
+              style={{ fontSize: 13, color: C.primary, marginLeft: 8 }}
             >
               50%
             </ThemedText>
           </View>
 
-          <TouchableOpacity onPress={() => router.push("/kyc")} style={styles.kycLink}>
+          <TouchableOpacity
+            onPress={() => router.push("/kyc")}
+            style={styles.kycLink}
+          >
             <ThemedText
-              style={{ fontSize: 13, color: "#A28C34", fontWeight: "500" }}
+              style={{ fontSize: 13, color: C.primary, fontWeight: "500" }}
             >
               Complete Verification
             </ThemedText>
-            <ArrowRight2 size={16} color="#013D25" />
+            <ArrowRight2 size={16} color={C.primary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -100,7 +126,6 @@ const styles = StyleSheet.create({
   profileCard: {
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#FFFAF0",
     padding: 16,
     gap: 12,
     marginTop: 16,
@@ -110,6 +135,7 @@ const styles = StyleSheet.create({
   },
   kycCard: {
     borderRadius: 12,
+    borderWidth: 1,
     padding: 12,
     gap: 10,
   },

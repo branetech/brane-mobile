@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { EmptyState } from "@/components/empty-state";
 import { ThemedText } from "@/components/themed-text";
@@ -10,20 +10,20 @@ import { formatDate, priceFormatter } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import {
-    Bank,
-    Card,
-    Devices,
-    Eye,
-    EyeSlash,
-    Mobile,
+  Bank,
+  Card,
+  Devices,
+  Eye,
+  EyeSlash,
+  Mobile,
 } from "iconsax-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    RefreshControl,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -123,9 +123,9 @@ export default function WalletScreen() {
             hitSlop={8}
           >
             {balanceVisible ? (
-              <Eye size={20} color="#fff" />
+              <Eye size={20} color='#fff' />
             ) : (
-              <EyeSlash size={20} color="#fff" />
+              <EyeSlash size={20} color='#fff' />
             )}
           </TouchableOpacity>
         </View>
@@ -136,18 +136,18 @@ export default function WalletScreen() {
 
         <View row gap={12}>
           <BraneButton
-            text="Withdraw"
+            text='Withdraw'
             onPress={() => router.push("/wallet/withdraw")}
             style={styles.cardBtn}
-            backgroundColor="#2B5D49"
+            backgroundColor='#2B5D49'
             height={38}
           />
           <BraneButton
-            text="Fund Wallet"
+            text='Fund Wallet'
             onPress={() => router.push("/add-funds")}
             style={styles.cardBtn}
-            backgroundColor="#fff"
-            textColor="#013D25"
+            backgroundColor='#fff'
+            textColor='#013D25'
             height={38}
           />
         </View>
@@ -169,7 +169,7 @@ export default function WalletScreen() {
               ])}
               center
             >
-              <Icon size={22} color="#013D25" variant="Bold" />
+              <Icon size={22} color='#013D25' variant='Bold' />
             </View>
             <ThemedText style={[styles.qaLabel, { color: C.text }]}>
               {label}
@@ -187,7 +187,7 @@ export default function WalletScreen() {
           { justifyContent: "space-between" as const },
         ])}
       >
-        <ThemedText type="defaultSemiBold" style={{ fontSize: 15 }}>
+        <ThemedText type='defaultSemiBold' style={{ fontSize: 15 }}>
           Recent Transactions
         </ThemedText>
         <TouchableOpacity
@@ -207,14 +207,14 @@ export default function WalletScreen() {
       {/* Header */}
       <View style={styles.header} row aligned>
         <Back />
-        <ThemedText type="subtitle" style={styles.headerTitle}>
+        <ThemedText type='subtitle' style={styles.headerTitle}>
           My Wallet
         </ThemedText>
         <View style={{ width: 44 }} />
       </View>
 
       {isLoading ? (
-        <ActivityIndicator style={styles.loader} size="large" color="#013D25" />
+        <ActivityIndicator style={styles.loader} size='large' color='#013D25' />
       ) : (
         <FlatList
           data={transactions}
@@ -228,7 +228,7 @@ export default function WalletScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchData(true)}
-              tintColor="#013D25"
+              tintColor='#013D25'
             />
           }
           ListEmptyComponent={
@@ -248,7 +248,7 @@ export default function WalletScreen() {
               aligned
             >
               <View style={styles.txInfo} gap={3}>
-                <ThemedText type="defaultSemiBold" style={{ fontSize: 14 }}>
+                <ThemedText type='defaultSemiBold' style={{ fontSize: 14 }}>
                   {item.description}
                 </ThemedText>
                 <ThemedText style={{ fontSize: 12, color: C.muted }}>

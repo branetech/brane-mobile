@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -133,7 +133,7 @@ export default function DividendWithdrawScreen() {
             Available Dividend Balance
           </ThemedText>
           {isLoadingBalance ? (
-            <ActivityIndicator color="#fff" size="small" />
+            <ActivityIndicator color='#fff' size='small' />
           ) : (
             <ThemedText style={styles.balanceValue}>
               {priceFormatter(dividendBalance, 2)}
@@ -145,8 +145,8 @@ export default function DividendWithdrawScreen() {
           Amount to Withdraw
         </ThemedText>
         <FormInput
-          placeholder="Enter amount"
-          keyboardType="number-pad"
+          placeholder='Enter amount'
+          keyboardType='number-pad'
           value={amount}
           onChangeText={(v) => {
             setAmount(v.replace(/\D/g, ""));
@@ -158,10 +158,10 @@ export default function DividendWithdrawScreen() {
       </ScrollView>
       <View style={styles.footer}>
         <BraneButton
-          text="Continue"
+          text='Continue'
           onPress={handleContinueForm}
           backgroundColor={C.primary}
-          textColor="#D2F1E4"
+          textColor='#D2F1E4'
           height={52}
           radius={12}
         />
@@ -225,7 +225,7 @@ export default function DividendWithdrawScreen() {
 
   const renderStageSuccess = () => (
     <View style={styles.successWrap}>
-      <TickCircle size={72} color="#013D25" variant="Bold" />
+      <TickCircle size={72} color='#013D25' variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Withdrawal Successful
       </ThemedText>
@@ -234,13 +234,13 @@ export default function DividendWithdrawScreen() {
         in dividends to your bank account.
       </ThemedText>
       <BraneButton
-        text="Done"
+        text='Done'
         onPress={() => router.push("/(tabs)/portfolio")}
         backgroundColor={C.primary}
-        textColor="#D2F1E4"
+        textColor='#D2F1E4'
         height={52}
         radius={12}
-        width="80%"
+        width='80%'
       />
     </View>
   );

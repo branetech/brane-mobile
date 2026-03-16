@@ -1,4 +1,4 @@
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { OTPInput } from "@/components/otp-input";
 import { ThemedText } from "@/components/themed-text";
@@ -66,7 +66,7 @@ export default function DeleteAccountScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type="subtitle" style={styles.headerTitle}>
+        <ThemedText type='subtitle' style={styles.headerTitle}>
           Delete Account
         </ThemedText>
         <View style={{ width: 44 }} />
@@ -74,12 +74,12 @@ export default function DeleteAccountScreen() {
 
       <ScrollView
         contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps='handled'
       >
         {stage === 1 && (
           <>
-            <ThemedText type="defaultSemiBold">Why are you leaving?</ThemedText>
-            <ThemedText style={[styles.subText, { color: "#85808A" }]}>
+            <ThemedText type='defaultSemiBold'>Why are you leaving?</ThemedText>
+            <ThemedText style={[styles.subText, { color: C.muted }]}>
               Please select a reason for deleting your account.
             </ThemedText>
 
@@ -93,8 +93,10 @@ export default function DeleteAccountScreen() {
                     style={[
                       styles.reasonRow,
                       {
-                        borderColor: isSelected ? "#013D25" : C.border,
-                        backgroundColor: isSelected ? "#D2F1E4" : C.background,
+                        borderColor: isSelected ? C.primary : C.border,
+                        backgroundColor: isSelected
+                          ? C.primary + "20"
+                          : C.background,
                       },
                     ]}
                     onPress={() => setSelectedReason(reason)}
@@ -102,10 +104,17 @@ export default function DeleteAccountScreen() {
                     <View
                       style={{
                         ...styles.radio,
-                        borderColor: isSelected ? "#013D25" : "#85808A",
+                        borderColor: isSelected ? C.primary : C.muted,
                       }}
                     >
-                      {isSelected && <View style={styles.radioInner} />}
+                      {isSelected && (
+                        <View
+                          style={[
+                            styles.radioInner,
+                            { backgroundColor: C.primary },
+                          ]}
+                        />
+                      )}
                     </View>
                     <ThemedText style={styles.reasonText}>{reason}</ThemedText>
                   </TouchableOpacity>
@@ -114,7 +123,7 @@ export default function DeleteAccountScreen() {
             </View>
 
             <BraneButton
-              text="Continue"
+              text='Continue'
               onPress={onContinue}
               loading={loading}
               disabled={!selectedReason}
@@ -125,8 +134,8 @@ export default function DeleteAccountScreen() {
 
         {stage === 2 && (
           <>
-            <ThemedText type="defaultSemiBold">Confirm deletion</ThemedText>
-            <ThemedText style={[styles.subText, { color: "#85808A" }]}>
+            <ThemedText type='defaultSemiBold'>Confirm deletion</ThemedText>
+            <ThemedText style={[styles.subText, { color: C.muted }]}>
               Enter the OTP sent to your email to confirm deletion.
             </ThemedText>
 
@@ -135,11 +144,11 @@ export default function DeleteAccountScreen() {
             </View>
 
             <BraneButton
-              text="Confirm Deletion"
+              text='Confirm Deletion'
               onPress={onConfirmDeletion}
               loading={loading}
               disabled={!otp || otp.length < 6}
-              backgroundColor="#CB010B"
+              backgroundColor='#CB010B'
               style={styles.button}
             />
           </>
@@ -192,7 +201,6 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#013D25",
   },
   reasonText: {
     fontSize: 14,
