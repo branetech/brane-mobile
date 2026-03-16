@@ -61,14 +61,14 @@ export default function CardScreen() {
           <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
             Fund Method
           </ThemedText>
-          <View style={styles.methodContainer}>
+          <View style={[styles.methodContainer, { borderColor: C.border, backgroundColor: C.screen }]}>
             <View style={styles.subHeaderRow}>
-              <ThemedText style={styles.addedCardsText}>Added Cards</ThemedText>
+              <ThemedText style={[styles.addedCardsText, { color: C.muted }]}>Added Cards</ThemedText>
               {savedCards.length > 0 && (
                 <TouchableOpacity
                   onPress={() => router.push("/add-funds/add-card")}
                 >
-                  <ThemedText style={styles.addNewText}>Add New</ThemedText>
+                  <ThemedText style={[styles.addNewText, { color: C.primary }]}>Add New</ThemedText>
                 </TouchableOpacity>
               )}
             </View>
@@ -76,11 +76,11 @@ export default function CardScreen() {
             {savedCards.length === 0 ? (
               <BraneButton
                 style={styles.addNewCardBtn}
-                backgroundColor='#C5E8D9'
+                backgroundColor={C.googleBg}
                 text='Add New Card'
                 onPress={() => router.push("/add-funds/add-card")}
-                leftIcon={<Add size={14} color='#013D25' />}
-                textColor='#013D25'
+                leftIcon={<Add size={14} color={C.primary} />}
+                textColor={C.primary}
                 fontSize={12}
                 radius={8}
                 height={36}
@@ -94,9 +94,9 @@ export default function CardScreen() {
                       styles.cardRow,
                       {
                         borderColor:
-                          selectedCard === card ? "#E4DDCC" : "#E8E8E8",
+                          selectedCard === card ? C.primary : C.border,
                         backgroundColor:
-                          selectedCard === card ? "#F3F0E4" : "#FFFFFF",
+                          selectedCard === card ? C.inputBg : C.screen,
                       },
                     ]}
                     onPress={() => setSelectedCard(card)}
@@ -115,13 +115,13 @@ export default function CardScreen() {
                         styles.radioCircle,
                         {
                           borderColor:
-                            selectedCard === card ? "#1E5B41" : "#D0D0D0",
-                          backgroundColor: "#FFFFFF",
+                            selectedCard === card ? C.primary : C.muted,
+                          backgroundColor: C.screen,
                         },
                       ]}
                     >
                       {selectedCard === card && (
-                        <View style={styles.radioInner} />
+                        <View style={[styles.radioInner, { backgroundColor: C.primary }]} />
                       )}
                     </View>
                   </TouchableOpacity>
@@ -140,8 +140,8 @@ export default function CardScreen() {
             keyboardType='number-pad'
             value={amount}
             onChangeText={setAmount}
-            inputContainerStyle={styles.amountInputContainer}
-            inputStyle={styles.amountInputText}
+            inputContainerStyle={[styles.amountInputContainer, { borderColor: C.border }]}
+            inputStyle={[styles.amountInputText, { color: C.text, backgroundColor: C.inputBg }]}
           />
           <View style={styles.presetRow}>
             {PRESET_AMOUNTS.map((preset) => (
@@ -150,18 +150,18 @@ export default function CardScreen() {
                 style={[
                   styles.presetBtn,
                   {
-                    backgroundColor: amount === preset ? "#F4F1E2" : "#FFFFFF",
-                    borderColor: amount === preset ? "#E4DBC0" : "#ECECEC",
+                    backgroundColor: amount === preset ? C.inputBg : C.screen,
+                    borderColor: amount === preset ? C.primary : C.border,
                   },
                 ]}
                 onPress={() => setAmount(preset)}
               >
                 <View style={styles.presetInner}>
-                  <View style={styles.presetDot} />
+                  <View style={[styles.presetDot, { backgroundColor: amount === preset ? C.primary : C.text }]} />
                   <ThemedText
                     style={[
                       styles.presetText,
-                      { color: amount === preset ? "#013D25" : "#111111" },
+                      { color: amount === preset ? C.primary : C.text },
                     ]}
                   >
                     ₦ {preset}
@@ -181,8 +181,8 @@ export default function CardScreen() {
               if (!amount || !selectedCard) return;
               handleFund();
             }}
-            backgroundColor={amount && selectedCard ? "#013D25" : "#C5E8D9"}
-            textColor={amount && selectedCard ? "#FFFFFF" : "#2A6D53"}
+            backgroundColor={amount && selectedCard ? C.primary : C.googleBg}
+            textColor={amount && selectedCard ? C.background : C.primary}
             disabled={false}
             height={48}
             radius={8}
@@ -235,10 +235,8 @@ const styles = StyleSheet.create({
   },
   methodContainer: {
     borderWidth: 1,
-    borderColor: "#EDEDED",
     borderRadius: 10,
     padding: 10,
-    backgroundColor: "#FFFFFF",
   },
   subHeaderRow: {
     flexDirection: "row",
@@ -248,7 +246,6 @@ const styles = StyleSheet.create({
   },
   addedCardsText: {
     fontSize: 10,
-    color: "#8E8E93",
   },
   addNewCardBtn: {
     height: 36,
@@ -258,10 +255,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    backgroundColor: "#C5E8D9",
   },
   addNewCardText: {
-    color: "#013D25",
     fontSize: 16,
     fontWeight: "500",
   },
@@ -274,7 +269,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 12,
     marginBottom: 6,
-    backgroundColor: "#FFFFFF",
   },
   cardDetails: {
     flexDirection: "row",
@@ -312,7 +306,6 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#013D25",
   },
   cardText: {
     fontSize: 11,
@@ -320,18 +313,15 @@ const styles = StyleSheet.create({
   },
   addNewText: {
     fontSize: 10,
-    color: "#013D25",
     fontWeight: "400",
   },
   amountInputContainer: {
     height: 36,
     borderRadius: 8,
-    borderColor: "#F0F0F0",
     marginBottom: 10,
   },
   amountInputText: {
     fontSize: 12,
-    color: "#0B0014",
   },
   amountInput: {
     height: 56,
@@ -339,7 +329,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 16,
     fontSize: 16,
-    backgroundColor: "#F9F9F9",
     marginBottom: 12,
   },
   presetRow: {
@@ -361,7 +350,6 @@ const styles = StyleSheet.create({
     width: 3,
     height: 3,
     borderRadius: 2,
-    backgroundColor: "#0B0014",
   },
   presetText: {
     fontSize: 11,
@@ -371,7 +359,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 16,
-    borderTopWidth: 0,
+    borderTopWidth: 1,
   },
   fundBtn: {
     height: 56,
@@ -395,7 +383,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#EAEAEA",
   },
   modalTitle: {
     fontSize: 16,
@@ -406,7 +393,6 @@ const styles = StyleSheet.create({
   },
   bvnText: {
     fontSize: 14,
-    color: "#8E8E93",
     textAlign: "center",
     marginBottom: 24,
   },
@@ -442,13 +428,11 @@ const styles = StyleSheet.create({
   addCardBtn: {
     height: 52,
     borderRadius: 12,
-    backgroundColor: "#013D25",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 32,
   },
   addCardBtnText: {
-    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
