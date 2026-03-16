@@ -43,38 +43,60 @@ const FAQRow = ({
   text,
   expanded,
   onPress,
+  iconColor,
+  backgroundColor,
+  borderColor,
+  textColor,
 }: {
   text: string;
   expanded: boolean;
   onPress: () => void;
+  iconColor: string;
+  backgroundColor: string;
+  borderColor: string;
+  textColor: string;
 }) => {
   return (
     <TouchableOpacity
-      style={styles.faqRow}
+      style={[
+        styles.faqRow,
+        { backgroundColor, borderColor },
+      ]}
       activeOpacity={0.85}
       onPress={onPress}
     >
-      <ThemedText style={styles.faqText}>{text}</ThemedText>
+      <ThemedText style={[styles.faqText, { color: textColor }]}>
+        {text}
+      </ThemedText>
       {expanded ? (
-        <Minus size={16} color='#013D25' />
+        <Minus size={16} color={iconColor} />
       ) : (
-        <Add size={16} color='#013D25' />
+        <Add size={16} color={iconColor} />
       )}
     </TouchableOpacity>
   );
 };
 
-const DocLinkRow = ({ onPress }: { onPress: () => void }) => {
+const DocLinkRow = ({
+  onPress,
+  titleColor,
+  subColor,
+}: {
+  onPress: () => void;
+  titleColor: string;
+  subColor: string;
+}) => {
   return (
     <TouchableOpacity
-      //   style={styles.docLinkRow}
       activeOpacity={0.85}
       onPress={onPress}
     >
-      <ThemedText style={styles.docLinkTitle}>
+      <ThemedText style={[styles.docLinkTitle, { color: titleColor }]}>
         How to put my bracks to work
       </ThemedText>
-      <ThemedText style={styles.docLinkSub}>{DOC_SUBTEXT}</ThemedText>
+      <ThemedText style={[styles.docLinkSub, { color: subColor }]}>
+        {DOC_SUBTEXT}
+      </ThemedText>
     </TouchableOpacity>
   );
 };
@@ -205,8 +227,8 @@ const LiveChatModal = ({
                 style={[
                   styles.chatBubble,
                   message.sender === "support"
-                    ? styles.supportBubble
-                    : styles.userBubble,
+                    ? [styles.supportBubble, { backgroundColor: C.inputBg }]
+                    : [styles.userBubble, { backgroundColor: C.primary }],
                 ]}
               >
                 <ThemedText
@@ -214,7 +236,7 @@ const LiveChatModal = ({
                     styles.chatBubbleText,
                     {
                       color:
-                        message.sender === "support" ? "#0B0014" : "#FFFFFF",
+                        message.sender === "support" ? C.text : C.background,
                     },
                   ]}
                 >
@@ -224,24 +246,34 @@ const LiveChatModal = ({
             ))}
           </ScrollView>
 
-          <View style={[styles.chatInputRow, { borderColor: C.border }]}>
-            <TouchableOpacity activeOpacity={0.8} style={styles.attachIconWrap}>
-              <ThemedText style={styles.attachIcon}>⌁</ThemedText>
+          <View
+            style={[
+              styles.chatInputRow,
+              { borderTopColor: C.border, backgroundColor: C.background },
+            ]}
+          >
+            <TouchableOpacity activeOpacity={0.8} style={[styles.attachIconWrap, { backgroundColor: C.inputBg }]}>
+              <ThemedText style={[styles.attachIcon, { color: C.primary }]}>
+                ⌁
+              </ThemedText>
             </TouchableOpacity>
             <TextInput
               value={input}
               onChangeText={setInput}
               placeholder='I have always wanted to be a wing man'
-              placeholderTextColor='#8E8E93'
-              style={styles.chatInput}
+              placeholderTextColor={C.muted}
+              style={[
+                styles.chatInput,
+                { borderColor: C.border, color: C.text },
+              ]}
               multiline
             />
             <TouchableOpacity
               onPress={sendMessage}
               activeOpacity={0.85}
-              style={styles.chatSendBtn}
+              style={[styles.chatSendBtn, { backgroundColor: C.primary }]}
             >
-              <Send size={14} color='#FFFFFF' />
+              <Send size={14} color={C.background} />
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -291,20 +323,20 @@ export default function SupportScreen() {
 
           <ThemedText style={styles.heroQuestion}>How Can We Help?</ThemedText>
 
-          <View style={styles.searchWrap}>
-            <SearchNormal1 size={14} color='#9AA4A0' />
+          <View style={[styles.searchWrap, { backgroundColor: C.inputBg }]}>
+            <SearchNormal1 size={14} color={C.muted} />
             <TextInput
               value={search}
               onChangeText={setSearch}
               placeholder='Search anything'
-              placeholderTextColor='#9AA4A0'
-              style={styles.searchInput}
+              placeholderTextColor={C.muted}
+              style={[styles.searchInput, { color: C.text }]}
             />
           </View>
         </View>
 
         <View style={styles.bodyArea}>
-          <ThemedText style={styles.faqHeading}>FAQs</ThemedText>
+          <ThemedText style={[styles.faqHeading, { color: C.text }]}>FAQs</ThemedText>
 
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -318,25 +350,39 @@ export default function SupportScreen() {
                 onPress={() =>
                   setOpenFaqIndex((prev) => (prev === index ? null : index))
                 }
+                iconColor={scheme === "dark" ? C.muted : C.primary}
+                backgroundColor={C.inputBg}
+                borderColor={C.border}
+                textColor={C.text}
               />
             ))}
 
             {[0, 1, 2].map((index) => (
-              <View key={`doc-${index}`} style={styles.docLinkRow}>
-                <DocLinkRow onPress={() => setShowDocumented(true)} />
+              <View
+                key={`doc-${index}`}
+                style={[
+                  styles.docLinkRow,
+                  { backgroundColor: C.inputBg, borderColor: C.border },
+                ]}
+              >
+                <DocLinkRow
+                  onPress={() => setShowDocumented(true)}
+                  titleColor={C.text}
+                  subColor={C.muted}
+                />
               </View>
             ))}
 
             <View style={styles.bottomSpace} />
           </ScrollView>
 
-          <View style={styles.startCtaWrap}>
+          <View style={[styles.startCtaWrap, { backgroundColor: C.background }]}>
             <TouchableOpacity
               activeOpacity={0.85}
-              style={styles.startCtaBtn}
+              style={[styles.startCtaBtn, { backgroundColor: C.googleBg }]}
               onPress={() => setShowLiveChat(true)}
             >
-              <ThemedText style={styles.startCtaText}>
+              <ThemedText style={[styles.startCtaText, { color: C.primary }]}>
                 Start Conversation
               </ThemedText>
             </TouchableOpacity>
@@ -418,7 +464,6 @@ const styles = StyleSheet.create({
   searchWrap: {
     height: 48,
     borderRadius: 12,
-    backgroundColor: "#F6F6F7",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
@@ -426,7 +471,6 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: "#0B0014",
     fontSize: 14,
     padding: 0,
   },
@@ -439,7 +483,6 @@ const styles = StyleSheet.create({
     marginTop: -12,
   },
   faqHeading: {
-    color: "#F4F4F5",
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 16,
@@ -450,37 +493,30 @@ const styles = StyleSheet.create({
   faqRow: {
     minHeight: 56,
     borderRadius: 12,
-    backgroundColor: "#F4F4F5",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#EAEAEA",
   },
   faqText: {
-    color: "#0B0014",
     fontSize: 14,
     flex: 1,
     marginRight: 12,
   },
   docLinkRow: {
     borderRadius: 12,
-    backgroundColor: "#F4F4F5",
     padding: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#EAEAEA",
   },
   docLinkTitle: {
-    color: "#0B0014",
     fontSize: 14,
     fontWeight: "500",
     marginBottom: 4,
   },
   docLinkSub: {
-    color: "#8C9390",
     fontSize: 12,
   },
   bottomSpace: {
@@ -491,18 +527,15 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     bottom: 24,
-    backgroundColor: "#fff",
     paddingTop: 8,
   },
   startCtaBtn: {
     height: 52,
     borderRadius: 12,
-    backgroundColor: "#D2F1E4",
     alignItems: "center",
     justifyContent: "center",
   },
   startCtaText: {
-    color: "#013D25",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -547,7 +580,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderBottomColor: "#EAEAEA",
   },
   liveHeaderText: {
     fontSize: 16,
@@ -567,11 +599,9 @@ const styles = StyleSheet.create({
   },
   supportBubble: {
     alignSelf: "flex-start",
-    backgroundColor: "#F4F4F5",
   },
   userBubble: {
     alignSelf: "flex-end",
-    backgroundColor: "#013D25",
   },
   chatBubbleText: {
     fontSize: 14,
@@ -579,24 +609,20 @@ const styles = StyleSheet.create({
   },
   chatInputRow: {
     borderTopWidth: 1,
-    borderTopColor: "#EAEAEA",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 8,
     gap: 8,
-    backgroundColor: "#FFFFFF",
   },
   attachIconWrap: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#F4F4F5",
     alignItems: "center",
     justifyContent: "center",
   },
   attachIcon: {
-    color: "#013D25",
     fontSize: 20,
   },
   chatInput: {
@@ -604,16 +630,13 @@ const styles = StyleSheet.create({
     minHeight: 40,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#EAEAEA",
     paddingHorizontal: 16,
     fontSize: 14,
-    color: "#0B0014",
   },
   chatSendBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#013D25",
     alignItems: "center",
     justifyContent: "center",
   },
