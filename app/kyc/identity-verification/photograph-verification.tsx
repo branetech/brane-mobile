@@ -62,13 +62,13 @@ export default function PhotographVerificationScreen() {
           and authenticity purposes.
         </ThemedText>
 
-        <ThemedText style={styles.sectionTitle}>
+        <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
           Select Verification Method
         </ThemedText>
 
         <UploadMethodItem
           title='Upload Passport'
-          icon={<ProfileCircle size={20} color='#013D25' />}
+          icon={<ProfileCircle size={20} color={C.primary} />}
           selected={selectedOption === "uploadPassport"}
           onSelect={() => setSelectedOption("uploadPassport")}
           onFileChange={setFileUri}
@@ -94,8 +94,8 @@ export default function PhotographVerificationScreen() {
         onRequestClose={() => setSuccess(false)}
       >
         <View style={styles.successOverlay}>
-          <View style={styles.successCard}>
-            <ThemedText type='subtitle' style={{ textAlign: "center" }}>
+          <View style={[styles.successCard, { backgroundColor: C.screen }]}>
+            <ThemedText type='subtitle' style={{ textAlign: "center", color: C.text }}>
               Successful
             </ThemedText>
             <ThemedText style={[styles.successText, { color: C.muted }]}>
@@ -126,7 +126,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginTop: 20,
     marginBottom: 8,
-    color: "#0B0014",
     fontSize: 14,
     fontWeight: "500",
   },
@@ -138,7 +137,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   successCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 14,
     padding: 20,
   },

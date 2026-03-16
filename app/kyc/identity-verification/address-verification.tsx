@@ -59,13 +59,13 @@ export default function AddressVerificationScreen() {
           purposes.
         </ThemedText>
 
-        <ThemedText style={styles.sectionTitle}>
+        <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
           Select Verification Method
         </ThemedText>
 
         <UploadMethodItem
           title='Utility Bill'
-          icon={<DocumentText1 size={20} color='#013D25' />}
+          icon={<DocumentText1 size={20} color={C.primary} />}
           selected={selectedOption === "utility"}
           onSelect={() => setSelectedOption("utility")}
           onFileChange={setFileUri}
@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginTop: 20,
     marginBottom: 8,
-    color: "#0B0014",
     fontSize: 14,
     fontWeight: "500",
   },
