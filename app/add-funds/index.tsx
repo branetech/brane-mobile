@@ -42,9 +42,7 @@ export default function FundScreen() {
           <View w='100%' gap={16}>
             <View row gap={8} aligned>
               <BankIcon />
-              <ThemedText style={{ color: C.text }}>
-                Bank Transfer
-              </ThemedText>
+              <ThemedText style={{ color: C.text }}>Bank Transfer</ThemedText>
             </View>
             <View
               bg={C.primary}
@@ -64,22 +62,10 @@ export default function FundScreen() {
                 <Text color={C.background}>Brane - Oluayo Bankole</Text>
               </View>
               <View row gap={16}>
-                <View
-                  center
-                  w={32}
-                  h={32}
-                  bg={C.primary + "CC"}
-                  radius={8}
-                >
+                <View center w={32} h={32} bg={C.primary + "CC"} radius={8}>
                   <ExportCurve size={16} color={C.background} />
                 </View>
-                <View
-                  center
-                  w={32}
-                  h={32}
-                  bg={C.primary + "CC"}
-                  radius={8}
-                >
+                <View center w={32} h={32} bg={C.primary + "CC"} radius={8}>
                   <Copy size={16} color={C.background} />
                 </View>
               </View>

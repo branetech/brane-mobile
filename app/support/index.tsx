@@ -58,10 +58,7 @@ const FAQRow = ({
 }) => {
   return (
     <TouchableOpacity
-      style={[
-        styles.faqRow,
-        { backgroundColor, borderColor },
-      ]}
+      style={[styles.faqRow, { backgroundColor, borderColor }]}
       activeOpacity={0.85}
       onPress={onPress}
     >
@@ -87,10 +84,7 @@ const DocLinkRow = ({
   subColor: string;
 }) => {
   return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={onPress}
-    >
+    <TouchableOpacity activeOpacity={0.85} onPress={onPress}>
       <ThemedText style={[styles.docLinkTitle, { color: titleColor }]}>
         How to put my bracks to work
       </ThemedText>
@@ -252,7 +246,10 @@ const LiveChatModal = ({
               { borderTopColor: C.border, backgroundColor: C.background },
             ]}
           >
-            <TouchableOpacity activeOpacity={0.8} style={[styles.attachIconWrap, { backgroundColor: C.inputBg }]}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[styles.attachIconWrap, { backgroundColor: C.inputBg }]}
+            >
               <ThemedText style={[styles.attachIcon, { color: C.primary }]}>
                 ⌁
               </ThemedText>
@@ -336,7 +333,9 @@ export default function SupportScreen() {
         </View>
 
         <View style={styles.bodyArea}>
-          <ThemedText style={[styles.faqHeading, { color: C.text }]}>FAQs</ThemedText>
+          <ThemedText style={[styles.faqHeading, { color: C.text }]}>
+            FAQs
+          </ThemedText>
 
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -376,7 +375,9 @@ export default function SupportScreen() {
             <View style={styles.bottomSpace} />
           </ScrollView>
 
-          <View style={[styles.startCtaWrap, { backgroundColor: C.background }]}>
+          <View
+            style={[styles.startCtaWrap, { backgroundColor: C.background }]}
+          >
             <TouchableOpacity
               activeOpacity={0.85}
               style={[styles.startCtaBtn, { backgroundColor: C.googleBg }]}

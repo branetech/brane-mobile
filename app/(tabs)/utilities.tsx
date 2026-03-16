@@ -25,7 +25,7 @@ type UtilityOption = {
     | "cable"
     | "electricity"
     | "transportation";
-  icon: React.ReactNode;
+  icon: (color: string) => React.ReactNode;
   bg: string;
   iconBg: string;
 };
@@ -92,9 +92,11 @@ export default function UtiliScreen() {
         <ThemedText style={[styles.title, { color: C.text }]}>
           Bills & Utilities
         </ThemedText>
-        <View style={styles.badge}>
-          <KeyboardOpen size={14} color="#013D25" />
-          <ThemedText style={styles.badgeText}>Pay fast</ThemedText>
+        <View style={[styles.badge, { backgroundColor: C.googleBg }]}>
+          <KeyboardOpen size={14} color={C.primary} />
+          <ThemedText style={[styles.badgeText, { color: C.primary }]}>
+            Pay fast
+          </ThemedText>
         </View>
       </View>
 
@@ -118,8 +120,12 @@ export default function UtiliScreen() {
             <View style={[styles.iconWrap, { backgroundColor: item.iconBg }]}>
               {item.icon}
             </View>
-            <ThemedText style={styles.cardTitle}>{item.title}</ThemedText>
-            <ThemedText style={styles.cardSubtitle}>{item.subtitle}</ThemedText>
+            <ThemedText style={[styles.cardTitle, { color: C.text }]}>
+              {item.title}
+            </ThemedText>
+            <ThemedText style={[styles.cardSubtitle, { color: C.muted }]}>
+              {item.subtitle}
+            </ThemedText>
           </TouchableOpacity>
         ))}
       </View>
@@ -157,7 +163,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   badgeText: {
-    color: "#013D25",
     fontSize: 10,
     fontWeight: "600",
   },
@@ -185,11 +190,9 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#0B0014",
   },
   cardSubtitle: {
     marginTop: 5,
-    color: "#66606E",
     fontSize: 10,
     lineHeight: 14,
   },
