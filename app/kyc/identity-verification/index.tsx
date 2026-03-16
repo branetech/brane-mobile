@@ -32,7 +32,7 @@ export default function IdentityVerificationScreen() {
         <View style={{ marginTop: 12 }}>
           <KycItem
             title='ID Verification'
-            icon={<DocumentText1 size={20} color='#013D25' />}
+            icon={<DocumentText1 size={20} color={C.primary} />}
             isVerified={!!user?.hasIdentity && !!user?.hasBvn}
             onPress={() =>
               router.push("/kyc/identity-verification/id-verification")
@@ -40,7 +40,7 @@ export default function IdentityVerificationScreen() {
           />
           <KycItem
             title='Passport Photograph'
-            icon={<ProfileCircle size={20} color='#013D25' />}
+            icon={<ProfileCircle size={20} color={C.primary} />}
             isVerified={!!user?.hasPhoto}
             onPress={() =>
               router.push("/kyc/identity-verification/photograph-verification")
@@ -48,7 +48,7 @@ export default function IdentityVerificationScreen() {
           />
           <KycItem
             title='Address Verification'
-            icon={<Location size={20} color='#013D25' />}
+            icon={<Location size={20} color={C.primary} />}
             isVerified={!!user?.hasLocation}
             onPress={() =>
               router.push("/kyc/identity-verification/address-verification")

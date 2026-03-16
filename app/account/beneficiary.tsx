@@ -108,12 +108,12 @@ export default function ManageBeneficiaryScreen() {
         <View style={{ width: 44 }} />
       </View>
 
-      <View style={styles.searchWrap} row aligned>
-        <SearchNormal1 size={18} color='#85808A' />
+      <View style={[styles.searchWrap, { borderColor: C.border }]} row aligned>
+        <SearchNormal1 size={18} color={C.muted} />
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: C.text }]}
           placeholder='Search name or phone'
-          placeholderTextColor='#85808A'
+          placeholderTextColor={C.muted}
           value={search}
           onChangeText={setSearch}
         />
@@ -121,7 +121,7 @@ export default function ManageBeneficiaryScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size='small' color='#013D25' />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : (
         <FlatList
@@ -132,6 +132,7 @@ export default function ManageBeneficiaryScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchBeneficiaries(true)}
+              tintColor={C.primary}
             />
           }
           ListEmptyComponent={
@@ -140,7 +141,7 @@ export default function ManageBeneficiaryScreen() {
             </ThemedText>
           }
           renderItem={({ item }) => (
-            <View style={styles.card} row aligned spaced>
+            <View style={[styles.card, { borderColor: C.border, backgroundColor: C.screen }]} row aligned spaced>
               <View style={{ flex: 1 }}>
                 <ThemedText type='defaultSemiBold'>{item.name}</ThemedText>
                 <ThemedText style={[styles.meta, { color: C.muted }]}>
@@ -156,7 +157,7 @@ export default function ManageBeneficiaryScreen() {
                 style={styles.deleteButton}
                 onPress={() => onDeleteBeneficiary(item)}
               >
-                <Trash size={16} color='#CB010B' />
+                <Trash size={16} color='#D50000' />
               </Pressable>
             </View>
           )}
@@ -182,11 +183,10 @@ const styles = StyleSheet.create({
     marginTop: 18,
     marginHorizontal: 16,
     borderWidth: 1,
-    borderColor: "#F1F1F3",
-    borderRadius: 10,
     paddingHorizontal: 12,
     gap: 8,
     height: 46,
+    borderRadius: 10,
   },
   searchInput: {
     flex: 1,
@@ -205,10 +205,8 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderColor: "#F4F4F5",
     borderRadius: 12,
     padding: 14,
-    backgroundColor: "#FFFFFF",
   },
   meta: {
     fontSize: 12,
@@ -220,7 +218,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFF3F3",
+    backgroundColor: "#FCE4E4",
     marginLeft: 8,
   },
   emptyText: {
