@@ -215,7 +215,7 @@ export default function BuyAirtimeScreen() {
                 <View
                   style={{
                     ...styles.summaryCard,
-                    backgroundColor: C.inputBackground,
+                    backgroundColor: C.inputBg,
                     borderColor: C.border,
                   }}
                 >
@@ -249,8 +249,8 @@ export default function BuyAirtimeScreen() {
                 <BraneButton
                   text='Go Back'
                   onPress={() => setStage("form")}
-                  backgroundColor={C.inputBackground}
-                  textColor='#013D25'
+                  backgroundColor={C.inputBg}
+                  textColor={C.primary}
                   style={styles.secondaryButton}
                 />
               </>
@@ -259,7 +259,7 @@ export default function BuyAirtimeScreen() {
             {/* ── SUCCESS ── */}
             {stage === "success" && (
               <View style={{ ...styles.successWrap, gap: 12 }}>
-                <TickCircle size={72} color='#013D25' variant='Bold' />
+                <TickCircle size={72} color={C.primary} variant='Bold' />
                 <ThemedText type='subtitle' style={{ textAlign: "center" }}>
                   Airtime Purchase Successful!
                 </ThemedText>
