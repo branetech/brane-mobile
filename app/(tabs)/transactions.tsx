@@ -1,5 +1,7 @@
 import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import { formatDate, parseTransaction, priceFormatter } from "@/utils/helpers";
@@ -55,6 +57,8 @@ const getStatusStyles = (status?: string) => {
 
 export default function TransactionScreen() {
   const router = useRouter();
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
   const [transactions, setTransactions] = useState<ITransactionDetail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -109,21 +113,23 @@ export default function TransactionScreen() {
   }, [transactions]);
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
-        <ThemedText style={styles.title}>Transaction History</ThemedText>
+        <ThemedText style={[styles.title, { color: C.text }]}>
+          Transaction History
+        </ThemedText>
         <TouchableOpacity onPress={() => setShowFilterModal(true)}>
-          <Setting3 size={20} color='#0B0014' variant='Outline' />
+          <Setting3 size={20} color={C.text} variant='Outline' />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.searchRow}>
-        <SearchNormal1 size={16} color='#7A7A80' variant='Outline' />
+      <View style={[styles.searchRow, { backgroundColor: C.inputBg, borderColor: C.border }]}>
+        <SearchNormal1 size={16} color={C.muted} variant='Outline' />
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: C.text }]}
           placeholder='Search transactions'
-          placeholderTextColor='#A4A4AA'
+          placeholderTextColor={C.muted}
           value={search}
           onChangeText={setSearch}
           onSubmitEditing={() => fetchTransactions()}
@@ -132,7 +138,7 @@ export default function TransactionScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color='#013D25' />
+          <ActivityIndicator color={C.primary} />
         </View>
       ) : (
         <ScrollView
@@ -141,23 +147,26 @@ export default function TransactionScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchTransactions(true)}
+              tintColor={C.primary}
             />
           }
         >
           {Object.keys(grouped).length < 1 ? (
-            <ThemedText style={styles.emptyText}>
+            <ThemedText style={[styles.emptyText, { color: C.muted }]}>
               No transactions yet.
             </ThemedText>
           ) : (
             Object.entries(grouped).map(([date, records]) => (
               <View key={date} style={styles.groupWrap}>
-                <ThemedText style={styles.groupDate}>{date}</ThemedText>
+                <ThemedText style={[styles.groupDate, { color: C.muted }]}>
+                  {date}
+                </ThemedText>
                 {records.map((item) => {
                   const statusUI = getStatusStyles(item.status);
                   return (
                     <TouchableOpacity
                       key={String(item.id)}
-                      style={styles.row}
+                      style={[styles.row, { backgroundColor: C.screen, borderColor: C.border }]}
                       onPress={() =>
                         router.push({
                           pathname: "/transaction/[details]",
@@ -166,15 +175,15 @@ export default function TransactionScreen() {
                       }
                     >
                       <View style={styles.rowLeft}>
-                        <ThemedText style={styles.rowTitle}>
+                        <ThemedText style={[styles.rowTitle, { color: C.text }]}>
                           {item.transactionDescription || item.transactionType}
                         </ThemedText>
-                        <ThemedText style={styles.rowSub}>
+                        <ThemedText style={[styles.rowSub, { color: C.muted }]}>
                           {formatDate(item.createdAt, "hh:mm a")}
                         </ThemedText>
                       </View>
                       <View style={styles.rowRight}>
-                        <ThemedText style={styles.rowAmount}>
+                        <ThemedText style={[styles.rowAmount, { color: C.text }]}>
                           {priceFormatter(Number(item.amount || 0))}
                         </ThemedText>
                         <View
@@ -213,12 +222,16 @@ export default function TransactionScreen() {
         >
           <TouchableOpacity
             activeOpacity={1}
-            style={styles.modalCard}
+            style={[styles.modalCard, { backgroundColor: C.background }]}
             onPress={() => {}}
           >
-            <ThemedText style={styles.modalTitle}>Filter</ThemedText>
+            <ThemedText style={[styles.modalTitle, { color: C.text }]}>
+              Filter
+            </ThemedText>
 
-            <ThemedText style={styles.filterHeading}>Status</ThemedText>
+            <ThemedText style={[styles.filterHeading, { color: C.muted }]}>
+              Status
+            </ThemedText>
             <View style={styles.filterRow}>
               {(["", "pending", "success", "failed"] as TxStatus[]).map(
                 (status) => (
@@ -226,14 +239,23 @@ export default function TransactionScreen() {
                     key={status || "all"}
                     style={[
                       styles.filterChip,
-                      statusFilter === status && styles.filterChipActive,
+                      statusFilter === status && {
+                        backgroundColor: C.primary,
+                      },
+                      statusFilter !== status && {
+                        backgroundColor: C.inputBg,
+                        borderColor: C.border,
+                      },
                     ]}
                     onPress={() => setStatusFilter(status)}
                   >
                     <ThemedText
                       style={[
                         styles.filterChipText,
-                        statusFilter === status && styles.filterChipTextActive,
+                        {
+                          color:
+                            statusFilter === status ? C.background : C.text,
+                        },
                       ]}
                     >
                       {status ? status : "All"}
@@ -243,14 +265,22 @@ export default function TransactionScreen() {
               )}
             </View>
 
-            <ThemedText style={styles.filterHeading}>Type</ThemedText>
+            <ThemedText style={[styles.filterHeading, { color: C.muted }]}>
+              Type
+            </ThemedText>
             <View style={styles.filterRow}>
               {TX_TYPES.map((type) => (
                 <TouchableOpacity
                   key={type}
                   style={[
                     styles.filterChip,
-                    typeFilter === type && styles.filterChipActive,
+                    typeFilter === type && {
+                      backgroundColor: C.primary,
+                    },
+                    typeFilter !== type && {
+                      backgroundColor: C.inputBg,
+                      borderColor: C.border,
+                    },
                   ]}
                   onPress={() =>
                     setTypeFilter((prev) => (prev === type ? "" : type))
@@ -259,7 +289,9 @@ export default function TransactionScreen() {
                   <ThemedText
                     style={[
                       styles.filterChipText,
-                      typeFilter === type && styles.filterChipTextActive,
+                      {
+                        color: typeFilter === type ? C.background : C.text,
+                      },
                     ]}
                   >
                     {type}
@@ -270,22 +302,26 @@ export default function TransactionScreen() {
 
             <View style={styles.modalActions}>
               <TouchableOpacity
-                style={styles.secondaryBtn}
+                style={[styles.secondaryBtn, { borderColor: C.border }]}
                 onPress={() => {
                   setStatusFilter("");
                   setTypeFilter("");
                 }}
               >
-                <ThemedText style={styles.secondaryBtnText}>Clear</ThemedText>
+                <ThemedText style={[styles.secondaryBtnText, { color: C.text }]}>
+                  Clear
+                </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.primaryBtn}
+                style={[styles.primaryBtn, { backgroundColor: C.primary }]}
                 onPress={() => {
                   setShowFilterModal(false);
                   fetchTransactions();
                 }}
               >
-                <ThemedText style={styles.primaryBtnText}>Apply</ThemedText>
+                <ThemedText style={[styles.primaryBtnText, { color: C.background }]}>
+                  Apply
+                </ThemedText>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -298,7 +334,6 @@ export default function TransactionScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
   },
   header: {
     paddingHorizontal: 16,
@@ -311,25 +346,21 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0B0014",
   },
   searchRow: {
     marginHorizontal: 16,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#ECECEF",
     borderRadius: 10,
     height: 42,
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: "#F8F8FA",
   },
   searchInput: {
     flex: 1,
     fontSize: 12,
-    color: "#0B0014",
   },
   loaderWrap: {
     flex: 1,
@@ -344,19 +375,16 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: "center",
     marginTop: 20,
-    color: "#8C8893",
   },
   groupWrap: {
     gap: 8,
   },
   groupDate: {
     fontSize: 12,
-    color: "#85808A",
     fontWeight: "600",
   },
   row: {
     borderWidth: 1,
-    borderColor: "#EFEFF1",
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 11,
@@ -375,16 +403,13 @@ const styles = StyleSheet.create({
   rowTitle: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#0B0014",
   },
   rowSub: {
     fontSize: 10,
-    color: "#8A8790",
   },
   rowAmount: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#17131F",
   },
   statusPill: {
     borderWidth: 1,
@@ -403,7 +428,6 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     maxHeight: "80%",
-    backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     paddingHorizontal: 16,
@@ -414,11 +438,9 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0B0014",
   },
   filterHeading: {
     fontSize: 12,
-    color: "#625D69",
     fontWeight: "600",
     marginTop: 2,
   },
@@ -431,7 +453,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: "#E8E8EB",
     borderRadius: 16,
   },
   filterChipActive: {
@@ -440,7 +461,6 @@ const styles = StyleSheet.create({
   },
   filterChipText: {
     fontSize: 11,
-    color: "#4F4C57",
     textTransform: "capitalize",
   },
   filterChipTextActive: {
@@ -457,26 +477,22 @@ const styles = StyleSheet.create({
     height: 42,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#DADADD",
     alignItems: "center",
     justifyContent: "center",
   },
   secondaryBtnText: {
     fontSize: 12,
-    color: "#4F4C57",
     fontWeight: "600",
   },
   primaryBtn: {
     flex: 1,
     height: 42,
     borderRadius: 10,
-    backgroundColor: "#013D25",
     alignItems: "center",
     justifyContent: "center",
   },
   primaryBtnText: {
     fontSize: 12,
-    color: "#D2F1E4",
     fontWeight: "700",
   },
 });
