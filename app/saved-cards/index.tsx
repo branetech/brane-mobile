@@ -109,7 +109,10 @@ export default function SavedCardsScreen() {
   const renderItem = useCallback(
     ({ item }: { item: ISavedCard }) => (
       <View
-        style={StyleSheet.flatten([styles.card, { borderColor: C.border, backgroundColor: C.screen }])}
+        style={StyleSheet.flatten([
+          styles.card,
+          { borderColor: C.border, backgroundColor: C.screen },
+        ])}
         row
         aligned
         spaced
