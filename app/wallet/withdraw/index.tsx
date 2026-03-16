@@ -134,7 +134,7 @@ export default function WalletWithdrawScreen() {
         <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
           <ThemedText style={styles.balanceLabel}>Wallet Balance</ThemedText>
           {isLoadingBalance ? (
-            <ActivityIndicator color='#fff' size='small' />
+            <ActivityIndicator color={C.background} size='small' />
           ) : (
             <ThemedText style={styles.balanceValue}>
               {priceFormatter(walletBalance, 2)}
@@ -185,7 +185,7 @@ export default function WalletWithdrawScreen() {
           text='Continue'
           onPress={handleContinueForm}
           backgroundColor={C.primary}
-          textColor={scheme === "dark" ? "#fff" : "#D2F1E4"}
+          textColor={C.googleBg}
           height={52}
           radius={12}
         />
@@ -272,7 +272,7 @@ export default function WalletWithdrawScreen() {
         text='Go Home'
         onPress={() => router.push("/(tabs)")}
         backgroundColor={C.primary}
-        textColor={scheme === "dark" ? "#fff" : "#D2F1E4"}
+        textColor={C.googleBg}
         height={52}
         radius={12}
         width='80%'
@@ -304,7 +304,7 @@ export default function WalletWithdrawScreen() {
             text='Confirm with PIN'
             onPress={() => setShowPin(true)}
             backgroundColor={C.primary}
-            textColor='#D2F1E4'
+            textColor={C.googleBg}
             height={52}
             radius={12}
             style={styles.pinTriggerBtn}
