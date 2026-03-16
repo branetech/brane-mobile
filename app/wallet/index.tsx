@@ -278,7 +278,7 @@ export default function WalletScreen() {
               <ThemedText
                 style={[
                   styles.txAmount,
-                  { color: item.type === "credit" ? C.primary : "#CB010B" },
+                  { color: item.type === "credit" ? C.primary : "#D50000" },
                 ]}
               >
                 {item.type === "credit" ? "+" : "-"}
