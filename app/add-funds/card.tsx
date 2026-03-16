@@ -61,14 +61,23 @@ export default function CardScreen() {
           <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
             Fund Method
           </ThemedText>
-          <View style={[styles.methodContainer, { borderColor: C.border, backgroundColor: C.screen }]}>
+          <View
+            style={[
+              styles.methodContainer,
+              { borderColor: C.border, backgroundColor: C.screen },
+            ]}
+          >
             <View style={styles.subHeaderRow}>
-              <ThemedText style={[styles.addedCardsText, { color: C.muted }]}>Added Cards</ThemedText>
+              <ThemedText style={[styles.addedCardsText, { color: C.muted }]}>
+                Added Cards
+              </ThemedText>
               {savedCards.length > 0 && (
                 <TouchableOpacity
                   onPress={() => router.push("/add-funds/add-card")}
                 >
-                  <ThemedText style={[styles.addNewText, { color: C.primary }]}>Add New</ThemedText>
+                  <ThemedText style={[styles.addNewText, { color: C.primary }]}>
+                    Add New
+                  </ThemedText>
                 </TouchableOpacity>
               )}
             </View>
@@ -121,7 +130,12 @@ export default function CardScreen() {
                       ]}
                     >
                       {selectedCard === card && (
-                        <View style={[styles.radioInner, { backgroundColor: C.primary }]} />
+                        <View
+                          style={[
+                            styles.radioInner,
+                            { backgroundColor: C.primary },
+                          ]}
+                        />
                       )}
                     </View>
                   </TouchableOpacity>
@@ -140,8 +154,14 @@ export default function CardScreen() {
             keyboardType='number-pad'
             value={amount}
             onChangeText={setAmount}
-            inputContainerStyle={[styles.amountInputContainer, { borderColor: C.border }]}
-            inputStyle={[styles.amountInputText, { color: C.text, backgroundColor: C.inputBg }]}
+            inputContainerStyle={[
+              styles.amountInputContainer,
+              { borderColor: C.border },
+            ]}
+            inputStyle={[
+              styles.amountInputText,
+              { color: C.text, backgroundColor: C.inputBg },
+            ]}
           />
           <View style={styles.presetRow}>
             {PRESET_AMOUNTS.map((preset) => (
@@ -157,7 +177,14 @@ export default function CardScreen() {
                 onPress={() => setAmount(preset)}
               >
                 <View style={styles.presetInner}>
-                  <View style={[styles.presetDot, { backgroundColor: amount === preset ? C.primary : C.text }]} />
+                  <View
+                    style={[
+                      styles.presetDot,
+                      {
+                        backgroundColor: amount === preset ? C.primary : C.text,
+                      },
+                    ]}
+                  />
                   <ThemedText
                     style={[
                       styles.presetText,

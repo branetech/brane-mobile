@@ -10,12 +10,12 @@ import { useRouter } from "expo-router";
 import { SearchNormal1, Trash } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-  TextInput,
+    ActivityIndicator,
+    FlatList,
+    Pressable,
+    RefreshControl,
+    StyleSheet,
+    TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -141,7 +141,15 @@ export default function ManageBeneficiaryScreen() {
             </ThemedText>
           }
           renderItem={({ item }) => (
-            <View style={[styles.card, { borderColor: C.border, backgroundColor: C.screen }]} row aligned spaced>
+            <View
+              style={[
+                styles.card,
+                { borderColor: C.border, backgroundColor: C.screen },
+              ]}
+              row
+              aligned
+              spaced
+            >
               <View style={{ flex: 1 }}>
                 <ThemedText type='defaultSemiBold'>{item.name}</ThemedText>
                 <ThemedText style={[styles.meta, { color: C.muted }]}>

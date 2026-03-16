@@ -9,10 +9,10 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -227,8 +227,13 @@ export default function SpendingPatternScreen() {
                 }}
                 gap={4}
               >
-                <ThemedText style={[styles.summaryLabel, { color: C.muted }]}>Total Spent</ThemedText>
-                <ThemedText type='subtitle' style={[styles.summaryValue, { color: C.text }]}>
+                <ThemedText style={[styles.summaryLabel, { color: C.muted }]}>
+                  Total Spent
+                </ThemedText>
+                <ThemedText
+                  type='subtitle'
+                  style={[styles.summaryValue, { color: C.text }]}
+                >
                   {priceFormatter(totalSpent)}
                 </ThemedText>
               </View>
@@ -244,7 +249,10 @@ export default function SpendingPatternScreen() {
                 <ThemedText style={[styles.summaryLabel, { color: C.muted }]}>
                   Transactions
                 </ThemedText>
-                <ThemedText type='subtitle' style={[styles.summaryValue, { color: C.text }]}>
+                <ThemedText
+                  type='subtitle'
+                  style={[styles.summaryValue, { color: C.text }]}
+                >
                   {transactionCount ?? 0}
                 </ThemedText>
               </View>

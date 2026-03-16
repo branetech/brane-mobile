@@ -109,7 +109,7 @@ export default function SavedCardsScreen() {
   const renderItem = useCallback(
     ({ item }: { item: ISavedCard }) => (
       <View
-        style={StyleSheet.flatten([styles.card, { borderColor: C.border }])}
+        style={StyleSheet.flatten([styles.card, { borderColor: C.border, backgroundColor: C.screen }])}
         row
         aligned
         spaced
@@ -122,7 +122,7 @@ export default function SavedCardsScreen() {
           align='center'
           justify='center'
         >
-          <Card size={20} color='#013D25' variant='TwoTone' />
+          <Card size={20} color={C.primary} variant='TwoTone' />
         </View>
         <View style={{ flex: 1, marginLeft: 12 }}>
           <ThemedText
@@ -150,11 +150,11 @@ export default function SavedCardsScreen() {
           )}
         </View>
         <TouchableOpacity
-          style={styles.deleteBtn}
+          style={[styles.deleteBtn, { backgroundColor: "#FCE4E4" }]}
           activeOpacity={0.7}
           onPress={() => setPendingDelete(item)}
         >
-          <Trash size={18} color='#CB010B' variant='TwoTone' />
+          <Trash size={18} color='#D50000' variant='TwoTone' />
         </TouchableOpacity>
       </View>
     ),
@@ -173,7 +173,7 @@ export default function SavedCardsScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size='small' color='#013D25' />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : (
         <FlatList
@@ -185,7 +185,7 @@ export default function SavedCardsScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchCards(true)}
-              tintColor='#013D25'
+              tintColor={C.primary}
             />
           }
           renderItem={renderItem}
@@ -286,11 +286,11 @@ export default function SavedCardsScreen() {
                 disabled={isDeleting}
               >
                 {isDeleting ? (
-                  <ActivityIndicator size='small' color='#fff' />
+                  <ActivityIndicator size='small' color={C.background} />
                 ) : (
                   <ThemedText
                     type='defaultSemiBold'
-                    style={{ fontSize: 14, color: "#fff" }}
+                    style={{ fontSize: 14, color: C.background }}
                   >
                     Remove
                   </ThemedText>
@@ -331,7 +331,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     padding: 14,
-    backgroundColor: "#FFFFFF",
   },
   cardIcon: {
     width: 40,
@@ -344,7 +343,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFF3F3",
     marginLeft: 8,
   },
   emptyWrap: {
@@ -389,6 +387,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   removeBtn: {
-    backgroundColor: "#CB010B",
+    backgroundColor: "#D50000",
   },
 });

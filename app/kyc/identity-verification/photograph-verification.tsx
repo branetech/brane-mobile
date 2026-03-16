@@ -95,7 +95,10 @@ export default function PhotographVerificationScreen() {
       >
         <View style={styles.successOverlay}>
           <View style={[styles.successCard, { backgroundColor: C.screen }]}>
-            <ThemedText type='subtitle' style={{ textAlign: "center", color: C.text }}>
+            <ThemedText
+              type='subtitle'
+              style={{ textAlign: "center", color: C.text }}
+            >
               Successful
             </ThemedText>
             <ThemedText style={[styles.successText, { color: C.muted }]}>

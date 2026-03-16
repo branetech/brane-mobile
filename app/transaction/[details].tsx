@@ -10,19 +10,23 @@ import { ITransactionDetail } from "@/utils/index";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const getStatusStyles = (status?: string, C?: any) => {
   const key = String(status || "").toLowerCase();
   if (key.includes("success")) {
-    return { bg: C?.primary + "15", color: C?.primary, border: C?.primary + "40" };
+    return {
+      bg: C?.primary + "15",
+      color: C?.primary,
+      border: C?.primary + "40",
+    };
   }
   if (key.includes("pending")) {
     return { bg: "#FFF7E8", color: "#B5760A", border: "#F1D9A8" };
@@ -102,7 +106,9 @@ export default function TransactionDetailScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
-        <ThemedText style={[styles.title, { color: C.text }]}>Transaction Details</ThemedText>
+        <ThemedText style={[styles.title, { color: C.text }]}>
+          Transaction Details
+        </ThemedText>
         <View style={styles.spacer} />
       </View>
 
@@ -212,11 +218,7 @@ export default function TransactionDetailScreen() {
               />
             ) : null}
             {meta?.token ? (
-              <DetailRow
-                title='Token'
-                value={String(meta.token)}
-                C={C}
-              />
+              <DetailRow title='Token' value={String(meta.token)} C={C} />
             ) : null}
           </View>
 

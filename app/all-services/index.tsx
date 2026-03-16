@@ -7,10 +7,10 @@ import { useRouter } from "expo-router";
 import { ArrowRight2 } from "iconsax-react-native";
 import React, { useMemo, useState } from "react";
 import {
-  SectionList,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
+    SectionList,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

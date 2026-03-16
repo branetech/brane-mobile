@@ -9,12 +9,12 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -173,12 +173,7 @@ export default function StockMarketScreen() {
             backgroundColor: txBgColor,
           }}
         >
-          <ThemedText
-            style={[
-              styles.txTypeText,
-              { color: txTextColor },
-            ]}
-          >
+          <ThemedText style={[styles.txTypeText, { color: txTextColor }]}>
             {isBuy ? "Buy" : "Sell"}
           </ThemedText>
         </View>
