@@ -100,35 +100,43 @@ export default function SendMoneySetAmountScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.recipientCard}>
-          <ThemedText style={styles.smallLabel}>Wema bank</ThemedText>
+        <View style={[styles.recipientCard, { backgroundColor: C.inputBg }]}>
+          <ThemedText style={[styles.smallLabel, { color: C.muted }]}>
+            Wema bank
+          </ThemedText>
           <View style={styles.recipientRow}>
             <View>
               <ThemedText style={[styles.recipientName, { color: C.text }]}>
                 {recipientName}
               </ThemedText>
-              <ThemedText style={styles.smallMeta}>{accountNumber}</ThemedText>
+              <ThemedText style={[styles.smallMeta, { color: C.muted }]}>
+                {accountNumber}
+              </ThemedText>
             </View>
-            <View style={styles.checkIconWrap}>
-              <ThemedText style={styles.checkIcon}>✓</ThemedText>
+            <View style={[styles.checkIconWrap, { backgroundColor: C.primary + "20" }]}>
+              <ThemedText style={[styles.checkIcon, { color: C.primary }]}>
+                ✓
+              </ThemedText>
             </View>
           </View>
         </View>
 
         <View style={styles.beneficiaryRow}>
-          <ThemedText style={styles.fieldHeading}>
+          <ThemedText style={[styles.fieldHeading, { color: C.muted }]}>
             Add to beneficiaries
           </ThemedText>
           <Switch
             value={addToBeneficiaries}
             onValueChange={setAddToBeneficiaries}
-            trackColor={{ false: "#E6E6E8", true: "#D2F1E4" }}
-            thumbColor={addToBeneficiaries ? "#013D25" : "#B9B9BD"}
+            trackColor={{ false: C.inputBg, true: C.googleBg }}
+            thumbColor={addToBeneficiaries ? C.primary : C.muted}
           />
         </View>
 
-        <ThemedText style={styles.fieldHeading}>Amount</ThemedText>
-        <View style={styles.newCon} gap={12}>
+        <ThemedText style={[styles.fieldHeading, { color: C.muted }]}>
+          Amount
+        </ThemedText>
+        <View style={[styles.newCon, { backgroundColor: C.screen, borderColor: C.border }]} gap={12}>
           <View style={styles.presetGrid}>
             {PRESET_AMOUNTS.concat(PRESET_AMOUNTS).map((preset, index) => (
               <TouchableOpacity
@@ -136,8 +144,8 @@ export default function SendMoneySetAmountScreen() {
                 style={[
                   styles.presetBtn,
                   {
-                    backgroundColor: amount === preset ? "#F4F1E2" : "#FFFFFF",
-                    borderColor: amount === preset ? "#E4DBC0" : "#ECECEC",
+                    backgroundColor: amount === preset ? C.inputBg : C.screen,
+                    borderColor: amount === preset ? C.border : "#ECECEC",
                   },
                 ]}
                 onPress={() => {
@@ -145,7 +153,9 @@ export default function SendMoneySetAmountScreen() {
                   setAmountError(undefined);
                 }}
               >
-                <ThemedText style={styles.presetText}>₦ {preset}</ThemedText>
+                <ThemedText style={[styles.presetText, { color: C.text }]}>
+                  ₦ {preset}
+                </ThemedText>
               </TouchableOpacity>
             ))}
           </View>
@@ -163,7 +173,7 @@ export default function SendMoneySetAmountScreen() {
           />
         </View>
 
-        <ThemedText style={[styles.fieldHeading, { marginTop: 12 }]}>
+        <ThemedText style={[styles.fieldHeading, { marginTop: 12, color: C.muted }]}>
           Remark
         </ThemedText>
         <View style={styles.remarkWrap}>
@@ -175,12 +185,12 @@ export default function SendMoneySetAmountScreen() {
               setRemarkError(undefined);
             }}
             error={remarkError}
-            inputContainerStyle={styles.remarkInputContainer}
-            inputStyle={styles.remarkInputText}
+            inputContainerStyle={[styles.remarkInputContainer, { borderColor: C.border }]}
+            inputStyle={[styles.remarkInputText, { color: C.text }]}
           />
-          <ThemedText
-            style={styles.counter}
-          >{`${remark.length}/150`}</ThemedText>
+          <ThemedText style={[styles.counter, { color: C.muted }]}>
+            {`${remark.length}/150`}
+          </ThemedText>
         </View>
       </ScrollView>
 
@@ -191,8 +201,8 @@ export default function SendMoneySetAmountScreen() {
             if (!validate()) return;
             setShowConfirmSheet(true);
           }}
-          backgroundColor='#013D25'
-          textColor='#D2F1E4'
+          backgroundColor={C.primary}
+          textColor={C.googleBg}
           height={48}
           radius={8}
           fontSize={11}
@@ -206,11 +216,13 @@ export default function SendMoneySetAmountScreen() {
         onRequestClose={() => setShowConfirmSheet(false)}
       >
         <RNView style={styles.sheetOverlay}>
-          <RNView style={styles.sheetCard}>
-            <RNView style={styles.grabber} />
-            <ThemedText style={styles.sheetTitle}>Confirm Recipient</ThemedText>
-            <RNView style={styles.noticeBox}>
-              <ThemedText style={styles.noticeText}>
+          <RNView style={[styles.sheetCard, { backgroundColor: C.background }]}>
+            <RNView style={[styles.grabber, { backgroundColor: C.border }]} />
+            <ThemedText style={[styles.sheetTitle, { color: C.text }]}>
+              Confirm Recipient
+            </ThemedText>
+            <RNView style={[styles.noticeBox, { backgroundColor: C.googleBg }]}>
+              <ThemedText style={[styles.noticeText, { color: C.primary }]}>
                 Please review and confirm the recipient information as
                 successful transfer can not be refunded
               </ThemedText>
@@ -243,8 +255,8 @@ export default function SendMoneySetAmountScreen() {
               <BraneButton
                 text='Not This Account'
                 onPress={() => setShowConfirmSheet(false)}
-                backgroundColor='#D2F1E4'
-                textColor='#013D25'
+                backgroundColor={C.googleBg}
+                textColor={C.primary}
                 height={48}
                 radius={24}
                 style={styles.halfBtn}
@@ -256,8 +268,8 @@ export default function SendMoneySetAmountScreen() {
                   setShowConfirmSheet(false);
                   setShowSummarySheet(true);
                 }}
-                backgroundColor='#013D25'
-                textColor='#D2F1E4'
+                backgroundColor={C.primary}
+                textColor={C.googleBg}
                 height={48}
                 radius={24}
                 style={styles.halfBtn}
@@ -344,8 +356,8 @@ export default function SendMoneySetAmountScreen() {
                 setShowSummarySheet(false);
                 setShowPinValidator(true);
               }}
-              backgroundColor='#013D25'
-              textColor='#D2F1E4'
+              backgroundColor={C.primary}
+              textColor={C.googleBg}
               height={52}
               radius={8}
               fontSize={14}
@@ -391,35 +403,33 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 16, fontWeight: "bold" },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 20 },
   recipientCard: {
-    backgroundColor: "#F6F8F8",
     borderRadius: 10,
     padding: 10,
     marginBottom: 12,
   },
-  smallLabel: { fontSize: 9, color: "#8E8E93", marginBottom: 4 },
+  smallLabel: { fontSize: 9, marginBottom: 4 },
   recipientRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
   recipientName: { fontSize: 12, fontWeight: "600" },
-  smallMeta: { fontSize: 9, color: "#8E8E93", marginTop: 2 },
+  smallMeta: { fontSize: 9, marginTop: 2 },
   checkIconWrap: {
     width: 20,
     height: 20,
     borderRadius: 6,
-    backgroundColor: "#E1F4EC",
     alignItems: "center",
     justifyContent: "center",
   },
-  checkIcon: { color: "#013D25", fontSize: 10, fontWeight: "700" },
+  checkIcon: { fontSize: 10, fontWeight: "700" },
   beneficiaryRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 12,
   },
-  fieldHeading: { fontSize: 10, color: "#8E8E93", marginBottom: 8 },
+  fieldHeading: { fontSize: 10, marginBottom: 8 },
   presetGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -428,9 +438,7 @@ const styles = StyleSheet.create({
   newCon: {
     padding: 12,
     borderWidth: 1,
-    borderColor: "#F7F7F8",
     borderRadius: 8,
-    backgroundColor: "#FFFFFF",
     marginBottom: 12,
   },
   presetBtn: {
@@ -441,18 +449,16 @@ const styles = StyleSheet.create({
     minWidth: 72,
     alignItems: "center",
   },
-  presetText: { fontSize: 10, color: "#0B0014", fontWeight: "500" },
+  presetText: { fontSize: 10, fontWeight: "500" },
   inputContainer: {
     height: 36,
     borderRadius: 8,
-    borderColor: "#F0F0F0",
   },
   inputText: { fontSize: 11 },
   remarkWrap: { marginBottom: 8 },
   remarkInputContainer: {
     height: 84,
     borderRadius: 8,
-    borderColor: "#F0F0F0",
     alignItems: "flex-start",
     justifyContent: "flex-start",
     paddingTop: 8,
@@ -461,7 +467,6 @@ const styles = StyleSheet.create({
   counter: {
     alignSelf: "flex-end",
     marginTop: 4,
-    color: "#A1A1A6",
     fontSize: 8,
   },
   footer: {
@@ -475,7 +480,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   sheetCard: {
-    backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -487,17 +491,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     fontWeight: "600",
-    color: "#0B0014",
   },
   noticeBox: {
-    backgroundColor: "#D2F1E4",
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
   noticeText: {
     fontSize: 11,
-    color: "#013D25",
     textAlign: "center",
     lineHeight: 16,
   },
@@ -510,10 +511,9 @@ const styles = StyleSheet.create({
   },
   rowDivider: {
     borderBottomWidth: 1,
-    borderBottomColor: "#EFEFF1",
   },
-  sheetLabel: { fontSize: 13, color: "#8E8E93" },
-  sheetValue: { fontSize: 13, color: "#0B0014", fontWeight: "600" },
+  sheetLabel: { fontSize: 13 },
+  sheetValue: { fontSize: 13, fontWeight: "600" },
   sheetButtons: {
     flexDirection: "row",
     gap: 12,
@@ -523,7 +523,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   summaryCard: {
-    backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -543,18 +542,15 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#E3E3E8",
     alignSelf: "center",
   },
   summaryAmount: {
     textAlign: "center",
     fontSize: 28,
     fontWeight: "700",
-    color: "#0B0014",
   },
   summaryHeading: {
     fontSize: 12,
-    color: "#0B0014",
     fontWeight: "600",
   },
   summaryRows: {
@@ -568,16 +564,13 @@ const styles = StyleSheet.create({
   },
   summaryRowDivider: {
     borderBottomWidth: 1,
-    borderBottomColor: "#EFEFF1",
   },
   summaryRowValue: {
     fontSize: 13,
-    color: "#0B0014",
     fontWeight: "600",
   },
 
   rewardCard: {
-    backgroundColor: "#E9DFB3",
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -595,16 +588,13 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: "#C4961A",
   },
   rewardText: {
     fontSize: 12,
-    color: "#0B0014",
     flex: 1,
   },
   rewardValue: {
     fontSize: 12,
-    color: "#0B0014",
     fontWeight: "700",
   },
 });
