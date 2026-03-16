@@ -114,7 +114,8 @@ export default function StockMarketScreen() {
       item?.changePercent || item?.percentChange || 0,
     );
     const isPositive = changePercent >= 0;
-    const changeColor = isPositive ? "#09734C" : "#D50000";
+    const changeColor = isPositive ? C.primary : "#D50000";
+    const changeBgColor = isPositive ? C.primary + "15" : "#FCE4E4";
     return (
       <TouchableOpacity
         style={[styles.stockRow, { borderBottomColor: C.border }]}
@@ -141,7 +142,7 @@ export default function StockMarketScreen() {
         <View
           style={{
             ...styles.changePill,
-            backgroundColor: isPositive ? "#EAF8F1" : "#FDECEC",
+            backgroundColor: changeBgColor,
           }}
         >
           <ThemedText style={[styles.changeText, { color: changeColor }]}>
@@ -156,6 +157,8 @@ export default function StockMarketScreen() {
     const isBuy = String(item?.type || item?.transactionType || "")
       .toLowerCase()
       .includes("buy");
+    const txBgColor = isBuy ? C.primary + "15" : "#FCE4E4";
+    const txTextColor = isBuy ? C.primary : "#D50000";
     return (
       <View
         style={{
@@ -167,13 +170,13 @@ export default function StockMarketScreen() {
         <View
           style={{
             ...styles.txTypeBadge,
-            backgroundColor: isBuy ? "#EAF8F1" : "#FDECEC",
+            backgroundColor: txBgColor,
           }}
         >
           <ThemedText
             style={[
               styles.txTypeText,
-              { color: isBuy ? "#09734C" : "#D50000" },
+              { color: txTextColor },
             ]}
           >
             {isBuy ? "Buy" : "Sell"}
@@ -247,6 +250,7 @@ export default function StockMarketScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchStocks(true)}
+              tintColor={C.primary}
             />
           }
           ListHeaderComponent={
@@ -301,6 +305,7 @@ export default function StockMarketScreen() {
                         item?.changePercent || item?.percentChange || 0,
                       );
                       const pos = chg >= 0;
+                      const topChangeColor = pos ? C.primary : "#D50000";
                       return (
                         <TouchableOpacity
                           key={i}
@@ -340,7 +345,7 @@ export default function StockMarketScreen() {
                             style={{
                               fontSize: 11,
                               fontWeight: "600",
-                              color: pos ? "#09734C" : "#D50000",
+                              color: topChangeColor,
                             }}
                           >
                             {pos ? "▲" : "▼"} {Math.abs(chg).toFixed(2)}%
@@ -374,6 +379,7 @@ export default function StockMarketScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchTransactions(true)}
+              tintColor={C.primary}
             />
           }
           renderItem={renderTransactionItem}

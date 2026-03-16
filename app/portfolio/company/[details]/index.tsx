@@ -62,7 +62,8 @@ export default function CompanyDetailsScreen() {
     stock?.changePercent || stock?.percentChange || 0,
   );
   const isPositive = changePercent >= 0;
-  const changeColor = isPositive ? "#09734C" : "#D50000";
+  const changeColor = isPositive ? C.primary : "#D50000";
+  const changeBgColor = isPositive ? C.primary + "15" : "#FCE4E4";
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
@@ -85,6 +86,7 @@ export default function CompanyDetailsScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchStock(true)}
+              tintColor={C.primary}
             />
           }
         >
@@ -107,7 +109,7 @@ export default function CompanyDetailsScreen() {
             <View
               style={{
                 ...StyleSheet.flatten(styles.changePill),
-                backgroundColor: isPositive ? "#EAF8F1" : "#FDECEC",
+                backgroundColor: changeBgColor,
               }}
             >
               <ThemedText style={[styles.changeText, { color: changeColor }]}>
@@ -118,7 +120,7 @@ export default function CompanyDetailsScreen() {
           </View>
 
           {/* Tabs */}
-          <View style={styles.tabs}>
+          <View style={[styles.tabs, { borderBottomColor: C.border }]}>
             {(["about", "financials"] as Tab[]).map((tab) => (
               <TouchableOpacity
                 key={tab}
@@ -248,7 +250,7 @@ export default function CompanyDetailsScreen() {
             })
           }
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.background}
           height={52}
           radius={12}
           width='100%'
@@ -315,7 +317,6 @@ const styles = StyleSheet.create({
   tabs: {
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderBottomColor: "#EFEFF1",
   },
   tab: { flex: 1, alignItems: "center", paddingVertical: 12 },
   tabLabel: { fontSize: 14 },

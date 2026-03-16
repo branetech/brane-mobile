@@ -101,7 +101,10 @@ export default function BankAccountScreen() {
   const renderItem = useCallback(
     ({ item }: { item: IBankAccount }) => (
       <View
-        style={StyleSheet.flatten([styles.card, { borderColor: C.border }])}
+        style={StyleSheet.flatten([
+          styles.card,
+          { borderColor: C.border, backgroundColor: C.inputBg },
+        ])}
         row
         aligned
         spaced
@@ -114,7 +117,7 @@ export default function BankAccountScreen() {
           align='center'
           justify='center'
         >
-          <Bank size={20} color='#013D25' variant='TwoTone' />
+          <Bank size={20} color={C.primary} variant='TwoTone' />
         </View>
         <View style={{ flex: 1, marginLeft: 12 }}>
           <ThemedText
@@ -131,7 +134,7 @@ export default function BankAccountScreen() {
           </ThemedText>
         </View>
         <TouchableOpacity
-          style={styles.deleteBtn}
+          style={[styles.deleteBtn, { backgroundColor: "#FCE4E4" }]}
           activeOpacity={0.7}
           onPress={() => setPendingDelete(item)}
         >
@@ -154,7 +157,7 @@ export default function BankAccountScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size='small' color='#013D25' />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : (
         <FlatList
@@ -166,7 +169,7 @@ export default function BankAccountScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchAccounts(true)}
-              tintColor='#013D25'
+              tintColor={C.primary}
             />
           }
           renderItem={renderItem}
@@ -312,7 +315,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     padding: 14,
-    backgroundColor: "#FFFFFF",
   },
   bankIcon: {
     width: 40,
@@ -325,7 +327,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFF3F3",
     marginLeft: 8,
   },
   emptyWrap: {
