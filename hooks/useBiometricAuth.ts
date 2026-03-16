@@ -1,4 +1,4 @@
-import FingerprintScanner from 'react-native-fingerprint-scanner';
+import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from 'expo-secure-store';
 import { useCallback, useEffect, useState } from 'react';
 import { parseBiometricError } from '@/utils/biometric-error-handler';
@@ -31,7 +31,9 @@ export const useBiometricAuth = () => {
   const checkAvailability = useCallback(async () => {
     try {
       setIsLoading(true);
-      const result = await FingerprintScanner.isSensorAvailable();
+      const result = await LocalAuthentication.authenticateAsync({
+  promptMessage: "Authenticate",
+});
 
       if (result) {
         setAvailability({
@@ -65,12 +67,12 @@ export const useBiometricAuth = () => {
     async (): Promise<{ success: boolean; error?: string }> => {
       try {
         setIsLoading(true);
-        await FingerprintScanner.authenticate({
-          onAttempt: () => {
-            // Called on each attempt
-          },
-          description: 'Authenticate to login to Brane',
-        });
+        // await FingerprintScanner.authenticate({
+        //   onAttempt: () => {
+        //     // Called on each attempt
+        //   },
+        //   description: 'Authenticate to login to Brane',
+        // });
         return { success: true };
       } catch (error: any) {
         const errorInfo = parseBiometricError(error);
@@ -81,7 +83,7 @@ export const useBiometricAuth = () => {
         };
       } finally {
         setIsLoading(false);
-        FingerprintScanner.release();
+        // FingerprintScanner.release();
       }
     },
     []
@@ -226,7 +228,7 @@ export const useBiometricAuth = () => {
     checkAvailability();
 
     return () => {
-      FingerprintScanner.release();
+      // FingerprintScanner.release();
     };
   }, [checkAvailability]);
 

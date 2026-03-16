@@ -121,7 +121,9 @@ export default function SendMoneyScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          <ThemedText style={styles.helperText}>Recipient Account</ThemedText>
+          <ThemedText style={[styles.helperText, { color: C.muted }]}>
+            Recipient Account
+          </ThemedText>
 
           <View style={styles.form}>
             <FormInput
@@ -130,28 +132,32 @@ export default function SendMoneyScreen() {
               value={formValues.accountNumber}
               onChangeText={(value) => handleChange("accountNumber", value)}
               error={errors.accountNumber}
-              inputContainerStyle={styles.inputContainer}
+              inputContainerStyle={[styles.inputContainer, { backgroundColor: C.inputBg, borderColor: C.border }]}
               inputStyle={styles.inputText}
             />
 
-            <ThemedText style={styles.helperText}>Bank</ThemedText>
+            <ThemedText style={[styles.helperText, { color: C.muted }]}>
+              Bank
+            </ThemedText>
             <FormInput
               placeholder='Guaranty Trust Bank'
               value={formValues.bankName}
               onChangeText={(value) => handleChange("bankName", value)}
               error={errors.bankName}
-              inputContainerStyle={styles.inputContainer}
+              inputContainerStyle={[styles.inputContainer, { backgroundColor: C.inputBg, borderColor: C.border }]}
               inputStyle={styles.inputText}
             />
 
-            <ThemedText style={styles.helperText}>Recipient Name</ThemedText>
+            <ThemedText style={[styles.helperText, { color: C.muted }]}>
+              Recipient Name
+            </ThemedText>
             <FormInput
               placeholder='Enter recipient name'
               value={formValues.recipientName}
               onChangeText={(value) => handleChange("recipientName", value)}
               error={errors.recipientName}
               disabled
-              inputContainerStyle={styles.inputContainer}
+              inputContainerStyle={[styles.inputContainer, { backgroundColor: C.inputBg, borderColor: C.border }]}
               inputStyle={styles.inputText}
             />
           </View>
@@ -207,7 +213,6 @@ const styles = StyleSheet.create({
   },
   helperText: {
     fontSize: 10,
-    color: "#8E8E93",
     marginBottom: 6,
     marginTop: 10,
   },
@@ -217,7 +222,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     height: 40,
     borderRadius: 8,
-    borderColor: "#F0F0F0",
+    borderWidth: 1,
   },
   inputText: {
     fontSize: 11,
@@ -235,6 +240,5 @@ const styles = StyleSheet.create({
   },
   beneficiaryText: {
     fontSize: 10,
-    color: "#6F6F74",
   },
 });
