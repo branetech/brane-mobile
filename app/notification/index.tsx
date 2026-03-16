@@ -114,7 +114,7 @@ export default function NotificationScreen() {
 
         {isDetailLoading ? (
           <View style={styles.loaderWrap}>
-            <ActivityIndicator size='small' color='#013D25' />
+            <ActivityIndicator size='small' color={C.primary} />
           </View>
         ) : (
           <View style={styles.detailContent}>
@@ -150,7 +150,7 @@ export default function NotificationScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size='small' color='#013D25' />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : hasNotifications ? (
         <ScrollView
@@ -174,12 +174,14 @@ export default function NotificationScreen() {
                   ? {
                       backgroundColor: C.background,
                       borderWidth: 1,
-                      borderColor: "#D3EBE1",
+                      borderColor: C.border,
                     }
-                  : { backgroundColor: "#F7F3E8" },
+                  : { backgroundColor: C.primary + "15" },
               ]}
             >
-              <ThemedText style={styles.cardDate}>{item.date}</ThemedText>
+              <ThemedText style={[styles.cardDate, { color: C.muted }]}>
+                {item.date}
+              </ThemedText>
               <ThemedText
                 type='defaultSemiBold'
                 style={{ color: C.text, fontSize: 14, marginTop: 4 }}
@@ -204,7 +206,7 @@ export default function NotificationScreen() {
       ) : (
         <View style={styles.emptyWrapper}>
           <EmptyState>
-            <BellIcon variant='TwoTone' size={24} color='#013D25' />
+            <BellIcon variant='TwoTone' size={24} color={C.primary} />
             <View style={{ gap: 4, alignItems: "center" }}>
               <ThemedText
                 type='defaultSemiBold'
@@ -256,7 +258,6 @@ const styles = StyleSheet.create({
   },
   cardDate: {
     fontSize: 11,
-    color: "#85808A",
     fontWeight: "400",
   },
   detailContent: {
