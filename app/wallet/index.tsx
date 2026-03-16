@@ -115,22 +115,37 @@ export default function WalletScreen() {
   const ListHeader = (
     <>
       {/* Balance card */}
-      <View style={styles.balanceCard} gap={16}>
+      <View
+        style={[styles.balanceCard, { backgroundColor: C.primary }]}
+        gap={16}
+      >
         <View row aligned style={{ justifyContent: "space-between" }}>
-          <ThemedText style={styles.balanceLabel}>Wallet Balance</ThemedText>
+          <ThemedText
+            style={[
+              styles.balanceLabel,
+              { color: scheme === "dark" ? C.text : "#D2F1E4" },
+            ]}
+          >
+            Wallet Balance
+          </ThemedText>
           <TouchableOpacity
             onPress={() => setBalanceVisible((v) => !v)}
             hitSlop={8}
           >
             {balanceVisible ? (
-              <Eye size={20} color='#fff' />
+              <Eye size={20} color={scheme === "dark" ? C.text : "#fff"} />
             ) : (
-              <EyeSlash size={20} color='#fff' />
+              <EyeSlash size={20} color={scheme === "dark" ? C.text : "#fff"} />
             )}
           </TouchableOpacity>
         </View>
 
-        <ThemedText style={styles.balanceAmount}>
+        <ThemedText
+          style={[
+            styles.balanceAmount,
+            { color: scheme === "dark" ? C.text : "#fff" },
+          ]}
+        >
           {balanceVisible ? priceFormatter(balance, 2) : "₦ ******"}
         </ThemedText>
 
@@ -139,15 +154,16 @@ export default function WalletScreen() {
             text='Withdraw'
             onPress={() => router.push("/wallet/withdraw")}
             style={styles.cardBtn}
-            backgroundColor='#2B5D49'
+            backgroundColor={C.primary + "80"}
+            textColor={scheme === "dark" ? C.text : "#fff"}
             height={38}
           />
           <BraneButton
             text='Fund Wallet'
             onPress={() => router.push("/add-funds")}
             style={styles.cardBtn}
-            backgroundColor='#fff'
-            textColor='#013D25'
+            backgroundColor={C.inputBg}
+            textColor={C.primary}
             height={38}
           />
         </View>
@@ -165,11 +181,11 @@ export default function WalletScreen() {
             <View
               style={StyleSheet.flatten([
                 styles.qaIconCircle,
-                { backgroundColor: C.inputBackground },
+                { backgroundColor: C.inputBg },
               ])}
               center
             >
-              <Icon size={22} color='#013D25' variant='Bold' />
+              <Icon size={22} color={C.primary} variant='Bold' />
             </View>
             <ThemedText style={[styles.qaLabel, { color: C.text }]}>
               {label}
@@ -194,7 +210,7 @@ export default function WalletScreen() {
           onPress={() => router.push("/(tabs)/transactions")}
           activeOpacity={0.7}
         >
-          <ThemedText style={{ color: "#013D25", fontSize: 13 }}>
+          <ThemedText style={{ color: C.primary, fontSize: 13 }}>
             See All
           </ThemedText>
         </TouchableOpacity>
@@ -214,7 +230,11 @@ export default function WalletScreen() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator style={styles.loader} size='large' color='#013D25' />
+        <ActivityIndicator
+          style={styles.loader}
+          size='large'
+          color={C.primary}
+        />
       ) : (
         <FlatList
           data={transactions}
@@ -228,7 +248,7 @@ export default function WalletScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchData(true)}
-              tintColor='#013D25'
+              tintColor={C.primary}
             />
           }
           ListEmptyComponent={
@@ -258,7 +278,7 @@ export default function WalletScreen() {
               <ThemedText
                 style={[
                   styles.txAmount,
-                  { color: item.type === "credit" ? "#013D25" : "#CB010B" },
+                  { color: item.type === "credit" ? C.primary : "#CB010B" },
                 ]}
               >
                 {item.type === "credit" ? "+" : "-"}
@@ -285,12 +305,11 @@ const styles = StyleSheet.create({
   listContent: { paddingBottom: 40 },
   balanceCard: {
     margin: 16,
-    backgroundColor: "#013D25",
     borderRadius: 16,
     padding: 20,
   },
-  balanceLabel: { color: "#D2F1E4", fontSize: 13 },
-  balanceAmount: { color: "#fff", fontSize: 28, fontWeight: "700" },
+  balanceLabel: { fontSize: 13 },
+  balanceAmount: { fontSize: 28, fontWeight: "700" },
   cardBtn: { flex: 1 },
   quickActions: {
     paddingHorizontal: 16,

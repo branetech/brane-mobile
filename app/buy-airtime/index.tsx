@@ -127,7 +127,7 @@ export default function BuyAirtimeScreen() {
                             borderColor: active ? n.color : C.border,
                             backgroundColor: active
                               ? n.color + "22"
-                              : C.inputBackground,
+                              : C.inputBg,
                           },
                         ]}
                         activeOpacity={0.75}
@@ -178,8 +178,8 @@ export default function BuyAirtimeScreen() {
                         styles.chip,
                         {
                           backgroundColor:
-                            amount === preset ? "#013D25" : C.inputBackground,
-                          borderColor: amount === preset ? "#013D25" : C.border,
+                            amount === preset ? C.primary : C.inputBg,
+                          borderColor: amount === preset ? C.primary : C.border,
                         },
                       ]}
                       activeOpacity={0.75}
