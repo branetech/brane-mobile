@@ -177,7 +177,7 @@ export default function SendMoneyScreen() {
             text='Next'
             onPress={handleNext}
             backgroundColor={C.primary}
-            textColor={scheme === "dark" ? "#fff" : "#D2F1E4"}
+            textColor={C.googleBg}
             height={48}
             radius={8}
             fontSize={11}
