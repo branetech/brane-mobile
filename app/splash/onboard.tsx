@@ -1,5 +1,7 @@
 import { BraneButton } from '@/components/brane-button';
 import { ThemedText } from '@/components/themed-text';
+import { Colors } from '@/constants/colors';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import expoSecureStorage from '@/utils/secureStore';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -29,6 +31,8 @@ const SLIDES = [
 export default function Onboarding() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
+  const scheme = useColorScheme();
+  const C = Colors[scheme === 'dark' ? 'dark' : 'light'];
 
   const goToNextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev === SLIDES.length - 1 ? 0 : prev + 1));
@@ -70,10 +74,10 @@ export default function Onboarding() {
         </Animated.View>
       </View>
 
-      <View style={styles.contentContainer}>
+      <View style={[styles.contentContainer, { backgroundColor: C.background }]}>
         <View style={styles.textContainer}>
-          <ThemedText style={styles.title}>{SLIDES[currentIndex].title}</ThemedText>
-          <ThemedText style={styles.body}>{SLIDES[currentIndex].body}</ThemedText>
+          <ThemedText style={[styles.title, { color: C.text }]}>{SLIDES[currentIndex].title}</ThemedText>
+          <ThemedText style={[styles.body, { color: C.muted }]}>{SLIDES[currentIndex].body}</ThemedText>
         </View>
 
         <View style={styles.pagination}>
@@ -82,9 +86,10 @@ export default function Onboarding() {
               key={index}
               style={[
                 styles.dot,
-                index === currentIndex ? styles.activeDot : styles.inactiveDot,
+                index === currentIndex ? [styles.activeDot, { backgroundColor: C.primary }] : [styles.inactiveDot, { backgroundColor: C.border }],
               ]}
             />
+          ))}
           ))}
         </View>
 
@@ -93,16 +98,17 @@ export default function Onboarding() {
             onPress={handleCreateAccount}
             text="Create Account"
             style={styles.createAccountButton}
-            textColor={'#fff'}
+            backgroundColor={C.primary}
+            textColor={C.background}
             fontSize={16}
           />
           <BraneButton
             onPress={handleLogin}
             text="Login"
             style={styles.loginButton}
-            textColor={'#013D25'}
+            textColor={C.primary}
+            backgroundColor={C.googleBg}
             fontSize={16}
-            backgroundColor={'#D2F1E4'}
           />
         </View>
       </View>
@@ -116,7 +122,6 @@ const styles = StyleSheet.create({
     maxWidth: 480,
     width: '100%',
     alignSelf: 'center',
-    backgroundColor: '#FFFFFF',
   },
   imageContainer: {
     height: height * 0.55,
@@ -138,7 +143,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: '6%',
     paddingVertical: '10%',
-    backgroundColor: '#F4FBF8E5',
   },
   textContainer: {
     alignItems: 'center',
@@ -150,14 +154,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
     marginBottom: 12,
-    color: '#000000',
     lineHeight: 28,
   },
   body: {
     fontSize: 14,
     textAlign: 'center',
     fontWeight: '400',
-    color: '#666666',
     lineHeight: 20,
     paddingHorizontal: 10,
   },
@@ -174,19 +176,16 @@ const styles = StyleSheet.create({
   activeDot: {
     width: 24,
     height: 4,
-    backgroundColor: '#013D25',
   },
   inactiveDot: {
     width: 8,
     height: 4,
-    backgroundColor: '#D0E4DB',
   },
   buttonContainer: {
     gap: 15,
     marginTop: 20,
   },
   createAccountButton: {
-    backgroundColor: '#013D25',
     height: 56,
     borderRadius: 12,
     justifyContent: 'center',
