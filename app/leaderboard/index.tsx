@@ -117,7 +117,10 @@ export default function LeaderboardScreen() {
               activeOpacity={0.75}
             >
               <ThemedText
-                style={[styles.pillText, { color: active ? "#fff" : C.muted }]}
+                style={[
+                  styles.pillText,
+                  { color: active ? C.background : C.muted },
+                ]}
               >
                 {p}
               </ThemedText>
@@ -185,7 +188,7 @@ export default function LeaderboardScreen() {
                 <View
                   style={StyleSheet.flatten([
                     styles.rankCircle,
-                    { backgroundColor: medalColor ?? "#F0F0F0" },
+                    { backgroundColor: medalColor ?? C.inputBg },
                   ])}
                   center
                 >
@@ -208,8 +211,14 @@ export default function LeaderboardScreen() {
                   </ThemedText>
                 </View>
 
-                <View style={styles.pointsBadge} center>
-                  <ThemedText style={styles.pointsText}>
+                <View
+                  style={[
+                    styles.pointsBadge,
+                    { backgroundColor: C.googleBg },
+                  ]}
+                  center
+                >
+                  <ThemedText style={[styles.pointsText, { color: C.primary }]}>
                     {item.points.toLocaleString()} BRACS
                   </ThemedText>
                 </View>
@@ -274,10 +283,9 @@ const styles = StyleSheet.create({
   rankText: { fontSize: 14, fontWeight: "700" },
   entryInfo: { flex: 1 },
   pointsBadge: {
-    backgroundColor: "#D2F1E4",
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 20,
   },
-  pointsText: { fontSize: 12, color: "#013D25", fontWeight: "600" },
+  pointsText: { fontSize: 12, fontWeight: "600" },
 });

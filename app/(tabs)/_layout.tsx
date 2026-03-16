@@ -1,3 +1,5 @@
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Tabs } from "expo-router";
 import {
     Chart1,
@@ -10,11 +12,12 @@ import React from "react";
 import { Platform } from "react-native";
 
 export default function TabLayout() {
-  // #F7F7F8E5
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#013D25",
+        tabBarActiveTintColor: C.primary,
         headerShown: false,
         tabBarShowLabel: true,
         tabBarIconStyle: { marginHorizontal: "auto" },
@@ -24,10 +27,10 @@ export default function TabLayout() {
             position: "absolute",
             height: 80,
             paddingTop: 12,
-            backgroundColor: "#F7F7F8E5",
+            backgroundColor: C.inputBg,
           },
           default: {
-            backgroundColor: "#F7F7F8E5",
+            backgroundColor: C.inputBg,
             height: 80,
             paddingTop: 12,
           },
