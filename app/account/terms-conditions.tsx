@@ -33,7 +33,9 @@ export default function TermsConditionsScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         {TERMS.map((item, idx) => (
           <View key={`${idx}-${item.slice(0, 16)}`} style={styles.item} row>
-            <ThemedText style={styles.dot}>{`${idx + 1}.`}</ThemedText>
+            <ThemedText
+              style={[styles.dot, { color: C.primary }]}
+            >{`${idx + 1}.`}</ThemedText>
             <ThemedText style={[styles.text, { color: C.text }]}>
               {item}
             </ThemedText>
@@ -58,6 +60,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   item: { gap: 8, alignItems: "flex-start" },
-  dot: { width: 22, color: "#013D25", fontWeight: "700" },
+  dot: { width: 22, fontWeight: "700" },
   text: { flex: 1, fontSize: 13, lineHeight: 20 },
 });

@@ -12,10 +12,10 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -131,8 +131,8 @@ export default function ChangePasswordScreen() {
                 text='Resend OTP'
                 onPress={onResendOtp}
                 loading={loading}
-                backgroundColor='#F7F7F8'
-                textColor='#013D25'
+                backgroundColor={C.inputBg}
+                textColor={C.primary}
                 style={styles.secondaryButton}
               />
             </>

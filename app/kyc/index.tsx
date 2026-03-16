@@ -27,28 +27,28 @@ export default function KycScreen() {
       <View style={styles.content}>
         <KycItem
           title='Person Information'
-          icon={<Profile2User size={20} color='#013D25' />}
+          icon={<Profile2User size={20} color={C.primary} />}
           isVerified={!!user?.hasName}
           onPress={() => router.push("/kyc/verification")}
         />
 
         <KycItem
           title='Banking Information'
-          icon={<Card size={20} color='#013D25' />}
+          icon={<Card size={20} color={C.primary} />}
           isVerified={!!user?.hasBanking}
           onPress={() => router.push("/kyc/information")}
         />
 
         <KycItem
           title='Verify your identity'
-          icon={<User size={20} color='#013D25' />}
+          icon={<User size={20} color={C.primary} />}
           isVerified={!!user?.identityKyc}
           onPress={() => router.push("/kyc/identity-verification")}
         />
 
         <KycItem
           title='Next of kin details'
-          icon={<UserTag size={20} color='#013D25' />}
+          icon={<UserTag size={20} color={C.primary} />}
           isVerified={!!user?.hasNextOfKin}
           onPress={() => router.push("/kyc/kin-details")}
         />

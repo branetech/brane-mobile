@@ -136,7 +136,18 @@ export default function KycVerificationScreen() {
                   setForm((prev: any) => ({ ...prev, occupation: value }))
                 }
               >
-                <View style={[styles.radio, selected && styles.radioActive]} />
+                <View
+                  style={[
+                    styles.radio,
+                    {
+                      borderColor: C.border,
+                    },
+                    selected && {
+                      backgroundColor: C.primary,
+                      borderColor: C.primary,
+                    },
+                  ]}
+                />
                 <ThemedText>{toPascalCase(key.replace(/_/g, " "))}</ThemedText>
               </Pressable>
             );
@@ -190,11 +201,9 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#AABEB6",
   },
   radioActive: {
-    backgroundColor: "#013D25",
-    borderColor: "#013D25",
+    borderWidth: 1,
   },
   error: {
     color: "#CB010B",

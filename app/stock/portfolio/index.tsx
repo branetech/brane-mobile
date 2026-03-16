@@ -11,13 +11,13 @@ import { useRouter } from "expo-router";
 import { ArrowDown2, Eye, EyeSlash } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  RefreshControl,
-  View as RNView,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    Image,
+    RefreshControl,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -129,7 +129,7 @@ export default function StockPortfolioScreen() {
         style={[
           styles.stockCard,
           {
-            backgroundColor: isDown ? "#FCEDED" : "#E9F7F0",
+            backgroundColor: isDown ? C.inputBg : C.inputBg,
             borderColor: C.border,
           },
         ]}
@@ -184,7 +184,7 @@ export default function StockPortfolioScreen() {
 
   const renderHeader = () => (
     <View style={styles.contentWrap}>
-      <View style={{ ...styles.holdingsCard, backgroundColor: "#D3EBE133" }}>
+      <View style={{ ...styles.holdingsCard, backgroundColor: C.inputBg }}>
         <View style={styles.holdingHeaderRow}>
           <View style={styles.balanceTitleWrap}>
             <ThemedText style={[styles.holdingsLabel, { color: C.muted }]}>
@@ -201,8 +201,8 @@ export default function StockPortfolioScreen() {
           <BraneButton
             text='Withdraw'
             onPress={() => router.push("/stock/withdraw")}
-            backgroundColor='#D2F1E4'
-            textColor='#013D25'
+            backgroundColor={C.primary}
+            textColor={C.googleBg}
             height={36}
             radius={10}
             width={118}
@@ -231,19 +231,23 @@ export default function StockPortfolioScreen() {
       <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
         <View style={styles.balanceRow}>
           <View style={styles.balanceItem}>
-            <ThemedText style={styles.balanceLabelText}>
+            <ThemedText
+              style={[styles.balanceLabelText, { color: C.googleBg }]}
+            >
               Portfolio Balance
             </ThemedText>
-            <ThemedText style={styles.balanceAmount}>
+            <ThemedText style={[styles.balanceAmount, { color: "#fff" }]}>
               {hideBalance ? "••••••" : priceFormatter(portfolioBalance, 2)}
             </ThemedText>
           </View>
           <View style={styles.balanceDivider} />
           <View style={styles.balanceItem}>
-            <ThemedText style={styles.balanceLabelText}>
+            <ThemedText
+              style={[styles.balanceLabelText, { color: C.googleBg }]}
+            >
               BRACS Balance
             </ThemedText>
-            <ThemedText style={styles.balanceAmount}>
+            <ThemedText style={[styles.balanceAmount, { color: "#fff" }]}>
               {hideBalance ? "••••••" : bracsBalance.toFixed(4)}
             </ThemedText>
           </View>
@@ -252,9 +256,9 @@ export default function StockPortfolioScreen() {
             style={styles.eyeBtn}
           >
             {hideBalance ? (
-              <EyeSlash size={20} color='#D2F1E4' />
+              <EyeSlash size={20} color={C.googleBg} />
             ) : (
-              <Eye size={20} color='#D2F1E4' />
+              <Eye size={20} color={C.googleBg} />
             )}
           </TouchableOpacity>
         </View>
@@ -519,8 +523,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   balanceItem: { flex: 1, gap: 4 },
-  balanceLabelText: { fontSize: 11, color: "#D2F1E4" },
-  balanceAmount: { fontSize: 18, fontWeight: "800", color: "#fff" },
+  balanceLabelText: { fontSize: 11, fontWeight: "600" },
+  balanceAmount: { fontSize: 18, fontWeight: "800" },
   balanceDivider: {
     width: 1,
     height: 40,

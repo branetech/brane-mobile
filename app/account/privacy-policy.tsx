@@ -32,8 +32,13 @@ export default function PrivacyPolicyScreen() {
 
       <ScrollView contentContainerStyle={styles.content}>
         {POLICY.map((item, idx) => (
-          <View key={`${idx}-${item.slice(0, 16)}`} style={styles.item}>
-            <ThemedText style={styles.head}>{`Section ${idx + 1}`}</ThemedText>
+          <View
+            key={`${idx}-${item.slice(0, 16)}`}
+            style={[styles.item, { borderBottomColor: C.border }]}
+          >
+            <ThemedText
+              style={[styles.head, { color: C.primary }]}
+            >{`Section ${idx + 1}`}</ThemedText>
             <ThemedText style={[styles.text, { color: C.text }]}>
               {item}
             </ThemedText>
@@ -62,6 +67,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#F2F4F7",
     paddingBottom: 12,
   },
-  head: { color: "#013D25", fontSize: 13, fontWeight: "700", marginBottom: 5 },
+  head: { fontSize: 13, fontWeight: "700", marginBottom: 5 },
   text: { fontSize: 13, lineHeight: 20 },
 });
