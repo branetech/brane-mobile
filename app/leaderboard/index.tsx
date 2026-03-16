@@ -110,8 +110,8 @@ export default function LeaderboardScreen() {
               style={[
                 styles.pill,
                 {
-                  backgroundColor: active ? "#013D25" : C.inputBackground,
-                  borderColor: active ? "#013D25" : C.border,
+                  backgroundColor: active ? C.primary : C.inputBg,
+                  borderColor: active ? C.primary : C.border,
                 },
               ]}
               activeOpacity={0.75}
@@ -130,7 +130,7 @@ export default function LeaderboardScreen() {
       <View
         style={StyleSheet.flatten([
           styles.searchWrapper,
-          { backgroundColor: C.inputBackground, borderColor: C.border },
+          { backgroundColor: C.inputBg, borderColor: C.border },
         ])}
       >
         <TextInput
@@ -143,7 +143,7 @@ export default function LeaderboardScreen() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator style={styles.loader} size='large' color='#013D25' />
+        <ActivityIndicator style={styles.loader} size='large' color={C.primary} />
       ) : (
         <FlatList
           data={filtered}
@@ -154,7 +154,7 @@ export default function LeaderboardScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchLeaderboard(true)}
-              tintColor='#013D25'
+              tintColor={C.primary}
             />
           }
           ListEmptyComponent={
@@ -171,7 +171,7 @@ export default function LeaderboardScreen() {
                 style={StyleSheet.flatten([
                   styles.entryRow,
                   {
-                    backgroundColor: C.inputBackground,
+                    backgroundColor: C.inputBg,
                     borderColor: C.border,
                   },
                 ])}
