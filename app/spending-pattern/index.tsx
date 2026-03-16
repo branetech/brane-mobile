@@ -78,6 +78,15 @@ const SERVICE_BAR_COLORS: Record<string, string> = {
   betting: "#9B59B6",
 };
 
+const getServiceColor = (service: ServiceFilter, C: any): string => {
+  if (service === "airtime") return C.primary + "25";
+  if (service === "data") return "#FFF3DB";
+  if (service === "electricity") return "#E1F0FF";
+  if (service === "cable") return "#FFE8E8";
+  if (service === "betting") return "#EDE1FF";
+  return C.primary + "15";
+};
+
 const toArray = (value: unknown): SpendingEntry[] => {
   if (Array.isArray(value)) return value as SpendingEntry[];
   const v = value as any;
@@ -180,8 +189,8 @@ export default function SpendingPatternScreen() {
                 style={[
                   styles.pill,
                   {
-                    backgroundColor: active ? "#013D25" : C.inputBackground,
-                    borderColor: active ? "#013D25" : C.border,
+                    backgroundColor: active ? C.primary : C.inputBg,
+                    borderColor: active ? C.primary : C.border,
                   },
                 ]}
                 activeOpacity={0.75}
@@ -201,7 +210,7 @@ export default function SpendingPatternScreen() {
 
         {loading ? (
           <View style={styles.loaderWrap}>
-            <ActivityIndicator color='#013D25' size='large' />
+            <ActivityIndicator color={C.primary} size='large' />
             <ThemedText style={{ color: C.muted, marginTop: 10 }}>
               Loading spending data…
             </ThemedText>
@@ -213,13 +222,13 @@ export default function SpendingPatternScreen() {
               <View
                 style={{
                   ...styles.summaryCard,
-                  backgroundColor: "#D2F1E4",
+                  backgroundColor: C.primary + "15",
                   flex: 1,
                 }}
                 gap={4}
               >
-                <ThemedText style={styles.summaryLabel}>Total Spent</ThemedText>
-                <ThemedText type='subtitle' style={styles.summaryValue}>
+                <ThemedText style={[styles.summaryLabel, { color: C.muted }]}>Total Spent</ThemedText>
+                <ThemedText type='subtitle' style={[styles.summaryValue, { color: C.text }]}>
                   {priceFormatter(totalSpent)}
                 </ThemedText>
               </View>
@@ -232,10 +241,10 @@ export default function SpendingPatternScreen() {
                 }}
                 gap={4}
               >
-                <ThemedText style={styles.summaryLabel}>
+                <ThemedText style={[styles.summaryLabel, { color: C.muted }]}>
                   Transactions
                 </ThemedText>
-                <ThemedText type='subtitle' style={styles.summaryValue}>
+                <ThemedText type='subtitle' style={[styles.summaryValue, { color: C.text }]}>
                   {transactionCount ?? 0}
                 </ThemedText>
               </View>
@@ -246,7 +255,7 @@ export default function SpendingPatternScreen() {
               <View
                 style={{
                   ...styles.barCard,
-                  backgroundColor: C.inputBackground,
+                  backgroundColor: C.inputBg,
                   borderColor: C.border,
                 }}
                 gap={12}
@@ -257,7 +266,7 @@ export default function SpendingPatternScreen() {
                 {Object.entries(barGroups).map(([key, value]) => {
                   const pct = (value / maxBarValue) * 100;
                   const barColor =
-                    SERVICE_BAR_COLORS[key as ServiceFilter] ?? "#013D25";
+                    SERVICE_BAR_COLORS[key as ServiceFilter] ?? C.primary;
                   return (
                     <View key={key} gap={4}>
                       <View style={styles.barLabelRow} row aligned>
@@ -311,9 +320,9 @@ export default function SpendingPatternScreen() {
                       styles.pill,
                       {
                         backgroundColor: active
-                          ? SERVICE_COLORS[f.id]
-                          : C.inputBackground,
-                        borderColor: active ? "#013D25" : C.border,
+                          ? getServiceColor(f.id, C)
+                          : C.inputBg,
+                        borderColor: active ? C.primary : C.border,
                       },
                     ]}
                     activeOpacity={0.75}
@@ -321,7 +330,7 @@ export default function SpendingPatternScreen() {
                     <ThemedText
                       style={[
                         styles.pillText,
-                        { color: active ? "#013D25" : C.muted },
+                        { color: active ? C.primary : C.muted },
                       ]}
                     >
                       {f.label}
@@ -348,13 +357,13 @@ export default function SpendingPatternScreen() {
                     entry.service ??
                     "other"
                   ).toLowerCase();
-                  const dotColor = SERVICE_BAR_COLORS[key] ?? "#013D25";
+                  const dotColor = SERVICE_BAR_COLORS[key] ?? C.primary;
                   return (
                     <View
                       key={entry.id ?? String(idx)}
                       style={{
                         ...styles.entryRow,
-                        backgroundColor: C.inputBackground,
+                        backgroundColor: C.inputBg,
                         borderColor: C.border,
                       }}
                       row
@@ -447,7 +456,6 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 12,
-    color: "#85808A",
   },
   summaryValue: {
     fontSize: 22,

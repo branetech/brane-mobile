@@ -1,6 +1,8 @@
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest from "@/services";
 import { MOBILE_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
 import { formatDate, parseTransaction, priceFormatter } from "@/utils/helpers";
@@ -17,15 +19,15 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const getStatusStyles = (status?: string) => {
+const getStatusStyles = (status?: string, C?: any) => {
   const key = String(status || "").toLowerCase();
   if (key.includes("success")) {
-    return { bg: "#EAF8F1", color: "#0E8A4D", border: "#CBECD9" };
+    return { bg: C?.primary + "15", color: C?.primary, border: C?.primary + "40" };
   }
   if (key.includes("pending")) {
     return { bg: "#FFF7E8", color: "#B5760A", border: "#F1D9A8" };
   }
-  return { bg: "#FDECEC", color: "#C53333", border: "#F6C8C8" };
+  return { bg: "#FCE4E4", color: "#C53333", border: "#E8C0C0" };
 };
 
 const mapServiceRoute = (type: string) => {
@@ -43,6 +45,8 @@ export default function TransactionDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const details = String(params.details || "");
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
 
   const [transaction, setTransaction] = useState<ITransactionDetail | null>(
     null,
@@ -87,24 +91,24 @@ export default function TransactionDetailScreen() {
   }, [fetchDetail]);
 
   const statusUI = useMemo(
-    () => getStatusStyles(transaction?.status),
-    [transaction?.status],
+    () => getStatusStyles(transaction?.status, C),
+    [transaction?.status, C],
   );
   const branePayload = meta?.branePayload || {};
   const transactionType = String(transaction?.transactionType || "");
   const buyAgainRoute = mapServiceRoute(transactionType);
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
-        <ThemedText style={styles.title}>Transaction Details</ThemedText>
+        <ThemedText style={[styles.title, { color: C.text }]}>Transaction Details</ThemedText>
         <View style={styles.spacer} />
       </View>
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color='#013D25' />
+          <ActivityIndicator color={C.primary} />
         </View>
       ) : (
         <ScrollView
@@ -113,15 +117,24 @@ export default function TransactionDetailScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={() => fetchDetail(true)}
+              tintColor={C.primary}
             />
           }
         >
-          <View style={styles.summaryCard}>
-            <ThemedText style={styles.summaryTitle}>
+          <View
+            style={[
+              styles.summaryCard,
+              {
+                borderColor: C.border,
+                backgroundColor: C.inputBg,
+              },
+            ]}
+          >
+            <ThemedText style={[styles.summaryTitle, { color: C.muted }]}>
               {transaction?.transactionDescription ||
                 transaction?.transactionType}
             </ThemedText>
-            <ThemedText style={styles.summaryAmount}>
+            <ThemedText style={[styles.summaryAmount, { color: C.text }]}>
               {priceFormatter(Number(transaction?.amount || 0))}
             </ThemedText>
             <View
@@ -141,10 +154,19 @@ export default function TransactionDetailScreen() {
             </View>
           </View>
 
-          <View style={styles.detailsCard}>
+          <View
+            style={[
+              styles.detailsCard,
+              {
+                borderColor: C.border,
+                backgroundColor: C.inputBg,
+              },
+            ]}
+          >
             <DetailRow
               title='Reference ID'
               value={String(transaction?.id || "-")}
+              C={C}
             />
             <DetailRow
               title='Date & Time'
@@ -152,38 +174,49 @@ export default function TransactionDetailScreen() {
                 transaction?.createdAt,
                 "MMMM dd, yyyy | hh:mm a",
               )}
+              C={C}
             />
             <DetailRow
               title='Transaction Type'
               value={String(transaction?.transactionType || "-")}
+              C={C}
             />
             <DetailRow
               title='Recipient'
               value={String(transaction?.sentTo || "-")}
+              C={C}
             />
             <DetailRow
               title='Service Charge'
               value={priceFormatter(Number(transaction?.serviceCharge || 0))}
+              C={C}
             />
             <DetailRow
               title='Amount'
               value={priceFormatter(Number(transaction?.amount || 0))}
+              C={C}
             />
 
             {branePayload?.serviceID ? (
               <DetailRow
                 title='Service ID'
                 value={String(branePayload.serviceID)}
+                C={C}
               />
             ) : null}
             {branePayload?.variation_code ? (
               <DetailRow
                 title='Variation Code'
                 value={String(branePayload.variation_code)}
+                C={C}
               />
             ) : null}
             {meta?.token ? (
-              <DetailRow title='Token' value={String(meta.token)} />
+              <DetailRow
+                title='Token'
+                value={String(meta.token)}
+                C={C}
+              />
             ) : null}
           </View>
 
@@ -196,15 +229,15 @@ export default function TransactionDetailScreen() {
                   params: { service: buyAgainRoute },
                 })
               }
-              backgroundColor='#013D25'
-              textColor='#D2F1E4'
+              backgroundColor={C.primary}
+              textColor={C.background}
               height={48}
               radius={10}
             />
           ) : null}
 
           <TouchableOpacity style={styles.helpRow}>
-            <ThemedText style={styles.helpText}>
+            <ThemedText style={[styles.helpText, { color: C.primary }]}>
               Having issues? Contact support
             </ThemedText>
           </TouchableOpacity>
@@ -217,13 +250,18 @@ export default function TransactionDetailScreen() {
 type DetailRowProps = {
   title: string;
   value: string;
+  C: (typeof Colors)["light"];
 };
 
-function DetailRow({ title, value }: DetailRowProps) {
+function DetailRow({ title, value, C }: DetailRowProps) {
   return (
     <View style={styles.detailRow}>
-      <ThemedText style={styles.detailLabel}>{title}</ThemedText>
-      <ThemedText style={styles.detailValue}>{value || "-"}</ThemedText>
+      <ThemedText style={[styles.detailLabel, { color: C.muted }]}>
+        {title}
+      </ThemedText>
+      <ThemedText style={[styles.detailValue, { color: C.text }]}>
+        {value || "-"}
+      </ThemedText>
     </View>
   );
 }
@@ -231,7 +269,6 @@ function DetailRow({ title, value }: DetailRowProps) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
   },
   header: {
     paddingHorizontal: 16,
@@ -247,7 +284,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0B0014",
   },
   loaderWrap: {
     flex: 1,
@@ -261,7 +297,6 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     borderWidth: 1,
-    borderColor: "#EFEFF1",
     borderRadius: 12,
     padding: 14,
     alignItems: "flex-start",
@@ -269,12 +304,10 @@ const styles = StyleSheet.create({
   },
   summaryTitle: {
     fontSize: 13,
-    color: "#4E4A57",
     fontWeight: "600",
   },
   summaryAmount: {
     fontSize: 20,
-    color: "#0B0014",
     fontWeight: "700",
   },
   statusPill: {
@@ -289,7 +322,6 @@ const styles = StyleSheet.create({
   },
   detailsCard: {
     borderWidth: 1,
-    borderColor: "#EFEFF1",
     borderRadius: 12,
     padding: 14,
     gap: 10,
@@ -301,12 +333,10 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 12,
-    color: "#77717F",
     flex: 1,
   },
   detailValue: {
     fontSize: 12,
-    color: "#0B0014",
     fontWeight: "600",
     flex: 1,
     textAlign: "right",
@@ -317,7 +347,6 @@ const styles = StyleSheet.create({
   },
   helpText: {
     fontSize: 12,
-    color: "#013D25",
     textDecorationLine: "underline",
   },
 });
