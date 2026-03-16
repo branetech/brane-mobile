@@ -210,7 +210,7 @@ export default function AllServicesScreen() {
       <View
         style={{
           ...styles.searchWrap,
-          backgroundColor: C.inputBackground,
+          backgroundColor: C.inputBg,
           borderColor: C.border,
         }}
         row
@@ -262,7 +262,7 @@ export default function AllServicesScreen() {
                   backgroundColor: item.color,
                 }}
               >
-                <ThemedText style={styles.initialsText}>
+                <ThemedText style={[styles.initialsText, { color: C.primary }]}>
                   {item.initials}
                 </ThemedText>
               </View>
@@ -338,7 +338,6 @@ const styles = StyleSheet.create({
   initialsText: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#013D25",
   },
   itemName: { fontSize: 14 },
   emptyWrap: {
