@@ -8,11 +8,11 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Switch,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -132,7 +132,10 @@ export default function SendMoneyScreen() {
               value={formValues.accountNumber}
               onChangeText={(value) => handleChange("accountNumber", value)}
               error={errors.accountNumber}
-              inputContainerStyle={[styles.inputContainer, { backgroundColor: C.inputBg, borderColor: C.border }]}
+              inputContainerStyle={[
+                styles.inputContainer,
+                { backgroundColor: C.inputBg, borderColor: C.border },
+              ]}
               inputStyle={styles.inputText}
             />
 
@@ -144,7 +147,10 @@ export default function SendMoneyScreen() {
               value={formValues.bankName}
               onChangeText={(value) => handleChange("bankName", value)}
               error={errors.bankName}
-              inputContainerStyle={[styles.inputContainer, { backgroundColor: C.inputBg, borderColor: C.border }]}
+              inputContainerStyle={[
+                styles.inputContainer,
+                { backgroundColor: C.inputBg, borderColor: C.border },
+              ]}
               inputStyle={styles.inputText}
             />
 
@@ -157,7 +163,10 @@ export default function SendMoneyScreen() {
               onChangeText={(value) => handleChange("recipientName", value)}
               error={errors.recipientName}
               disabled
-              inputContainerStyle={[styles.inputContainer, { backgroundColor: C.inputBg, borderColor: C.border }]}
+              inputContainerStyle={[
+                styles.inputContainer,
+                { backgroundColor: C.inputBg, borderColor: C.border },
+              ]}
               inputStyle={styles.inputText}
             />
           </View>

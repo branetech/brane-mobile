@@ -7,12 +7,12 @@ import BaseRequest, { catchError } from "@/services";
 import { View } from "@idimma/rn-widget";
 import { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -143,7 +143,11 @@ export default function LeaderboardScreen() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator style={styles.loader} size='large' color={C.primary} />
+        <ActivityIndicator
+          style={styles.loader}
+          size='large'
+          color={C.primary}
+        />
       ) : (
         <FlatList
           data={filtered}

@@ -13,14 +13,14 @@ import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -171,7 +171,7 @@ export default function BuyDataScreen() {
                             borderColor: active ? n.color : C.border,
                             backgroundColor: active
                               ? n.color + "22"
-                              : C.inputBackground,
+                              : C.inputBg,
                           },
                         ]}
                         activeOpacity={0.75}
@@ -206,7 +206,7 @@ export default function BuyDataScreen() {
 
                 {loadingPlans ? (
                   <View style={styles.loaderWrap}>
-                    <ActivityIndicator color='#013D25' />
+                    <ActivityIndicator color={C.primary} />
                     <ThemedText style={{ color: C.muted, fontSize: 13 }}>
                       Loading plans…
                     </ThemedText>
@@ -228,9 +228,9 @@ export default function BuyDataScreen() {
                             styles.planCard,
                             {
                               backgroundColor: active
-                                ? "#D2F1E4"
-                                : C.inputBackground,
-                              borderColor: active ? "#013D25" : C.border,
+                                ? C.primary + "20"
+                                : C.inputBg,
+                              borderColor: active ? C.primary : C.border,
                             },
                           ]}
                           activeOpacity={0.75}
@@ -238,7 +238,7 @@ export default function BuyDataScreen() {
                           <ThemedText
                             style={{
                               fontWeight: "600",
-                              color: active ? "#013D25" : C.text,
+                              color: active ? C.primary : C.text,
                               flex: 1,
                             }}
                           >
@@ -247,7 +247,7 @@ export default function BuyDataScreen() {
                           <ThemedText
                             style={{
                               fontWeight: "700",
-                              color: active ? "#013D25" : C.text,
+                              color: active ? C.primary : C.text,
                             }}
                           >
                             {priceFormatter(Number(plan.variation_amount))}
@@ -277,7 +277,7 @@ export default function BuyDataScreen() {
                 <View
                   style={{
                     ...styles.summaryCard,
-                    backgroundColor: C.inputBackground,
+                    backgroundColor: C.inputBg,
                     borderColor: C.border,
                   }}
                 >
@@ -317,8 +317,8 @@ export default function BuyDataScreen() {
                 <BraneButton
                   text='Go Back'
                   onPress={() => setStage("form")}
-                  backgroundColor={C.inputBackground}
-                  textColor='#013D25'
+                  backgroundColor={C.inputBg}
+                  textColor={C.primary}
                   style={styles.secondaryButton}
                 />
               </>
@@ -327,7 +327,7 @@ export default function BuyDataScreen() {
             {/* ── SUCCESS ── */}
             {stage === "success" && selectedPlan && (
               <View style={{ ...styles.successWrap, gap: 12 }}>
-                <TickCircle size={72} color='#013D25' variant='Bold' />
+                <TickCircle size={72} color={C.primary} variant='Bold' />
                 <ThemedText type='subtitle' style={{ textAlign: "center" }}>
                   Data Purchase Successful!
                 </ThemedText>
