@@ -5,12 +5,16 @@ import {
     Quick,
     Transactions,
 } from "@/components/home/home-card";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useCallback, useState } from "react";
 import { RefreshControl, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const onRefresh = useCallback(() => {
@@ -22,7 +26,7 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: C.background }]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}

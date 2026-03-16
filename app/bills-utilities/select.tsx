@@ -2,48 +2,50 @@ import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import {
-  PaymentMethodSelector,
-  type PaymentOption,
+    PaymentMethodSelector,
+    type PaymentOption,
 } from "@/components/payment-method-selector";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import BaseRequest, { parseNetworkError } from "@/services";
 import {
-  onTransactionPinBettingValidation,
-  onTransactionPinCabelValidation,
-  onTransactionPinElectricityValidation,
-  onTransactionPinValidated,
+    onTransactionPinBettingValidation,
+    onTransactionPinCabelValidation,
+    onTransactionPinElectricityValidation,
+    onTransactionPinValidated,
 } from "@/services/data";
 import {
-  AUTH_SERVICE,
-  MOBILE_SERVICE,
-  PAYMENT_CALLBACK_URL,
-  STOCKS_SERVICE,
-  TRANSACTION_SERVICE,
+    AUTH_SERVICE,
+    MOBILE_SERVICE,
+    PAYMENT_CALLBACK_URL,
+    STOCKS_SERVICE,
+    TRANSACTION_SERVICE,
 } from "@/services/routes";
 import { showError } from "@/utils/helpers";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
-  Add,
-  ArrowDown2,
-  CloseCircle,
-  Mobile,
-  SearchNormal1,
-  WifiSquare,
+    Add,
+    ArrowDown2,
+    CloseCircle,
+    Mobile,
+    SearchNormal1,
+    WifiSquare,
 } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -312,6 +314,9 @@ export default function UtilitySelectScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const auth = useAppState("auth");
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+  const styles = createStyles(C);
 
   const initialService = String(params.service || "airtime").toLowerCase();
   const currentService: UtilityService =
@@ -924,7 +929,7 @@ export default function UtilitySelectScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
         <ThemedText style={styles.headerTitle}>Bills & Utilities</ThemedText>
@@ -933,7 +938,7 @@ export default function UtilitySelectScreen() {
 
       {isFetchingMeta ? (
         <View style={styles.fullPageLoader}>
-          <ActivityIndicator size='large' color='#013D25' />
+          <ActivityIndicator size='large' color={C.primary} />
           <ThemedText style={styles.loadingText}>
             Loading services...
           </ThemedText>
@@ -957,7 +962,7 @@ export default function UtilitySelectScreen() {
                 >
                   <Mobile
                     size={16}
-                    color={service === "airtime" ? "#013D25" : "#7F7F86"}
+                    color={service === "airtime" ? C.primary : C.muted}
                     variant='Outline'
                   />
                   <ThemedText
@@ -979,7 +984,7 @@ export default function UtilitySelectScreen() {
                 >
                   <WifiSquare
                     size={16}
-                    color={service === "data" ? "#013D25" : "#7F7F86"}
+                    color={service === "data" ? C.primary : C.muted}
                     variant='Outline'
                   />
                   <ThemedText
@@ -1051,7 +1056,7 @@ export default function UtilitySelectScreen() {
                   <TextInput
                     style={styles.inlineInputText}
                     placeholder='Enter phone number'
-                    placeholderTextColor='#A9A9AE'
+                    placeholderTextColor={C.muted}
                     keyboardType='number-pad'
                     value={phone}
                     onChangeText={(value) => {
@@ -1059,7 +1064,7 @@ export default function UtilitySelectScreen() {
                       setPhoneError(undefined);
                     }}
                   />
-                  <Add size={18} color='#9B9BA2' variant='Outline' />
+                  <Add size={18} color={C.muted} variant='Outline' />
                 </View>
                 {phoneError ? (
                   <ThemedText style={styles.errorText}>{phoneError}</ThemedText>
@@ -1072,8 +1077,8 @@ export default function UtilitySelectScreen() {
                   <Switch
                     value={addToBeneficiaries}
                     onValueChange={setAddToBeneficiaries}
-                    trackColor={{ false: "#E6E6E8", true: "#D2F1E4" }}
-                    thumbColor={addToBeneficiaries ? "#013D25" : "#B9B9BD"}
+                    trackColor={{ false: C.border, true: C.primary + "20" }}
+                    thumbColor={addToBeneficiaries ? C.primary : C.muted}
                   />
                 </View>
 
@@ -1084,13 +1089,13 @@ export default function UtilitySelectScreen() {
                   <View style={styles.searchRow}>
                     <SearchNormal1
                       size={16}
-                      color='#88888F'
+                      color={C.muted}
                       variant='Outline'
                     />
                     <TextInput
                       style={styles.searchInput}
                       placeholder='Search by name or phone number'
-                      placeholderTextColor='#A9A9AE'
+                      placeholderTextColor={C.muted}
                       value={beneficiarySearch}
                       onChangeText={setBeneficiarySearch}
                     />
@@ -1165,7 +1170,7 @@ export default function UtilitySelectScreen() {
                   <TextInput
                     style={styles.inlineInputText}
                     placeholder='Enter custom amount'
-                    placeholderTextColor='#A9A9AE'
+                    placeholderTextColor={C.muted}
                     keyboardType='number-pad'
                     value={amount}
                     onChangeText={(value) => {
@@ -1205,7 +1210,7 @@ export default function UtilitySelectScreen() {
                         </ThemedText>
                       ) : null}
                     </View>
-                    <ArrowDown2 size={18} color='#6E6E75' />
+                    <ArrowDown2 size={18} color={C.muted} />
                   </TouchableOpacity>
                 ) : (
                   <ThemedText style={styles.emptyBeneficiaryText}>
@@ -1366,8 +1371,8 @@ export default function UtilitySelectScreen() {
                   }}
                   height={38}
                   radius={8}
-                  backgroundColor='#D2F1E4'
-                  textColor='#013D25'
+                  backgroundColor={C.primary + "20"}
+                  textColor={C.primary}
                   fontSize={11}
                   style={styles.verifyBtn}
                 />
@@ -1404,7 +1409,7 @@ export default function UtilitySelectScreen() {
                         </ThemedText>
                       ) : null}
                     </View>
-                    <ArrowDown2 size={18} color='#6E6E75' />
+                    <ArrowDown2 size={18} color={C.muted} />
                   </TouchableOpacity>
                 ) : (
                   <ThemedText style={styles.emptyBeneficiaryText}>
@@ -1440,7 +1445,7 @@ export default function UtilitySelectScreen() {
                         </ThemedText>
                       ) : null}
                     </View>
-                    <ArrowDown2 size={18} color='#6E6E75' />
+                    <ArrowDown2 size={18} color={C.muted} />
                   </TouchableOpacity>
                 ) : (
                   <ThemedText style={styles.emptyBeneficiaryText}>
@@ -1519,8 +1524,8 @@ export default function UtilitySelectScreen() {
                   }}
                   height={38}
                   radius={8}
-                  backgroundColor='#D2F1E4'
-                  textColor='#013D25'
+                  backgroundColor={C.primary + "20"}
+                  textColor={C.primary}
                   fontSize={11}
                   style={styles.verifyBtn}
                 />
@@ -1571,7 +1576,7 @@ export default function UtilitySelectScreen() {
                   <TextInput
                     style={styles.inlineInputText}
                     placeholder='Enter custom amount'
-                    placeholderTextColor='#A9A9AE'
+                    placeholderTextColor={C.muted}
                     keyboardType='number-pad'
                     value={amount}
                     onChangeText={(value) => {
@@ -1658,7 +1663,7 @@ export default function UtilitySelectScreen() {
                         </ThemedText>
                       ) : null}
                     </View>
-                    <ArrowDown2 size={18} color='#6E6E75' />
+                    <ArrowDown2 size={18} color={C.muted} />
                   </TouchableOpacity>
                 ) : (
                   <ThemedText style={styles.emptyBeneficiaryText}>
@@ -1688,8 +1693,8 @@ export default function UtilitySelectScreen() {
                 if (!validateForm()) return;
                 setShowPinValidator(true);
               }}
-              backgroundColor='#013D25'
-              textColor='#D2F1E4'
+              backgroundColor={C.primary}
+              textColor='#ffffff'
               height={48}
               radius={8}
               loading={isSubmitting}
@@ -1748,7 +1753,7 @@ export default function UtilitySelectScreen() {
                 Select Data Plan
               </ThemedText>
               <TouchableOpacity onPress={() => setShowDataPlanModal(false)}>
-                <CloseCircle size={18} color='#6E6E75' variant='Outline' />
+                <CloseCircle size={18} color={C.muted} variant='Outline' />
               </TouchableOpacity>
             </View>
 
@@ -1815,7 +1820,7 @@ export default function UtilitySelectScreen() {
               <TouchableOpacity
                 onPress={() => setShowElectricityProviderModal(false)}
               >
-                <CloseCircle size={18} color='#6E6E75' variant='Outline' />
+                <CloseCircle size={18} color={C.muted} variant='Outline' />
               </TouchableOpacity>
             </View>
 
@@ -1893,7 +1898,7 @@ export default function UtilitySelectScreen() {
               <TouchableOpacity
                 onPress={() => setShowTransportPlanModal(false)}
               >
-                <CloseCircle size={18} color='#6E6E75' variant='Outline' />
+                <CloseCircle size={18} color={C.muted} variant='Outline' />
               </TouchableOpacity>
             </View>
 
@@ -1961,7 +1966,7 @@ export default function UtilitySelectScreen() {
                 Select Subscription Plan
               </ThemedText>
               <TouchableOpacity onPress={() => setShowCablePlanModal(false)}>
-                <CloseCircle size={18} color='#6E6E75' variant='Outline' />
+                <CloseCircle size={18} color={C.muted} variant='Outline' />
               </TouchableOpacity>
             </View>
 
@@ -2010,10 +2015,10 @@ export default function UtilitySelectScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (C: typeof Colors["light"]) => StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
   },
   header: {
     flexDirection: "row",
@@ -2029,7 +2034,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0B0014",
+    color: C.text,
   },
   content: {
     paddingHorizontal: 20,
@@ -2044,16 +2049,16 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: "#6F6F74",
+    color: C.muted,
   },
   heading: {
-    color: "#8E8E93",
+    color: C.muted,
     fontSize: 10,
   },
   segmentTabs: {
     flexDirection: "row",
     borderRadius: 12,
-    backgroundColor: "#F3F3F5",
+    backgroundColor: C.inputBg,
     padding: 4,
     gap: 4,
     marginBottom: 4,
@@ -2069,17 +2074,17 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   segmentTabActive: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
     borderWidth: 1,
-    borderColor: "#DDEEE5",
+    borderColor: C.border,
   },
   segmentTabText: {
     fontSize: 12,
-    color: "#7F7F86",
+    color: C.muted,
     fontWeight: "600",
   },
   segmentTabTextActive: {
-    color: "#013D25",
+    color: C.primary,
   },
   serviceRow: {
     flexDirection: "row",
@@ -2090,27 +2095,27 @@ const styles = StyleSheet.create({
   serviceChip: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#E6E7EB",
-    backgroundColor: "#FFFFFF",
+    borderColor: C.border,
+    backgroundColor: C.inputBg,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   serviceChipActive: {
-    backgroundColor: "#D2F1E4",
-    borderColor: "#C2E6D7",
+    backgroundColor: C.primary + "20",
+    borderColor: C.border,
   },
   serviceChipText: {
     fontSize: 11,
-    color: "#585561",
+    color: C.muted,
     fontWeight: "500",
   },
   serviceChipTextActive: {
-    color: "#013D25",
+    color: C.primary,
     fontWeight: "700",
   },
   label: {
     fontSize: 10,
-    color: "#8E8E93",
+    color: C.muted,
     marginTop: 4,
   },
   providersRow: {
@@ -2121,28 +2126,28 @@ const styles = StyleSheet.create({
   },
   airtimeDataCard: {
     borderWidth: 1,
-    borderColor: "#ECECEF",
+    borderColor: C.border,
     borderRadius: 12,
     padding: 14,
     gap: 12,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
   },
   sectionCard: {
     borderWidth: 1,
-    borderColor: "#ECECEF",
+    borderColor: C.border,
     borderRadius: 12,
     padding: 14,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
     gap: 12,
   },
   sectionTitle: {
     fontSize: 12,
-    color: "#0B0014",
+    color: C.text,
     fontWeight: "700",
   },
   fieldLabel: {
     fontSize: 11,
-    color: "#5F5F65",
+    color: C.muted,
     fontWeight: "600",
   },
   networkGrid: {
@@ -2155,15 +2160,15 @@ const styles = StyleSheet.create({
     minWidth: 72,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#ECECEF",
-    backgroundColor: "#F9FAFA",
+    borderColor: C.border,
+    backgroundColor: C.inputBg,
     paddingVertical: 11,
     alignItems: "center",
     gap: 6,
   },
   networkTileActive: {
-    borderColor: "#013D25",
-    backgroundColor: "#F2FAF6",
+    borderColor: C.primary,
+    backgroundColor: C.primary + "10",
   },
   networkLogo: {
     width: 28,
@@ -2171,27 +2176,27 @@ const styles = StyleSheet.create({
   },
   networkText: {
     fontSize: 10,
-    color: "#5A5660",
+    color: C.muted,
     fontWeight: "600",
   },
   networkTextActive: {
-    color: "#013D25",
+    color: C.primary,
   },
   inlineInput: {
     height: 44,
     borderWidth: 1,
-    borderColor: "#E9E9EC",
+    borderColor: C.border,
     borderRadius: 10,
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: "#F8F8FA",
+    backgroundColor: C.inputBg,
   },
   phonePrefix: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1D1D22",
+    color: C.text,
     marginRight: 2,
   },
   inlineInputError: {
@@ -2199,7 +2204,7 @@ const styles = StyleSheet.create({
   },
   inlineInputText: {
     flex: 1,
-    color: "#0B0014",
+    color: C.text,
     fontSize: 12,
   },
   errorText: {
@@ -2210,18 +2215,18 @@ const styles = StyleSheet.create({
   currencyPrefix: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#4A4A50",
+    color: C.muted,
   },
   providerBtn: {
     borderWidth: 1,
-    borderColor: "#ECECEF",
+    borderColor: C.border,
     borderRadius: 8,
     minWidth: 66,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
   },
   providerLogo: {
     width: 22,
@@ -2229,16 +2234,16 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   providerBtnActive: {
-    borderColor: "#013D25",
-    backgroundColor: "#EAF4EF",
+    borderColor: C.primary,
+    backgroundColor: C.primary + "15",
   },
   providerText: {
     fontSize: 11,
-    color: "#5A5660",
+    color: C.muted,
     fontWeight: "600",
   },
   providerTextActive: {
-    color: "#013D25",
+    color: C.primary,
   },
   cableGrid: {
     flexDirection: "row",
@@ -2251,15 +2256,15 @@ const styles = StyleSheet.create({
     minWidth: 72,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#E8E8EA",
-    backgroundColor: "#F9FAFA",
+    borderColor: C.border,
+    backgroundColor: C.inputBg,
     paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   cableTileActive: {
-    borderColor: "#013D25",
-    backgroundColor: "#F2FAF6",
+    borderColor: C.primary,
+    backgroundColor: C.primary + "10",
   },
   cableLogo: {
     width: 38,
@@ -2268,12 +2273,12 @@ const styles = StyleSheet.create({
   },
   cableText: {
     fontSize: 10,
-    color: "#4F4F56",
+    color: C.muted,
     fontWeight: "600",
     textTransform: "capitalize",
   },
   cableTextActive: {
-    color: "#013D25",
+    color: C.primary,
   },
   beneficiaryRow: {
     flexDirection: "row",
@@ -2283,7 +2288,7 @@ const styles = StyleSheet.create({
   },
   beneficiaryText: {
     fontSize: 11,
-    color: "#55555A",
+    color: C.muted,
     fontWeight: "600",
   },
   beneficiariesWrap: {
@@ -2292,18 +2297,18 @@ const styles = StyleSheet.create({
   searchRow: {
     height: 42,
     borderWidth: 1,
-    borderColor: "#E9E9EC",
+    borderColor: C.border,
     borderRadius: 10,
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: "#F8F8FA",
+    backgroundColor: C.inputBg,
   },
   searchInput: {
     flex: 1,
     fontSize: 12,
-    color: "#101014",
+    color: C.text,
   },
   beneficiaryList: {
     gap: 8,
@@ -2312,40 +2317,40 @@ const styles = StyleSheet.create({
   beneficiaryCard: {
     minWidth: 140,
     borderWidth: 1,
-    borderColor: "#E7E7EA",
+    borderColor: C.border,
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 8,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
   },
   beneficiaryAvatar: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: "#EAF4EF",
+    backgroundColor: C.primary + "15",
     alignItems: "center",
     justifyContent: "center",
   },
   beneficiaryInitials: {
     fontSize: 11,
-    color: "#013D25",
+    color: C.primary,
     fontWeight: "700",
   },
   beneficiaryName: {
     fontSize: 11,
-    color: "#15151A",
+    color: C.text,
     fontWeight: "600",
   },
   beneficiaryPhone: {
     fontSize: 10,
-    color: "#7A7A80",
+    color: C.muted,
   },
   emptyBeneficiaryText: {
     fontSize: 10,
-    color: "#8E8E93",
+    color: C.muted,
   },
   amountRow: {
     flexDirection: "row",
@@ -2355,90 +2360,90 @@ const styles = StyleSheet.create({
   },
   planCard: {
     borderWidth: 1,
-    borderColor: "#F0F0F2",
+    borderColor: C.border,
     borderRadius: 8,
     padding: 10,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
   },
   amountChip: {
     width: "23%",
     borderWidth: 1,
-    borderColor: "#E8E8EA",
+    borderColor: C.border,
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 11,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
     alignItems: "center",
   },
   amountChipActive: {
-    backgroundColor: "#EAF6F0",
-    borderColor: "#013D25",
+    backgroundColor: C.primary + "15",
+    borderColor: C.primary,
   },
   amountChipText: {
     fontSize: 11,
-    color: "#4F4F56",
+    color: C.muted,
     fontWeight: "600",
   },
   beneficiaryResultRow: {
     borderWidth: 1,
-    borderColor: "#DDEEE5",
+    borderColor: C.border,
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    backgroundColor: "#F2FAF6",
+    backgroundColor: C.primary + "10",
   },
   beneficiaryResultText: {
     fontSize: 10,
-    color: "#013D25",
+    color: C.primary,
     fontWeight: "600",
   },
   amountChipTextActive: {
-    color: "#013D25",
+    color: C.primary,
   },
   dataPlansList: {
     gap: 8,
   },
   dataPlanRow: {
     borderWidth: 1,
-    borderColor: "#E7E7EB",
+    borderColor: C.border,
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
   },
   dataPlanRowActive: {
-    borderColor: "#013D25",
-    backgroundColor: "#F2FAF6",
+    borderColor: C.primary,
+    backgroundColor: C.primary + "10",
   },
   dataPlanTitle: {
     fontSize: 12,
-    color: "#1D1D22",
+    color: C.text,
     fontWeight: "600",
   },
   dataPlanTitleActive: {
-    color: "#013D25",
+    color: C.primary,
   },
   dataPlanAmount: {
     fontSize: 12,
-    color: "#5D5D66",
+    color: C.muted,
     fontWeight: "700",
   },
   dataPlanAmountActive: {
-    color: "#013D25",
+    color: C.primary,
   },
   planSelector: {
     borderWidth: 1,
-    borderColor: "#E7E7EB",
+    borderColor: C.border,
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
   },
   planSelectorTextWrap: {
     flex: 1,
@@ -2446,12 +2451,12 @@ const styles = StyleSheet.create({
   },
   planSelectorTitle: {
     fontSize: 12,
-    color: "#1D1D22",
+    color: C.text,
     fontWeight: "600",
   },
   planSelectorAmount: {
     fontSize: 11,
-    color: "#676770",
+    color: C.muted,
   },
   modalOverlay: {
     flex: 1,
@@ -2459,7 +2464,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   modalCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
     paddingHorizontal: 16,
@@ -2475,7 +2480,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 14,
-    color: "#0B0014",
+    color: C.text,
     fontWeight: "700",
   },
   modalList: {
@@ -2483,46 +2488,46 @@ const styles = StyleSheet.create({
   },
   modalListRow: {
     borderWidth: 1,
-    borderColor: "#E7E7EB",
+    borderColor: C.border,
     borderRadius: 10,
     paddingVertical: 11,
     paddingHorizontal: 12,
     marginBottom: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
   },
   modalListRowActive: {
-    borderColor: "#013D25",
-    backgroundColor: "#F2FAF6",
+    borderColor: C.primary,
+    backgroundColor: C.primary + "10",
   },
   modalListTitle: {
     fontSize: 12,
-    color: "#1D1D22",
+    color: C.text,
     fontWeight: "600",
   },
   modalListTitleActive: {
-    color: "#013D25",
+    color: C.primary,
   },
   modalListAmount: {
     marginTop: 2,
     fontSize: 11,
-    color: "#676770",
+    color: C.muted,
   },
   modalListAmountActive: {
-    color: "#013D25",
+    color: C.primary,
   },
   providerModalRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#F1F1F3",
+    borderBottomColor: C.border,
     paddingVertical: 12,
     paddingHorizontal: 4,
   },
   providerModalRowActive: {
-    backgroundColor: "#F2FAF6",
+    backgroundColor: C.primary + "10",
     borderRadius: 8,
-    borderBottomColor: "#F2FAF6",
+    borderBottomColor: C.primary + "10",
     paddingHorizontal: 8,
   },
   providerModalLogo: {
@@ -2539,17 +2544,17 @@ const styles = StyleSheet.create({
   },
   providerModalTitle: {
     fontSize: 14,
-    color: "#0B0014",
+    color: C.text,
     fontWeight: "600",
   },
   providerModalSubtitle: {
     fontSize: 12,
-    color: "#5B5760",
+    color: C.muted,
   },
   inputContainer: {
     height: 40,
     borderRadius: 8,
-    borderColor: "#F0F0F0",
+    borderColor: C.border,
   },
   inputText: {
     fontSize: 11,
@@ -2562,19 +2567,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    backgroundColor: "#EFFAF4",
+    backgroundColor: C.primary + "10",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#D7EDE0",
+    borderColor: C.border,
   },
   verifiedLabel: {
     fontSize: 9,
-    color: "#5A8A70",
+    color: C.muted,
   },
   verifiedValue: {
     marginTop: 2,
     fontSize: 12,
-    color: "#013D25",
+    color: C.primary,
     fontWeight: "600",
   },
   footer: {
