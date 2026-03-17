@@ -15,7 +15,9 @@ export function ThemedText({
   type = 'default',
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  // For link type, use primary color; otherwise use text color
+  const colorKey = type === 'link' ? 'primary' : 'text';
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, colorKey);
 
   return (
     <Text
@@ -39,7 +41,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     fontWeight: '400',
-    color: '#85808A',
   },
   defaultSemiBold: {
     fontSize: 16,
@@ -58,7 +59,6 @@ const styles = StyleSheet.create({
   link: {
     lineHeight: 30,
     fontSize: 16,
-    color: '#013D25',
   },
   regular:{
     lineHeight: 43,

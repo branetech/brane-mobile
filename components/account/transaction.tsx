@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
   iconWrapper: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: "#D2F1E4",
+    // borderRadius: 18,
+    // backgroundColor: "#D2F1E4",
     alignItems: "center",
     justifyContent: "center",
   },
