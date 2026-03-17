@@ -162,7 +162,7 @@ export default function ManageBeneficiaryScreen() {
                 )}
               </View>
               <Pressable
-                style={styles.deleteButton}
+                style={[styles.deleteButton, { backgroundColor: "#FCE4E4" }]}
                 onPress={() => onDeleteBeneficiary(item)}
               >
                 <Trash size={16} color='#D50000' />
@@ -198,7 +198,6 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: "#0B0014",
     fontSize: 14,
   },
   loaderWrap: {
@@ -226,7 +225,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FCE4E4",
     marginLeft: 8,
   },
   emptyText: {

@@ -61,13 +61,18 @@ const SERVICE_FILTERS: { id: ServiceFilter; label: string }[] = [
   { id: "betting", label: "Betting" },
 ];
 
-const SERVICE_COLORS: Record<ServiceFilter, string> = {
-  all: "#013D25",
-  airtime: "#D2F1E4",
-  data: "#FFF3DB",
-  electricity: "#E1F0FF",
-  cable: "#FFE8E8",
-  betting: "#EDE1FF",
+const getServiceColors = (
+  scheme: "dark" | "light",
+): Record<ServiceFilter, string> => {
+  const isDark = scheme === "dark";
+  return {
+    all: "#013D25",
+    airtime: isDark ? "#013D2530" : "#D2F1E4",
+    data: isDark ? "#F5A62330" : "#FFF3DB",
+    electricity: isDark ? "#4A90E230" : "#E1F0FF",
+    cable: isDark ? "#E24A4A30" : "#FFE8E8",
+    betting: isDark ? "#9B59B630" : "#EDE1FF",
+  };
 };
 
 const SERVICE_BAR_COLORS: Record<string, string> = {
@@ -78,12 +83,21 @@ const SERVICE_BAR_COLORS: Record<string, string> = {
   betting: "#9B59B6",
 };
 
-const getServiceColor = (service: ServiceFilter, C: any): string => {
+const getServiceColor = (
+  service: ServiceFilter,
+  C: any,
+  scheme: "dark" | "light",
+): string => {
+  const isDark = scheme === "dark";
   if (service === "airtime") return C.primary + "25";
-  if (service === "data") return "#FFF3DB";
-  if (service === "electricity") return "#E1F0FF";
-  if (service === "cable") return "#FFE8E8";
-  if (service === "betting") return "#EDE1FF";
+  if (service === "data")
+    return isDark ? C.primary + "15" : "#FFF3DB";
+  if (service === "electricity")
+    return isDark ? C.primary + "15" : "#E1F0FF";
+  if (service === "cable")
+    return isDark ? C.primary + "15" : "#FFE8E8";
+  if (service === "betting")
+    return isDark ? C.primary + "15" : "#EDE1FF";
   return C.primary + "15";
 };
 
@@ -108,7 +122,9 @@ const resolveField = (obj: any, ...keys: string[]): any => {
 export default function SpendingPatternScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
-  const C = Colors[scheme === "dark" ? "dark" : "light"];
+  const themeScheme = scheme === "dark" ? "dark" : "light";
+  const C = Colors[themeScheme];
+  const SERVICE_COLORS = getServiceColors(themeScheme);
 
   const [selectedPeriod, setSelectedPeriod] = useState<Period>("daily");
   const [selectedFilter, setSelectedFilter] = useState<ServiceFilter>("all");
@@ -198,7 +214,7 @@ export default function SpendingPatternScreen() {
                 <ThemedText
                   style={[
                     styles.pillText,
-                    { color: active ? "#fff" : C.muted },
+                    { color: active ? C.text : C.muted },
                   ]}
                 >
                   {p.label}
@@ -241,7 +257,7 @@ export default function SpendingPatternScreen() {
               <View
                 style={{
                   ...styles.summaryCard,
-                  backgroundColor: "#FFF3DB",
+                  backgroundColor: themeScheme === "dark" ? C.primary + "15" : "#FFF3DB",
                   flex: 1,
                 }}
                 gap={4}
@@ -328,7 +344,7 @@ export default function SpendingPatternScreen() {
                       styles.pill,
                       {
                         backgroundColor: active
-                          ? getServiceColor(f.id, C)
+                          ? getServiceColor(f.id, C, themeScheme)
                           : C.inputBg,
                         borderColor: active ? C.primary : C.border,
                       },

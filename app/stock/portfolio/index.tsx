@@ -44,8 +44,11 @@ const toArray = (v: any): any[] => {
   return [];
 };
 
-const textToImage = (text: string) =>
-  `https://dummyimage.com/80x80/F7F7F8/013D25&text=${encodeURIComponent(text || "ST")}`;
+const getTextToImage = (text: string, C: any) => {
+  const bgColor = C.inputBg.replace("#", "");
+  const fgColor = C.primary.replace("#", "");
+  return `https://dummyimage.com/80x80/${bgColor}/${fgColor}&text=${encodeURIComponent(text || "ST")}`;
+};
 
 export default function StockPortfolioScreen() {
   const router = useRouter();
@@ -122,6 +125,7 @@ export default function StockPortfolioScreen() {
       item?.changePercent || item?.percentChange || 0,
     );
     const isDown = changePercent < 0;
+    const priceColor = isDown ? "#D50000" : C.primary;
 
     return (
       <TouchableOpacity
@@ -129,7 +133,7 @@ export default function StockPortfolioScreen() {
         style={[
           styles.stockCard,
           {
-            backgroundColor: isDown ? C.inputBg : C.inputBg,
+            backgroundColor: C.inputBg,
             borderColor: C.border,
           },
         ]}
@@ -143,9 +147,9 @@ export default function StockPortfolioScreen() {
               uri:
                 logo && !String(logo).startsWith("/stock")
                   ? logo
-                  : textToImage(ticker || "ST"),
+                  : getTextToImage(ticker || "ST", C),
             }}
-            style={styles.stockLogo}
+            style={[styles.stockLogo, { backgroundColor: C.inputBg }]}
           />
           <View style={styles.stockCardMeta}>
             <ThemedText style={[styles.stockTicker, { color: C.text }]}>
@@ -164,7 +168,7 @@ export default function StockPortfolioScreen() {
           <ThemedText
             style={[
               styles.stockPrice,
-              { color: isDown ? "#CB010B" : "#008753" },
+              { color: priceColor },
             ]}
           >
             {priceFormatter(currentPrice, 2)}
@@ -172,7 +176,7 @@ export default function StockPortfolioScreen() {
           <ThemedText
             style={[
               styles.stockChange,
-              { color: isDown ? "#CB010B" : "#008753" },
+              { color: priceColor },
             ]}
           >
             {isDown ? "▼" : "▲"} {Math.abs(changePercent).toFixed(2)}%
@@ -220,7 +224,7 @@ export default function StockPortfolioScreen() {
                   2,
                 )}
           </ThemedText>
-          <ThemedText style={styles.holdingsPercent}>+0.25%</ThemedText>
+          <ThemedText style={[styles.holdingsPercent, { color: "#27C840" }]}>+0.25%</ThemedText>
         </View>
 
         <ThemedText style={[styles.updatedAt, { color: C.muted }]}>
@@ -236,7 +240,7 @@ export default function StockPortfolioScreen() {
             >
               Portfolio Balance
             </ThemedText>
-            <ThemedText style={[styles.balanceAmount, { color: "#fff" }]}>
+            <ThemedText style={[styles.balanceAmount, { color: C.screen }]}>
               {hideBalance ? "••••••" : priceFormatter(portfolioBalance, 2)}
             </ThemedText>
           </View>
@@ -247,7 +251,7 @@ export default function StockPortfolioScreen() {
             >
               BRACS Balance
             </ThemedText>
-            <ThemedText style={[styles.balanceAmount, { color: "#fff" }]}>
+            <ThemedText style={[styles.balanceAmount, { color: C.screen }]}>
               {hideBalance ? "••••••" : bracsBalance.toFixed(4)}
             </ThemedText>
           </View>
@@ -311,8 +315,8 @@ export default function StockPortfolioScreen() {
                   style={[
                     styles.assetReturn,
                     {
-                      color: isUp ? "#008753" : "#CB010B",
-                      backgroundColor: isUp ? "#E0FFF3" : "#FCEDED",
+                      color: isUp ? C.primary : "#D50000",
+                      backgroundColor: isUp ? C.primary + "15" : "#FCE4E4",
                     },
                   ]}
                 >
@@ -358,7 +362,7 @@ export default function StockPortfolioScreen() {
         text='My Stocks'
         onPress={() => router.push("/stock/portfolio/my-stocks")}
         backgroundColor={C.primary}
-        textColor='#D2F1E4'
+        textColor={C.googleBg}
         height={52}
         radius={12}
       />
@@ -401,13 +405,13 @@ export default function StockPortfolioScreen() {
                 <View
                   style={{
                     ...styles.txBadge,
-                    backgroundColor: isBuy ? "#EAF8F1" : "#FDECEC",
+                    backgroundColor: isBuy ? C.primary + "15" : "#FCE4E4",
                   }}
                 >
                   <ThemedText
                     style={[
                       styles.txBadgeText,
-                      { color: isBuy ? "#09734C" : "#D50000" },
+                      { color: isBuy ? C.primary : "#D50000" },
                     ]}
                   >
                     {isBuy ? "Buy" : "Sell"}
@@ -508,7 +512,6 @@ const styles = StyleSheet.create({
   holdingsPercent: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#27C840",
     marginBottom: 2,
   },
   updatedAt: { fontSize: 12, fontWeight: "500" },
@@ -528,7 +531,7 @@ const styles = StyleSheet.create({
   balanceDivider: {
     width: 1,
     height: 40,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: "rgba(230,230,230,0.5)",
   },
   eyeBtn: { padding: 4 },
 
@@ -599,7 +602,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#FFFFFF",
   },
   stockCardMeta: { flex: 1 },
   stockTicker: { fontSize: 12, fontWeight: "700" },

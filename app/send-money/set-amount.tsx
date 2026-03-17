@@ -219,8 +219,8 @@ export default function SendMoneySetAmountScreen() {
           }}
           backgroundColor={C.primary}
           textColor={C.googleBg}
-          height={56}
-          radius={12}
+          height={48}
+          radius={8}
           fontSize={16}
         />
       </View>
@@ -273,8 +273,8 @@ export default function SendMoneySetAmountScreen() {
                 onPress={() => setShowConfirmSheet(false)}
                 backgroundColor={C.googleBg}
                 textColor={C.primary}
-                height={56}
-                radius={12}
+                height={48}
+                radius={24}
                 style={styles.halfBtn}
                 fontSize={14}
               />
@@ -286,8 +286,8 @@ export default function SendMoneySetAmountScreen() {
                 }}
                 backgroundColor={C.primary}
                 textColor={C.googleBg}
-                height={56}
-                radius={12}
+                height={48}
+                radius={24}
                 style={styles.halfBtn}
                 fontSize={14}
               />
@@ -374,8 +374,8 @@ export default function SendMoneySetAmountScreen() {
               }}
               backgroundColor={C.primary}
               textColor={C.googleBg}
-              height={56}
-              radius={12}
+              height={48}
+              radius={8}
               fontSize={16}
             />
           </RNView>

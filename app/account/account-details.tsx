@@ -7,7 +7,7 @@ import { useAppState } from "@/redux/store";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View as RNView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const DetailRow = ({
@@ -109,12 +109,12 @@ export default function AccountDetailsScreen() {
           borderColor={C.border}
         />
 
-        <View style={[styles.note, { backgroundColor: C.inputBg }]}>
+        <RNView style={[styles.note, { backgroundColor: C.inputBg }]}>
           <ThemedText style={[styles.noteText, { color: C.muted }]}>
             For account information changes, please contact our support team at
             support@getbrane.co
           </ThemedText>
-        </View>
+        </RNView>
       </ScrollView>
     </SafeAreaView>
   );

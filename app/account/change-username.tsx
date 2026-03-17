@@ -17,6 +17,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  View as RNView
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -133,8 +134,8 @@ export default function ChangeUsernameScreen() {
         animationType='fade'
         onRequestClose={() => setSuccess(false)}
       >
-        <View style={styles.overlay}>
-          <View
+        <View style={[styles.overlay, { backgroundColor: "rgba(11, 0, 20, 0.5)" }]}>
+          <RNView
             style={[
               styles.card,
               {
@@ -163,7 +164,7 @@ export default function ChangeUsernameScreen() {
               onPress={() => router.push("/(tabs)")}
               style={{ marginTop: 16 }}
             />
-          </View>
+          </RNView>
         </View>
       </Modal>
     </SafeAreaView>
@@ -183,7 +184,6 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,.35)",
     paddingHorizontal: 20,
   },
   card: { borderRadius: 12, padding: 18 },

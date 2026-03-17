@@ -57,7 +57,10 @@ export default function HelpDeskScreen() {
         {FAQS.map((item, index) => {
           const expanded = open === index;
           return (
-            <View key={item.q} style={[styles.faqItem, { borderBottomColor: C.border }]}>
+            <View
+              key={item.q}
+              style={[styles.faqItem, { borderBottomColor: C.border }]}
+            >
               <TouchableOpacity
                 style={styles.faqHeader}
                 onPress={() => setOpen(expanded ? null : index)}

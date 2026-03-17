@@ -138,7 +138,7 @@ export default function BankAccountScreen() {
           activeOpacity={0.7}
           onPress={() => setPendingDelete(item)}
         >
-          <Trash size={18} color='#CB010B' variant='TwoTone' />
+          <Trash size={18} color='#D50000' variant='TwoTone' />
         </TouchableOpacity>
       </View>
     ),
@@ -211,7 +211,7 @@ export default function BankAccountScreen() {
           <BraneButton
             text='Add Bank Account'
             onPress={() => router.push("/add-funds/bank")}
-            leftIcon={<Add size={18} color='#fff' />}
+            leftIcon={<Add size={18} color={C.googleBg} />}
           />
         </View>
       )}
@@ -264,17 +264,20 @@ export default function BankAccountScreen() {
                 </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalBtn, styles.removeBtn]}
+                style={[
+                  styles.modalBtn,
+                  { backgroundColor: "#D50000" },
+                ]}
                 activeOpacity={0.7}
                 onPress={handleDelete}
                 disabled={isDeleting}
               >
                 {isDeleting ? (
-                  <ActivityIndicator size='small' color='#fff' />
+                  <ActivityIndicator size='small' color={C.googleBg} />
                 ) : (
                   <ThemedText
                     type='defaultSemiBold'
-                    style={{ fontSize: 14, color: "#fff" }}
+                    style={{ fontSize: 14, color: C.googleBg }}
                   >
                     Remove
                   </ThemedText>
@@ -344,7 +347,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "rgba(11, 0, 20, 0.5)",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 24,
@@ -369,8 +372,5 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-  },
-  removeBtn: {
-    backgroundColor: "#CB010B",
   },
 });

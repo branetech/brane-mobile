@@ -10,14 +10,14 @@ import { useRouter } from "expo-router";
 import { SearchNormal1, Setting3 } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  Modal,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -124,7 +124,12 @@ export default function TransactionScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.searchRow, { backgroundColor: C.inputBg, borderColor: C.border }]}>
+      <View
+        style={[
+          styles.searchRow,
+          { backgroundColor: C.inputBg, borderColor: C.border },
+        ]}
+      >
         <SearchNormal1 size={16} color={C.muted} variant='Outline' />
         <TextInput
           style={[styles.searchInput, { color: C.text }]}
@@ -166,7 +171,10 @@ export default function TransactionScreen() {
                   return (
                     <TouchableOpacity
                       key={String(item.id)}
-                      style={[styles.row, { backgroundColor: C.screen, borderColor: C.border }]}
+                      style={[
+                        styles.row,
+                        { backgroundColor: C.screen, borderColor: C.border },
+                      ]}
                       onPress={() =>
                         router.push({
                           pathname: "/transaction/[details]",
@@ -175,7 +183,9 @@ export default function TransactionScreen() {
                       }
                     >
                       <View style={styles.rowLeft}>
-                        <ThemedText style={[styles.rowTitle, { color: C.text }]}>
+                        <ThemedText
+                          style={[styles.rowTitle, { color: C.text }]}
+                        >
                           {item.transactionDescription || item.transactionType}
                         </ThemedText>
                         <ThemedText style={[styles.rowSub, { color: C.muted }]}>
@@ -183,7 +193,9 @@ export default function TransactionScreen() {
                         </ThemedText>
                       </View>
                       <View style={styles.rowRight}>
-                        <ThemedText style={[styles.rowAmount, { color: C.text }]}>
+                        <ThemedText
+                          style={[styles.rowAmount, { color: C.text }]}
+                        >
                           {priceFormatter(Number(item.amount || 0))}
                         </ThemedText>
                         <View
@@ -308,7 +320,9 @@ export default function TransactionScreen() {
                   setTypeFilter("");
                 }}
               >
-                <ThemedText style={[styles.secondaryBtnText, { color: C.text }]}>
+                <ThemedText
+                  style={[styles.secondaryBtnText, { color: C.text }]}
+                >
                   Clear
                 </ThemedText>
               </TouchableOpacity>
@@ -319,7 +333,9 @@ export default function TransactionScreen() {
                   fetchTransactions();
                 }}
               >
-                <ThemedText style={[styles.primaryBtnText, { color: C.background }]}>
+                <ThemedText
+                  style={[styles.primaryBtnText, { color: C.background }]}
+                >
                   Apply
                 </ThemedText>
               </TouchableOpacity>

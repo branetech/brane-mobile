@@ -13,10 +13,10 @@ export const Account = ({ header }: { header?: ReactNode }) => {
   const acc = accnt();
   const resolveRoute = (label: string, routeKey?: string) => {
     const byLabel: Record<string, string> = {
-      Preferences: "/account/preference",
-      "Help desk": "/account/helpdesk",
+      Preferences: "/account/preferences",
+      "Help desk": "/account/help-desk",
       "Terms & conditions": "/account/terms-condition",
-      "Privacy policy": "/account/privacy",
+      "Privacy policy": "/account/privacy-policy",
     };
 
     if (byLabel[label]) return byLabel[label];
@@ -31,9 +31,9 @@ export const Account = ({ header }: { header?: ReactNode }) => {
       "reset-transaction-pin": "/account/reset-transaction-pin",
       "change-username": "/account/change-username",
       preferences: "/account/preference",
-      "help-desk": "/account/helpdesk",
-      "terms-conditions": "/account/terms-condition",
-      "privacy-policy": "/account/privacy",
+      "help-desk": "/account/help-desk",
+      "terms-conditions": "/account/terms-conditions",
+      "privacy-policy": "/account/privacy-policy",
       chat: "/support",
     };
 
