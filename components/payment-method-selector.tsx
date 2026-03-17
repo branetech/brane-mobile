@@ -1,4 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -24,6 +26,8 @@ export function PaymentMethodSelector({
   onSelect,
   onSeeAll,
 }: Props) {
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
   return (
     <View style={styles.wrapper}>
       {/* Header row */}
@@ -35,14 +39,14 @@ export function PaymentMethodSelector({
             hitSlop={8}
             style={styles.seeAllBtn}
           >
-            <ThemedText style={styles.seeAll}>See All</ThemedText>
-            <ThemedText style={styles.seeAllChevron}>›</ThemedText>
+            <ThemedText style={[styles.seeAll, { color: C.primary }]}>See All</ThemedText>
+            <ThemedText style={[styles.seeAllChevron, { color: C.primary }]}>›</ThemedText>
           </TouchableOpacity>
         )}
       </View>
 
       {/* Options card */}
-      <View style={styles.card}>
+      <View style={[styles.card, { borderColor: C.border }]}>
         {options.map((option, index) => {
           const isSelected = option.id === selectedId;
           const isLast = index === options.length - 1;
@@ -51,7 +55,14 @@ export function PaymentMethodSelector({
               key={option.id}
               activeOpacity={0.7}
               onPress={() => onSelect(option.id)}
-              style={[styles.optionRow, !isLast && styles.optionDivider]}
+              style={[
+                styles.optionRow,
+                { backgroundColor: C.screen },
+                !isLast && [
+                  styles.optionDivider,
+                  { borderBottomColor: C.border },
+                ],
+              ]}
             >
               {/* Left: icon + label */}
               <View style={styles.optionLeft}>
@@ -67,10 +78,16 @@ export function PaymentMethodSelector({
               <View
                 style={[
                   styles.radio,
-                  isSelected ? styles.radioSelected : styles.radioUnselected,
+                  isSelected
+                    ? [styles.radioSelected, { borderColor: C.primary }]
+                    : styles.radioUnselected,
                 ]}
               >
-                {isSelected && <View style={styles.radioInner} />}
+                {isSelected && (
+                  <View
+                    style={[styles.radioInner, { backgroundColor: C.primary }]}
+                  />
+                )}
               </View>
             </TouchableOpacity>
           );
@@ -101,18 +118,15 @@ const styles = StyleSheet.create({
   },
   seeAll: {
     fontSize: 11,
-    color: "#013D25",
     fontWeight: "500",
   },
   seeAllChevron: {
     fontSize: 13,
-    color: "#013D25",
     fontWeight: "500",
     marginTop: 1,
   },
   card: {
     borderWidth: 1,
-    borderColor: "#EFEFF1",
     borderRadius: 12,
     overflow: "hidden",
   },
@@ -122,11 +136,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 14,
     paddingVertical: 14,
-    backgroundColor: "#FFFFFF",
   },
   optionDivider: {
     borderBottomWidth: 1,
-    borderBottomColor: "#EFEFF1",
   },
   optionLeft: {
     flexDirection: "row",
@@ -161,7 +173,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   radioSelected: {
-    borderColor: "#013D25",
   },
   radioUnselected: {
     borderColor: "#C5C5CA",
@@ -170,6 +181,5 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#013D25",
   },
 });

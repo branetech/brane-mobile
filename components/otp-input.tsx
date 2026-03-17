@@ -1,13 +1,14 @@
-import React, { useRef, useState, useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
-  View,
-  TextInput,
-  StyleSheet,
-  useColorScheme,
   Animated,
   Pressable,
+  StyleSheet,
   Text,
+  TextInput,
+  useColorScheme,
+  View,
 } from "react-native";
+import { Colors } from "@/constants/colors";
 
 interface OTPProps {
   length?: number;
@@ -20,11 +21,12 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
   const inputsRef = useRef<TextInput[]>([]);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const C = Colors[isDark ? "dark" : "light"];
 
   const scaleAnims = useRef(
     Array(length)
       .fill(null)
-      .map(() => new Animated.Value(1))
+      .map(() => new Animated.Value(1)),
   ).current;
 
   const popIn = useCallback(
@@ -42,7 +44,7 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
         }),
       ]).start();
     },
-    [scaleAnims]
+    [scaleAnims],
   );
 
   const handleChange = useCallback(
@@ -63,7 +65,7 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
         onComplete?.(newOtp.join(""));
       }
     },
-    [otpValues, length, onComplete, popIn]
+    [otpValues, length, onComplete, popIn],
   );
 
   const handleKeyPress = useCallback(
@@ -81,7 +83,7 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
         }
       }
     },
-    [otpValues]
+    [otpValues],
   );
 
   const handleCellPress = useCallback((index: number) => {
@@ -92,7 +94,9 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
   // Works for any length but separator only shows when length === 6
   const groups: number[][] = [];
   for (let i = 0; i < length; i += 3) {
-    groups.push(Array.from({ length: Math.min(3, length - i) }, (_, k) => i + k));
+    groups.push(
+      Array.from({ length: Math.min(3, length - i) }, (_, k) => i + k),
+    );
   }
   const showSeparator = length === 6;
 
@@ -105,27 +109,27 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
         <Animated.View
           style={[
             styles.cell,
-            isDark &&  styles.cellLight,
-            filled && (styles.cellFilledLight),
-            focused && (styles.cellFocusedLight),
+            isDark && styles.cellLight,
+            filled && [styles.cellFilledLight, { borderColor: C.primary }],
+            focused && [styles.cellFocusedLight, { borderColor: C.primary }],
+            !isDark && { backgroundColor: C.inputBg },
             { transform: [{ scale: scaleAnims[index] }] },
           ]}
         >
           <TextInput
-            ref={(el) => { if (el) inputsRef.current[index] = el; }}
+            ref={(el) => {
+              if (el) inputsRef.current[index] = el;
+            }}
             value={otpValues[index]}
             onChangeText={(text) => handleChange(text, index)}
             onKeyPress={(e) => handleKeyPress(e, index)}
             onFocus={() => setFocusedIndex(index)}
             onBlur={() => setFocusedIndex(null)}
-            keyboardType="numeric"
+            keyboardType='numeric'
             maxLength={1}
             caretHidden
             selectTextOnFocus
-            style={[
-              styles.input,
-              { color: "#0D1B12" },
-            ]}
+            style={[styles.input, { color: "#0D1B12" }]}
           />
         </Animated.View>
       </Pressable>
@@ -143,7 +147,12 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
 
           {/* Render separator between groups, not after the last one */}
           {showSeparator && groupIndex < groups.length - 1 && (
-            <Text style={[styles.separator, { color: isDark ? "#4A6358" : "#AABBB4" }]}>
+            <Text
+              style={[
+                styles.separator,
+                { color: isDark ? "#4A6358" : "#AABBB4" },
+              ]}
+            >
               —
             </Text>
           )}
@@ -180,16 +189,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cellLight: {
-    backgroundColor: "#F7F7F8",
     borderColor: "transparent",
   },
   cellFilledLight: {
-    backgroundColor: "#F7F7F8",
-    borderColor: "#013D25",
   },
   cellFocusedLight: {
-    backgroundColor: "#F7F7F8",
-    borderColor: "#013D25",
   },
   cellDark: {
     backgroundColor: "#1A2420",

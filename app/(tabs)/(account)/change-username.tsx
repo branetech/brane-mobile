@@ -15,9 +15,9 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
+  View as RNView,
   ScrollView,
   StyleSheet,
-  View as RNView
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -134,7 +134,9 @@ export default function ChangeUsernameScreen() {
         animationType='fade'
         onRequestClose={() => setSuccess(false)}
       >
-        <View style={[styles.overlay, { backgroundColor: "rgba(11, 0, 20, 0.5)" }]}>
+        <View
+          style={[styles.overlay, { backgroundColor: "rgba(11, 0, 20, 0.5)" }]}
+        >
           <RNView
             style={[
               styles.card,

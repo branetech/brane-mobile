@@ -26,8 +26,33 @@ type UtilityOption = {
     | "electricity"
     | "transportation";
   icon: (color: string) => React.ReactNode;
-  bg: string;
-  iconBg: string;
+  bg: (C: any) => string;
+  iconBg: (C: any) => string;
+};
+
+const getUtilityColors = (C: any, service: string) => {
+  const isDark = C.background === "#151718"; // Check if dark theme
+  const colors: Record<string, { bg: string; iconBg: string }> = {
+    airtime: isDark
+      ? { bg: "#1F4035", iconBg: "#2A5F54" }
+      : { bg: "#E9F8F1", iconBg: "#D2F1E4" },
+    data: isDark
+      ? { bg: "#3D3520", iconBg: "#5F5535" }
+      : { bg: "#F5F1E0", iconBg: "#E7DCB1" },
+    betting: isDark
+      ? { bg: "#1F3A52", iconBg: "#2A5270" }
+      : { bg: "#EAF4FF", iconBg: "#D8E9FF" },
+    cable: isDark
+      ? { bg: "#52381F", iconBg: "#704D2C" }
+      : { bg: "#FFF4EB", iconBg: "#FFDFC2" },
+    electricity: isDark
+      ? { bg: "#1F3A52", iconBg: "#2A5270" }
+      : { bg: "#EEF7FF", iconBg: "#DDEEFF" },
+    transportation: isDark
+      ? { bg: "#253D20", iconBg: "#3A5A30" }
+      : { bg: "#F1F8EE", iconBg: "#DFF0D7" },
+  };
+  return colors[service] || colors.airtime;
 };
 
 const utilities: UtilityOption[] = [
@@ -36,48 +61,48 @@ const utilities: UtilityOption[] = [
     subtitle: "Top up your line instantly",
     routeService: "airtime",
     icon: <CardSend size={18} color='#013D25' variant='Bold' />,
-    bg: "#E9F8F1",
-    iconBg: "#D2F1E4",
+    bg: (C) => getUtilityColors(C, "airtime").bg,
+    iconBg: (C) => getUtilityColors(C, "airtime").iconBg,
   },
   {
     title: "Data",
     subtitle: "Buy internet bundles",
     routeService: "data",
     icon: <Devices size={18} color='#013D25' variant='Bold' />,
-    bg: "#F5F1E0",
-    iconBg: "#E7DCB1",
+    bg: (C) => getUtilityColors(C, "data").bg,
+    iconBg: (C) => getUtilityColors(C, "data").iconBg,
   },
   {
     title: "Betting",
     subtitle: "Fund betting wallets",
     routeService: "betting",
     icon: <I3Dcube size={18} color='#013D25' variant='Bold' />,
-    bg: "#EAF4FF",
-    iconBg: "#D8E9FF",
+    bg: (C) => getUtilityColors(C, "betting").bg,
+    iconBg: (C) => getUtilityColors(C, "betting").iconBg,
   },
   {
     title: "Cable TV",
     subtitle: "Pay for DSTV, GOTV and more",
     routeService: "cable",
     icon: <CardReceive size={18} color='#013D25' variant='Bold' />,
-    bg: "#FFF4EB",
-    iconBg: "#FFDFC2",
+    bg: (C) => getUtilityColors(C, "cable").bg,
+    iconBg: (C) => getUtilityColors(C, "cable").iconBg,
   },
   {
     title: "Electricity",
     subtitle: "Pay meter bills instantly",
     routeService: "electricity",
     icon: <Electricity size={18} color='#013D25' variant='Bold' />,
-    bg: "#EEF7FF",
-    iconBg: "#DDEEFF",
+    bg: (C) => getUtilityColors(C, "electricity").bg,
+    iconBg: (C) => getUtilityColors(C, "electricity").iconBg,
   },
   {
     title: "Transportation",
     subtitle: "Pay for transit services",
     routeService: "transportation",
     icon: <TruckFast size={18} color='#013D25' variant='Bold' />,
-    bg: "#F1F8EE",
-    iconBg: "#DFF0D7",
+    bg: (C) => getUtilityColors(C, "transportation").bg,
+    iconBg: (C) => getUtilityColors(C, "transportation").iconBg,
   },
 ];
 
@@ -109,7 +134,7 @@ export default function UtiliScreen() {
           <TouchableOpacity
             key={item.routeService}
             activeOpacity={0.8}
-            style={[styles.card, { backgroundColor: item.bg }]}
+            style={[styles.card, { backgroundColor: item.bg(C) }]}
             onPress={() =>
               router.push({
                 pathname: "/bills-utilities/select",
@@ -117,7 +142,7 @@ export default function UtiliScreen() {
               })
             }
           >
-            <View style={[styles.iconWrap, { backgroundColor: item.iconBg }]}>
+            <View style={[styles.iconWrap, { backgroundColor: item.iconBg(C) }]}>
               {item.icon}
             </View>
             <ThemedText style={[styles.cardTitle, { color: C.text }]}>

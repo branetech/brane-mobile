@@ -1,3 +1,5 @@
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ArrowRight2 } from "iconsax-react-native";
 import React, { useState } from "react";
 import { StyleSheet, Switch, Text, View } from "react-native";
@@ -10,9 +12,11 @@ type Accn = {
 
 export const AccountItem = ({ icon, text }: Accn) => {
   const [enabled, setEnabled] = useState(true);
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { borderBottomColor: C.border }]}>
       <View style={styles.left}>
         <View style={styles.iconWrapper}>{icon}</View>
         <Text style={styles.text}>{text}</Text>
@@ -27,7 +31,7 @@ export const AccountItem = ({ icon, text }: Accn) => {
             thumbColor={enabled ? "#013D25" : "#8B0000"}
           />
         ) : (
-          <ArrowRight2 color="#85808A" size={16} />
+          <ArrowRight2 color='#85808A' size={16} />
         )}
       </View>
     </View>
@@ -41,7 +45,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderColor: "#F7F7F8",
   },
   left: {
     flexDirection: "row",

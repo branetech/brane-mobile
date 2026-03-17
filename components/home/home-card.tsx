@@ -1,15 +1,17 @@
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { usePreference } from "@/services/data";
 import { priceFormatter } from "@/utils/helpers";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import {
-    ChartSquare,
-    Eye,
-    EyeSlash,
-    Mobile,
-    Money,
-    WifiSquare,
+  ChartSquare,
+  Eye,
+  EyeSlash,
+  Mobile,
+  Money,
+  WifiSquare,
 } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Text } from "react-native";
@@ -237,6 +239,8 @@ export const Transactions = () => {
 };
 
 const TransactionCardDisplay = ({ transaction }: any) => {
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
   const getTransactionIcon = (type: string) => {
     const icons: Record<string, string> = {
       airtime: "📱",
@@ -262,10 +266,10 @@ const TransactionCardDisplay = ({ transaction }: any) => {
         justifyContent: "space-between",
         paddingVertical: 12,
         paddingHorizontal: 12,
-        backgroundColor: "#F7F7F8",
+        backgroundColor: C.inputBg,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: "#E6E4E8",
+        borderColor: C.border,
       }}
     >
       <View
