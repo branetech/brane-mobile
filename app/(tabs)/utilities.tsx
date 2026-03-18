@@ -10,10 +10,13 @@ import {
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import BaseRequest from "@/services";
+import { MOBILE_SERVICE } from "@/services/routes";
 import { useRouter } from "expo-router";
-import { SearchNormal1 } from "iconsax-react-native";
-import React, { useState } from "react";
+import { CloseCircle, SearchNormal1 } from "iconsax-react-native";
+import React, { useEffect, useMemo, useState } from "react";
 import {
+  Image,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -21,6 +24,23 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  getCableImageKey,
+  getElectricityImageKey,
+  getNetworkImageKey,
+  normalizeElectricityProviders,
+  normalizeKey,
+  normalizeOption,
+  toArray,
+} from "../bills-utilities/helpers";
+import {
+  CABLE_IMAGES,
+  ELECTRICITY_IMAGES,
+  NETWORK_IMAGES,
+  TRANSPORT_KEYWORDS,
+  type SelectOption,
+  type UtilityService,
+} from "../bills-utilities/types";
 
 type Category = {
   id: string;
@@ -29,6 +49,16 @@ type Category = {
   bg: string;
   iconColor: string;
   fullWidth: boolean;
+};
+
+type SearchResult = {
+  id: string;
+  label: string;
+  service: UtilityService;
+  providerId?: string;
+  subtitle?: string;
+  categoryId: string;
+  imageSource?: any;
 };
 
 const CATEGORIES: Category[] = [
@@ -116,6 +146,10 @@ export default function UtiliScreen() {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const [search, setSearch] = useState("");
+  const [searchableResults, setSearchableResults] = useState<SearchResult[]>(
+    [],
+  );
+  const [isLoadingResults, setIsLoadingResults] = useState(false);
 
   const filtered = search.trim()
     ? CATEGORIES.filter((c) =>
@@ -123,11 +157,147 @@ export default function UtiliScreen() {
       )
     : CATEGORIES;
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchSearchables = async () => {
+      setIsLoadingResults(true);
+      try {
+        const [dataRes, bettingRes, cableRes, electricityRes, transportRes] =
+          await Promise.all([
+            BaseRequest.get(
+              "/mobile-connectivity-service/mobile-data/providers",
+            ).catch(() => null),
+            BaseRequest.get(MOBILE_SERVICE.BETTING_SERVICE).catch(() => null),
+            BaseRequest.get(MOBILE_SERVICE.CABLE_SERVICE).catch(() => null),
+            BaseRequest.get(MOBILE_SERVICE.ELECTRICITY_GET_BILLER).catch(
+              () => null,
+            ),
+            BaseRequest.get(MOBILE_SERVICE.VT_PASS_SERVICE).catch(() => null),
+          ]);
+
+        const dataProviders = toArray(dataRes).map(normalizeOption);
+        const bettingProviders = toArray(bettingRes).map(normalizeOption);
+        const cableProviders = toArray(cableRes).map(normalizeOption);
+        const electricityProviders = normalizeElectricityProviders(
+          electricityRes?.data || electricityRes,
+        );
+        const transportProviders = toArray(transportRes)
+          .map(normalizeOption)
+          .filter((item) =>
+            TRANSPORT_KEYWORDS.some((keyword) =>
+              normalizeKey(
+                `${item.id} ${item.label} ${item.description || ""}`,
+              ).includes(keyword),
+            ),
+          );
+
+        const buildResult = (
+          item: SelectOption,
+          service: UtilityService,
+          categoryId: string,
+        ): SearchResult => {
+          const text = `${item.id} ${item.label} ${item.description || ""}`;
+          const imageSource =
+            service === "data"
+              ? NETWORK_IMAGES[getNetworkImageKey(text)]
+              : service === "cable"
+                ? CABLE_IMAGES[getCableImageKey(text)]
+                : service === "electricity"
+                  ? ELECTRICITY_IMAGES[getElectricityImageKey(text)]
+                  : undefined;
+
+          return {
+            id: `${service}-${item.id}`,
+            label: item.label,
+            providerId: item.id,
+            subtitle: item.description,
+            service,
+            categoryId,
+            imageSource,
+          };
+        };
+
+        const categoryResults: SearchResult[] = CATEGORIES.filter(
+          (item) => item.service !== "government",
+        ).map((item) => ({
+          id: `category-${item.id}`,
+          label: item.title,
+          service: item.service as UtilityService,
+          categoryId: item.id,
+        }));
+
+        const allResults = [
+          ...categoryResults,
+          ...dataProviders.map((item) => buildResult(item, "data", "internet")),
+          ...bettingProviders.map((item) =>
+            buildResult(item, "betting", "gaming-sport"),
+          ),
+          ...cableProviders.map((item) =>
+            buildResult(item, "cable", "tv-bills"),
+          ),
+          ...electricityProviders.map((item) =>
+            buildResult(item, "electricity", "electricity"),
+          ),
+          ...transportProviders.map((item) =>
+            buildResult(item, "transportation", "transportation"),
+          ),
+        ];
+
+        const deduped = allResults.filter(
+          (item, index, array) =>
+            array.findIndex(
+              (candidate) =>
+                candidate.service === item.service &&
+                candidate.providerId === item.providerId &&
+                candidate.label.toLowerCase() === item.label.toLowerCase(),
+            ) === index,
+        );
+
+        if (isMounted) {
+          setSearchableResults(deduped);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingResults(false);
+        }
+      }
+    };
+
+    fetchSearchables();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const query = search.trim().toLowerCase();
+  const searchMatches = useMemo(() => {
+    if (!query) return [];
+
+    return searchableResults.filter((item) => {
+      const haystack = normalizeKey(
+        `${item.label} ${item.subtitle || ""} ${item.providerId || ""}`,
+      );
+      return haystack.includes(normalizeKey(query));
+    });
+  }, [query, searchableResults]);
+
   const handlePress = (cat: Category) => {
     if (cat.service === "government") return;
     router.push({
       pathname: "/bills-utilities/select",
       params: { service: cat.service },
+    });
+  };
+
+  const handleSearchResultPress = (result: SearchResult) => {
+    router.push({
+      pathname: "/bills-utilities/select",
+      params: {
+        service: result.service,
+        providerId: result.providerId,
+      },
     });
   };
 
@@ -160,7 +330,11 @@ export default function UtiliScreen() {
       <View
         style={[
           styles.searchBar,
-          { backgroundColor: C.inputBg, borderColor: C.border },
+          {
+            backgroundColor: C.inputBg,
+            borderColor: query ? C.primary : C.border,
+            borderWidth: query ? 1 : 0,
+          },
         ]}
       >
         <SearchNormal1 size={16} color={C.muted} variant="Outline" />
@@ -171,53 +345,106 @@ export default function UtiliScreen() {
           value={search}
           onChangeText={setSearch}
         />
+        {query ? (
+          <TouchableOpacity onPress={() => setSearch("")} hitSlop={8}>
+            <CloseCircle size={16} color={C.muted} variant="Outline" />
+          </TouchableOpacity>
+        ) : null}
       </View>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {rows.map((row, idx) => {
-          if (Array.isArray(row)) {
-            const [left, right] = row;
+      {query ? (
+        <View style={styles.searchResultsWrap}>
+          {searchMatches.map((item) => {
             return (
-              <View key={`row-${idx}`} style={styles.halfRow}>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  style={[styles.cardHalf, { backgroundColor: left.bg }]}
-                  onPress={() => handlePress(left)}
-                >
-                  <View style={styles.cardIconWrap}>{renderIcon(left.id)}</View>
-                  <ThemedText style={styles.cardLabel}>{left.title}</ThemedText>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  style={[styles.cardHalf, { backgroundColor: right.bg }]}
-                  onPress={() => handlePress(right)}
-                >
-                  <View style={styles.cardIconWrap}>
-                    {renderIcon(right.id)}
-                  </View>
-                  <ThemedText style={styles.cardLabel}>
-                    {right.title}
+              <TouchableOpacity
+                key={item.id}
+                activeOpacity={0.85}
+                style={styles.searchResultRow}
+                onPress={() => handleSearchResultPress(item)}
+              >
+                <View style={styles.searchResultIconWrap}>
+                  {item.imageSource ? (
+                    <Image
+                      source={item.imageSource}
+                      style={styles.searchResultImage}
+                      resizeMode="contain"
+                    />
+                  ) : (
+                    renderIcon(item.categoryId)
+                  )}
+                </View>
+                <View style={styles.searchResultTextWrap}>
+                  <ThemedText style={styles.searchResultTitle}>
+                    {item.label}
                   </ThemedText>
-                </TouchableOpacity>
-              </View>
+                  {item.subtitle ? (
+                    <ThemedText
+                      style={[styles.searchResultSubtitle, { color: C.muted }]}
+                    >
+                      {item.subtitle.replace(/-/g, " ")}
+                    </ThemedText>
+                  ) : null}
+                </View>
+              </TouchableOpacity>
             );
-          }
-          return (
-            <TouchableOpacity
-              key={row.id}
-              activeOpacity={0.85}
-              style={[styles.cardFull, { backgroundColor: row.bg }]}
-              onPress={() => handlePress(row)}
-            >
-              <View style={styles.cardIconWrap}>{renderIcon(row.id)}</View>
-              <ThemedText style={styles.cardLabel}>{row.title}</ThemedText>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+          })}
+          {!isLoadingResults && searchMatches.length === 0 ? (
+            <ThemedText style={[styles.emptySearchText, { color: C.muted }]}>
+              No matching service found.
+            </ThemedText>
+          ) : null}
+        </View>
+      ) : (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {rows.map((row, idx) => {
+            if (Array.isArray(row)) {
+              const [left, right] = row;
+              return (
+                <View key={`row-${idx}`} style={styles.halfRow}>
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    style={[styles.cardHalf, { backgroundColor: left.bg }]}
+                    onPress={() => handlePress(left)}
+                  >
+                    <View style={styles.cardIconWrap}>
+                      {renderIcon(left.id)}
+                    </View>
+                    <ThemedText style={styles.cardLabel}>
+                      {left.title}
+                    </ThemedText>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    style={[styles.cardHalf, { backgroundColor: right.bg }]}
+                    onPress={() => handlePress(right)}
+                  >
+                    <View style={styles.cardIconWrap}>
+                      {renderIcon(right.id)}
+                    </View>
+                    <ThemedText style={styles.cardLabel}>
+                      {right.title}
+                    </ThemedText>
+                  </TouchableOpacity>
+                </View>
+              );
+            }
+            return (
+              <TouchableOpacity
+                key={row.id}
+                activeOpacity={0.85}
+                style={[styles.cardFull, { backgroundColor: row.bg }]}
+                onPress={() => handlePress(row)}
+              >
+                <View style={styles.cardIconWrap}>{renderIcon(row.id)}</View>
+                <ThemedText style={styles.cardLabel}>{row.title}</ThemedText>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -245,6 +472,43 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 13,
+  },
+  searchResultsWrap: {
+    gap: 14,
+    paddingTop: 4,
+  },
+  searchResultRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  searchResultIconWrap: {
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 14,
+    overflow: "hidden",
+  },
+  searchResultImage: {
+    width: 28,
+    height: 28,
+  },
+  searchResultTextWrap: {
+    flex: 1,
+    gap: 2,
+  },
+  searchResultTitle: {
+    fontSize: 13,
+    color: "#1A1A2E",
+    fontWeight: "500",
+  },
+  searchResultSubtitle: {
+    fontSize: 11,
+  },
+  emptySearchText: {
+    fontSize: 13,
+    paddingTop: 4,
   },
   scrollContent: {
     gap: 16,

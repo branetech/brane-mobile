@@ -54,6 +54,17 @@ export const NETWORK_ORDER = [
   "smile",
 ];
 
+export const BETTING_ORDER = [
+  "bet9ja",
+  "sportybet",
+  "nairabet",
+  "betway",
+  "1xbet",
+  "merrybet",
+  "betking",
+  "bangbet",
+];
+
 export const ELECTRICITY_PRODUCTS = ["prepaid", "postpaid"];
 export const ELECTRICITY_AMOUNTS = ["5000", "10000", "20000", "50000"];
 export const BOOST_PRESETS = ["0", "50", "100", "200"];
@@ -99,4 +110,15 @@ export const ELECTRICITY_IMAGES: Record<string, any> = {
   kedco: require("@/assets/images/network/kedco.png"),
   phed: require("@/assets/images/network/phed.png"),
   yedc: require("@/assets/images/network/yedc.png"),
+};
+
+export const BETTING_IMAGES: Record<string, any> = {
+  "1xbet": require("@/assets/images/betting/1xbet.png"),
+  bangbet: require("@/assets/images/betting/bangbet.png"),
+  bet9ja: require("@/assets/images/betting/bet9ja.png"),
+  betking: require("@/assets/images/betting/betking.png"),
+  betway: require("@/assets/images/betting/betway.png"),
+  merrybet: require("@/assets/images/betting/merrybet.png"),
+  nairabet: require("@/assets/images/betting/nairabet.png"),
+  sportybet: require("@/assets/images/betting/sportybet.png"),
 };

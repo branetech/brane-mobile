@@ -11,6 +11,8 @@ import { TransactionPinValidator } from "@/components/transaction-pin-validator"
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
+import BaseRequest from "@/services";
+import { AUTH_SERVICE } from "@/services/routes";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -401,7 +403,17 @@ export default function SendMoneySetAmountScreen() {
       <TransactionPinValidator
         visible={showPinValidator}
         onClose={() => setShowPinValidator(false)}
-        onValidatePin={async (pin) => pin === "123456"}
+        onValidatePin={async (pin) => {
+          try {
+            await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
+              transactionPin: pin,
+            });
+            return true;
+          } catch {
+            return false;
+          }
+        }}
+        onResetPin={() => router.push("/account/reset-transaction-pin")}
         onTransactionPinValidated={() => {
           setShowPinValidator(false);
           setShowSuccessModal(true);
