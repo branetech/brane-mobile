@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setTransactionSound, setShowBalance } from "@/redux/slice/preferencesSlice";
 import Back from "@/components/back";
-import { Volume2, Eye, Palette } from "iconsax-react-native";
+import { Volume, Eye, Setting } from "iconsax-react-native";
 
 export default function PreferencesScreen() {
   const router = useRouter();
@@ -60,7 +60,7 @@ export default function PreferencesScreen() {
       >
         {/* Transaction Sound Toggle */}
         <PreferenceRow
-          icon={<Volume2 size={24} color={C.primary} />}
+          icon={<Volume size={24} color={C.primary} />}
           label="Transaction sound"
           value={transactionSound}
           onValueChange={handleTransactionSoundChange}
@@ -74,7 +74,7 @@ export default function PreferencesScreen() {
           onPress={() => router.push("/account/preferences/themes")}
         >
           <View style={styles.rowContent}>
-            <Palette size={24} color={C.primary} />
+            <Setting size={24} color={C.primary} />
             <ThemedText style={[styles.rowLabel, { color: C.text }]}>
               Theme
             </ThemedText>
