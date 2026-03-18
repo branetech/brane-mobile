@@ -35,7 +35,7 @@ export const OptionRow = ({
 }: OptionRowProps) => {
   const colorScheme = useColorScheme();
   const C = Colors[colorScheme === "dark" ? "dark" : "light"];
-  const dynamicStyles = createDynamicStyles(C);
+  const dynamicStyles = useMemo(() => createDynamicStyles(C), [C]);
   return (
     <Pressable style={styles.optionRow} onPress={onPress}>
       <View style={styles.optionTextWrap}>
@@ -79,7 +79,7 @@ export const SallyIntroModal = ({
 }: SallyIntroModalProps) => {
   const colorScheme = useColorScheme();
   const C = Colors[colorScheme === "dark" ? "dark" : "light"];
-  const dynamicStyles = createDynamicStyles(C);
+  const dynamicStyles = useMemo(() => createDynamicStyles(C), [C]);
   return (
     <Modal
       visible={visible}
@@ -148,7 +148,7 @@ export const SallyConfigModal = ({
 }: SallyConfigModalProps) => {
   const colorScheme = useColorScheme();
   const C = Colors[colorScheme === "dark" ? "dark" : "light"];
-  const dynamicStyles = createDynamicStyles(C);
+  const dynamicStyles = useMemo(() => createDynamicStyles(C), [C]);
   const [threshold, setThreshold] = useState(50);
   const bracsValue = useMemo(
     () => Math.round((threshold / 100) * 1000),
@@ -1044,8 +1044,5 @@ const createDynamicStyles = (C: typeof Colors.light) =>
     checkboxChecked: {
       backgroundColor: C.primary,
       borderColor: C.primary,
-    },
-    modalTitle: {
-      color: C.text,
     },
   });

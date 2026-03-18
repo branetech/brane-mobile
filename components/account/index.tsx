@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontWeight: "600",
     fontSize: 14,
-    marginTop: 24,
+    marginTop: 16,
     marginBottom: 4,
   },
   logoutRow: {

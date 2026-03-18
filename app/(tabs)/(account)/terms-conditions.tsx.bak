@@ -155,12 +155,12 @@ const TermsConditions = () => {
           </ThemedText>
 
           <ThemedText style={styles.paragraphText}>
-            Please read the following Terms and Conditions of Service (&quot;
+            Please read the following Terms and Conditions of Service ("
             <ThemedText style={{ fontWeight: "600" }}>Terms</ThemedText>
-            &quot;) carefully before using the Platform (as defined below). The Terms
+            ") carefully before using the Platform (as defined below). The Terms
             govern the access and use of the Platform owned and/or controlled by
-            Brane Technologies Limited (&quot;
-            <ThemedText style={{ fontWeight: "600" }}>Brane</ThemedText>&quot;).
+            Brane Technologies Limited ("
+            <ThemedText style={{ fontWeight: "600" }}>Brane</ThemedText>").
           </ThemedText>
 
           <ThemedText style={styles.paragraphText}>
@@ -235,8 +235,8 @@ const TermsConditions = () => {
               </ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means all information, however recorded or preserved, disclosed
-                by a Party (the "Disclosing Party&quot;) or its representatives to
-                another Party (the "Receiving Party&quot;) under this Terms, or that
+                by a Party (the "Disclosing Party") or its representatives to
+                another Party (the "Receiving Party") under this Terms, or that
                 a Receiving Party accesses from the Disclosing Party in
                 connection with the Services that Brane provides under this
                 Terms that meets one of the following two criteria: the
@@ -409,8 +409,8 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>4.1</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              To use the Platform, you must register and create an account (&quot;
-              <ThemedText style={{ fontWeight: "600" }}>Account</ThemedText>&quot;).
+              To use the Platform, you must register and create an account ("
+              <ThemedText style={{ fontWeight: "600" }}>Account</ThemedText>").
             </ThemedText>
           </View>
 
@@ -423,11 +423,11 @@ const TermsConditions = () => {
               birth, Bank Verification Number (BVN), bank account details, debit
               card details, next of kin details, means of identification info
               (passport photo, National Identification Number or international
-              passport) (&quot;
+              passport) ("
               <ThemedText style={{ fontWeight: "600" }}>
                 Login Credentials
               </ThemedText>
-              &quot;).
+              ").
             </ThemedText>
           </View>
 
@@ -436,11 +436,11 @@ const TermsConditions = () => {
             <ThemedText style={styles.paragraphText}>
               In registering for the Services, you agree (a) to provide true,
               accurate, current and complete information about yourself as
-              prompted by the Platform's registration form (&quot;
+              prompted by the Platform's registration form ("
               <ThemedText style={{ fontWeight: "600" }}>
                 Registration Data
               </ThemedText>
-              &quot;); (b) not to create an Account using a false identity or
+              "); (b) not to create an Account using a false identity or
               information, or on behalf of someone other than yourself; and (c)
               to maintain and promptly update the Registration Data to keep it
               true, accurate, current and complete.
@@ -910,7 +910,7 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsubsectionTitle}>8.5.6</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              Transmit User&apos;s information to service providers in connection
+              Transmit User's information to service providers in connection
               with services rendered.
             </ThemedText>
           </View>
@@ -1062,7 +1062,7 @@ const TermsConditions = () => {
               timeliness, security, or accuracy of the Platform or the Content
               for any purpose. To the maximum extent permitted by Applicable
               Law, all such information, software, products, service, and
-              related graphics are provided &quot;as is&quot; without warranty or
+              related graphics are provided "as is" without warranty or
               condition of any kind.
             </ThemedText>
           </View>
@@ -1153,7 +1153,7 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>15.3</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              In no event shall Brane&apos;s total liability to you for all damages
+              In no event shall Brane's total liability to you for all damages
               (other than as may be required by applicable law in cases
               involving personal injury) exceed ₦5,000 (Five Thousand Naira).
             </ThemedText>
@@ -1212,8 +1212,8 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>17.2</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              Brane will post the revised terms on the Platform with a &quot;Last
-              Modification&quot; date. Please review the Platform on a regular basis
+              Brane will post the revised terms on the Platform with a "Last
+              Modification" date. Please review the Platform on a regular basis
               to obtain timely notice of any revisions. If you continue to use
               the Platform after the revisions take effect, you agree to be
               bound by the revised terms. You agree that Brane shall not be
@@ -1227,8 +1227,8 @@ const TermsConditions = () => {
             <ThemedText style={styles.paragraphText}>
               You agree to receive all communications, agreements, newsletters,
               marketing or promotional materials and notices that Brane provides
-              in connection with the Services (&quot;Communication&quot;), including, but
-              not limited to, Communications related to Brane&apos;s delivery of the
+              in connection with the Services ("Communication"), including, but
+              not limited to, Communications related to Brane's delivery of the
               Services and your purchase of or subscription to the Platform via
               electronic means, including by e-mail, text, in-product
               notifications, or by posting them on the Platform. You agree that
@@ -1302,7 +1302,7 @@ const TermsConditions = () => {
               Policy that covers how it collects, uses, discloses, transfers and
               stores your information. For more information, please review our{" "}
               <TouchableOpacity
-                onPress={() => router.push('/account/privacy-policy')}
+                onPress={() => router.push("/account/privacy-policy")}
                 activeOpacity={0.7}
               >
                 <ThemedText style={styles.link}>Privacy Policy</ThemedText>
@@ -1440,7 +1440,7 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>23.3</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              Both Parties agree that the mediator&apos;s decision is final and that
+              Both Parties agree that the mediator's decision is final and that
               they shall be bound by same and keep the contents of the mediation
               proceedings strictly confidential.
             </ThemedText>
@@ -1506,7 +1506,7 @@ const TermsConditions = () => {
             If you have questions or concerns with respect to these Terms,
             please contact us at{" "}
             <TouchableOpacity
-              onPress={() => handleEmail('info@getbrane.co')}
+              onPress={() => handleEmail("info@getbrane.co")}
               activeOpacity={0.7}
             >
               <ThemedText style={styles.link}>info@getbrane.co</ThemedText>
