@@ -1739,7 +1739,13 @@ export default function UtilitySelectScreen() {
         onRequestClose={() => setShowDataPlanModal(false)}
       >
         <TouchableOpacity
-          style={styles.modalOverlay}
+          style={[
+            styles.modalOverlay,
+            {
+              backgroundColor:
+                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)",
+            },
+          ]}
           activeOpacity={1}
           onPress={() => setShowDataPlanModal(false)}
         >
@@ -1806,7 +1812,13 @@ export default function UtilitySelectScreen() {
         onRequestClose={() => setShowElectricityProviderModal(false)}
       >
         <TouchableOpacity
-          style={styles.modalOverlay}
+          style={[
+            styles.modalOverlay,
+            {
+              backgroundColor:
+                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)",
+            },
+          ]}
           activeOpacity={1}
           onPress={() => setShowElectricityProviderModal(false)}
         >
@@ -1882,7 +1894,13 @@ export default function UtilitySelectScreen() {
         onRequestClose={() => setShowTransportPlanModal(false)}
       >
         <TouchableOpacity
-          style={styles.modalOverlay}
+          style={[
+            styles.modalOverlay,
+            {
+              backgroundColor:
+                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)",
+            },
+          ]}
           activeOpacity={1}
           onPress={() => setShowTransportPlanModal(false)}
         >
@@ -1952,7 +1970,13 @@ export default function UtilitySelectScreen() {
         onRequestClose={() => setShowCablePlanModal(false)}
       >
         <TouchableOpacity
-          style={styles.modalOverlay}
+          style={[
+            styles.modalOverlay,
+            {
+              backgroundColor:
+                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)",
+            },
+          ]}
           activeOpacity={1}
           onPress={() => setShowCablePlanModal(false)}
         >

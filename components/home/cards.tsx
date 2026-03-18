@@ -43,13 +43,13 @@ export const LearnCard = () => {
       flex={1}
       style={{
         backgroundColor: C.inputBg,
-        borderColor: C.border,
+        borderColor: isDark ? C.border : "#CCCCCC",
         borderWidth: 1,
-        shadowColor: C.text,
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
+        shadowColor: isDark ? "#000000" : "#0B0014",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: isDark ? 0.1 : 0.08,
         shadowRadius: 4,
-        elevation: 4,
+        elevation: 3,
         overflow: "hidden",
       }}
     >

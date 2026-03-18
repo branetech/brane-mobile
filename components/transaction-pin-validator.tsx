@@ -186,7 +186,7 @@ export const TransactionPinValidator = ({
 
               <View style={styles.keyRow}>
                 <TouchableOpacity style={styles.keyBtn} onPress={() => {}}>
-                  <FingerCricle size={20} color='#12432E' />
+                  <FingerCricle size={20} color={C.primary} />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
@@ -195,7 +195,7 @@ export const TransactionPinValidator = ({
                   <ThemedText style={dynamicStyles.keyText}>0</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.keyBtn} onPress={handleDelete}>
-                  <ArrowLeft2 size={20} color='#CB010B' />
+                  <ArrowLeft2 size={20} color={C.error} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -205,10 +205,10 @@ export const TransactionPinValidator = ({
         <Modal
           visible={showInvalid}
           transparent
-          animationType='fade'
+          animationType="fade"
           onRequestClose={() => setShowInvalid(false)}
         >
-          <View style={styles.invalidOverlay}>
+          <View style={[styles.invalidOverlay, { backgroundColor: scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)" }]}>
             <View style={[styles.invalidCard, { backgroundColor: C.screen }]}>
               <ThemedText style={dynamicStyles.invalidTitle}>
                 Invalid transaction pin
@@ -217,7 +217,7 @@ export const TransactionPinValidator = ({
                 Can’t remember PIN?
               </ThemedText>
               <BraneButton
-                text='Click here to reset'
+                text="Click here to reset"
                 onPress={() => {
                   setShowInvalid(false);
                   onResetPin?.();
@@ -318,7 +318,6 @@ const styles = StyleSheet.create({
   },
   invalidOverlay: {
     flex: 1,
-    backgroundColor: "rgba(11,0,20,0.35)",
     justifyContent: "center",
     paddingHorizontal: 20,
   },

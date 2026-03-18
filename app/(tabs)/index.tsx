@@ -58,10 +58,7 @@ export default function HomeScreen() {
         visible={showNewUserModal}
         onClose={handleCloseModal}
       />
-      {/* <SupportChatModal
-        visible={showSupportChat}
-        onClose={handleCloseSupportChat}
-      /> */}
+      
     </SafeAreaView>
   );
 }

@@ -42,7 +42,7 @@ export default function SupportScreen() {
       <View style={[styles.header, { backgroundColor: C.primary }]}>
         <View style={styles.headerTop}>
           <View style={styles.brand}>
-            <Image source={require("../assets/images/icn.png")} style={{ width: 24, height: 24 }} />
+            {/* <Image source={require("../assets/images/icn.png")} style={{ width: 24, height: 24 }} /> */}
              <ThemedText style={[styles.support, { color: "#fff" }]}>Support</ThemedText>
           </View>
 

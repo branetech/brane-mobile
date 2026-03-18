@@ -114,7 +114,7 @@ export default function BracsAllocationScreen() {
 
       {fetching ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size='small' color='#013D25' />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.content}>

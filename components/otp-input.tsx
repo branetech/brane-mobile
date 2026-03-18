@@ -13,9 +13,10 @@ import { Colors } from "@/constants/colors";
 interface OTPProps {
   length?: number;
   onComplete?: (otp: string) => void;
+  mode?: "otp" | "pin"; // "otp" for 6-digit with separator, "pin" for 4-digit without
 }
 
-export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
+export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => {
   const [otpValues, setOtpValues] = useState<string[]>(Array(length).fill(""));
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const inputsRef = useRef<TextInput[]>([]);
@@ -91,14 +92,22 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
   }, []);
 
   // Split indices into groups of 3: [[0,1,2], [3,4,5]]
-  // Works for any length but separator only shows when length === 6
+  // Works for OTP but PIN mode shows all cells without separator
   const groups: number[][] = [];
-  for (let i = 0; i < length; i += 3) {
-    groups.push(
-      Array.from({ length: Math.min(3, length - i) }, (_, k) => i + k),
-    );
+
+  if (mode === "pin") {
+    // For PIN mode, show all cells in one row without grouping
+    groups.push(Array.from({ length }, (_, i) => i));
+  } else {
+    // For OTP mode, group by 3 with separator
+    for (let i = 0; i < length; i += 3) {
+      groups.push(
+        Array.from({ length: Math.min(3, length - i) }, (_, k) => i + k),
+      );
+    }
   }
-  const showSeparator = length === 6;
+
+  const showSeparator = mode === "otp" && length === 6;
 
   const renderCell = (index: number) => {
     const filled = otpValues[index] !== "";
@@ -110,15 +119,15 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
           style={[
             styles.cell,
             {
-              backgroundColor: isDark ? "#1A2420" : C.inputBg,
-              borderColor: isDark ? "transparent" : C.border,
+              backgroundColor: C.inputBg,
+              borderColor: C.border,
             },
             filled && {
-              backgroundColor: isDark ? "#0D2A1E" : C.inputBg,
+              backgroundColor: isDark ? "#0D2A1E" : "#FFFFFF",
               borderColor: C.primary,
             },
             focused && {
-              backgroundColor: isDark ? "#152119" : C.inputBg,
+              backgroundColor: isDark ? "#0D2A1E" : "#FFFFFF",
               borderColor: C.primary,
               shadowColor: C.primary,
               shadowOffset: { width: 0, height: 0 },

@@ -37,7 +37,6 @@ function RootLayoutContent() {
         <Stack screenOptions={{ headerShown: false }} />
         <StatusBar hidden={true} />
         <Toaster />
-        <SupportChat />
       </ThemeProvider>
     </GestureHandlerRootView>
   );

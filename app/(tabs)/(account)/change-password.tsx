@@ -14,9 +14,7 @@ import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import {
     KeyboardAvoidingView,
-    Modal,
     Platform,
-    Pressable,
     ScrollView,
     StyleSheet,
     View as RNView,
@@ -210,48 +208,6 @@ export default function ChangePasswordScreen() {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-
-      {/* Success Modal */}
-      <Modal
-        visible={stage === 3}
-        transparent
-        animationType='fade'
-        onRequestClose={() => router.push("/(tabs)")}
-      >
-        <Pressable
-          style={[styles.modalBackdrop, { backgroundColor: "rgba(11, 0, 20, 0.5)" }]}
-          onPress={() => router.push("/(tabs)")}
-        >
-          <RNView
-            style={
-              [
-                styles.successCard,
-                { backgroundColor: C.background, borderColor: C.border },
-              ] as any
-            }
-          >
-            <RNView style={{ alignItems: "center", marginBottom: 12 }}>
-              <TickCircle size={48} color={C.primary} />
-            </RNView>
-            <ThemedText
-              type='defaultSemiBold'
-              style={[{ textAlign: "center", color: C.text, fontSize: 18 }]}
-            >
-              Success!
-            </ThemedText>
-            <ThemedText style={[styles.successText, { color: C.muted }]}>
-              Your password has been changed successfully.
-            </ThemedText>
-            <BraneButton
-              text='Continue'
-              onPress={() => router.push("/(tabs)")}
-              height={48}
-              radius={10}
-              style={{ marginTop: 20 }}
-            />
-          </RNView>
-        </Pressable>
-      </Modal>
     </SafeAreaView>
   );
 }
@@ -288,21 +244,5 @@ const styles = StyleSheet.create({
     marginTop: 40,
     alignItems: "center",
     justifyContent: "center",
-  },
-  modalBackdrop: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  successCard: {
-    borderRadius: 16,
-    padding: 24,
-    width: "85%",
-    borderWidth: 1,
-  },
-  successText: {
-    marginTop: 8,
-    textAlign: "center",
-    fontSize: 13,
   },
 });

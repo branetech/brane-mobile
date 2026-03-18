@@ -82,6 +82,7 @@ export interface Auth {
   wallet: any;
   showNewUserModal: boolean;
   showSupportChat: boolean;
+  showBalance: boolean;
 }
 
 interface AssetCheckout {
@@ -128,6 +129,7 @@ const initialState: Auth = {
   checkouts: [],
   showNewUserModal: false,
   showSupportChat: false,
+  showBalance: false,
 };
 
 const { reducer, actions } = createSlice({
@@ -247,6 +249,9 @@ const { reducer, actions } = createSlice({
     setShowSupportChat: (state, action) => {
       state.showSupportChat = action.payload;
     },
+    setShowBalance: (state, action) => {
+      state.showBalance = action.payload;
+    },
   },
 });
 
@@ -268,6 +273,7 @@ export const {
   setConfig,
   setShowNewUserModal,
   setShowSupportChat,
+  setShowBalance,
   onRemoveFromCheckouts,
   onClearCheckouts,
   onAddToCheckouts,

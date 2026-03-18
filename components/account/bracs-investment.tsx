@@ -88,7 +88,7 @@ export const SallyIntroModal = ({
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={[styles.modalCard, styles.gradientCard]}>
+        <View style={[styles.modalCard, dynamicStyles.modalCard, dynamicStyles.gradientCard]}>
           <Pressable style={styles.closeIconWrap} onPress={onClose}>
             <CloseCircle size={22} color={C.muted} />
           </Pressable>
@@ -101,7 +101,7 @@ export const SallyIntroModal = ({
             />
           </View>
 
-          <ThemedText type='subtitle' style={styles.modalTitle}>
+          <ThemedText type='subtitle' style={[styles.modalTitle, dynamicStyles.modalTitle]}>
             Let Sally Invest for You
           </ThemedText>
           <ThemedText style={dynamicStyles.modalBody}>
@@ -163,7 +163,7 @@ export const SallyConfigModal = ({
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.modalCard}>
+        <View style={[styles.modalCard, dynamicStyles.modalCard]}>
           <View style={styles.modalTopRow}>
             <Pressable onPress={onBack}>
               <ThemedText style={dynamicStyles.backText}>Back</ThemedText>
@@ -188,7 +188,7 @@ export const SallyConfigModal = ({
             <InfoCircle size={16} color={C.muted} />
           </View>
 
-          <View style={styles.thresholdPill}>
+          <View style={[styles.thresholdPill, dynamicStyles.thresholdPill]}>
             <ThemedText style={dynamicStyles.thresholdText}>
               {bracsValue} Bracs
             </ThemedText>
@@ -233,6 +233,9 @@ export const RiskDisclosureModal = ({
   isLoading,
 }: RiskDisclosureModalProps) => {
   const [agreed, setAgreed] = useState(false);
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
 
   return (
     <Modal
@@ -242,9 +245,9 @@ export const RiskDisclosureModal = ({
       onRequestClose={onClose}
     >
       <View style={styles.bottomOverlay}>
-        <View style={styles.bottomSheet}>
-          <View style={styles.sheetHandle} />
-          <ThemedText type='subtitle' style={styles.sheetTitle}>
+        <View style={[styles.bottomSheet, { backgroundColor: C.background }]}>
+          <View style={[styles.sheetHandle, dynamicStyles.sheetHandle]} />
+          <ThemedText type='subtitle' style={[styles.sheetTitle, dynamicStyles.sheetTitle]}>
             Risk Disclosure
           </ThemedText>
 
@@ -259,7 +262,7 @@ export const RiskDisclosureModal = ({
             style={styles.agreeRow}
             onPress={() => setAgreed((prev) => !prev)}
           >
-            <View style={[styles.checkbox, agreed && styles.checkboxChecked]} />
+            <View style={[styles.checkbox, dynamicStyles.checkbox, agreed && dynamicStyles.checkboxChecked]} />
             <ThemedText style={dynamicStyles.agreeText}>
               I understand and agree to this terms
             </ThemedText>
@@ -607,17 +610,13 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(1,61,37,0.35)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     paddingHorizontal: 16,
   },
   modalCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 16,
-  },
-  gradientCard: {
-    backgroundColor: "#F8F2DD",
   },
   closeIconWrap: {
     alignSelf: "flex-end",
@@ -682,7 +681,6 @@ const styles = StyleSheet.create({
   thresholdPill: {
     marginTop: 16,
     alignSelf: "center",
-    backgroundColor: "#F3F4F6",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
@@ -693,10 +691,9 @@ const styles = StyleSheet.create({
   bottomOverlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(1,61,37,0.55)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   bottomSheet: {
-    backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 16,
@@ -709,7 +706,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 5,
     borderRadius: 999,
-    backgroundColor: "#DCE5E1",
     marginBottom: 14,
   },
   sheetTitle: {},
@@ -732,11 +728,9 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
   },
   checkboxChecked: {
-    backgroundColor: "#013D25",
-    borderColor: "#013D25",
+    borderWidth: 1,
   },
   agreeText: {
     flex: 1,
@@ -951,12 +945,14 @@ const createDynamicStyles = (C: typeof Colors.light) =>
     },
     badge: {
       fontSize: 10,
-      color: C.text,
-      backgroundColor: "#FFEFCC",
+      color: C.primary,
+      backgroundColor: C.inputBg,
       paddingHorizontal: 8,
       paddingVertical: 2,
       borderRadius: 10,
       overflow: "hidden",
+      borderWidth: 1,
+      borderColor: C.border,
     },
     optionDescription: {
       marginTop: 4,
@@ -1025,5 +1021,31 @@ const createDynamicStyles = (C: typeof Colors.light) =>
       fontWeight: "600",
       color: C.muted,
       marginBottom: 12,
+    },
+    gradientCard: {
+      backgroundColor: C.inputBg,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    modalCard: {
+      backgroundColor: C.background,
+    },
+    thresholdPill: {
+      backgroundColor: C.inputBg,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    sheetHandle: {
+      backgroundColor: C.border,
+    },
+    checkbox: {
+      borderColor: C.border,
+    },
+    checkboxChecked: {
+      backgroundColor: C.primary,
+      borderColor: C.primary,
+    },
+    modalTitle: {
+      color: C.text,
     },
   });

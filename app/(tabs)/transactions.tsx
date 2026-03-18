@@ -228,7 +228,13 @@ export default function TransactionScreen() {
 
       <Modal visible={showFilterModal} transparent animationType='slide'>
         <TouchableOpacity
-          style={styles.modalOverlay}
+          style={[
+            styles.modalOverlay,
+            {
+              backgroundColor:
+                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)",
+            },
+          ]}
           activeOpacity={1}
           onPress={() => setShowFilterModal(false)}
         >

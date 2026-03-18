@@ -1,16 +1,20 @@
 import { accnt, VERSION } from "@/utils";
 import { useBooleans } from "@/utils/hooks";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRouter } from "expo-router";
 import { LogoutCurve } from "iconsax-react-native";
 import { ReactNode } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import LogOutModal from "../log-out";
-import { AccountItem} from "./transaction";
+import { AccountItem } from "./transaction";
 
 export const Account = ({ header }: { header?: ReactNode }) => {
   const [isOpen, openModal, closeModal] = useBooleans();
   const router = useRouter();
-  const acc = accnt();
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+  const acc = accnt(C.primary);
   const resolveRoute = (label: string, routeKey?: string) => {
     const byLabel: Record<string, string> = {
       Preferences: "/(account)/preferences",
@@ -26,7 +30,7 @@ export const Account = ({ header }: { header?: ReactNode }) => {
       beneficiary: "/(account)/beneficiary",
       "update-kin-details": "/(account)/update-kin-details",
       "account-verification": "/(account)/account-verification",
-      "bracs-investment-trigger": "/bracs-investment-trigger",
+      "bracs-investment-trigger": "/(account)/bracs-investment-trigger",
       "change-password": "/(account)/change-password",
       "reset-transaction-pin": "/(account)/reset-transaction-pin",
       "change-username": "/(account)/change-username",
@@ -34,7 +38,6 @@ export const Account = ({ header }: { header?: ReactNode }) => {
       "help-desk": "/(account)/help-desk",
       "terms-conditions": "/(account)/terms-conditions",
       "privacy-policy": "/(account)/privacy-policy",
-      chat: "/support",
     };
 
     return routeKey ? byKey[routeKey] : undefined;
@@ -50,7 +53,9 @@ export const Account = ({ header }: { header?: ReactNode }) => {
         ListHeaderComponent={header ? <>{header}</> : null}
         renderItem={({ item: itm }) => (
           <View style={styles.sectionWrapper}>
-            <Text style={styles.sectionTitle}>{itm.title}</Text>
+            <Text style={[styles.sectionTitle, { color: C.text }]}>
+              {itm.title}
+            </Text>
             {itm.content.map((item) => (
               <Pressable
                 key={item.text}
@@ -67,20 +72,27 @@ export const Account = ({ header }: { header?: ReactNode }) => {
         )}
         ListEmptyComponent={
           // 👇 helps confirm if data is empty
-          <Text style={{ padding: 20, color: "red" }}>No items found</Text>
+          <Text style={{ padding: 20, color: C.error }}>No items found</Text>
         }
         ListFooterComponent={
           <>
-            <Pressable style={styles.logoutRow} onPress={openModal}>
+            <Pressable
+              style={[styles.logoutRow, { borderColor: C.border }]}
+              onPress={openModal}
+            >
               <View style={styles.logoutLeft}>
-                <LogoutCurve color="#CB010B" size={20} />
-                <Text style={styles.logoutText}>Log out</Text>
+                <LogoutCurve color={C.error} size={20} />
+                <Text style={[styles.logoutText, { color: C.error }]}>
+                  Log out
+                </Text>
               </View>
               {/* <ArrowRight2 color="#6B7280" size={20} /> */}
             </Pressable>
 
             <View style={styles.footer}>
-              <Text style={styles.version}>Version {VERSION}</Text>
+              <Text style={[styles.version, { color: C.muted }]}>
+                Version {VERSION}
+              </Text>
             </View>
           </>
         }
@@ -104,7 +116,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 24,
     marginBottom: 4,
-    color: "#111",
   },
   logoutRow: {
     paddingVertical: 20,
@@ -112,7 +123,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderColor: "#F7F7F8",
     marginTop: 8,
   },
   logoutLeft: {
@@ -121,7 +131,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoutText: {
-    color: "#CB010B",
     fontSize: 14,
   },
   footer: {
@@ -130,6 +139,5 @@ const styles = StyleSheet.create({
   },
   version: {
     fontSize: 13,
-    color: "#6B7280",
   },
 });

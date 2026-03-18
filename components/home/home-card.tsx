@@ -24,6 +24,9 @@ import { TRANSACTION_SERVICE } from "@/services/routes";
 
 export const HomeCard = () => {
   const router = useRouter();
+  const scheme = useColorScheme();
+  const isDark = scheme === "dark";
+  const C = Colors[isDark ? "dark" : "light"];
   const { onToggleBalance, showBalance } = usePreference();
 
   const { data, isLoading } = useRequest(TRANSACTION_SERVICE.BALANCE, {
@@ -39,22 +42,22 @@ export const HomeCard = () => {
         <View spaced flex={1} h='100%'>
           <View gap={8} w='100%' aligned>
             <View justified w='100%' row aligned gap={6}>
-              <ThemedText style={{ color: "#D3EBE1" }}>
+              <ThemedText style={{ color: '#fff' }}>
                 Total Balance
               </ThemedText>
               <TouchableOpacity onPress={onToggleBalance}>
                 {showBalance ? (
-                  <Eye color='#D3EBE1' size={16} />
+                  <Eye color={'#fff'} size={16} />
                 ) : (
-                  <EyeSlash color='#D3EBE1' size={16} />
+                  <EyeSlash color={'#fff'} size={16} />
                 )}
               </TouchableOpacity>
             </View>
             <View row aligned>
               {isLoading ? (
-                <ActivityIndicator size='small' color='#D3EBE1' />
+                <ActivityIndicator size='small' color={'#fff'} />
               ) : (
-                <ThemedText type='title' style={{ color: "#fff" }}>
+                <ThemedText type='title' style={{ color: '#fff' }}>
                   {showBalance ? priceFormatter(data) : "••••••"}
                 </ThemedText>
               )}
@@ -66,16 +69,16 @@ export const HomeCard = () => {
               onPress={() => {
                 router.push("/add-funds");
               }}
-              backgroundColor='#D2F1E4'
-              textColor='#013D25'
+              backgroundColor={C.primary}
+              textColor={C.background}
               width={160}
               radius={32}
             />
             <BraneButton
               text='My Wallet'
               onPress={() => router.push("/wallet")}
-              backgroundColor='#D2F1E41A'
-              textColor='#D3EBE1'
+              backgroundColor={'#D2F1E41A'}
+              textColor={'#fff'}
               width={160}
               radius={32}
             />

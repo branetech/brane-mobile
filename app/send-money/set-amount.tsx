@@ -231,7 +231,15 @@ export default function SendMoneySetAmountScreen() {
         animationType='slide'
         onRequestClose={() => setShowConfirmSheet(false)}
       >
-        <RNView style={styles.sheetOverlay}>
+        <RNView
+          style={[
+            styles.sheetOverlay,
+            {
+              backgroundColor:
+                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.4)",
+            },
+          ]}
+        >
           <RNView style={[styles.sheetCard, { backgroundColor: C.background }]}>
             <RNView style={[styles.grabber, { backgroundColor: C.border }]} />
             <ThemedText style={[styles.sheetTitle, { color: C.text }]}>
@@ -302,7 +310,15 @@ export default function SendMoneySetAmountScreen() {
         animationType='slide'
         onRequestClose={() => setShowSummarySheet(false)}
       >
-        <RNView style={styles.sheetOverlay}>
+        <RNView
+          style={[
+            styles.sheetOverlay,
+            {
+              backgroundColor:
+                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.4)",
+            },
+          ]}
+        >
           <RNView style={styles.summaryCard}>
             <RNView style={styles.grabber} />
             <ThemedText style={styles.summaryAmount}>

@@ -1,15 +1,15 @@
 import Back from "@/components/back";
-import FaqsComponent from "@/components/help-desk/faqs";
+import HelpDeskComponent from "@/components/help-desk";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React from "react";
+import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
 
-export default function FaqsScreen() {
+export default function HelpDeskScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
@@ -18,10 +18,13 @@ export default function FaqsScreen() {
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header} row aligned>
         <Back onPress={() => router.back()} />
-        <ThemedText type='subtitle'>FAQs</ThemedText>
+        <ThemedText type='subtitle'>Help Desk</ThemedText>
         <View style={{ width: 44 }} />
       </View>
-      <FaqsComponent />
+
+      <ScrollView contentContainerStyle={styles.content}>
+        <HelpDeskComponent />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -33,4 +36,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
   },
+  content: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24 },
 });
