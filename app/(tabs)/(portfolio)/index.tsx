@@ -6,11 +6,7 @@ import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
 import { priceFormatter } from "@/utils/helpers";
 import { useRouter } from "expo-router";
-import {
-  Eye,
-  EyeSlash,
-  Search,
-} from "iconsax-react-native";
+import { Eye, EyeSlash, SearchNormal1 } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -71,7 +67,9 @@ export default function PortfolioScreen() {
       ]);
 
       const wallet = walletRes?.data || walletRes;
-      setPortfolioBalance(Number(wallet?.portfolioValue || wallet?.balance || 20000));
+      setPortfolioBalance(
+        Number(wallet?.portfolioValue || wallet?.balance || 20000),
+      );
       setTopAssets(toArray(stocksRes).slice(0, 2));
     } catch (error) {
       catchError(error, false);
@@ -94,13 +92,21 @@ export default function PortfolioScreen() {
     return (
       <TouchableOpacity
         key={ticker}
-        style={[styles.assetItem, { backgroundColor: C.inputBg, borderColor: C.border }]}
-        onPress={() => router.push(`/portfolio/company/${asset?.tickerSymbol}` as any)}
+        style={[
+          styles.assetItem,
+          { backgroundColor: C.inputBg, borderColor: C.border },
+        ]}
+        onPress={() =>
+          router.push(`/portfolio/company/${asset?.tickerSymbol}` as any)
+        }
       >
         <View style={styles.assetItemLeft}>
           <Image
             source={{
-              uri: logo && !String(logo).startsWith("/stock") ? logo : getTextToImage(ticker, C),
+              uri:
+                logo && !String(logo).startsWith("/stock")
+                  ? logo
+                  : getTextToImage(ticker, C),
             }}
             style={[styles.assetLogo, { backgroundColor: C.inputBg }]}
           />
@@ -117,8 +123,14 @@ export default function PortfolioScreen() {
           <ThemedText style={[styles.assetValue, { color: C.text }]}>
             ₦{(Math.random() * 5000 + 1000).toFixed(2)}
           </ThemedText>
-          <ThemedText style={[styles.assetReturn, { color: isUp ? C.primary : "#D50000" }]}>
-            {isUp ? "+" : ""}{changePercent.toFixed(2)}%
+          <ThemedText
+            style={[
+              styles.assetReturn,
+              { color: isUp ? C.primary : "#D50000" },
+            ]}
+          >
+            {isUp ? "+" : ""}
+            {changePercent.toFixed(2)}%
           </ThemedText>
         </View>
       </TouchableOpacity>
@@ -132,7 +144,7 @@ export default function PortfolioScreen() {
         <ThemedText style={styles.headerTitle}>Portfolio</ThemedText>
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.iconBtn}>
-            <Search size={20} color="#fff" />
+            <SearchNormal1 size={20} color='#fff' />
           </TouchableOpacity>
         </View>
       </View>
@@ -187,7 +199,7 @@ export default function PortfolioScreen() {
                   {hideBalance ? "••••••" : priceFormatter(dividendBalance, 2)}
                 </ThemedText>
                 <BraneButton
-                  text="Withdraw"
+                  text='Withdraw'
                   onPress={() => router.push("/wallet/withdraw")}
                   backgroundColor={C.primary}
                   textColor={C.googleBg}
@@ -205,7 +217,9 @@ export default function PortfolioScreen() {
               <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
                 Asset Holdings
               </ThemedText>
-              <TouchableOpacity onPress={() => router.push("/(tabs)/(portfolio)/my-holdings")}>
+              <TouchableOpacity
+                onPress={() => router.push("/(tabs)/(portfolio)/my-holdings")}
+              >
                 <ThemedText style={[styles.seeAllLink, { color: C.primary }]}>
                   All Holdings ›
                 </ThemedText>
@@ -233,7 +247,11 @@ export default function PortfolioScreen() {
                 <TouchableOpacity
                   key={idx}
                   style={[styles.assetCard, { backgroundColor: asset.bgColor }]}
-                  onPress={() => router.push(`/portfolio/assets/${asset.label.toLowerCase()}`)}
+                  onPress={() =>
+                    router.push(
+                      `/portfolio/assets/${asset.label.toLowerCase()}`,
+                    )
+                  }
                 >
                   <ThemedText style={styles.assetCardLabel}>
                     {asset.label}
