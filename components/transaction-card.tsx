@@ -1,24 +1,29 @@
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { ArrowRight } from "iconsax-react-native";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 export interface Transaction {
   id: string;
   title: string;
-  description?: string;
   amount: number;
   type: "credit" | "debit";
-  date: string;
-  icon?: string;
+  date: string; // e.g. "09:41 AM"
+  status?: "success" | "failed" | "pending";
+  currency?: string; // defaults to "₦"
 }
 
 interface TransactionCardProps {
   transaction: Transaction;
   onPress?: () => void;
 }
+
+const STATUS_CONFIG = {
+  success: { label: "SUCCESS", color: "#1a6644", bg: "#d6f0e3" },
+  failed:  { label: "FAILED",  color: "#b91c1c", bg: "#fde8e8" },
+  pending: { label: "PENDING", color: "#92400e", bg: "#fef3c7" },
+};
 
 export const TransactionCard: React.FC<TransactionCardProps> = ({
   transaction,
@@ -27,62 +32,38 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
-  const isCredit = transaction.type === "credit";
-  const amountColor = isCredit ? "#013D25" : "#CB010B";
+  const status = transaction.status ?? "success";
+  const badge = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending;
+  const currency = transaction.currency ?? "₦";
+
+  const formattedAmount = `${currency}${Math.abs(transaction.amount).toLocaleString()}`;
 
   return (
     <TouchableOpacity
-      style={[
-        styles.card,
-        {
-          borderColor: C.border,
-          backgroundColor: C.inputBackground,
-        },
-      ]}
+      style={[styles.card, { borderColor: C.border, backgroundColor: C.inputBg }]}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <View style={styles.iconContainer}>
-        {transaction.icon ? (
-          <ThemedText style={styles.icon}>{transaction.icon}</ThemedText>
-        ) : (
-          <View
-            style={[
-              styles.iconPlaceholder,
-              {
-                backgroundColor: isCredit ? "#D2F1E4" : "#FFE5E5",
-              },
-            ]}
-          />
-        )}
-      </View>
-
-      <View style={styles.content}>
-        <ThemedText
-          type='defaultSemiBold'
-          style={[styles.title, { color: C.text }]}
-        >
+      {/* Left: title + time */}
+      <View style={styles.left}>
+        <ThemedText type="defaultSemiBold" style={[styles.title, { color: C.text }]}>
           {transaction.title}
         </ThemedText>
-        {transaction.description && (
-          <ThemedText style={[styles.description, { color: C.muted }]}>
-            {transaction.description}
-          </ThemedText>
-        )}
-        <ThemedText style={[styles.date, { color: C.muted }]}>
+        <ThemedText style={[styles.time, { color: C.muted }]}>
           {transaction.date}
         </ThemedText>
       </View>
 
-      <View style={styles.amountContainer}>
-        <ThemedText
-          type='defaultSemiBold'
-          style={[styles.amount, { color: amountColor }]}
-        >
-          {isCredit ? "+" : "-"}
-          {Math.abs(transaction.amount).toLocaleString()}
+      {/* Right: amount + status badge */}
+      <View style={styles.right}>
+        <ThemedText type="defaultSemiBold" style={[styles.amount, { color: C.text }]}>
+          {formattedAmount}
         </ThemedText>
-        {onPress && <ArrowRight size={16} color={C.muted} />}
+        <View style={[styles.badge, { backgroundColor: badge.bg }]}>
+          <ThemedText style={[styles.badgeText, { color: badge.color }]}>
+            {badge.label}
+          </ThemedText>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -92,46 +73,40 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 12,
-    gap: 12,
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     marginBottom: 8,
   },
-  iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  icon: {
-    fontSize: 24,
-  },
-  iconPlaceholder: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-  },
-  content: {
+  left: {
     flex: 1,
-    gap: 4,
+    gap: 5,
+    paddingRight: 12,
   },
   title: {
-    fontSize: 14,
+    fontSize: 13,
   },
-  description: {
-    fontSize: 12,
+  time: {
+    fontSize: 10,
   },
-  date: {
-    fontSize: 11,
-  },
-  amountContainer: {
+  right: {
     alignItems: "flex-end",
-    gap: 4,
+    gap: 6,
   },
   amount: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "700",
+  },
+  badge: {
+    borderRadius: 20,
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
 });

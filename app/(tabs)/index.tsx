@@ -1,6 +1,10 @@
 import { HomeHeader } from "@/components/home";
-import { HomeCard, Learning, Quick } from "@/components/home/home-card";
-import HomeTransactionHistory from "@/components/home/home-transaction-history";
+import {
+    HomeCard,
+    Learning,
+    Quick,
+} from "@/components/home/home-card";
+import { Transactions } from "@/components/home/home-transaction-history";
 import { NewUserOnboardingModal } from "@/components/new-user-onboarding-modal";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -44,7 +48,7 @@ export default function HomeScreen() {
         <HomeHeader />
         <HomeCard />
         <Quick />
-        <HomeTransactionHistory />
+        <Transactions />
         <Learning />
       </ScrollView>
       <NewUserOnboardingModal
