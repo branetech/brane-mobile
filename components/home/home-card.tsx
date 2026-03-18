@@ -19,32 +19,19 @@ import { BraneButton } from "../brane-button";
 import { EmptyState } from "../empty-state";
 import { ThemedText } from "../themed-text";
 import { CardStyle, LearnCard, ServicesCard } from "./cards";
+import { useRequest } from "@/services/useRequest";
+import { TRANSACTION_SERVICE } from "@/services/routes";
 
 export const HomeCard = () => {
   const router = useRouter();
   const { onToggleBalance, showBalance } = usePreference();
-  const [balance, setBalance] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchBalance();
-  }, []);
-
-  const fetchBalance = async () => {
-    try {
-      setIsLoading(true);
-      const response: any = await BaseRequest.get(
-        "/transactions-service/wallet/balance",
-      );
-      const balanceAmount = response?.data?.balance || response?.balance || 0;
-      setBalance(balanceAmount);
-    } catch (error) {
-      catchError(error);
-      setBalance(0);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data, isLoading } = useRequest(TRANSACTION_SERVICE.BALANCE, {
+    initialValue: 0,
+    revalidateOnFocus: true,
+    revalidateOnMount: true,
+    noCache: true
+  });
 
   return (
     <View w='100%' mt={8}>
@@ -68,7 +55,7 @@ export const HomeCard = () => {
                 <ActivityIndicator size='small' color='#D3EBE1' />
               ) : (
                 <ThemedText type='title' style={{ color: "#fff" }}>
-                  {showBalance ? priceFormatter(balance) : "••••••"}
+                  {showBalance ? priceFormatter(data) : "••••••"}
                 </ThemedText>
               )}
             </View>
@@ -101,6 +88,33 @@ export const HomeCard = () => {
 
 export const Quick = () => {
   const router = useRouter();
+  const scheme = useColorScheme();
+  const isDark = scheme === "dark";
+  const C = Colors[isDark ? "dark" : "light"];
+
+  // Define service colors for light and dark modes
+  const getServiceColors = (service: 'airtime' | 'send' | 'bills' | 'wealth') => {
+    const colors = {
+      light: {
+        airtime: { bg: '#D3EBE1', iconBg: '#E1F4EC', icon: '#013D25' },
+        send: { bg: '#FFF4EB', iconBg: '#FFDFC2', icon: '#013D25' },
+        bills: { bg: '#F5F1E0', iconBg: '#E7DCB1', icon: '#013D25' },
+        wealth: { bg: '#E1FFF3', iconBg: '#AFFEDE', icon: '#013D25' },
+      },
+      dark: {
+        airtime: { bg: `${C.primary}15`, iconBg: `${C.primary}25`, icon: C.primary },
+        send: { bg: '#FF6B351A', iconBg: '#FF6B3530', icon: '#FF6B35' },
+        bills: { bg: '#FDB92230', iconBg: '#FDB92245', icon: '#FDB922' },
+        wealth: { bg: `${C.primary}15`, iconBg: `${C.primary}25`, icon: C.primary },
+      },
+    };
+    return isDark ? colors.dark[service] : colors.light[service];
+  };
+
+  const airtimeColors = getServiceColors('airtime');
+  const sendColors = getServiceColors('send');
+  const billsColors = getServiceColors('bills');
+  const wealthColors = getServiceColors('wealth');
 
   return (
     <View w='100%' mt={24} gap={20}>
@@ -109,8 +123,8 @@ export const Quick = () => {
         <ServicesCard
           variant='full'
           title='Airtime & Data'
-          icon={<Mobile size={16} color='#013D25' />}
-          bg='#D3EBE1'
+          icon={<Mobile size={16} color={airtimeColors.icon} />}
+          bg={airtimeColors.bg}
           height={88}
           onPress={() =>
             router.push({
@@ -118,34 +132,34 @@ export const Quick = () => {
               params: { service: "airtime" },
             })
           }
-          iconBg='#E1F4EC'
+          iconBg={airtimeColors.iconBg}
         />
         <ServicesCard
           variant='full'
           title='Send Money'
-          icon={<Money size={16} color='#013D25' />}
-          bg='#FFF4EB'
+          icon={<Money size={16} color={sendColors.icon} />}
+          bg={sendColors.bg}
           height={88}
           onPress={() => router.push("/send-money")}
-          iconBg='#FFDFC2'
+          iconBg={sendColors.iconBg}
         />
         <ServicesCard
           variant='full'
           title='Bills & Services'
-          icon={<WifiSquare size={16} color='#013D25' />}
-          bg='#F5F1E0'
+          icon={<WifiSquare size={16} color={billsColors.icon} />}
+          bg={billsColors.bg}
           height={88}
           onPress={() => router.push("/utilities")}
-          iconBg='#E7DCB1'
+          iconBg={billsColors.iconBg}
         />
         <ServicesCard
           variant='full'
           title='Wealth Investment'
-          icon={<ChartSquare size={16} color='#013D25' />}
-          bg='#E1FFF3'
+          icon={<ChartSquare size={16} color={wealthColors.icon} />}
+          bg={wealthColors.bg}
           height={88}
           onPress={() => router.push("/stock")}
-          iconBg='#AFFEDE'
+          iconBg={wealthColors.iconBg}
         />
       </View>
     </View>
@@ -154,6 +168,10 @@ export const Quick = () => {
 
 export const Transactions = () => {
   const router = useRouter();
+  const scheme = useColorScheme();
+  const isDark = scheme === "dark";
+  const C = Colors[isDark ? "dark" : "light"];
+
   const [transactions, setTransactions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -194,7 +212,7 @@ export const Transactions = () => {
               fontWeight: "800",
               fontSize: 14,
               textDecorationStyle: "dashed",
-              textDecorationColor: "#013D25",
+              textDecorationColor: C.primary,
             }}
           >
             See All
@@ -210,7 +228,7 @@ export const Transactions = () => {
             minHeight: 150,
           }}
         >
-          <ActivityIndicator size='small' color='#013D25' />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : transactions.length > 0 ? (
         <View gap={12}>
@@ -289,7 +307,7 @@ const TransactionCardDisplay = ({ transaction }: any) => {
               "Transaction"}
           </ThemedText>
           <ThemedText
-            style={{ fontSize: 11, color: "#85808A", marginTop: 2 }}
+            style={{ fontSize: 11, color: C.muted, marginTop: 2 }}
             numberOfLines={1}
           >
             {transaction.createdAt
@@ -305,7 +323,7 @@ const TransactionCardDisplay = ({ transaction }: any) => {
       <ThemedText
         type='defaultSemiBold'
         style={{
-          color: isDebit ? "#CB010B" : "#013D25",
+          color: isDebit ? C.error : C.primary,
           fontSize: 13,
         }}
       >
@@ -316,6 +334,10 @@ const TransactionCardDisplay = ({ transaction }: any) => {
 };
 
 export const Learning = () => {
+  const scheme = useColorScheme();
+  const isDark = scheme === "dark";
+  const C = Colors[isDark ? "dark" : "light"];
+
   return (
     <View w='100%' gap={16}>
       <View row spaced>
@@ -326,7 +348,7 @@ export const Learning = () => {
             fontWeight: "800",
             fontSize: 14,
             textDecorationStyle: "dashed",
-            textDecorationColor: "#013D25",
+            textDecorationColor: C.primary,
           }}
         >
           See All
