@@ -219,8 +219,8 @@ export default function SendMoneySetAmountScreen() {
           }}
           backgroundColor={C.primary}
           textColor={C.googleBg}
-          height={56}
-          radius={12}
+          height={48}
+          radius={8}
           fontSize={16}
         />
       </View>
@@ -231,7 +231,15 @@ export default function SendMoneySetAmountScreen() {
         animationType='slide'
         onRequestClose={() => setShowConfirmSheet(false)}
       >
-        <RNView style={styles.sheetOverlay}>
+        <RNView
+          style={[
+            styles.sheetOverlay,
+            {
+              backgroundColor:
+                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.4)",
+            },
+          ]}
+        >
           <RNView style={[styles.sheetCard, { backgroundColor: C.background }]}>
             <RNView style={[styles.grabber, { backgroundColor: C.border }]} />
             <ThemedText style={[styles.sheetTitle, { color: C.text }]}>
@@ -273,8 +281,8 @@ export default function SendMoneySetAmountScreen() {
                 onPress={() => setShowConfirmSheet(false)}
                 backgroundColor={C.googleBg}
                 textColor={C.primary}
-                height={56}
-                radius={12}
+                height={48}
+                radius={24}
                 style={styles.halfBtn}
                 fontSize={14}
               />
@@ -286,8 +294,8 @@ export default function SendMoneySetAmountScreen() {
                 }}
                 backgroundColor={C.primary}
                 textColor={C.googleBg}
-                height={56}
-                radius={12}
+                height={48}
+                radius={24}
                 style={styles.halfBtn}
                 fontSize={14}
               />
@@ -302,7 +310,15 @@ export default function SendMoneySetAmountScreen() {
         animationType='slide'
         onRequestClose={() => setShowSummarySheet(false)}
       >
-        <RNView style={styles.sheetOverlay}>
+        <RNView
+          style={[
+            styles.sheetOverlay,
+            {
+              backgroundColor:
+                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.4)",
+            },
+          ]}
+        >
           <RNView style={styles.summaryCard}>
             <RNView style={styles.grabber} />
             <ThemedText style={styles.summaryAmount}>
@@ -374,8 +390,8 @@ export default function SendMoneySetAmountScreen() {
               }}
               backgroundColor={C.primary}
               textColor={C.googleBg}
-              height={56}
-              radius={12}
+              height={48}
+              radius={8}
               fontSize={16}
             />
           </RNView>

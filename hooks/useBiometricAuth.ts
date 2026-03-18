@@ -31,23 +31,47 @@ export const useBiometricAuth = () => {
   const checkAvailability = useCallback(async () => {
     try {
       setIsLoading(true);
-      const result = await LocalAuthentication.authenticateAsync({
-  promptMessage: "Authenticate",
-});
 
-      if (result) {
+      // Check if biometric authentication is compatible
+      const compatible = await LocalAuthentication.hasHardwareAsync();
+      if (!compatible) {
         setAvailability({
-          available: true,
-          type: 'Fingerprint', // Default to 'Fingerprint' as the type
+          available: false,
+          error: 'Biometric sensor not available',
         });
-        return { available: true, type: 'Fingerprint' };
+        return { available: false };
+      }
+
+      // Check what types of biometrics are enrolled
+      const enrolled = await LocalAuthentication.isEnrolledAsync();
+      if (!enrolled) {
+        setAvailability({
+          available: false,
+          error: 'No biometric data enrolled on device',
+        });
+        return { available: false };
+      }
+
+      // Get supported authentication types
+      const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync();
+
+      let biometricType: 'Fingerprint' | 'Face' | 'Iris' = 'Fingerprint';
+
+      // Determine the type of biometric available
+      // iris (4) > face (2) > fingerprint (1)
+      if (supportedTypes.includes(LocalAuthentication.AuthenticationType.IRIS)) {
+        biometricType = 'Iris';
+      } else if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
+        biometricType = 'Face';
+      } else if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
+        biometricType = 'Fingerprint';
       }
 
       setAvailability({
-        available: false,
-        error: 'Biometric sensor not available',
+        available: true,
+        type: biometricType,
       });
-      return { available: false };
+      return { available: true, type: biometricType };
     } catch (error: any) {
       const errorMsg = error?.message || 'Failed to check biometric availability';
       setAvailability({
@@ -67,26 +91,33 @@ export const useBiometricAuth = () => {
     async (): Promise<{ success: boolean; error?: string }> => {
       try {
         setIsLoading(true);
-        // await FingerprintScanner.authenticate({
-        //   onAttempt: () => {
-        //     // Called on each attempt
-        //   },
-        //   description: 'Authenticate to login to Brane',
-        // });
-        return { success: true };
+
+        const result = await LocalAuthentication.authenticateAsync({
+          promptMessage: `Authenticate with ${availability.type || 'biometric'}`,
+          fallbackLabel: 'Use passcode',
+          disableDeviceFallback: false,
+          reason: 'Authenticate to access your account',
+        });
+
+        if (result.success) {
+          return { success: true };
+        } else {
+          return {
+            success: false,
+            error: 'Biometric authentication failed',
+          };
+        }
       } catch (error: any) {
         const errorInfo = parseBiometricError(error);
-        // 'Biometric authentication failed:', errorInfo);
         return {
           success: false,
           error: errorInfo.userMessage,
         };
       } finally {
         setIsLoading(false);
-        // FingerprintScanner.release();
       }
     },
-    []
+    [availability.type]
   );
 
   /**
@@ -121,7 +152,6 @@ export const useBiometricAuth = () => {
         return { success: true };
       } catch (error: any) {
         const errorMsg = error?.message || 'Failed to store credentials';
-        // 'Error storing biometric credentials:', error);
         return { success: false, error: errorMsg };
       } finally {
         setIsLoading(false);
@@ -163,7 +193,6 @@ export const useBiometricAuth = () => {
         };
       } catch (error: any) {
         const errorMsg = error?.message || 'Failed to retrieve credentials';
-        // 'Error retrieving biometric credentials:', error);
         return { error: errorMsg };
       } finally {
         setIsLoading(false);
@@ -183,7 +212,6 @@ export const useBiometricAuth = () => {
       await SecureStore.deleteItemAsync(BIOMETRIC_TYPE_KEY);
       return true;
     } catch (error: any) {
-      // 'Error deleting biometric credentials:', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -226,10 +254,6 @@ export const useBiometricAuth = () => {
    */
   useEffect(() => {
     checkAvailability();
-
-    return () => {
-      // FingerprintScanner.release();
-    };
   }, [checkAvailability]);
 
   return {

@@ -26,12 +26,13 @@ export const SuccessModal = ({
   const scheme = useColorScheme();
   const themeKey: "light" | "dark" = scheme === "dark" ? "dark" : "light";
   const C = Colors[themeKey];
+  const dynamicStyles = createDynamicStyles(C);
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType='fade'
       onRequestClose={onRequestClose ?? onAction}
     >
       <View style={styles.overlay}>
@@ -41,7 +42,7 @@ export const SuccessModal = ({
           </View>
 
           <View style={styles.textBlock}>
-            <ThemedText style={styles.title}>{title}</ThemedText>
+            <ThemedText style={dynamicStyles.title}>{title}</ThemedText>
             <ThemedText style={[styles.description, { color: C.muted }]}>
               {description}
             </ThemedText>
@@ -52,8 +53,8 @@ export const SuccessModal = ({
             onPress={onAction}
             height={48}
             radius={10}
-            backgroundColor="#013D25"
-            textColor="#D2F1E4"
+            backgroundColor={C.primary}
+            textColor={C.background}
             fontSize={14}
             style={styles.button}
           />
@@ -91,7 +92,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     textAlign: "center",
-    color: "#0B0014",
   },
   description: {
     fontSize: 12,
@@ -103,3 +103,13 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
+
+const createDynamicStyles = (C: typeof Colors.light) =>
+  StyleSheet.create({
+    title: {
+      fontSize: 20,
+      fontWeight: "700",
+      textAlign: "center",
+      color: C.text,
+    },
+  });

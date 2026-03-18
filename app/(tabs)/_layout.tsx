@@ -38,7 +38,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name='index'
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
@@ -51,7 +51,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="utilities"
+        name='utilities'
         options={{
           title: "Utilities",
           tabBarIcon: ({ color, focused }) => (
@@ -65,7 +65,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="portfolio"
+        name='portfolio'
         options={{
           title: "Portfolio",
           tabBarIcon: ({ color, focused }) => (
@@ -78,7 +78,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="transactions"
+        name='transactions'
         options={{
           title: "Transactions",
           tabBarIcon: ({ color, focused }) => (
@@ -91,7 +91,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(account)"
+        name='(account)'
         options={{
           title: "Account",
           tabBarIcon: ({ color, focused }) => (

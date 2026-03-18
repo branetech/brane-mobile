@@ -8,22 +8,22 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
 import {
-  hideAppLoader,
-  priceFormatter,
-  showAppLoader,
-  showError,
+    hideAppLoader,
+    priceFormatter,
+    showAppLoader,
+    showError,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -273,7 +273,7 @@ export default function PayBillsScreen() {
             style={{
               ...StyleSheet.flatten(styles.providerChip),
               borderColor: elProvider === p.id ? C.primary : C.border,
-              backgroundColor: elProvider === p.id ? "#EAF8F1" : C.inputBg,
+              backgroundColor: elProvider === p.id ? C.primary + "20" : C.inputBg,
             }}
             onPress={() => {
               setElProvider(p.id);
@@ -342,15 +342,15 @@ export default function PayBillsScreen() {
         <View
           style={{
             ...StyleSheet.flatten(styles.verifiedBanner),
-            borderColor: "#09734C",
-            backgroundColor: "#EAF8F1",
+            borderColor: C.primary,
+            backgroundColor: C.primary + "20",
           }}
         >
-          <TickCircle size={16} color='#09734C' variant='Bold' />
+          <TickCircle size={16} color={C.primary} variant='Bold' />
           <ThemedText
             style={{
               ...StyleSheet.flatten(styles.verifiedText),
-              color: "#09734C",
+              color: C.primary,
             }}
           >
             {elAccountName}
@@ -360,8 +360,8 @@ export default function PayBillsScreen() {
         <BraneButton
           text={elVerifying ? "Verifying…" : "Verify Meter"}
           onPress={handleVerifyMeter}
-          backgroundColor='#013D25'
-          textColor='#D2F1E4'
+          backgroundColor={C.primary}
+          textColor={C.googleBg}
           height={44}
           radius={10}
           width='100%'
@@ -387,7 +387,8 @@ export default function PayBillsScreen() {
                 style={{
                   ...StyleSheet.flatten(styles.presetChip),
                   borderColor: elAmount === a ? C.primary : C.border,
-                  backgroundColor: elAmount === a ? "#EAF8F1" : C.inputBg,
+                  backgroundColor:
+                    elAmount === a ? C.primary + "20" : C.inputBg,
                 }}
                 onPress={() => setElAmount(a)}
               >
@@ -431,7 +432,7 @@ export default function PayBillsScreen() {
               style={{
                 ...StyleSheet.flatten(styles.cableChip),
                 borderColor: isSelected ? C.primary : C.border,
-                backgroundColor: isSelected ? "#EAF8F1" : C.inputBg,
+                backgroundColor: isSelected ? C.primary + "20" : C.inputBg,
               }}
               onPress={() => {
                 setCableProvider(key);
@@ -475,15 +476,15 @@ export default function PayBillsScreen() {
         <View
           style={{
             ...StyleSheet.flatten(styles.verifiedBanner),
-            borderColor: "#09734C",
-            backgroundColor: "#EAF8F1",
+            borderColor: C.primary,
+            backgroundColor: C.primary + "20",
           }}
         >
-          <TickCircle size={16} color='#09734C' variant='Bold' />
+          <TickCircle size={16} color={C.primary} variant='Bold' />
           <ThemedText
             style={{
               ...StyleSheet.flatten(styles.verifiedText),
-              color: "#09734C",
+              color: C.primary,
             }}
           >
             {cableAccountName}
@@ -493,8 +494,8 @@ export default function PayBillsScreen() {
         <BraneButton
           text={cableVerifying ? "Verifying…" : "Verify Card"}
           onPress={handleVerifyCable}
-          backgroundColor='#013D25'
-          textColor='#D2F1E4'
+          backgroundColor={C.primary}
+          textColor={C.googleBg}
           height={44}
           radius={10}
           width='100%'
@@ -537,7 +538,7 @@ export default function PayBillsScreen() {
                   style={{
                     ...StyleSheet.flatten(styles.planRow),
                     ...(idx < cablePlans.length - 1
-                      ? StyleSheet.flatten(styles.planDivider)
+                      ? { borderBottomWidth: 1, borderBottomColor: C.border }
                       : {}),
                   }}
                   onPress={() => {
@@ -606,7 +607,8 @@ export default function PayBillsScreen() {
               style={{
                 ...StyleSheet.flatten(styles.providerChip),
                 borderColor: bettingProvider === id ? C.primary : C.border,
-                backgroundColor: bettingProvider === id ? "#EAF8F1" : C.inputBg,
+                backgroundColor:
+                  bettingProvider === id ? C.primary + "20" : C.inputBg,
               }}
               onPress={() => setBettingProvider(id)}
             >
@@ -642,7 +644,7 @@ export default function PayBillsScreen() {
 
   const renderSuccess = () => (
     <View style={styles.successContainer}>
-      <TickCircle size={80} color='#09734C' variant='Bold' />
+      <TickCircle size={80} color={C.primary} variant='Bold' />
       <ThemedText
         style={{ ...StyleSheet.flatten(styles.successTitle), color: C.text }}
       >
@@ -658,7 +660,7 @@ export default function PayBillsScreen() {
           text='Go Home'
           onPress={() => router.push("/(tabs)")}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.googleBg}
           height={52}
           radius={12}
           width='100%'
@@ -725,7 +727,7 @@ export default function PayBillsScreen() {
                 text='Proceed'
                 onPress={() => setPinVisible(true)}
                 backgroundColor={C.primary}
-                textColor='#D2F1E4'
+                textColor={C.googleBg}
                 height={52}
                 radius={12}
                 width='100%'
@@ -812,7 +814,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
   },
-  planDivider: { borderBottomWidth: 1, borderBottomColor: "#EFEFF1" },
   planInfo: { flex: 1, gap: 2 },
   planLabel: { fontSize: 13, fontWeight: "600" },
   planAmount: { fontSize: 12 },

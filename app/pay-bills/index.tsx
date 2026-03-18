@@ -17,31 +17,31 @@ type BillCategory = {
   label: string;
   route: string;
   Icon: React.ComponentType<any>;
-  iconBg: string;
+  iconBg: (C: any) => string;
   iconColor: string;
 };
 
-const BILL_CATEGORIES: BillCategory[] = [
+const BILL_CATEGORIES = (C: any): BillCategory[] => [
   {
     label: "Electricity",
     route: "/pay-bills/electricity",
     Icon: Electricity,
-    iconBg: "#FFF7E8",
-    iconColor: "#B5760A",
+    iconBg: () => C.primary + "15",
+    iconColor: C.primary,
   },
   {
     label: "Cable TV",
     route: "/pay-bills/cable",
     Icon: Devices,
-    iconBg: "#EAF3FF",
-    iconColor: "#2563EB",
+    iconBg: () => C.primary + "15",
+    iconColor: C.primary,
   },
   {
     label: "Betting",
     route: "/pay-bills/betting",
     Icon: I3Dcube,
-    iconBg: "#F0EAFF",
-    iconColor: "#7C3AED",
+    iconBg: () => C.primary + "15",
+    iconColor: C.primary,
   },
 ];
 
@@ -62,7 +62,7 @@ export default function PayBillsScreen() {
       </View>
 
       <FlatList
-        data={BILL_CATEGORIES}
+        data={BILL_CATEGORIES(C)}
         keyExtractor={(item) => item.label}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
@@ -72,7 +72,7 @@ export default function PayBillsScreen() {
             <TouchableOpacity
               style={[
                 styles.row,
-                { backgroundColor: C.background, borderColor: C.border },
+                { backgroundColor: C.inputBg, borderColor: C.border },
               ]}
               onPress={() => router.push(route as any)}
               activeOpacity={0.7}
@@ -80,7 +80,10 @@ export default function PayBillsScreen() {
               <View
                 style={StyleSheet.flatten([
                   styles.iconCircle,
-                  { backgroundColor: iconBg },
+                  {
+                    backgroundColor:
+                      typeof iconBg === "function" ? iconBg() : iconBg,
+                  },
                 ])}
                 center
               >

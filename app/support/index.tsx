@@ -283,6 +283,7 @@ export default function SupportScreen() {
   const router = useRouter();
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
+  const C = Colors[scheme];
 
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [showDocumented, setShowDocumented] = useState(false);
@@ -332,7 +333,7 @@ export default function SupportScreen() {
           </View>
         </View>
 
-        <View style={styles.bodyArea}>
+        <View style={[styles.bodyArea, { backgroundColor: C.background }]}>
           <ThemedText style={[styles.faqHeading, { color: C.text }]}>
             FAQs
           </ThemedText>

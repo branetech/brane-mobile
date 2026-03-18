@@ -195,7 +195,7 @@ export default function LeaderboardScreen() {
                   <ThemedText
                     style={[
                       styles.rankText,
-                      { color: medalColor ? "#fff" : C.muted },
+                      { color: medalColor ? C.background : C.muted },
                     ]}
                   >
                     {item.rank}

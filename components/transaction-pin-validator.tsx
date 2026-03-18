@@ -6,10 +6,10 @@ import { View } from "@idimma/rn-widget";
 import { ArrowLeft2, FingerCricle } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Modal,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -33,6 +33,7 @@ export const TransactionPinValidator = ({
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
+  const dynamicStyles = createDynamicStyles(C);
 
   const [pin, setPin] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,28 +83,31 @@ export const TransactionPinValidator = ({
     <Modal
       visible={visible}
       transparent={false}
-      animationType="slide"
+      animationType='slide'
       onRequestClose={handleClose}
     >
       <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
         <View style={styles.container}>
           <View style={styles.topContent}>
-            <TouchableOpacity onPress={handleClose} style={styles.closeWrap}>
-              <ThemedText style={styles.closeText}>×</ThemedText>
+            <TouchableOpacity
+              onPress={handleClose}
+              style={[styles.closeWrap, { backgroundColor: C.inputBg }]}
+            >
+              <ThemedText style={dynamicStyles.closeText}>×</ThemedText>
             </TouchableOpacity>
 
-            <ThemedText style={styles.title}>Confirm transaction</ThemedText>
-            <ThemedText style={styles.subtitle}>
+            <ThemedText style={dynamicStyles.title}>Confirm transaction</ThemedText>
+            <ThemedText style={dynamicStyles.subtitle}>
               Kindly enter your transaction PIN to authorize this transaction.
             </ThemedText>
 
-            <View style={styles.pinBox}>
+            <View style={[styles.pinBox, { backgroundColor: C.inputBg }]}>
               {Array.from({ length: 6 }).map((_, index) => (
                 <View
                   key={index}
                   style={{
                     ...styles.dot,
-                    backgroundColor: index < pinLength ? "#85808A" : "#D9D9DE",
+                    backgroundColor: index < pinLength ? C.text : C.muted,
                   }}
                 />
               ))}
@@ -112,86 +116,86 @@ export const TransactionPinValidator = ({
 
           {isLoading ? (
             <View style={styles.loadingWrap}>
-              <ActivityIndicator size="small" color="#013D25" />
-              <ThemedText style={styles.loadingText}>Please wait</ThemedText>
+              <ActivityIndicator size='small' color={C.primary} />
+              <ThemedText style={dynamicStyles.loadingText}>Please wait</ThemedText>
             </View>
           ) : (
             <View style={styles.keypad}>
               <View style={styles.keyRow}>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("1")}
                 >
-                  <ThemedText style={styles.keyText}>1</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>1</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("2")}
                 >
-                  <ThemedText style={styles.keyText}>2</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>2</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("3")}
                 >
-                  <ThemedText style={styles.keyText}>3</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>3</ThemedText>
                 </TouchableOpacity>
               </View>
 
               <View style={styles.keyRow}>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("4")}
                 >
-                  <ThemedText style={styles.keyText}>4</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>4</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("5")}
                 >
-                  <ThemedText style={styles.keyText}>5</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>5</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("6")}
                 >
-                  <ThemedText style={styles.keyText}>6</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>6</ThemedText>
                 </TouchableOpacity>
               </View>
 
               <View style={styles.keyRow}>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("7")}
                 >
-                  <ThemedText style={styles.keyText}>7</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>7</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("8")}
                 >
-                  <ThemedText style={styles.keyText}>8</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>8</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("9")}
                 >
-                  <ThemedText style={styles.keyText}>9</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>9</ThemedText>
                 </TouchableOpacity>
               </View>
 
               <View style={styles.keyRow}>
                 <TouchableOpacity style={styles.keyBtn} onPress={() => {}}>
-                  <FingerCricle size={20} color="#12432E" />
+                  <FingerCricle size={20} color={C.primary} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.keyBtn}
+                  style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("0")}
                 >
-                  <ThemedText style={styles.keyText}>0</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>0</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.keyBtn} onPress={handleDelete}>
-                  <ArrowLeft2 size={20} color="#CB010B" />
+                  <ArrowLeft2 size={20} color={C.error} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -204,12 +208,12 @@ export const TransactionPinValidator = ({
           animationType="fade"
           onRequestClose={() => setShowInvalid(false)}
         >
-          <View style={styles.invalidOverlay}>
-            <View style={styles.invalidCard}>
-              <ThemedText style={styles.invalidTitle}>
+          <View style={[styles.invalidOverlay, { backgroundColor: scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)" }]}>
+            <View style={[styles.invalidCard, { backgroundColor: C.screen }]}>
+              <ThemedText style={dynamicStyles.invalidTitle}>
                 Invalid transaction pin
               </ThemedText>
-              <ThemedText style={styles.invalidHint}>
+              <ThemedText style={dynamicStyles.invalidHint}>
                 Can’t remember PIN?
               </ThemedText>
               <BraneButton
@@ -218,8 +222,8 @@ export const TransactionPinValidator = ({
                   setShowInvalid(false);
                   onResetPin?.();
                 }}
-                backgroundColor="#013D25"
-                textColor="#D2F1E4"
+                backgroundColor={C.primary}
+                textColor={C.background}
                 height={44}
                 radius={12}
               />
@@ -247,13 +251,11 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#F4F4F5",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 8,
   },
   closeText: {
-    color: "#7C7C82",
     fontSize: 16,
     lineHeight: 16,
     fontWeight: "600",
@@ -262,18 +264,15 @@ const styles = StyleSheet.create({
     fontSize: 31,
     lineHeight: 38,
     fontWeight: "700",
-    color: "#0B0014",
   },
   subtitle: {
     width: "65%",
     fontSize: 10,
     lineHeight: 13,
-    color: "#85808A",
   },
   pinBox: {
     width: 186,
     height: 48,
-    backgroundColor: "#F7F7F8",
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
@@ -292,7 +291,6 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   loadingText: {
-    color: "#0B0014",
     fontSize: 12,
   },
   keypad: {
@@ -311,23 +309,19 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#FCFCFD",
     alignItems: "center",
     justifyContent: "center",
   },
   keyText: {
     fontSize: 20,
     fontWeight: "500",
-    color: "#0B0014",
   },
   invalidOverlay: {
     flex: 1,
-    backgroundColor: "rgba(11,0,20,0.35)",
     justifyContent: "center",
     paddingHorizontal: 20,
   },
   invalidCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 14,
     padding: 18,
     gap: 14,
@@ -336,11 +330,50 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     fontWeight: "700",
-    color: "#0B0014",
   },
   invalidHint: {
     textAlign: "center",
-    color: "#D09129",
     fontSize: 12,
   },
 });
+
+const createDynamicStyles = (C: typeof Colors.light) =>
+  StyleSheet.create({
+    title: {
+      fontSize: 31,
+      lineHeight: 38,
+      fontWeight: "700",
+      color: C.text,
+    },
+    closeText: {
+      fontSize: 16,
+      lineHeight: 16,
+      fontWeight: "600",
+      color: C.muted,
+    },
+    subtitle: {
+      fontSize: 10,
+      lineHeight: 13,
+      color: C.muted,
+    },
+    loadingText: {
+      color: C.text,
+      fontSize: 12,
+    },
+    keyText: {
+      fontSize: 20,
+      fontWeight: "500",
+      color: C.text,
+    },
+    invalidTitle: {
+      textAlign: "center",
+      fontSize: 14,
+      fontWeight: "700",
+      color: C.text,
+    },
+    invalidHint: {
+      textAlign: "center",
+      fontSize: 12,
+      color: C.primary,
+    },
+  });

@@ -7,23 +7,23 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
 import {
-  hideAppLoader,
-  priceFormatter,
-  showAppLoader,
-  showSuccess,
+    hideAppLoader,
+    priceFormatter,
+    showAppLoader,
+    showSuccess,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -129,7 +129,7 @@ export default function DividendWithdrawScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
-          <ThemedText style={styles.balanceLabel}>
+          <ThemedText style={[styles.balanceLabel, { color: C.googleBg }]}>
             Available Dividend Balance
           </ThemedText>
           {isLoadingBalance ? (
@@ -161,7 +161,7 @@ export default function DividendWithdrawScreen() {
           text='Continue'
           onPress={handleContinueForm}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.googleBg}
           height={52}
           radius={12}
         />
@@ -225,7 +225,7 @@ export default function DividendWithdrawScreen() {
 
   const renderStageSuccess = () => (
     <View style={styles.successWrap}>
-      <TickCircle size={72} color='#013D25' variant='Bold' />
+      <TickCircle size={72} color={C.primary} variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Withdrawal Successful
       </ThemedText>
@@ -237,7 +237,7 @@ export default function DividendWithdrawScreen() {
         text='Done'
         onPress={() => router.push("/(tabs)/portfolio")}
         backgroundColor={C.primary}
-        textColor='#D2F1E4'
+        textColor={C.googleBg}
         height={52}
         radius={12}
         width='80%'
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     gap: 6,
     marginBottom: 4,
   },
-  balanceLabel: { fontSize: 12, color: "#D2F1E4" },
+  balanceLabel: { fontSize: 12 },
   balanceValue: { fontSize: 28, fontWeight: "800", color: "#fff" },
   fieldLabel: { fontSize: 12, marginBottom: 4 },
   input: { height: 48, borderRadius: 8 },

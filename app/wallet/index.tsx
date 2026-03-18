@@ -1,6 +1,7 @@
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { EmptyState } from "@/components/empty-state";
+import { CardStyle } from "@/components/home/cards";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -115,11 +116,9 @@ export default function WalletScreen() {
   const ListHeader = (
     <>
       {/* Balance card */}
-      <View
-        style={[styles.balanceCard, { backgroundColor: C.primary }]}
-        gap={16}
+      <CardStyle
       >
-        <View row aligned style={{ justifyContent: "space-between" }}>
+        <View w='100%' row aligned style={{ justifyContent: "space-between" }}>
           <ThemedText
             style={[
               styles.balanceLabel,
@@ -149,7 +148,7 @@ export default function WalletScreen() {
           {balanceVisible ? priceFormatter(balance, 2) : "₦ ******"}
         </ThemedText>
 
-        <View row gap={12}>
+        <View row gap={12} w='100%' mt={20} h='100%'>
           <BraneButton
             text='Withdraw'
             onPress={() => router.push("/wallet/withdraw")}
@@ -167,7 +166,7 @@ export default function WalletScreen() {
             height={38}
           />
         </View>
-      </View>
+      </CardStyle>
 
       {/* Quick actions */}
       <View style={styles.quickActions} row>

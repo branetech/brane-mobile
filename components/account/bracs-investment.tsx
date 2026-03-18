@@ -1,18 +1,20 @@
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { priceFormatter } from "@/utils/helpers";
 import Slider from "@react-native-community/slider";
 import { Cardano, CloseCircle, InfoCircle } from "iconsax-react-native";
 import React, { useMemo, useState } from "react";
 import {
-    Image,
-    Modal,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    TextInput,
-    View,
+  Image,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  TextInput,
+  View,
 } from "react-native";
 import Svg, { Circle, G } from "react-native-svg";
 
@@ -31,24 +33,29 @@ export const OptionRow = ({
   onPress,
   badgeText,
 }: OptionRowProps) => {
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
   return (
     <Pressable style={styles.optionRow} onPress={onPress}>
       <View style={styles.optionTextWrap}>
         <View style={styles.optionTitleRow}>
-          <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
+          <ThemedText type='defaultSemiBold' style={dynamicStyles.optionTitle}>
             {title}
           </ThemedText>
           {!!badgeText && (
-            <ThemedText style={styles.badge}>{badgeText}</ThemedText>
+            <ThemedText style={dynamicStyles.badge}>{badgeText}</ThemedText>
           )}
         </View>
-        <ThemedText style={styles.optionDescription}>{description}</ThemedText>
+        <ThemedText style={dynamicStyles.optionDescription}>
+          {description}
+        </ThemedText>
       </View>
       <Switch
         value={isSelected}
         onValueChange={onPress}
-        trackColor={{ false: "#E7E6E8", true: "#D2F1E4" }}
-        thumbColor={isSelected ? "#013D25" : "#ACAAAD"}
+        trackColor={{ false: C.border, true: C.primary + "40" }}
+        thumbColor={isSelected ? C.primary : C.muted}
       />
     </Pressable>
   );
@@ -70,31 +77,34 @@ export const SallyIntroModal = ({
   onClose,
   onGetStarted,
 }: SallyIntroModalProps) => {
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType='slide'
       transparent
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={[styles.modalCard, styles.gradientCard]}>
+        <View style={[styles.modalCard, dynamicStyles.modalCard, dynamicStyles.gradientCard]}>
           <Pressable style={styles.closeIconWrap} onPress={onClose}>
-            <CloseCircle size={22} color="#342A3B" />
+            <CloseCircle size={22} color={C.muted} />
           </Pressable>
 
           <View style={styles.centeredImageWrap}>
             <Image
               source={require("@/assets/images/network/Rectangle.png")}
               style={styles.sallyImage}
-              resizeMode="contain"
+              resizeMode='contain'
             />
           </View>
 
-          <ThemedText type="subtitle" style={styles.modalTitle}>
+          <ThemedText type='subtitle' style={[styles.modalTitle, dynamicStyles.modalTitle]}>
             Let Sally Invest for You
           </ThemedText>
-          <ThemedText style={styles.modalBody}>
+          <ThemedText style={dynamicStyles.modalBody}>
             Sally automatically invests your Bracs into diversified assets once
             you reach your set goal.
           </ThemedText>
@@ -102,14 +112,16 @@ export const SallyIntroModal = ({
           <View style={styles.benefitList}>
             {benefits.map((benefit) => (
               <View key={benefit} style={styles.benefitItem}>
-                <Cardano size={12} color="#404040" />
-                <ThemedText style={styles.benefitText}>{benefit}</ThemedText>
+                <Cardano size={12} color={C.muted} />
+                <ThemedText style={dynamicStyles.benefitText}>
+                  {benefit}
+                </ThemedText>
               </View>
             ))}
           </View>
 
           <BraneButton
-            text="Get Started"
+            text='Get Started'
             onPress={onGetStarted}
             style={styles.modalButton}
           />
@@ -134,6 +146,9 @@ export const SallyConfigModal = ({
   onBack,
   onSaveAndActivate,
 }: SallyConfigModalProps) => {
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
   const [threshold, setThreshold] = useState(50);
   const bracsValue = useMemo(
     () => Math.round((threshold / 100) * 1000),
@@ -143,38 +158,38 @@ export const SallyConfigModal = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType='slide'
       transparent
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.modalCard}>
+        <View style={[styles.modalCard, dynamicStyles.modalCard]}>
           <View style={styles.modalTopRow}>
             <Pressable onPress={onBack}>
-              <ThemedText style={styles.backText}>Back</ThemedText>
+              <ThemedText style={dynamicStyles.backText}>Back</ThemedText>
             </Pressable>
             <Pressable onPress={onClose}>
-              <CloseCircle size={22} color="#342A3B" />
+              <CloseCircle size={22} color={C.muted} />
             </Pressable>
           </View>
 
-          <ThemedText type="defaultSemiBold" style={styles.configTitle}>
+          <ThemedText type='defaultSemiBold' style={dynamicStyles.configTitle}>
             Sally For You and With You
           </ThemedText>
-          <ThemedText style={styles.configBody}>
+          <ThemedText style={dynamicStyles.configBody}>
             Set a threshold for how Sally auto-invests your Bracs into
             diversified assets.
           </ThemedText>
 
           <View style={styles.sliderHeaderRow}>
-            <ThemedText style={styles.sliderTitle}>
+            <ThemedText style={dynamicStyles.sliderTitle}>
               Drag to set threshold
             </ThemedText>
-            <InfoCircle size={16} color="#342A3B" />
+            <InfoCircle size={16} color={C.muted} />
           </View>
 
-          <View style={styles.thresholdPill}>
-            <ThemedText style={styles.thresholdText}>
+          <View style={[styles.thresholdPill, dynamicStyles.thresholdPill]}>
+            <ThemedText style={dynamicStyles.thresholdText}>
               {bracsValue} Bracs
             </ThemedText>
           </View>
@@ -185,13 +200,13 @@ export const SallyConfigModal = ({
             step={5}
             value={threshold}
             onValueChange={setThreshold}
-            minimumTrackTintColor="#013D25"
-            maximumTrackTintColor="#E7E6E8"
-            thumbTintColor="#013D25"
+            minimumTrackTintColor={C.primary}
+            maximumTrackTintColor={C.border}
+            thumbTintColor={C.primary}
           />
 
           <BraneButton
-            text="Save and Activate"
+            text='Save and Activate'
             onPress={onSaveAndActivate}
             loading={isSaving}
             style={styles.modalButton}
@@ -218,18 +233,21 @@ export const RiskDisclosureModal = ({
   isLoading,
 }: RiskDisclosureModalProps) => {
   const [agreed, setAgreed] = useState(false);
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
 
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType='slide'
       transparent
       onRequestClose={onClose}
     >
       <View style={styles.bottomOverlay}>
-        <View style={styles.bottomSheet}>
-          <View style={styles.sheetHandle} />
-          <ThemedText type="subtitle" style={styles.sheetTitle}>
+        <View style={[styles.bottomSheet, { backgroundColor: C.background }]}>
+          <View style={[styles.sheetHandle, dynamicStyles.sheetHandle]} />
+          <ThemedText type='subtitle' style={[styles.sheetTitle, dynamicStyles.sheetTitle]}>
             Risk Disclosure
           </ThemedText>
 
@@ -237,21 +255,21 @@ export const RiskDisclosureModal = ({
             style={styles.sheetScroll}
             showsVerticalScrollIndicator={false}
           >
-            <ThemedText style={styles.sheetCopy}>{riskText}</ThemedText>
+            <ThemedText style={dynamicStyles.sheetCopy}>{riskText}</ThemedText>
           </ScrollView>
 
           <Pressable
             style={styles.agreeRow}
             onPress={() => setAgreed((prev) => !prev)}
           >
-            <View style={[styles.checkbox, agreed && styles.checkboxChecked]} />
-            <ThemedText style={styles.agreeText}>
+            <View style={[styles.checkbox, dynamicStyles.checkbox, agreed && dynamicStyles.checkboxChecked]} />
+            <ThemedText style={dynamicStyles.agreeText}>
               I understand and agree to this terms
             </ThemedText>
           </Pressable>
 
           <BraneButton
-            text="Accept and Continue"
+            text='Accept and Continue'
             onPress={onAccept}
             disabled={!agreed}
             loading={isLoading}
@@ -273,6 +291,9 @@ export const AllocationSliderRow = ({
   value,
   onChange,
 }: AllocationSliderRowProps) => {
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
   const [input, setInput] = useState(String(value));
 
   const onInputChange = (raw: string) => {
@@ -293,16 +314,16 @@ export const AllocationSliderRow = ({
   return (
     <View style={styles.sliderCard}>
       <View style={styles.sliderCardTop}>
-        <ThemedText style={styles.sliderCardLabel}>{label}</ThemedText>
+        <ThemedText style={dynamicStyles.sliderCardLabel}>{label}</ThemedText>
         <View style={styles.percentBox}>
           <TextInput
             value={input}
             onChangeText={onInputChange}
-            keyboardType="number-pad"
-            style={styles.percentInput}
+            keyboardType='number-pad'
+            style={dynamicStyles.percentInput}
             maxLength={3}
           />
-          <ThemedText style={styles.percentMark}>%</ThemedText>
+          <ThemedText style={dynamicStyles.percentMark}>%</ThemedText>
         </View>
       </View>
 
@@ -312,9 +333,9 @@ export const AllocationSliderRow = ({
         step={1}
         value={value}
         onValueChange={onChange}
-        minimumTrackTintColor="#013D25"
-        maximumTrackTintColor="#AABEB6"
-        thumbTintColor="#013D25"
+        minimumTrackTintColor={C.primary}
+        maximumTrackTintColor={C.border}
+        thumbTintColor={C.primary}
       />
     </View>
   );
@@ -326,16 +347,21 @@ export const ShowMoreRow = ({
 }: {
   show: boolean;
   onPress: () => void;
-}) => (
-  <Pressable style={styles.showMoreRow} onPress={onPress}>
-    <ThemedText style={styles.showMoreLabel}>
-      {show ? "Show less" : "Show more"}
-    </ThemedText>
-    <ThemedText style={[styles.showMoreArrow, show && styles.showMoreArrowUp]}>
-      ⌄
-    </ThemedText>
-  </Pressable>
-);
+}) => {
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
+  return (
+    <Pressable style={styles.showMoreRow} onPress={onPress}>
+      <ThemedText style={dynamicStyles.showMoreLabel}>
+        {show ? "Show less" : "Show more"}
+      </ThemedText>
+      <ThemedText style={[dynamicStyles.showMoreArrow, show && styles.showMoreArrowUp]}>
+        ⌄
+      </ThemedText>
+    </Pressable>
+  );
+};
 
 type TopPickCard = {
   tickerSymbol: string;
@@ -364,6 +390,9 @@ const tickerLogo = (ticker: string) => {
 };
 
 export const TopPicksStack = ({ picks }: { picks: TopPickCard[] }) => {
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
   const [activeIndex, setActiveIndex] = useState(0);
 
   if (!picks.length) {
@@ -407,7 +436,7 @@ export const TopPicksStack = ({ picks }: { picks: TopPickCard[] }) => {
               <Image
                 source={tickerLogo(pick.tickerSymbol)}
                 style={styles.pickLogo}
-                resizeMode="contain"
+                resizeMode='contain'
               />
               <View>
                 <ThemedText style={styles.pickTicker}>
@@ -494,12 +523,12 @@ export const WealthAllocationSection = ({
                 cx={90}
                 cy={90}
                 r={82}
-                fill="transparent"
+                fill='transparent'
               />
             ))}
             {slices.map((slice) => (
               <G key={slice.asset}>
-                <Circle cx={90} cy={90} r={82} fill="transparent" />
+                <Circle cx={90} cy={90} r={82} fill='transparent' />
               </G>
             ))}
             {slices.map((slice) => (
@@ -511,17 +540,17 @@ export const WealthAllocationSection = ({
                   r={82}
                   stroke={slice.color}
                   strokeWidth={46}
-                  fill="transparent"
+                  fill='transparent'
                   strokeDasharray={`${(slice.percentage / 100) * 515} 515`}
                   strokeDashoffset={-(slice.start / 360) * 515}
-                  strokeLinecap="butt"
+                  strokeLinecap='butt'
                   rotation={-90}
                   originX={90}
                   originY={90}
                 />
               </G>
             ))}
-            <Circle cx={90} cy={90} r={52} fill="#FFFFFF" />
+            <Circle cx={90} cy={90} r={52} fill='#FFFFFF' />
           </G>
         </Svg>
       </View>
@@ -566,11 +595,9 @@ const styles = StyleSheet.create({
   },
   optionTitle: {
     fontSize: 14,
-    color: "#342A3B",
   },
   badge: {
     fontSize: 10,
-    color: "#404040",
     backgroundColor: "#FFEFCC",
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -580,21 +607,16 @@ const styles = StyleSheet.create({
   optionDescription: {
     marginTop: 4,
     fontSize: 12,
-    color: "#85808A",
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(1,61,37,0.35)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     paddingHorizontal: 16,
   },
   modalCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 16,
-  },
-  gradientCard: {
-    backgroundColor: "#F8F2DD",
   },
   closeIconWrap: {
     alignSelf: "flex-end",
@@ -609,12 +631,10 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     marginTop: 16,
-    color: "#0B0014",
   },
   modalBody: {
     marginTop: 6,
     fontSize: 13,
-    color: "#404040",
   },
   benefitList: {
     marginTop: 14,
@@ -628,7 +648,6 @@ const styles = StyleSheet.create({
   benefitText: {
     flex: 1,
     fontSize: 12,
-    color: "#404040",
   },
   modalButton: {
     marginTop: 18,
@@ -640,18 +659,15 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 13,
-    color: "#013D25",
     fontWeight: "600",
   },
   configTitle: {
     marginTop: 8,
     fontSize: 16,
-    color: "#0B0014",
   },
   configBody: {
     marginTop: 6,
     fontSize: 12,
-    color: "#85808A",
   },
   sliderHeaderRow: {
     marginTop: 18,
@@ -661,27 +677,23 @@ const styles = StyleSheet.create({
   },
   sliderTitle: {
     fontSize: 14,
-    color: "#0B0014",
   },
   thresholdPill: {
     marginTop: 16,
     alignSelf: "center",
-    backgroundColor: "#F3F4F6",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
   },
   thresholdText: {
     fontSize: 12,
-    color: "#404040",
   },
   bottomOverlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(1,61,37,0.55)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   bottomSheet: {
-    backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 16,
@@ -694,12 +706,9 @@ const styles = StyleSheet.create({
     width: 48,
     height: 5,
     borderRadius: 999,
-    backgroundColor: "#DCE5E1",
     marginBottom: 14,
   },
-  sheetTitle: {
-    color: "#0B0014",
-  },
+  sheetTitle: {},
   sheetScroll: {
     marginTop: 14,
     maxHeight: 280,
@@ -707,7 +716,6 @@ const styles = StyleSheet.create({
   sheetCopy: {
     fontSize: 13,
     lineHeight: 20,
-    color: "#85808A",
   },
   agreeRow: {
     marginTop: 16,
@@ -720,16 +728,13 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
   },
   checkboxChecked: {
-    backgroundColor: "#013D25",
-    borderColor: "#013D25",
+    borderWidth: 1,
   },
   agreeText: {
     flex: 1,
     fontSize: 13,
-    color: "#0B0014",
   },
   sliderCard: {
     paddingVertical: 12,
@@ -744,7 +749,6 @@ const styles = StyleSheet.create({
   },
   sliderCardLabel: {
     fontSize: 14,
-    color: "#111827",
   },
   percentBox: {
     width: 44,
@@ -760,14 +764,12 @@ const styles = StyleSheet.create({
   },
   percentInput: {
     fontSize: 10,
-    color: "#0B0014",
     padding: 0,
     textAlign: "center",
     minWidth: 18,
   },
   percentMark: {
     fontSize: 10,
-    color: "#0B0014",
   },
   showMoreRow: {
     flexDirection: "row",
@@ -777,12 +779,10 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   showMoreLabel: {
-    color: "#013D25",
     fontSize: 13,
     fontWeight: "600",
   },
   showMoreArrow: {
-    color: "#013D25",
     fontSize: 14,
   },
   showMoreArrowUp: {
@@ -797,7 +797,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyTopPicksText: {
-    color: "#85808A",
     fontSize: 13,
     fontStyle: "italic",
   },
@@ -827,13 +826,11 @@ const styles = StyleSheet.create({
   },
   pickTicker: {
     fontSize: 12,
-    color: "#000",
     fontWeight: "700",
   },
   pickName: {
     marginTop: 2,
     fontSize: 13,
-    color: "#85808A",
   },
   pickMetaRow: {
     marginTop: 14,
@@ -842,13 +839,11 @@ const styles = StyleSheet.create({
   },
   pickValue: {
     fontSize: 14,
-    color: "#000",
     fontWeight: "700",
   },
   pickSubMeta: {
     marginTop: 4,
     fontSize: 13,
-    color: "#6B7280",
   },
   pickTrend: {
     marginTop: 14,
@@ -857,7 +852,6 @@ const styles = StyleSheet.create({
   waSectionTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#000",
     paddingTop: 16,
     paddingBottom: 14,
     borderBottomWidth: 1,
@@ -867,7 +861,6 @@ const styles = StyleSheet.create({
   waChartTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#85808A",
     marginBottom: 12,
   },
   pieWrap: {
@@ -891,3 +884,168 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
   },
 });
+
+const createDynamicStyles = (C: typeof Colors.light) =>
+  StyleSheet.create({
+    optionTitle: {
+      fontSize: 14,
+      color: C.text,
+    },
+    modalTitle: {
+      marginTop: 16,
+      color: C.text,
+    },
+    configTitle: {
+      marginTop: 8,
+      fontSize: 16,
+      color: C.text,
+    },
+    sliderTitle: {
+      fontSize: 14,
+      color: C.text,
+    },
+    sheetTitle: {
+      color: C.text,
+    },
+    agreeText: {
+      flex: 1,
+      fontSize: 13,
+      color: C.text,
+    },
+    percentInput: {
+      fontSize: 10,
+      color: C.text,
+      padding: 0,
+      textAlign: "center",
+      minWidth: 18,
+    },
+    percentMark: {
+      fontSize: 10,
+      color: C.text,
+    },
+    pickTicker: {
+      fontSize: 12,
+      color: C.text,
+      fontWeight: "700",
+    },
+    pickValue: {
+      fontSize: 14,
+      color: C.text,
+      fontWeight: "700",
+    },
+    waSectionTitle: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: C.text,
+      paddingTop: 16,
+      paddingBottom: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: "#F7F7F8",
+      marginBottom: 14,
+    },
+    badge: {
+      fontSize: 10,
+      color: C.primary,
+      backgroundColor: C.inputBg,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 10,
+      overflow: "hidden",
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    optionDescription: {
+      marginTop: 4,
+      fontSize: 12,
+      color: C.muted,
+    },
+    modalBody: {
+      marginTop: 6,
+      fontSize: 13,
+      color: C.text,
+    },
+    benefitText: {
+      flex: 1,
+      fontSize: 12,
+      color: C.text,
+    },
+    backText: {
+      fontSize: 13,
+      color: C.primary,
+      fontWeight: "600",
+    },
+    configBody: {
+      marginTop: 6,
+      fontSize: 12,
+      color: C.muted,
+    },
+    thresholdText: {
+      fontSize: 12,
+      color: C.text,
+    },
+    sheetCopy: {
+      fontSize: 13,
+      lineHeight: 20,
+      color: C.muted,
+    },
+    sliderCardLabel: {
+      fontSize: 14,
+      color: C.text,
+    },
+    showMoreLabel: {
+      color: C.primary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    showMoreArrow: {
+      color: C.primary,
+      fontSize: 14,
+    },
+    emptyTopPicksText: {
+      color: C.muted,
+      fontSize: 13,
+      fontStyle: "italic",
+    },
+    pickName: {
+      marginTop: 2,
+      fontSize: 13,
+      color: C.muted,
+    },
+    pickSubMeta: {
+      marginTop: 4,
+      fontSize: 13,
+      color: C.muted,
+    },
+    waChartTitle: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: C.muted,
+      marginBottom: 12,
+    },
+    gradientCard: {
+      backgroundColor: C.inputBg,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    modalCard: {
+      backgroundColor: C.background,
+    },
+    thresholdPill: {
+      backgroundColor: C.inputBg,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    sheetHandle: {
+      backgroundColor: C.border,
+    },
+    checkbox: {
+      borderColor: C.border,
+    },
+    checkboxChecked: {
+      backgroundColor: C.primary,
+      borderColor: C.primary,
+    },
+    modalTitle: {
+      color: C.text,
+    },
+  });

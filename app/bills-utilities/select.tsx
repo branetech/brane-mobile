@@ -4,20 +4,22 @@ import { type PaymentOption } from "@/components/payment-method-selector";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import BaseRequest, { parseNetworkError } from "@/services";
 import {
-  onTransactionPinBettingValidation,
-  onTransactionPinCabelValidation,
-  onTransactionPinElectricityValidation,
-  onTransactionPinValidated,
+    onTransactionPinBettingValidation,
+    onTransactionPinCabelValidation,
+    onTransactionPinElectricityValidation,
+    onTransactionPinValidated,
 } from "@/services/data";
 import {
-  AUTH_SERVICE,
-  MOBILE_SERVICE,
-  PAYMENT_CALLBACK_URL,
-  STOCKS_SERVICE,
-  TRANSACTION_SERVICE,
+    AUTH_SERVICE,
+    MOBILE_SERVICE,
+    PAYMENT_CALLBACK_URL,
+    STOCKS_SERVICE,
+    TRANSACTION_SERVICE,
 } from "@/services/routes";
 import { showError } from "@/utils/helpers";
 import * as Contacts from "expo-contacts";
@@ -67,6 +69,9 @@ export default function UtilitySelectScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const auth = useAppState("auth");
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+  const styles = createStyles(C);
 
   const initialService = String(params.service || "airtime").toLowerCase();
   const currentService: UtilityService =
@@ -712,7 +717,7 @@ export default function UtilitySelectScreen() {
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
         <ThemedText style={styles.headerTitle}>
@@ -993,10 +998,10 @@ export default function UtilitySelectScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (C: typeof Colors["light"]) => StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: C.inputBg,
   },
   header: {
     flexDirection: "row",
@@ -1010,7 +1015,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0B0014",
+    color: C.text,
   },
   content: {
     paddingHorizontal: 16,
@@ -1025,7 +1030,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: "#6F6F74",
+    color: C.muted,
   },
   segmentTabs: {
     flexDirection: "row",

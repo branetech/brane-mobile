@@ -8,23 +8,23 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
 import {
-  hideAppLoader,
-  priceFormatter,
-  showAppLoader,
-  showSuccess,
+    hideAppLoader,
+    priceFormatter,
+    showAppLoader,
+    showSuccess,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  View as RNView,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -116,7 +116,9 @@ export default function BracsSwapScreen() {
       >
         {/* BRACS Balance */}
         <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
-          <ThemedText style={styles.balanceLabelText}>BRACS Balance</ThemedText>
+          <ThemedText style={[styles.balanceLabelText, { color: C.googleBg }]}>
+            BRACS Balance
+          </ThemedText>
           {isLoadingBalance ? (
             <ActivityIndicator color='#fff' size='small' />
           ) : (
@@ -181,7 +183,7 @@ export default function BracsSwapScreen() {
           text='Preview Swap'
           onPress={handlePreview}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.googleBg}
           height={52}
           radius={12}
         />
@@ -230,7 +232,7 @@ export default function BracsSwapScreen() {
         <BraneButton
           text='Back'
           onPress={() => setStage("form")}
-          backgroundColor='#D2F1E4'
+          backgroundColor={C.googleBg}
           textColor={C.primary}
           height={52}
           radius={12}
@@ -243,7 +245,7 @@ export default function BracsSwapScreen() {
             setShowPin(true);
           }}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={C.googleBg}
           height={52}
           radius={12}
           style={styles.halfBtn}
@@ -254,7 +256,7 @@ export default function BracsSwapScreen() {
 
   const renderSuccess = () => (
     <View style={styles.successWrap}>
-      <TickCircle size={72} color='#013D25' variant='Bold' />
+      <TickCircle size={72} color={C.primary} variant='Bold' />
       <ThemedText style={[styles.successTitle, { color: C.text }]}>
         Swap Successful!
       </ThemedText>
@@ -292,7 +294,7 @@ export default function BracsSwapScreen() {
         text='Done'
         onPress={() => router.push("/stock/breakdown")}
         backgroundColor={C.primary}
-        textColor='#D2F1E4'
+        textColor={C.googleBg}
         height={52}
         radius={12}
         width='80%'
@@ -367,7 +369,7 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 6,
   },
-  balanceLabelText: { fontSize: 12, color: "#D2F1E4" },
+  balanceLabelText: { fontSize: 12 },
   balanceAmount: { fontSize: 24, fontWeight: "800", color: "#fff" },
   swapBox: {
     borderWidth: 1,
