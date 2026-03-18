@@ -109,10 +109,23 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
         <Animated.View
           style={[
             styles.cell,
-            isDark && styles.cellLight,
-            filled && [styles.cellFilledLight, { borderColor: C.primary }],
-            focused && [styles.cellFocusedLight, { borderColor: C.primary }],
-            !isDark && { backgroundColor: C.inputBg },
+            {
+              backgroundColor: isDark ? "#1A2420" : C.inputBg,
+              borderColor: isDark ? "transparent" : C.border,
+            },
+            filled && {
+              backgroundColor: isDark ? "#0D2A1E" : C.inputBg,
+              borderColor: C.primary,
+            },
+            focused && {
+              backgroundColor: isDark ? "#152119" : C.inputBg,
+              borderColor: C.primary,
+              shadowColor: C.primary,
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.25,
+              shadowRadius: 8,
+              elevation: 4,
+            },
             { transform: [{ scale: scaleAnims[index] }] },
           ]}
         >
@@ -129,7 +142,7 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
             maxLength={1}
             caretHidden
             selectTextOnFocus
-            style={[styles.input, { color: "#0D1B12" }]}
+            style={[styles.input, { color: C.text }]}
           />
         </Animated.View>
       </Pressable>
@@ -150,7 +163,7 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
             <Text
               style={[
                 styles.separator,
-                { color: isDark ? "#4A6358" : "#AABBB4" },
+                { color: isDark ? C.muted : C.border },
               ]}
             >
               —
@@ -187,30 +200,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
-  },
-  cellLight: {
-    borderColor: "transparent",
-  },
-  cellFilledLight: {
-  },
-  cellFocusedLight: {
-  },
-  cellDark: {
-    backgroundColor: "#1A2420",
-    borderColor: "transparent",
-  },
-  cellFilledDark: {
-    backgroundColor: "#0D2A1E",
-    borderColor: "#2EBD73",
-  },
-  cellFocusedDark: {
-    backgroundColor: "#152119",
-    borderColor: "#2EBD73",
-    shadowColor: "#2EBD73",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
   },
   input: {
     fontSize: 14,
