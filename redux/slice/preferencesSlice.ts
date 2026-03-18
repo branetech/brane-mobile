@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const preferencesSlice = createSlice({
-  name: 'preferences',
+  name: "preferences",
   initialState: {
     transactionSound: true,
     showBalance: true,
@@ -19,5 +19,6 @@ const preferencesSlice = createSlice({
   },
 });
 
-export const { setTransactionSound, setShowBalance, setPreference } = preferencesSlice.actions;
+export const { setTransactionSound, setShowBalance, setPreference } =
+  preferencesSlice.actions;
 export default preferencesSlice.reducer;

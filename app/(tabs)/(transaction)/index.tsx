@@ -177,7 +177,7 @@ export default function TransactionScreen() {
                       ]}
                       onPress={() =>
                         router.push({
-                          pathname: "/transaction/[details]",
+                          pathname: "/(tabs)/(transaction)/[details]",
                           params: { details: String(item.id) },
                         })
                       }

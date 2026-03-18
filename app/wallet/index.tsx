@@ -8,7 +8,6 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import { formatDate, priceFormatter } from "@/utils/helpers";
-import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import {
   Bank,
@@ -25,6 +24,7 @@ import {
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -116,9 +116,8 @@ export default function WalletScreen() {
   const ListHeader = (
     <>
       {/* Balance card */}
-      <CardStyle
-      >
-        <View w='100%' row aligned style={{ justifyContent: "space-between" }}>
+      <CardStyle>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <ThemedText
             style={[
               styles.balanceLabel,
@@ -148,7 +147,7 @@ export default function WalletScreen() {
           {balanceVisible ? priceFormatter(balance, 2) : "₦ ******"}
         </ThemedText>
 
-        <View row gap={12} w='100%' mt={20} h='100%'>
+        <View style={{ flexDirection: "row", gap: 12, width: "100%", marginTop: 20 }}>
           <BraneButton
             text='Withdraw'
             onPress={() => router.push("/wallet/withdraw")}
@@ -169,7 +168,7 @@ export default function WalletScreen() {
       </CardStyle>
 
       {/* Quick actions */}
-      <View style={styles.quickActions} row>
+      <View style={styles.quickActions}>
         {QUICK_ACTIONS.map(({ label, route, Icon }) => (
           <TouchableOpacity
             key={label}
@@ -182,7 +181,6 @@ export default function WalletScreen() {
                 styles.qaIconCircle,
                 { backgroundColor: C.inputBg },
               ])}
-              center
             >
               <Icon size={22} color={C.primary} variant='Bold' />
             </View>
@@ -194,19 +192,12 @@ export default function WalletScreen() {
       </View>
 
       {/* Recent transactions header */}
-      <View
-        row
-        aligned
-        style={StyleSheet.flatten([
-          styles.sectionHeader,
-          { justifyContent: "space-between" as const },
-        ])}
-      >
+      <View style={[styles.sectionHeader, { justifyContent: "space-between" }]}>
         <ThemedText type='defaultSemiBold' style={{ fontSize: 15 }}>
           Recent Transactions
         </ThemedText>
         <TouchableOpacity
-          onPress={() => router.push("/(tabs)/transactions")}
+          onPress={() => router.push("/(tabs)/transaction")}
           activeOpacity={0.7}
         >
           <ThemedText style={{ color: C.primary, fontSize: 13 }}>
@@ -220,7 +211,7 @@ export default function WalletScreen() {
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header} row aligned>
+      <View style={[styles.header, { flexDirection: "row", justifyContent: "space-between", alignItems: "center" }]}>
         <Back />
         <ThemedText type='subtitle' style={styles.headerTitle}>
           My Wallet
@@ -263,14 +254,12 @@ export default function WalletScreen() {
                 styles.txRow,
                 { borderColor: C.border },
               ])}
-              row
-              aligned
             >
-              <View style={styles.txInfo} gap={3}>
+              <View style={styles.txInfo}>
                 <ThemedText type='defaultSemiBold' style={{ fontSize: 14 }}>
                   {item.description}
                 </ThemedText>
-                <ThemedText style={{ fontSize: 12, color: C.muted }}>
+                <ThemedText style={{ fontSize: 12, color: C.muted, marginTop: 3 }}>
                   {item.date}
                 </ThemedText>
               </View>
@@ -294,7 +283,6 @@ export default function WalletScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: {
-    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 4,
@@ -302,28 +290,32 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 16 },
   loader: { marginTop: 40 },
   listContent: { paddingBottom: 40 },
-  balanceCard: {
-    margin: 16,
-    borderRadius: 16,
-    padding: 20,
-  },
   balanceLabel: { fontSize: 13 },
   balanceAmount: { fontSize: 28, fontWeight: "700" },
   cardBtn: { flex: 1 },
   quickActions: {
     paddingHorizontal: 16,
     paddingVertical: 8,
+    flexDirection: "row",
     justifyContent: "space-between",
   },
   quickAction: { alignItems: "center", gap: 6 },
-  qaIconCircle: { width: 54, height: 54, borderRadius: 27 },
+  qaIconCircle: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   qaLabel: { fontSize: 11, fontWeight: "500", textAlign: "center" },
-  sectionHeader: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 },
+  sectionHeader: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4, flexDirection: "row", alignItems: "center" },
   txRow: {
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    gap: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   txInfo: { flex: 1 },
   txAmount: { fontSize: 14, fontWeight: "700" },

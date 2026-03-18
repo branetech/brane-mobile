@@ -13,7 +13,6 @@ import {
     showAppLoader,
     showSuccess,
 } from "@/utils/helpers";
-import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
@@ -25,6 +24,7 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
