@@ -1,159 +1,223 @@
+import {
+  AirtimeDataIcon,
+  ElectricityIcon,
+  GamingSportIcon,
+  GovernmentIcon,
+  InternetIcon,
+  TransportationIcon,
+  TvBillsIcon,
+} from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRouter } from "expo-router";
+import { SearchNormal1 } from "iconsax-react-native";
+import React, { useState } from "react";
 import {
-    CardReceive,
-    CardSend,
-    Devices,
-    Electricity,
-    I3Dcube,
-    KeyboardOpen,
-    TruckFast,
-} from "iconsax-react-native";
-import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type UtilityOption = {
+type Category = {
+  id: string;
   title: string;
-  subtitle: string;
-  routeService:
-    | "airtime"
-    | "data"
-    | "betting"
-    | "cable"
-    | "electricity"
-    | "transportation";
-  icon: (color: string) => React.ReactNode;
-  bg: (C: any) => string;
-  iconBg: (C: any) => string;
+  service: string;
+  bg: string;
+  iconColor: string;
+  fullWidth: boolean;
 };
 
-const getUtilityColors = (C: any, service: string) => {
-  const isDark = C.background === "#151718"; // Check if dark theme
-  const colors: Record<string, { bg: string; iconBg: string }> = {
-    airtime: isDark
-      ? { bg: "#1F4035", iconBg: "#2A5F54" }
-      : { bg: "#E9F8F1", iconBg: "#D2F1E4" },
-    data: isDark
-      ? { bg: "#3D3520", iconBg: "#5F5535" }
-      : { bg: "#F5F1E0", iconBg: "#E7DCB1" },
-    betting: isDark
-      ? { bg: "#1F3A52", iconBg: "#2A5270" }
-      : { bg: "#EAF4FF", iconBg: "#D8E9FF" },
-    cable: isDark
-      ? { bg: "#52381F", iconBg: "#704D2C" }
-      : { bg: "#FFF4EB", iconBg: "#FFDFC2" },
-    electricity: isDark
-      ? { bg: "#1F3A52", iconBg: "#2A5270" }
-      : { bg: "#EEF7FF", iconBg: "#DDEEFF" },
-    transportation: isDark
-      ? { bg: "#253D20", iconBg: "#3A5A30" }
-      : { bg: "#F1F8EE", iconBg: "#DFF0D7" },
-  };
-  return colors[service] || colors.airtime;
-};
-
-const utilities: UtilityOption[] = [
+const CATEGORIES: Category[] = [
   {
-    title: "Airtime",
-    subtitle: "Top up your line instantly",
-    routeService: "airtime",
-    icon: <CardSend size={18} color='#013D25' variant='Bold' />,
-    bg: (C) => getUtilityColors(C, "airtime").bg,
-    iconBg: (C) => getUtilityColors(C, "airtime").iconBg,
+    id: "airtime-data",
+    title: "Airtime & Data",
+    service: "airtime",
+    bg: "#EAF5F1",
+    iconColor: "#013D25",
+    fullWidth: true,
   },
   {
-    title: "Data",
-    subtitle: "Buy internet bundles",
-    routeService: "data",
-    icon: <Devices size={18} color='#013D25' variant='Bold' />,
-    bg: (C) => getUtilityColors(C, "data").bg,
-    iconBg: (C) => getUtilityColors(C, "data").iconBg,
+    id: "internet",
+    title: "Internet",
+    service: "data",
+    bg: "#E0FFFC",
+    iconColor: "#0D7490",
+    fullWidth: false,
   },
   {
-    title: "Betting",
-    subtitle: "Fund betting wallets",
-    routeService: "betting",
-    icon: <I3Dcube size={18} color='#013D25' variant='Bold' />,
-    bg: (C) => getUtilityColors(C, "betting").bg,
-    iconBg: (C) => getUtilityColors(C, "betting").iconBg,
-  },
-  {
-    title: "Cable TV",
-    subtitle: "Pay for DSTV, GOTV and more",
-    routeService: "cable",
-    icon: <CardReceive size={18} color='#013D25' variant='Bold' />,
-    bg: (C) => getUtilityColors(C, "cable").bg,
-    iconBg: (C) => getUtilityColors(C, "cable").iconBg,
-  },
-  {
+    id: "electricity",
     title: "Electricity",
-    subtitle: "Pay meter bills instantly",
-    routeService: "electricity",
-    icon: <Electricity size={18} color='#013D25' variant='Bold' />,
-    bg: (C) => getUtilityColors(C, "electricity").bg,
-    iconBg: (C) => getUtilityColors(C, "electricity").iconBg,
+    service: "electricity",
+    bg: "#99FFF4",
+    iconColor: "#1A5A8A",
+    fullWidth: false,
   },
   {
+    id: "transportation",
     title: "Transportation",
-    subtitle: "Pay for transit services",
-    routeService: "transportation",
-    icon: <TruckFast size={18} color='#013D25' variant='Bold' />,
-    bg: (C) => getUtilityColors(C, "transportation").bg,
-    iconBg: (C) => getUtilityColors(C, "transportation").iconBg,
+    service: "transportation",
+    bg: "#E7DCB1",
+    iconColor: "#6B4A22",
+    fullWidth: true,
+  },
+  {
+    id: "tv-bills",
+    title: "TV Bills",
+    service: "cable",
+    bg: "#F0C8A0",
+    iconColor: "#9E3A0E",
+    fullWidth: false,
+  },
+  {
+    id: "gaming-sport",
+    title: "Gaming & Sport",
+    service: "betting",
+    bg: "#99CFFF",
+    iconColor: "#1A3A6A",
+    fullWidth: false,
+  },
+  {
+    id: "government",
+    title: "Government Task & Levy",
+    service: "government",
+    bg: "#E0F1FF",
+    iconColor: "#1A2A78",
+    fullWidth: true,
   },
 ];
+
+const renderIcon = (id: string) => {
+  switch (id) {
+    case "airtime-data":
+      return <AirtimeDataIcon />;
+    case "internet":
+      return <InternetIcon />;
+    case "electricity":
+      return <ElectricityIcon />;
+    case "transportation":
+      return <TransportationIcon />;
+    case "tv-bills":
+      return <TvBillsIcon />;
+    case "gaming-sport":
+      return <GamingSportIcon />;
+    case "government":
+      return <GovernmentIcon />;
+    default:
+      return null;
+  }
+};
 
 export default function UtiliScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
+  const [search, setSearch] = useState("");
+
+  const filtered = search.trim()
+    ? CATEGORIES.filter((c) =>
+        c.title.toLowerCase().includes(search.toLowerCase()),
+      )
+    : CATEGORIES;
+
+  const handlePress = (cat: Category) => {
+    if (cat.service === "government") return;
+    router.push({
+      pathname: "/bills-utilities/select",
+      params: { service: cat.service },
+    });
+  };
+
+  // Group into rows: full-width cards are alone; consecutive halves pair up
+  const rows: (Category | [Category, Category])[] = [];
+  let i = 0;
+  while (i < filtered.length) {
+    const cur = filtered[i];
+    if (cur.fullWidth) {
+      rows.push(cur);
+      i++;
+    } else {
+      const next = filtered[i + 1];
+      if (next && !next.fullWidth) {
+        rows.push([cur, next]);
+        i += 2;
+      } else {
+        rows.push(cur);
+        i++;
+      }
+    }
+  }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: C.background }]}>
-      <View style={styles.headerRow}>
-        <ThemedText style={[styles.title, { color: C.text }]}>
-          Bills & Utilities
-        </ThemedText>
-        <View style={[styles.badge, { backgroundColor: C.googleBg }]}>
-          <KeyboardOpen size={14} color={C.primary} />
-          <ThemedText style={[styles.badgeText, { color: C.primary }]}>
-            Pay fast
-          </ThemedText>
-        </View>
-      </View>
-
-      <ThemedText style={[styles.subtitle, { color: C.muted }]}>
-        Choose a utility service to continue.
+      <ThemedText style={[styles.title, { color: C.text }]}>
+        Utilities
       </ThemedText>
 
-      <View style={styles.grid}>
-        {utilities.map((item) => (
-          <TouchableOpacity
-            key={item.routeService}
-            activeOpacity={0.8}
-            style={[styles.card, { backgroundColor: item.bg(C) }]}
-            onPress={() =>
-              router.push({
-                pathname: "/bills-utilities/select",
-                params: { service: item.routeService },
-              })
-            }
-          >
-            <View style={[styles.iconWrap, { backgroundColor: item.iconBg(C) }]}>
-              {item.icon}
-            </View>
-            <ThemedText style={[styles.cardTitle, { color: C.text }]}>
-              {item.title}
-            </ThemedText>
-            <ThemedText style={[styles.cardSubtitle, { color: C.muted }]}>
-              {item.subtitle}
-            </ThemedText>
-          </TouchableOpacity>
-        ))}
+      <View
+        style={[
+          styles.searchBar,
+          { backgroundColor: C.inputBg, borderColor: C.border },
+        ]}
+      >
+        <SearchNormal1 size={16} color={C.muted} variant="Outline" />
+        <TextInput
+          style={[styles.searchInput, { color: C.text }]}
+          placeholder="Search services"
+          placeholderTextColor={C.muted}
+          value={search}
+          onChangeText={setSearch}
+        />
       </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {rows.map((row, idx) => {
+          if (Array.isArray(row)) {
+            const [left, right] = row;
+            return (
+              <View key={`row-${idx}`} style={styles.halfRow}>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  style={[styles.cardHalf, { backgroundColor: left.bg }]}
+                  onPress={() => handlePress(left)}
+                >
+                  <View style={styles.cardIconWrap}>{renderIcon(left.id)}</View>
+                  <ThemedText style={styles.cardLabel}>{left.title}</ThemedText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  style={[styles.cardHalf, { backgroundColor: right.bg }]}
+                  onPress={() => handlePress(right)}
+                >
+                  <View style={styles.cardIconWrap}>
+                    {renderIcon(right.id)}
+                  </View>
+                  <ThemedText style={styles.cardLabel}>
+                    {right.title}
+                  </ThemedText>
+                </TouchableOpacity>
+              </View>
+            );
+          }
+          return (
+            <TouchableOpacity
+              key={row.id}
+              activeOpacity={0.85}
+              style={[styles.cardFull, { backgroundColor: row.bg }]}
+              onPress={() => handlePress(row)}
+            >
+              <View style={styles.cardIconWrap}>{renderIcon(row.id)}</View>
+              <ThemedText style={styles.cardLabel}>{row.title}</ThemedText>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -162,63 +226,54 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 12,
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    paddingTop: 14,
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "700",
+    marginBottom: 12,
   },
-  subtitle: {
-    marginTop: 6,
-    fontSize: 12,
-    marginBottom: 16,
-  },
-  badge: {
+  searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    backgroundColor: "#D2F1E4",
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: "600",
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-  card: {
-    width: "48.5%",
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#EEF0F3",
-    padding: 12,
-    minHeight: 140,
-  },
-  iconWrap: {
-    width: 34,
-    height: 34,
+    gap: 8,
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
+    paddingHorizontal: 12,
+    height: 48,
+    marginBottom: 24,
   },
-  cardTitle: {
+  searchInput: {
+    flex: 1,
     fontSize: 13,
-    fontWeight: "700",
   },
-  cardSubtitle: {
-    marginTop: 5,
-    fontSize: 10,
-    lineHeight: 14,
+  scrollContent: {
+    gap: 16,
+    paddingBottom: 24,
+  },
+  cardFull: {
+    width: "100%",
+    borderRadius: 16,
+    padding: 18,
+    minHeight: 116,
+    justifyContent: "space-between",
+  },
+  halfRow: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  cardHalf: {
+    flex: 1,
+    borderRadius: 16,
+    padding: 16,
+    minHeight: 116,
+    justifyContent: "space-between",
+  },
+  cardIconWrap: {
+    marginBottom: 14,
+  },
+  cardLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1A1A2E",
   },
 });

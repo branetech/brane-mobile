@@ -8,7 +8,7 @@ import { Transactions } from "@/components/home/home-transaction-history";
 import { NewUserOnboardingModal } from "@/components/new-user-onboarding-modal";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { setShowNewUserModal, setShowSupportChat } from "@/redux/slice/auth-slice";
+import { setShowNewUserModal } from "@/redux/slice/auth-slice";
 import { useCallback, useState } from "react";
 import { RefreshControl, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -20,8 +20,9 @@ export default function HomeScreen() {
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const [isRefreshing, setIsRefreshing] = useState(false);
   const dispatch = useDispatch();
-  const showNewUserModal = useSelector((state: any) => state.auth.showNewUserModal);
-  const showSupportChat = useSelector((state: any) => state.auth.showSupportChat);
+  const showNewUserModal = useSelector(
+    (state: any) => state.auth.showNewUserModal,
+  );
 
   const onRefresh = useCallback(() => {
     setIsRefreshing(true);
@@ -33,10 +34,6 @@ export default function HomeScreen() {
 
   const handleCloseModal = () => {
     dispatch(setShowNewUserModal(false));
-  };
-
-  const handleCloseSupportChat = () => {
-    dispatch(setShowSupportChat(false));
   };
 
   return (
@@ -58,7 +55,6 @@ export default function HomeScreen() {
         visible={showNewUserModal}
         onClose={handleCloseModal}
       />
-      
     </SafeAreaView>
   );
 }
