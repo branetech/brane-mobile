@@ -122,11 +122,11 @@ export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => 
           style={[
             styles.cell,
             {
-              backgroundColor: C.inputBg,
+              backgroundColor: C.inputBackground,
               borderColor: C.border,
             },
             filled && {
-              backgroundColor: C.inputBg,
+              backgroundColor: C.inputBackground,
               borderColor: C.primary,
             },
             focused && {

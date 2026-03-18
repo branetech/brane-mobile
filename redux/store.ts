@@ -9,6 +9,7 @@ import screenReducer from "./slice/checkScreen";
 import fundCardReducer from "./slice/fundCardSlice";
 import { default as intentReducer } from "./slice/intentSlice";
 import { default as themesReducer } from "./slice/themeSlice";
+import { default as preferencesReducer } from "./slice/preferencesSlice";
 import storage from "./storage";
 
 const reducers = combineReducers({
@@ -18,6 +19,7 @@ const reducers = combineReducers({
   intents: intentReducer,
   fundCardSlice: fundCardReducer,
   bracDetails: bracReducer,
+  preferences: preferencesReducer,
 });
 const persistConfig = { key: "root", storage: storage };
 const persistedReducer = persistReducer(persistConfig, reducers);
