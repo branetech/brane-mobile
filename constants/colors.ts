@@ -30,7 +30,7 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     borderColor: "#2A2B2D",
     inputBg: "#2A2B2D",
-    primary: "#13C965",
+    primary: "#013D25",
     muted: "#8E8E93",
     border: "#404040",
     error: "#D50000",

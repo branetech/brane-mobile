@@ -6,7 +6,6 @@ import {
     Transactions,
 } from "@/components/home/home-card";
 import { NewUserOnboardingModal } from "@/components/new-user-onboarding-modal";
-import { SupportChatModal } from "@/components/support-chat-modal";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { setShowNewUserModal, setShowSupportChat } from "@/redux/slice/auth-slice";
@@ -59,10 +58,10 @@ export default function HomeScreen() {
         visible={showNewUserModal}
         onClose={handleCloseModal}
       />
-      <SupportChatModal
+      {/* <SupportChatModal
         visible={showSupportChat}
         onClose={handleCloseSupportChat}
-      />
+      /> */}
     </SafeAreaView>
   );
 }

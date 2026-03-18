@@ -10,12 +10,12 @@ import {
   ActivityIndicator,
   Modal,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   useColorScheme,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ManagedPortfolioScreen = () => {
   const router = useRouter();
@@ -138,11 +138,19 @@ const ManagedPortfolioScreen = () => {
             { backgroundColor: `${C.primary}10`, borderColor: C.primary },
           ]}
         >
-          <Warning2 size={20} color={C.primary} />
-          <ThemedText style={[styles.infoText, { color: C.text }]}>
-            The Managed Portfolio is managed by Sankore Securities, a Registered
-            Investment Broker licensed by SEC
-          </ThemedText>
+          <View style={{ flex: 1, flexDirection: "row", gap: 12 }}>
+            <Warning2 size={20} color={C.primary} style={{ marginTop: 2 }} />
+            <View style={{ flex: 1 }}>
+              <ThemedText style={[styles.infoText, { color: C.text }]}>
+                The Managed Portfolio is managed by Sankore Securities, a Registered Investment Broker licensed by SEC
+              </ThemedText>
+              <Pressable onPress={() => router.push('/bracs-investment-trigger/about-managed-portfolio')}>
+                <ThemedText style={[styles.learnMoreLink, { color: C.primary }]}>
+                  Learn More →
+                </ThemedText>
+              </Pressable>
+            </View>
+          </View>
         </View>
 
         {/* Action Buttons */}
@@ -253,12 +261,12 @@ const ManagedPortfolioScreen = () => {
             <BraneButton
               onPress={() => {
                 setShowSuccessModal(false);
-                router.back();
+                router.push('/bracs-investment-trigger/about-managed-portfolio');
               }}
               style={[styles.continueButton, { backgroundColor: C.primary }]}
             >
               <ThemedText style={styles.continueButtonText}>
-                Continue
+                Learn About Your Portfolio
               </ThemedText>
             </BraneButton>
           </View>
@@ -357,6 +365,11 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
     lineHeight: 16,
+  },
+  learnMoreLink: {
+    fontSize: 12,
+    fontWeight: "600",
+    marginTop: 8,
   },
   buttonContainer: {
     gap: 12,
