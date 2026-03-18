@@ -1,26 +1,27 @@
-import React, { useState } from "react";
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  SafeAreaView,
-  useColorScheme,
-  Modal,
-  Pressable,
-  ActivityIndicator,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { Colors } from "@/constants/colors";
-import { ThemedText } from "@/components/themed-text";
 import { BraneButton } from "@/components/brane-button";
+import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
+import { useRouter } from "expo-router";
 import { TickCircle, Warning2 } from "iconsax-react-native";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  Modal,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from "react-native";
 
 const ManagedPortfolioScreen = () => {
   const router = useRouter();
-  const scheme = useColorScheme() || "light";
-  const C = Colors[scheme];
+  const scheme = useColorScheme();
+  const isDark = scheme === "dark";
+  const C = Colors[isDark ? "dark" : "light"];
 
   const [isLoading, setIsLoading] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -65,13 +66,15 @@ const ManagedPortfolioScreen = () => {
         { backgroundColor: C.inputBg, borderColor: C.border },
       ]}
     >
-      <View
-        style={[
-          styles.featureIcon,
-          { backgroundColor: `${C.primary}15` },
-        ]}
-      >
-        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.primary }} />
+      <View style={[styles.featureIcon, { backgroundColor: `${C.primary}15` }]}>
+        <View
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: 4,
+            backgroundColor: C.primary,
+          }}
+        />
       </View>
       <View style={styles.featureContent}>
         <ThemedText style={styles.featureTitle}>{title}</ThemedText>
@@ -100,35 +103,31 @@ const ManagedPortfolioScreen = () => {
             { backgroundColor: `${C.primary}15`, borderColor: C.primary },
           ]}
         >
-          <View
-            style={[
-              styles.heroIcon,
-              { backgroundColor: C.primary },
-            ]}
-          >
+          <View style={[styles.heroIcon, { backgroundColor: C.primary }]}>
             <ThemedText style={styles.heroIconText}>💰</ThemedText>
           </View>
           <ThemedText style={styles.heroTitle}>
             Let Experts Manage Your Wealth
           </ThemedText>
           <ThemedText style={[styles.heroSubtitle, { color: C.muted }]}>
-            Our expert investors grow your wealth using Brac balance automatically at 12-18% historical market returns
+            Our expert investors grow your wealth using Brac balance
+            automatically at 12-18% historical market returns
           </ThemedText>
         </View>
 
         {/* Features */}
         <View style={styles.featuresSection}>
           <FeatureItem
-            title="Earn More While You Spend"
-            description="Expert investors grow your wealth using Brac balance automatically at 12-18% historical market returns VS 0% sitting idle in your wallet."
+            title='Earn More While You Spend'
+            description='Expert investors grow your wealth using Brac balance automatically at 12-18% historical market returns VS 0% sitting idle in your wallet.'
           />
           <FeatureItem
-            title="Access Expert-Level Investment"
-            description="Get the same proven strategies and SEC-regulated protection that wealthy investors pay millions for at no extra cost to you."
+            title='Access Expert-Level Investment'
+            description='Get the same proven strategies and SEC-regulated protection that wealthy investors pay millions for at no extra cost to you.'
           />
           <FeatureItem
-            title="Fully Managed & Monitored"
-            description="Your portfolio is continuously monitored and rebalanced by professional fund managers to ensure optimal performance."
+            title='Fully Managed & Monitored'
+            description='Your portfolio is continuously monitored and rebalanced by professional fund managers to ensure optimal performance.'
           />
         </View>
 
@@ -141,7 +140,8 @@ const ManagedPortfolioScreen = () => {
         >
           <Warning2 size={20} color={C.primary} />
           <ThemedText style={[styles.infoText, { color: C.text }]}>
-            The Managed Portfolio is managed by Sankore Securities, a Registered Investment Broker licensed by SEC
+            The Managed Portfolio is managed by Sankore Securities, a Registered
+            Investment Broker licensed by SEC
           </ThemedText>
         </View>
 
@@ -156,21 +156,14 @@ const ManagedPortfolioScreen = () => {
             ]}
           >
             {isLoading ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <ActivityIndicator size='small' color='#FFFFFF' />
             ) : (
-              <ThemedText style={styles.proceedButtonText}>
-                Proceed
-              </ThemedText>
+              <ThemedText style={styles.proceedButtonText}>Proceed</ThemedText>
             )}
           </BraneButton>
 
           <Pressable onPress={() => setShowTermsModal(true)}>
-            <ThemedText
-              style={[
-                styles.termsLink,
-                { color: C.primary },
-              ]}
-            >
+            <ThemedText style={[styles.termsLink, { color: C.primary }]}>
               View Terms & Conditions
             </ThemedText>
           </Pressable>
@@ -181,14 +174,11 @@ const ManagedPortfolioScreen = () => {
       <Modal
         visible={showTermsModal}
         transparent
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setShowTermsModal(false)}
       >
         <SafeAreaView
-          style={[
-            styles.modalContainer,
-            { backgroundColor: C.background },
-          ]}
+          style={[styles.modalContainer, { backgroundColor: C.background }]}
         >
           <ScrollView
             style={styles.termsScroll}
@@ -197,12 +187,7 @@ const ManagedPortfolioScreen = () => {
             <ThemedText style={styles.termsTitle}>
               Terms & Conditions
             </ThemedText>
-            <ThemedText
-              style={[
-                styles.termsBody,
-                { color: C.text },
-              ]}
-            >
+            <ThemedText style={[styles.termsBody, { color: C.text }]}>
               {`1. MANAGED PORTFOLIO AGREEMENT\n\nBy proceeding with the Managed Portfolio option, you agree that your Brac balance will be invested according to professional management strategies.\n\n2. RISK DISCLOSURE\n\nAll investments carry risk. Past performance does not guarantee future results. Your investment may increase or decrease in value based on market conditions.\n\n3. FUND MANAGER AUTHORIZATION\n\nYou authorize Sankore Securities to manage your funds in accordance with their investment policies and procedures.\n\n4. FEES\n\nManaged portfolio fees will be clearly communicated before proceeding. Performance-based fees may apply.\n\n5. REGULATORY COMPLIANCE\n\nThis managed portfolio is regulated by the Securities and Exchange Commission (SEC) and complies with all applicable investment regulations.\n\n6. DISPUTE RESOLUTION\n\nAny disputes arising from this agreement shall be resolved through arbitration in accordance with applicable laws.\n\nPlease review these terms carefully before proceeding.`}
             </ThemedText>
           </ScrollView>
@@ -219,21 +204,13 @@ const ManagedPortfolioScreen = () => {
                 },
               ]}
             >
-              <ThemedText
-                style={[
-                  styles.termsButtonText,
-                  { color: C.text },
-                ]}
-              >
+              <ThemedText style={[styles.termsButtonText, { color: C.text }]}>
                 Decline
               </ThemedText>
             </BraneButton>
             <BraneButton
               onPress={handleAcceptTerms}
-              style={[
-                styles.termsButton,
-                { backgroundColor: C.primary },
-              ]}
+              style={[styles.termsButton, { backgroundColor: C.primary }]}
             >
               <ThemedText style={styles.termsButtonTextAccept}>
                 I Accept Terms
@@ -247,43 +224,30 @@ const ManagedPortfolioScreen = () => {
       <Modal
         visible={showSuccessModal}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => {
           setShowSuccessModal(false);
           router.back();
         }}
       >
         <Pressable
-          style={[
-            styles.modalBackdrop,
-            { backgroundColor: "rgba(0,0,0,0.5)" },
-          ]}
+          style={[styles.modalBackdrop, { backgroundColor: "rgba(0,0,0,0.5)" }]}
           onPress={() => {
             setShowSuccessModal(false);
             router.back();
           }}
         >
-          <View
-            style={[
-              styles.successCard,
-              { backgroundColor: C.background },
-            ]}
-          >
+          <View style={[styles.successCard, { backgroundColor: C.background }]}>
             <View
               style={[
                 styles.iconContainer,
                 { backgroundColor: `${C.primary}15` },
               ]}
             >
-              <TickCircle size={48} color={C.primary} variant="Bold" />
+              <TickCircle size={48} color={C.primary} variant='Bold' />
             </View>
             <ThemedText style={styles.successTitle}>Success!</ThemedText>
-            <ThemedText
-              style={[
-                styles.successMessage,
-                { color: C.muted },
-              ]}
-            >
+            <ThemedText style={[styles.successMessage, { color: C.muted }]}>
               Your managed portfolio has been activated successfully
             </ThemedText>
             <BraneButton
@@ -291,10 +255,7 @@ const ManagedPortfolioScreen = () => {
                 setShowSuccessModal(false);
                 router.back();
               }}
-              style={[
-                styles.continueButton,
-                { backgroundColor: C.primary },
-              ]}
+              style={[styles.continueButton, { backgroundColor: C.primary }]}
             >
               <ThemedText style={styles.continueButtonText}>
                 Continue

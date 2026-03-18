@@ -1,23 +1,22 @@
+import { BraneButton } from "@/components/brane-button";
+import { FormInput } from "@/components/formInput";
+import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import BaseRequest, { catchError } from "@/services";
+import { TRANSACTION_SERVICE } from "@/services/routes";
+import { useRouter } from "expo-router";
+import { TickCircle } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ScrollView,
-  View,
-  StyleSheet,
-  SafeAreaView,
-  useColorScheme,
   ActivityIndicator,
   Modal,
   Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  useColorScheme,
+  View,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { Colors } from "@/constants/colors";
-import { ThemedText } from "@/components/themed-text";
-import { BraneButton } from "@/components/brane-button";
-import { FormInput } from "@/components/formInput";
-import BaseRequest, { catchError } from "@/services";
-import { TRANSACTION_SERVICE } from "@/services/routes";
-import { showSuccess } from "@/utils/helpers";
-import { TickCircle } from "iconsax-react-native";
 
 interface BracsAllocation {
   stockAsset: number;
@@ -49,7 +48,7 @@ const BracsAllocationScreen = () => {
     try {
       setIsLoadingData(true);
       const response = await BaseRequest.get(
-        TRANSACTION_SERVICE.ACCOUNT_BRACS_ALLOCATION
+        TRANSACTION_SERVICE.ACCOUNT_BRACS_ALLOCATION,
       );
       if (response.data) {
         setStockAssets(response.data.stockAsset || 25);
@@ -87,10 +86,7 @@ const BracsAllocationScreen = () => {
     }
   };
 
-  const handleAssetChange = (
-    value: string,
-    setter: (val: number) => void
-  ) => {
+  const handleAssetChange = (value: string, setter: (val: number) => void) => {
     const num = parseInt(value) || 0;
     if (num >= 0 && num <= 100) {
       setter(num);
@@ -115,11 +111,11 @@ const BracsAllocationScreen = () => {
         ]}
       >
         <FormInput
-          placeholder="0-100"
+          placeholder='0-100'
           placeholderTextColor={C.muted}
           value={value.toString()}
           onChangeText={onChange}
-          keyboardType="number-pad"
+          keyboardType='number-pad'
           style={styles.assetInput}
           maxLength={3}
         />
@@ -144,29 +140,29 @@ const BracsAllocationScreen = () => {
 
         {isLoadingData ? (
           <View style={styles.centerLoader}>
-            <ActivityIndicator size="large" color={C.primary} />
+            <ActivityIndicator size='large' color={C.primary} />
           </View>
         ) : (
           <>
             {/* Asset Allocation Inputs */}
             <View style={styles.allocationSection}>
               <AssetRow
-                label="Stock Assets"
+                label='Stock Assets'
                 value={stockAssets}
                 onChange={(val) => handleAssetChange(val, setStockAssets)}
               />
               <AssetRow
-                label="Gold Assets"
+                label='Gold Assets'
                 value={goldAssets}
                 onChange={(val) => handleAssetChange(val, setGoldAssets)}
               />
               <AssetRow
-                label="Fixed Income"
+                label='Fixed Income'
                 value={fixedIncome}
                 onChange={(val) => handleAssetChange(val, setFixedIncome)}
               />
               <AssetRow
-                label="Index Funds"
+                label='Index Funds'
                 value={indexFunds}
                 onChange={(val) => handleAssetChange(val, setIndexFunds)}
               />
@@ -192,9 +188,7 @@ const BracsAllocationScreen = () => {
                 {total}%
               </ThemedText>
               {!isValid && (
-                <ThemedText
-                  style={[styles.totalHint, { color: C.error }]}
-                >
+                <ThemedText style={[styles.totalHint, { color: C.error }]}>
                   Must equal 100%
                 </ThemedText>
               )}
@@ -211,7 +205,9 @@ const BracsAllocationScreen = () => {
                 <ThemedText style={styles.toggleTitle}>
                   AI Recommended Trades
                 </ThemedText>
-                <ThemedText style={[styles.toggleDescription, { color: C.muted }]}>
+                <ThemedText
+                  style={[styles.toggleDescription, { color: C.muted }]}
+                >
                   Enable or disable AI recommendations
                 </ThemedText>
               </View>
@@ -226,9 +222,7 @@ const BracsAllocationScreen = () => {
                   style={[
                     styles.toggleThumb,
                     {
-                      transform: [
-                        { translateX: isAiTradesEnabled ? 20 : 2 },
-                      ],
+                      transform: [{ translateX: isAiTradesEnabled ? 20 : 2 }],
                     },
                   ]}
                 />
@@ -261,7 +255,7 @@ const BracsAllocationScreen = () => {
       <Modal
         visible={showSuccessModal}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => {
           setShowSuccessModal(false);
           router.back();
@@ -274,19 +268,14 @@ const BracsAllocationScreen = () => {
             router.back();
           }}
         >
-          <View
-            style={[
-              styles.successCard,
-              { backgroundColor: C.background },
-            ]}
-          >
+          <View style={[styles.successCard, { backgroundColor: C.background }]}>
             <View
               style={[
                 styles.iconContainer,
                 { backgroundColor: `${C.primary}15` },
               ]}
             >
-              <TickCircle size={48} color={C.primary} variant="Bold" />
+              <TickCircle size={48} color={C.primary} variant='Bold' />
             </View>
             <ThemedText style={styles.successTitle}>Success!</ThemedText>
             <ThemedText style={[styles.successMessage, { color: C.muted }]}>
