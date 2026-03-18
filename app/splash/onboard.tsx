@@ -90,7 +90,6 @@ export default function Onboarding() {
               ]}
             />
           ))}
-          ))}
         </View>
 
         <View style={styles.buttonContainer}>

@@ -23,12 +23,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  type ImageSourcePropType,
 } from "react-native";
-import { getElectricityImageKey } from "./helpers";
+import { getBettingImageKey, getElectricityImageKey } from "./helpers";
 import {
+  BETTING_IMAGES,
   BOOST_PRESETS,
   ELECTRICITY_IMAGES,
-  NETWORK_IMAGES,
   type CablePlan,
   type DataPlan,
   type SelectOption,
@@ -227,23 +228,28 @@ type SummaryModalProps = {
   visible: boolean;
   onClose: () => void;
   amountToPay: number;
-  bracsRewardAmount: number;
-  networkImageKey: string;
-  networkLabel: string;
-  phone: string;
-  boostAmount: string;
+  iconSource?: ImageSourcePropType;
+  iconFallbackText?: string;
+  summaryRows: {
+    label: string;
+    value: string;
+    bold?: boolean;
+  }[];
+  bracsRewardAmount?: number;
+  boostAmount?: string;
   paymentOptions: PaymentOption[];
   paymentId: string;
   setPaymentId: (v: string) => void;
   ctaLabel: string;
   isSubmitting: boolean;
+  showRewardBanner?: boolean;
   onSeeAll?: () => void;
   onConfirm: () => void;
 };
 
-function formatMoney(value: number) {
+function formatHeadlineMoney(value: number) {
   return Number(value || 0).toLocaleString("en-NG", {
-    minimumFractionDigits: 2,
+    minimumFractionDigits: Number.isInteger(Number(value || 0)) ? 0 : 2,
     maximumFractionDigits: 2,
   });
 }
@@ -252,16 +258,17 @@ export function SummaryModal({
   visible,
   onClose,
   amountToPay,
-  bracsRewardAmount,
-  networkImageKey,
-  networkLabel,
-  phone,
-  boostAmount,
+  iconSource,
+  iconFallbackText,
+  summaryRows,
+  bracsRewardAmount = 0,
+  boostAmount = "0",
   paymentOptions,
   paymentId,
   setPaymentId,
   ctaLabel,
   isSubmitting,
+  showRewardBanner = true,
   onSeeAll,
   onConfirm,
 }: SummaryModalProps) {
@@ -288,18 +295,20 @@ export function SummaryModal({
 
           <View style={styles.summaryAmountWrap}>
             <View style={styles.summaryNetworkCircle}>
-              {NETWORK_IMAGES[networkImageKey] ? (
+              {iconSource ? (
                 <Image
-                  source={NETWORK_IMAGES[networkImageKey]}
+                  source={iconSource}
                   style={styles.summaryNetworkImg}
                   resizeMode="contain"
                 />
               ) : (
-                <Text style={styles.summaryCoinEmoji}>🪙</Text>
+                <Text style={styles.summaryCoinEmoji}>
+                  {iconFallbackText || "🪙"}
+                </Text>
               )}
             </View>
             <ThemedText style={styles.summaryAmountText}>
-              ₦{formatMoney(amountToPay)}
+              ₦{formatHeadlineMoney(amountToPay)}
             </ThemedText>
           </View>
 
@@ -307,26 +316,9 @@ export function SummaryModal({
             <ThemedText style={styles.summaryTitle}>
               Transaction Summary
             </ThemedText>
-            {[
-              { label: "Provider", value: networkLabel },
-              { label: "Sending to", value: phone },
-              {
-                label: "Transaction Amount",
-                value: `₦ ${formatMoney(amountToPay)}`,
-              },
-              {
-                label: "Cash Boost",
-                value: `₦ ${formatMoney(Number(boostAmount || 0))}`,
-              },
-              { label: "Service Fee", value: "₦ 0.00" },
-              {
-                label: "Total Debit",
-                value: `₦ ${formatMoney(amountToPay + Number(boostAmount || 0))}`,
-                bold: true,
-              },
-            ].map((row, idx) => (
+            {summaryRows.map((row, idx) => (
               <View key={idx}>
-                {idx === 5 && <View style={styles.summaryDivider} />}
+                {row.bold ? <View style={styles.summaryDivider} /> : null}
                 <View style={styles.summaryRow}>
                   <ThemedText style={styles.summaryRowLabel}>
                     {row.label}
@@ -344,21 +336,23 @@ export function SummaryModal({
             ))}
           </View>
 
-          <TouchableOpacity
-            style={styles.bracsRewardBanner}
-            onPress={() => setShowTooltip(true)}
-            activeOpacity={0.8}
-          >
-            <View style={styles.bracsRewardLeft}>
-              <BracsInfoIcon size={16} />
-              <ThemedText style={styles.bracsRewardText}>
-                Bracs reward + cash boost
+          {showRewardBanner ? (
+            <TouchableOpacity
+              style={styles.bracsRewardBanner}
+              onPress={() => setShowTooltip(true)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.bracsRewardLeft}>
+                <BracsInfoIcon size={16} />
+                <ThemedText style={styles.bracsRewardText}>
+                  Bracs reward + cash boost
+                </ThemedText>
+              </View>
+              <ThemedText style={styles.bracsRewardValue}>
+                {bracsRewardAmount}+{boostAmount}
               </ThemedText>
-            </View>
-            <ThemedText style={styles.bracsRewardValue}>
-              {bracsRewardAmount}+{boostAmount || "0"}
-            </ThemedText>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          ) : null}
 
           {paymentOptions.length > 0 ? (
             <PaymentMethodSelector
@@ -379,9 +373,8 @@ export function SummaryModal({
             loading={isSubmitting}
           />
 
-          {/* Bracs tooltip — full-screen modal on top of summary sheet */}
           <Modal
-            visible={showTooltip}
+            visible={showRewardBanner && showTooltip}
             transparent
             animationType="fade"
             onRequestClose={() => setShowTooltip(false)}
@@ -726,6 +719,91 @@ export function ElectricityProviderModal({
                         .toUpperCase()}
                       )
                     </ThemedText>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
+
+type BettingProviderModalProps = {
+  visible: boolean;
+  onClose: () => void;
+  providers: SelectOption[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+};
+
+export function BettingProviderModal({
+  visible,
+  onClose,
+  providers,
+  selectedId,
+  onSelect,
+}: BettingProviderModalProps) {
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalCard}
+          onPress={() => {}}
+        >
+          <View style={styles.modalHeader}>
+            <ThemedText style={styles.modalTitle}>Select Provider</ThemedText>
+            <TouchableOpacity onPress={onClose}>
+              <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            style={styles.modalList}
+            showsVerticalScrollIndicator={false}
+          >
+            {providers.map((item) => {
+              const imageKey = getBettingImageKey(
+                `${item.id} ${item.label} ${item.description || ""}`,
+              );
+              const logo = imageKey ? BETTING_IMAGES[imageKey] : undefined;
+              const selected = selectedId === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.providerModalRow,
+                    selected && styles.providerModalRowActive,
+                  ]}
+                  onPress={() => onSelect(item.id)}
+                >
+                  {logo ? (
+                    <Image
+                      source={logo}
+                      style={styles.providerModalLogo}
+                      resizeMode="contain"
+                    />
+                  ) : null}
+                  <View style={styles.providerModalTextWrap}>
+                    <ThemedText style={styles.providerModalTitle}>
+                      {item.label}
+                    </ThemedText>
+                    {item.description ? (
+                      <ThemedText style={styles.providerModalSubtitle}>
+                        {item.description}
+                      </ThemedText>
+                    ) : null}
                   </View>
                 </TouchableOpacity>
               );

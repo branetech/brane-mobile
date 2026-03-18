@@ -340,7 +340,7 @@ export default function BracsSwapScreen() {
         onValidatePin={async (pin) => {
           try {
             await BaseRequest.post("/auth-service/validate-transaction-pin", {
-              pin,
+              transactionPin: pin,
             });
             return true;
           } catch {

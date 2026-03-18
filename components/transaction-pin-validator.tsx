@@ -6,10 +6,10 @@ import { View } from "@idimma/rn-widget";
 import { ArrowLeft2, FingerCricle } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    Modal,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -83,7 +83,7 @@ export const TransactionPinValidator = ({
     <Modal
       visible={visible}
       transparent={false}
-      animationType='slide'
+      animationType="slide"
       onRequestClose={handleClose}
     >
       <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
@@ -96,7 +96,9 @@ export const TransactionPinValidator = ({
               <ThemedText style={dynamicStyles.closeText}>×</ThemedText>
             </TouchableOpacity>
 
-            <ThemedText style={dynamicStyles.title}>Confirm transaction</ThemedText>
+            <ThemedText style={dynamicStyles.title}>
+              Confirm transaction
+            </ThemedText>
             <ThemedText style={dynamicStyles.subtitle}>
               Kindly enter your transaction PIN to authorize this transaction.
             </ThemedText>
@@ -116,8 +118,10 @@ export const TransactionPinValidator = ({
 
           {isLoading ? (
             <View style={styles.loadingWrap}>
-              <ActivityIndicator size='small' color={C.primary} />
-              <ThemedText style={dynamicStyles.loadingText}>Please wait</ThemedText>
+              <ActivityIndicator size="small" color={C.primary} />
+              <ThemedText style={dynamicStyles.loadingText}>
+                Please wait
+              </ThemedText>
             </View>
           ) : (
             <View style={styles.keypad}>
@@ -208,7 +212,15 @@ export const TransactionPinValidator = ({
           animationType="fade"
           onRequestClose={() => setShowInvalid(false)}
         >
-          <View style={[styles.invalidOverlay, { backgroundColor: scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)" }]}>
+          <View
+            style={[
+              styles.invalidOverlay,
+              {
+                backgroundColor:
+                  scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)",
+              },
+            ]}
+          >
             <View style={[styles.invalidCard, { backgroundColor: C.screen }]}>
               <ThemedText style={dynamicStyles.invalidTitle}>
                 Invalid transaction pin
@@ -242,7 +254,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 6,
+    paddingTop: 56,
   },
   topContent: {
     gap: 8,

@@ -65,6 +65,108 @@ export const getElectricityImageKey = (value: string) => {
   return "";
 };
 
+
+export const getBettingImageKey = (value: string) => {
+  const key = normalizeKey(value);
+  if (key.includes("bet9ja")) return "bet9ja";
+  if (key.includes("sportybet")) return "sportybet";
+  if (key.includes("nairabet")) return "nairabet";
+  if (key.includes("betway")) return "betway";
+  if (key.includes("1xbet")) return "1xbet";
+  if (key.includes("merrybet")) return "merrybet";
+  if (key.includes("betking")) return "betking";
+  if (key.includes("bangbet")) return "bangbet";
+  return "";
+};
+
+export const getElectricityServiceId = (value: string) => {
+  const raw = String(value || "").toLowerCase();
+  const key = normalizeKey(value);
+
+  if (
+    raw.includes("ikeja-electric") ||
+    key.includes("ikeja") ||
+    key.includes("ikedc")
+  ) {
+    return "ikeja-electric";
+  }
+  if (
+    raw.includes("eko-electric") ||
+    key.includes("eko") ||
+    key.includes("ekedc")
+  ) {
+    return "eko-electric";
+  }
+  if (
+    raw.includes("kano-electric") ||
+    key.includes("kano") ||
+    key.includes("kedco")
+  ) {
+    return "kano-electric";
+  }
+  if (
+    raw.includes("portharcourt-electric") ||
+    key.includes("port harcourt") ||
+    key.includes("phed")
+  ) {
+    return "portharcourt-electric";
+  }
+  if (
+    raw.includes("jos-electric") ||
+    key.includes("jos") ||
+    key.includes("jed")
+  ) {
+    return "jos-electric";
+  }
+  if (
+    raw.includes("ibadan-electric") ||
+    key.includes("ibadan") ||
+    key.includes("ibedc")
+  ) {
+    return "ibadan-electric";
+  }
+  if (
+    raw.includes("kaduna-electric") ||
+    key.includes("kaduna") ||
+    key.includes("kaedco")
+  ) {
+    return "kaduna-electric";
+  }
+  if (
+    raw.includes("abuja-electric") ||
+    key.includes("abuja") ||
+    key.includes("aedc")
+  ) {
+    return "abuja-electric";
+  }
+  if (
+    raw.includes("enugu-electric") ||
+    key.includes("enugu") ||
+    key.includes("eedc")
+  ) {
+    return "enugu-electric";
+  }
+  if (
+    raw.includes("benin-electric") ||
+    key.includes("benin") ||
+    key.includes("bedc")
+  ) {
+    return "benin-electric";
+  }
+  if (raw.includes("aba-electric") || key.includes("aba")) {
+    return "aba-electric";
+  }
+  if (
+    raw.includes("yola-electric") ||
+    key.includes("yola") ||
+    key.includes("yedc")
+  ) {
+    return "yola-electric";
+  }
+
+  return "";
+};
+
 export const toArray = (value: any): any[] => {
   if (Array.isArray(value)) return value;
   if (Array.isArray(value?.data?.providers)) return value.data.providers;
@@ -108,23 +210,34 @@ export const normalizeOption = (item: any, index: number): SelectOption => {
 
 export const normalizeElectricityProviders = (payload: any): SelectOption[] => {
   const providerMap = payload?.providers || payload?.data?.providers || {};
-  const seenIds = new Map<string, number>();
 
   return Object.keys(providerMap).map((key, index) => {
     const left = String(key || "");
     const right = String(providerMap[key] || "");
-    const baseId =
-      getElectricityImageKey(`${left} ${right}`) ||
-      normalizeKey(left).replace(/\s+/g, "-") ||
+    const leftLooksLikeServiceId = /-electric$/i.test(left);
+    const rightLooksLikeServiceId = /-electric$/i.test(right);
+    const serviceId =
+      getElectricityServiceId(`${left} ${right}`) ||
+      (leftLooksLikeServiceId ? left.toLowerCase() : "") ||
+      (rightLooksLikeServiceId ? right.toLowerCase() : "") ||
       `provider-${index}`;
-    const seenCount = seenIds.get(baseId) || 0;
-    seenIds.set(baseId, seenCount + 1);
-    const uniqueId = seenCount === 0 ? baseId : `${baseId}-${seenCount + 1}`;
-    const humanLabel = /\s|-/g.test(left) ? left : right || left;
-    const meta = humanLabel === left ? right : left;
+    const humanLabel = leftLooksLikeServiceId
+      ? right || left
+      : rightLooksLikeServiceId
+        ? left || right
+        : /\s|-/g.test(left)
+          ? left
+          : right || left;
+    const meta = leftLooksLikeServiceId
+      ? left
+      : rightLooksLikeServiceId
+        ? right
+        : humanLabel === left
+          ? right
+          : left;
 
     return {
-      id: uniqueId,
+      id: serviceId,
       label: humanLabel,
       description: meta || `provider-${index}`,
     };
