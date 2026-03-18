@@ -65,6 +65,7 @@ export const getElectricityImageKey = (value: string) => {
   return "";
 };
 
+
 export const getBettingImageKey = (value: string) => {
   const key = normalizeKey(value);
   if (key.includes("bet9ja")) return "bet9ja";
