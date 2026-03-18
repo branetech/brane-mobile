@@ -33,11 +33,10 @@ export default function AccountScreen() {
         Account
       </ThemedText>
 
-      <View
-        w='100%'
+      <RNView
         style={[
           styles.profileCard,
-          { backgroundColor: C.inputBg, borderColor: C.border },
+          { backgroundColor: C.inputBg, borderColor: C.border, width: "100%" },
         ]}
       >
         <View row spaced aligned w='100%'>
@@ -60,11 +59,10 @@ export default function AccountScreen() {
           />
         </View>
 
-        <View
-          w='100%'
+        <RNView
           style={[
             styles.kycCard,
-            { backgroundColor: C.background, borderColor: C.border },
+            {width: "100%", backgroundColor: C.background, borderColor: C.border },
           ]}
         >
           <View row spaced aligned w='100%'>
@@ -100,8 +98,8 @@ export default function AccountScreen() {
             </ThemedText>
             <ArrowRight2 size={16} color={C.primary} />
           </TouchableOpacity>
-        </View>
-      </View>
+        </RNView>
+      </RNView>
     </RNView>
   );
 

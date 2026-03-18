@@ -59,7 +59,7 @@ export default function SetUsernameScreen({
           <FormInput
             leftContent={
               <ThemedText
-                style={{ fontSize: 14, color: "#0B0014" }}
+                style={{ fontSize: 14, color: C.text }}
                 adjustsFontSizeToFit
               >
                 @

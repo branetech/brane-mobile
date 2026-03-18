@@ -1,4 +1,5 @@
 // app/_layout.tsx
+import SupportChat from '@/components/support-chat-modal';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAppInitialization } from '@/hooks/useAppInitialization';
 import { useRouteProtection } from '@/hooks/useRouteProtection';

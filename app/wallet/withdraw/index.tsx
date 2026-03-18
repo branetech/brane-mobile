@@ -8,23 +8,23 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import {
-  hideAppLoader,
-  priceFormatter,
-  showAppLoader,
-  showSuccess,
+    hideAppLoader,
+    priceFormatter,
+    showAppLoader,
+    showSuccess,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

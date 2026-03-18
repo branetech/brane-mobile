@@ -9,7 +9,7 @@ import { TRANSACTION_SERVICE } from "@/services/routes";
 import { showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { Add, Bank, Trash } from "iconsax-react-native";
+import { Add, Bank, Trash, TickCircle } from "iconsax-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -51,6 +51,7 @@ export default function BankAccountScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<IBankAccount | null>(null);
+  const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
 
   const fetchAccounts = useCallback(async (refresh = false) => {
     if (refresh) setIsRefreshing(true);
@@ -84,9 +85,14 @@ export default function BankAccountScreen() {
       await BaseRequest.delete(
         `${TRANSACTION_SERVICE.BENEFICIARIES}/${pendingDelete.id}`,
       );
-      showSuccess("Bank account removed successfully");
+      setShowDeleteSuccess(true);
       setPendingDelete(null);
-      fetchAccounts(true);
+
+      // Auto-close success modal and refresh list after delay
+      setTimeout(() => {
+        setShowDeleteSuccess(false);
+        fetchAccounts(true);
+      }, 2000);
     } catch (error) {
       catchError(error);
     } finally {
@@ -134,11 +140,11 @@ export default function BankAccountScreen() {
           </ThemedText>
         </View>
         <TouchableOpacity
-          style={[styles.deleteBtn, { backgroundColor: "#FCE4E4" }]}
+          style={[styles.deleteBtn, { backgroundColor: C.error + "20" }]}
           activeOpacity={0.7}
           onPress={() => setPendingDelete(item)}
         >
-          <Trash size={18} color='#CB010B' variant='TwoTone' />
+          <Trash size={18} color={C.error} variant='TwoTone' />
         </TouchableOpacity>
       </View>
     ),
@@ -211,7 +217,7 @@ export default function BankAccountScreen() {
           <BraneButton
             text='Add Bank Account'
             onPress={() => router.push("/add-funds/bank")}
-            leftIcon={<Add size={18} color='#fff' />}
+            leftIcon={<Add size={18} color={C.googleBg} />}
           />
         </View>
       )}
@@ -230,6 +236,18 @@ export default function BankAccountScreen() {
               { backgroundColor: C.background },
             ])}
           >
+            {/* Trash Icon */}
+            <View style={{ alignItems: "center", marginBottom: 16 }}>
+              <View
+                style={[
+                  styles.iconCircle,
+                  { backgroundColor: C.error + "15" },
+                ]}
+              >
+                <Trash size={28} color={C.error} />
+              </View>
+            </View>
+
             <ThemedText
               type='defaultSemiBold'
               style={{ fontSize: 16, color: C.text, textAlign: "center" }}
@@ -255,6 +273,7 @@ export default function BankAccountScreen() {
                 ]}
                 activeOpacity={0.7}
                 onPress={() => setPendingDelete(null)}
+                disabled={isDeleting}
               >
                 <ThemedText
                   type='defaultSemiBold'
@@ -264,23 +283,73 @@ export default function BankAccountScreen() {
                 </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalBtn, styles.removeBtn]}
+                style={[
+                  styles.modalBtn,
+                  { backgroundColor: C.error },
+                ]}
                 activeOpacity={0.7}
                 onPress={handleDelete}
                 disabled={isDeleting}
               >
                 {isDeleting ? (
-                  <ActivityIndicator size='small' color='#fff' />
+                  <ActivityIndicator size='small' color='#FFFFFF' />
                 ) : (
                   <ThemedText
                     type='defaultSemiBold'
-                    style={{ fontSize: 14, color: "#fff" }}
+                    style={{ fontSize: 14, color: '#FFFFFF' }}
                   >
                     Remove
                   </ThemedText>
                 )}
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Delete Success Modal */}
+      <Modal
+        visible={showDeleteSuccess}
+        transparent
+        animationType='fade'
+        onRequestClose={() => {}}
+      >
+        <View style={styles.modalOverlay}>
+          <View
+            style={StyleSheet.flatten([
+              styles.modalCard,
+              { backgroundColor: C.background },
+            ])}
+          >
+            {/* Success Icon */}
+            <View style={{ alignItems: "center", marginBottom: 16 }}>
+              <View
+                style={[
+                  styles.iconCircle,
+                  { backgroundColor: C.primary + "15" },
+                ]}
+              >
+                <TickCircle size={28} color={C.primary} />
+              </View>
+            </View>
+
+            <ThemedText
+              type='defaultSemiBold'
+              style={{ fontSize: 16, color: C.text, textAlign: "center" }}
+            >
+              Bank Account Removed
+            </ThemedText>
+            <ThemedText
+              style={{
+                fontSize: 13,
+                color: C.muted,
+                textAlign: "center",
+                marginTop: 8,
+                lineHeight: 20,
+              }}
+            >
+              Your bank account has been successfully removed.
+            </ThemedText>
           </View>
         </View>
       </Modal>
@@ -344,7 +413,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 24,
@@ -359,6 +428,13 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
   },
+  iconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   modalActions: {
     gap: 10,
     marginTop: 20,
@@ -369,8 +445,5 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-  },
-  removeBtn: {
-    backgroundColor: "#CB010B",
   },
 });

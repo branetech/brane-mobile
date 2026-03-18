@@ -2,7 +2,12 @@ import OTP from "@/components/forgot-password/otp";
 import SetPinScreen from "@/components/sign-up/setup-pin";
 import { SignupForm } from "@/components/sign-up/signup-form";
 import SetUsernameScreen from "@/components/sign-up/username-form";
-import { setRefreshToken, setToken, setUser } from "@/redux/slice/auth-slice";
+import {
+  setRefreshToken,
+  setShowNewUserModal,
+  setToken,
+  setUser,
+} from "@/redux/slice/auth-slice";
 import { useReduxState } from "@/redux/useReduxState";
 import BaseRequest, { parseNetworkError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
@@ -202,6 +207,7 @@ export default function SignupScreen() {
               showSuccess("Transaction pin created successfully");
               resetSignupSession();
               setPage("signup");
+              dispatch(setShowNewUserModal(true));
               router.replace("/(tabs)");
             } catch (error: any) {
               const { message } = parseNetworkError(error);

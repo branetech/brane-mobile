@@ -11,11 +11,11 @@ import { useRouter } from "expo-router";
 import { Eye, EyeSlash } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -114,17 +114,21 @@ export default function BracsBreakdownIndexScreen() {
           }
         >
           {/* BRACS Balance Card */}
-          <View style={{ ...styles.balanceCard, backgroundColor: "#013D25" }}>
+          <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
             <View style={styles.balanceRow}>
               <View style={styles.balanceInfo}>
-                <ThemedText style={styles.balanceLabelText}>
+                <ThemedText
+                  style={[styles.balanceLabelText, { color: C.googleBg }]}
+                >
                   Total BRACS Balance
                 </ThemedText>
-                <ThemedText style={styles.balanceAmount}>
+                <ThemedText style={[styles.balanceAmount, { color: "#fff" }]}>
                   {hideBalance ? "••••••" : `${bracsBalance.toFixed(4)} BRACS`}
                 </ThemedText>
                 {bracsData?.estimatedValue != null && (
-                  <ThemedText style={styles.balanceSubText}>
+                  <ThemedText
+                    style={[styles.balanceSubText, { color: C.googleBg }]}
+                  >
                     ≈{" "}
                     {hideBalance
                       ? "••••••"
@@ -137,9 +141,9 @@ export default function BracsBreakdownIndexScreen() {
                 style={styles.eyeBtn}
               >
                 {hideBalance ? (
-                  <EyeSlash size={22} color='#D2F1E4' />
+                  <EyeSlash size={22} color={C.googleBg} />
                 ) : (
-                  <Eye size={22} color='#D2F1E4' />
+                  <Eye size={22} color={C.googleBg} />
                 )}
               </TouchableOpacity>
             </View>
@@ -239,9 +243,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   balanceInfo: { gap: 4 },
-  balanceLabelText: { fontSize: 12, color: "#D2F1E4" },
-  balanceAmount: { fontSize: 26, fontWeight: "800", color: "#fff" },
-  balanceSubText: { fontSize: 12, color: "#D2F1E4", opacity: 0.8 },
+  balanceLabelText: { fontSize: 12, fontWeight: "600" },
+  balanceAmount: { fontSize: 26, fontWeight: "800" },
+  balanceSubText: { fontSize: 12, opacity: 0.8 },
   eyeBtn: { padding: 4, marginTop: 4 },
   sectionTitle: { fontSize: 14, fontWeight: "700" },
   networkCard: {

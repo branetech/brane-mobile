@@ -1,5 +1,7 @@
 import React from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 type RadioButtonProps = {
   selected: boolean;
@@ -16,10 +18,15 @@ export const BraneRadioButton = ({
   size = 24,
   color = "#013D25",
   children,
-  bg
+  bg,
 }: RadioButtonProps) => {
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
   return (
-    <Pressable onPress={onPress} style={[styles.wrapper, { backgroundColor: bg }]}>
+    <Pressable
+      onPress={onPress}
+      style={[styles.wrapper, { backgroundColor: bg, borderColor: C.border }]}
+    >
       {/* Content */}
       <View style={styles.content}>{children}</View>
 
@@ -58,7 +65,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
     // backgroundColor: "#fff",
   },
   content: {

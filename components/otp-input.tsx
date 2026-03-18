@@ -1,30 +1,33 @@
-import React, { useRef, useState, useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
-  View,
-  TextInput,
-  StyleSheet,
-  useColorScheme,
   Animated,
   Pressable,
+  StyleSheet,
   Text,
+  TextInput,
+  useColorScheme,
+  View,
 } from "react-native";
+import { Colors } from "@/constants/colors";
 
 interface OTPProps {
   length?: number;
   onComplete?: (otp: string) => void;
+  mode?: "otp" | "pin"; // "otp" for 6-digit with separator, "pin" for 4-digit without
 }
 
-export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
+export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => {
   const [otpValues, setOtpValues] = useState<string[]>(Array(length).fill(""));
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const inputsRef = useRef<TextInput[]>([]);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const C = Colors[isDark ? "dark" : "light"];
 
   const scaleAnims = useRef(
     Array(length)
       .fill(null)
-      .map(() => new Animated.Value(1))
+      .map(() => new Animated.Value(1)),
   ).current;
 
   const popIn = useCallback(
@@ -42,7 +45,7 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
         }),
       ]).start();
     },
-    [scaleAnims]
+    [scaleAnims],
   );
 
   const handleChange = useCallback(
@@ -63,7 +66,7 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
         onComplete?.(newOtp.join(""));
       }
     },
-    [otpValues, length, onComplete, popIn]
+    [otpValues, length, onComplete, popIn],
   );
 
   const handleKeyPress = useCallback(
@@ -81,7 +84,7 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
         }
       }
     },
-    [otpValues]
+    [otpValues],
   );
 
   const handleCellPress = useCallback((index: number) => {
@@ -89,12 +92,22 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
   }, []);
 
   // Split indices into groups of 3: [[0,1,2], [3,4,5]]
-  // Works for any length but separator only shows when length === 6
+  // Works for OTP but PIN mode shows all cells without separator
   const groups: number[][] = [];
-  for (let i = 0; i < length; i += 3) {
-    groups.push(Array.from({ length: Math.min(3, length - i) }, (_, k) => i + k));
+
+  if (mode === "pin") {
+    // For PIN mode, show all cells in one row without grouping
+    groups.push(Array.from({ length }, (_, i) => i));
+  } else {
+    // For OTP mode, group by 3 with separator
+    for (let i = 0; i < length; i += 3) {
+      groups.push(
+        Array.from({ length: Math.min(3, length - i) }, (_, k) => i + k),
+      );
+    }
   }
-  const showSeparator = length === 6;
+
+  const showSeparator = mode === "otp" && length === 6;
 
   const renderCell = (index: number) => {
     const filled = otpValues[index] !== "";
@@ -105,27 +118,40 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
         <Animated.View
           style={[
             styles.cell,
-            isDark &&  styles.cellLight,
-            filled && (styles.cellFilledLight),
-            focused && (styles.cellFocusedLight),
+            {
+              backgroundColor: C.inputBg,
+              borderColor: C.border,
+            },
+            filled && {
+              backgroundColor: isDark ? "#0D2A1E" : "#FFFFFF",
+              borderColor: C.primary,
+            },
+            focused && {
+              backgroundColor: isDark ? "#0D2A1E" : "#FFFFFF",
+              borderColor: C.primary,
+              shadowColor: C.primary,
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.25,
+              shadowRadius: 8,
+              elevation: 4,
+            },
             { transform: [{ scale: scaleAnims[index] }] },
           ]}
         >
           <TextInput
-            ref={(el) => { if (el) inputsRef.current[index] = el; }}
+            ref={(el) => {
+              if (el) inputsRef.current[index] = el;
+            }}
             value={otpValues[index]}
             onChangeText={(text) => handleChange(text, index)}
             onKeyPress={(e) => handleKeyPress(e, index)}
             onFocus={() => setFocusedIndex(index)}
             onBlur={() => setFocusedIndex(null)}
-            keyboardType="numeric"
+            keyboardType='numeric'
             maxLength={1}
             caretHidden
             selectTextOnFocus
-            style={[
-              styles.input,
-              { color: "#0D1B12" },
-            ]}
+            style={[styles.input, { color: C.text }]}
           />
         </Animated.View>
       </Pressable>
@@ -143,7 +169,12 @@ export const OTPInput = ({ length = 6, onComplete }: OTPProps) => {
 
           {/* Render separator between groups, not after the last one */}
           {showSeparator && groupIndex < groups.length - 1 && (
-            <Text style={[styles.separator, { color: isDark ? "#4A6358" : "#AABBB4" }]}>
+            <Text
+              style={[
+                styles.separator,
+                { color: isDark ? C.muted : C.border },
+              ]}
+            >
               —
             </Text>
           )}
@@ -178,35 +209,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
-  },
-  cellLight: {
-    backgroundColor: "#F7F7F8",
-    borderColor: "transparent",
-  },
-  cellFilledLight: {
-    backgroundColor: "#F7F7F8",
-    borderColor: "#013D25",
-  },
-  cellFocusedLight: {
-    backgroundColor: "#F7F7F8",
-    borderColor: "#013D25",
-  },
-  cellDark: {
-    backgroundColor: "#1A2420",
-    borderColor: "transparent",
-  },
-  cellFilledDark: {
-    backgroundColor: "#0D2A1E",
-    borderColor: "#2EBD73",
-  },
-  cellFocusedDark: {
-    backgroundColor: "#152119",
-    borderColor: "#2EBD73",
-    shadowColor: "#2EBD73",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
   },
   input: {
     fontSize: 14,

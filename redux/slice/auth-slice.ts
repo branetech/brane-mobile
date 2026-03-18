@@ -5,46 +5,60 @@ import { createSlice } from "@reduxjs/toolkit";
 import { findKey } from "lodash";
 
 function parseUserInfo(payload: IUSER): IUSER {
-  let user: IUSER | any = {}
-  if (typeof (payload) == 'object') user = { ...payload }
+  let user: IUSER | any = {};
+  if (typeof payload == "object") user = { ...payload };
 
-  const photo = payload?.identityVerification?.passportPhotographVerification?.status || ''
-  const bank = payload?.identityVerification?.bankAccountVerification?.status || ''
-  const bvn = payload?.identityVerification?.bvnVerification?.status || ''
-  const location = payload?.identityVerification?.locationVerification?.status || ''
-  const drivers = payload?.identityVerification?.driversLicenseVerification?.status || ''
-  const voters = payload?.identityVerification?.votersIdVerification?.status || ''
-  const intl = payload?.identityVerification?.passportVerification?.status || ''
-  const nin = payload?.identityVerification?.ninVerification?.status || ''
-  const hasCompleted = (status: string) => status === 'completed';
+  const photo =
+    payload?.identityVerification?.passportPhotographVerification?.status || "";
+  const bank =
+    payload?.identityVerification?.bankAccountVerification?.status || "";
+  const bvn = payload?.identityVerification?.bvnVerification?.status || "";
+  const location =
+    payload?.identityVerification?.locationVerification?.status || "";
+  const drivers =
+    payload?.identityVerification?.driversLicenseVerification?.status || "";
+  const voters =
+    payload?.identityVerification?.votersIdVerification?.status || "";
+  const intl =
+    payload?.identityVerification?.passportVerification?.status || "";
+  const nin = payload?.identityVerification?.ninVerification?.status || "";
+  const hasCompleted = (status: string) => status === "completed";
 
-  const identity = hasCompleted(nin) || hasCompleted(intl) || hasCompleted(drivers) || hasCompleted(voters);
+  const identity =
+    hasCompleted(nin) ||
+    hasCompleted(intl) ||
+    hasCompleted(drivers) ||
+    hasCompleted(voters);
   // ID Verification NIN, INTL, Drivers, Voters
-  user.hasIdentity = identity
-  user.identity = findKey({
-    "NIN": hasCompleted(nin),
-    "International Passport": hasCompleted(intl),
-    "Voters Card": hasCompleted(voters),
-    "Drivers Licence": hasCompleted(drivers) // Fixed: was 'voters'
-  }, (value: boolean) => value)
+  user.hasIdentity = identity;
+  user.identity = findKey(
+    {
+      NIN: hasCompleted(nin),
+      "International Passport": hasCompleted(intl),
+      "Voters Card": hasCompleted(voters),
+      "Drivers Licence": hasCompleted(drivers), // Fixed: was 'voters'
+    },
+    (value: boolean) => value,
+  );
 
-  user.hasNextOfKin = !!payload?.nextOfKin?.firstName
-  user.hasEmail = !!payload?.email
+  user.hasNextOfKin = !!payload?.nextOfKin?.firstName;
+  user.hasEmail = !!payload?.email;
   user.hasBvn = hasCompleted(bvn);
   user.hasBank = hasCompleted(bank);
   user.hasPhoto = hasCompleted(photo);
   user.hasLocation = hasCompleted(location);
   user.location = hasCompleted(location);
-  user.hasPhone = !!payload?.phone
-  user.hasUsername = !!payload?.username
-  user.hasName = !!payload?.firstName && !!payload?.lastName && !!payload?.university
+  user.hasPhone = !!payload?.phone;
+  user.hasUsername = !!payload?.username;
+  user.hasName =
+    !!payload?.firstName && !!payload?.lastName && !!payload?.university;
   user.locationStatus = location;
   user.photoStatus = photo;
   user.hasBanking = user?.beneficiaries && !!user?.beneficiaries?.length;
 
   user.identityKyc = identity && user.hasPhoto && user.hasLocation;
   user.kycDone = bvn && user.hasName && user.identityKyc && user?.hasBanking; // Fixed typo: identiyKyc -> identityKyc
-  user.name = `${payload?.firstName || ''} ${payload?.lastName || ''}`.trim();
+  user.name = `${payload?.firstName || ""} ${payload?.lastName || ""}`.trim();
 
   return user as IUSER;
 }
@@ -66,6 +80,9 @@ export interface Auth {
   checkouts: AssetCheckout[];
   onContactChecked: null | ((contact?: string) => void);
   wallet: any;
+  showNewUserModal: boolean;
+  showSupportChat: boolean;
+  showBalance: boolean;
 }
 
 interface AssetCheckout {
@@ -84,7 +101,7 @@ interface AssetCheckout {
   interestRate?: number;
   planName?: string;
   maturityDate?: string;
-  
+
   // For Gold
   logo: string;
   companyName: string;
@@ -92,11 +109,11 @@ interface AssetCheckout {
 
 const initialState: Auth = {
   user: null,
-  contactChecker: '',
+  contactChecker: "",
   token: null,
   loaderConfig: {
-    message: 'Please wait...',
-    bg: '#FFFFFF',
+    message: "Please wait...",
+    bg: "#FFFFFF",
   },
   isLoggedIn: false,
   isAuthenticated: false,
@@ -110,6 +127,9 @@ const initialState: Auth = {
   phone: null,
   onContactChecked: null,
   checkouts: [],
+  showNewUserModal: false,
+  showSupportChat: false,
+  showBalance: false,
 };
 
 const { reducer, actions } = createSlice({
@@ -161,29 +181,31 @@ const { reducer, actions } = createSlice({
       state.insufficientFundsModal = false;
     },
     onAddToCheckouts: (state, action) => {
-      const checkouts = state?.checkouts || []
+      const checkouts = state?.checkouts || [];
       const asset = action.payload;
-      const exists = checkouts.map(item => item.tickerSymbol).includes(action.payload.tickerSymbol)
+      const exists = checkouts
+        .map((item) => item.tickerSymbol)
+        .includes(action.payload.tickerSymbol);
       if (!exists) {
-        const stockPrice = (asset?.currentPrice || 0);
+        const stockPrice = asset?.currentPrice || 0;
         const totalCharge = 0.09630661039 * stockPrice;
         const order: AssetCheckout = {
           quantity: 1,
           netPayable: stockPrice + totalCharge,
-          tickerSymbol: asset?.tickerSymbol || '',
+          tickerSymbol: asset?.tickerSymbol || "",
           stockPrice,
           totalCharge,
-          brokerName: '',
-          assetClass: asset?.assetClass || 'stocks',
-          logo: asset?.logo || '',
-          companyName: asset?.companyName || ''
+          brokerName: "",
+          assetClass: asset?.assetClass || "stocks",
+          logo: asset?.logo || "",
+          companyName: asset?.companyName || "",
         };
         checkouts.push(order);
         state.checkouts = checkouts;
       }
     },
     onUpdateCheckouts: (state, action) => {
-      const checkouts = state?.checkouts || []
+      const checkouts = state?.checkouts || [];
       const asset = action.payload;
       state.checkouts = checkouts.map((item) => {
         if (item.tickerSymbol === asset.tickerSymbol) return asset;
@@ -191,33 +213,44 @@ const { reducer, actions } = createSlice({
       });
     },
     onRemoveFromCheckouts: (state, action) => {
-      const checkouts = state?.checkouts || []
-      state.checkouts = [...checkouts.filter(item => item.tickerSymbol !== action.payload)]
+      const checkouts = state?.checkouts || [];
+      state.checkouts = [
+        ...checkouts.filter((item) => item.tickerSymbol !== action.payload),
+      ];
     },
     onClearCheckouts: (state) => {
       state.checkouts = [];
     },
     setAppState(state: any, action) {
-      const payload = action?.payload
-      if (typeof (payload) === 'object') {
+      const payload = action?.payload;
+      if (typeof payload === "object") {
         Object.keys(payload).forEach((key) => {
-          if (key === 'user') {
-            state[key] = parseUserInfo(payload[key])
-          } else if (key === 'contactChecker') {
-            state[key] = payload[key]
-            if (payload[key] === '') state['onContactChecked'] = null
-          } else if (key === 'token') {
-            state[key] = payload[key]
-            state.isLoggedIn = !!payload[key]
-            state.isAuthenticated = !!payload[key]
+          if (key === "user") {
+            state[key] = parseUserInfo(payload[key]);
+          } else if (key === "contactChecker") {
+            state[key] = payload[key];
+            if (payload[key] === "") state["onContactChecked"] = null;
+          } else if (key === "token") {
+            state[key] = payload[key];
+            state.isLoggedIn = !!payload[key];
+            state.isAuthenticated = !!payload[key];
           } else {
-            state[key] = payload[key]
+            state[key] = payload[key];
           }
-        })
+        });
       }
     },
     setConfig: (state, action) => {
       state.config = action.payload;
+    },
+    setShowNewUserModal: (state, action) => {
+      state.showNewUserModal = action.payload;
+    },
+    setShowSupportChat: (state, action) => {
+      state.showSupportChat = action.payload;
+    },
+    setShowBalance: (state, action) => {
+      state.showBalance = action.payload;
     },
   },
 });
@@ -238,8 +271,11 @@ export const {
   onHideTab,
   onShowTab,
   setConfig,
+  setShowNewUserModal,
+  setShowSupportChat,
+  setShowBalance,
   onRemoveFromCheckouts,
   onClearCheckouts,
   onAddToCheckouts,
-  onUpdateCheckouts
+  onUpdateCheckouts,
 } = actions;

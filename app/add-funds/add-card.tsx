@@ -101,7 +101,10 @@ export default function AddCardScreen() {
             placeholder='Enter name as shown on card'
             {...mapFormikProps("cardholder", form)}
             containerStyle={styles.inputGroup}
-            inputContainerStyle={[styles.inputContainer, { borderColor: C.border }]}
+            inputContainerStyle={[
+              styles.inputContainer,
+              { borderColor: C.border },
+            ]}
             inputStyle={[styles.inputText, { color: C.text }]}
           />
 
@@ -111,7 +114,10 @@ export default function AddCardScreen() {
             keyboardType='number-pad'
             {...mapFormikProps("cardNumber", form)}
             containerStyle={styles.inputGroup}
-            inputContainerStyle={[styles.inputContainer, { borderColor: C.border }]}
+            inputContainerStyle={[
+              styles.inputContainer,
+              { borderColor: C.border },
+            ]}
             inputStyle={[styles.inputText, { color: C.text }]}
           />
 
@@ -122,7 +128,10 @@ export default function AddCardScreen() {
               keyboardType='number-pad'
               {...mapFormikProps("expiryDate", form)}
               containerStyle={[styles.inputGroup, styles.flex]}
-              inputContainerStyle={[styles.inputContainer, { borderColor: C.border }]}
+              inputContainerStyle={[
+                styles.inputContainer,
+                { borderColor: C.border },
+              ]}
               inputStyle={[styles.inputText, { color: C.text }]}
             />
             <FormInput
@@ -132,7 +141,10 @@ export default function AddCardScreen() {
               rightContent={<InfoCircle size={14} color={C.muted} />}
               {...mapFormikProps("cvv", form)}
               containerStyle={[styles.inputGroup, styles.flex]}
-              inputContainerStyle={[styles.inputContainer, { borderColor: C.border }]}
+              inputContainerStyle={[
+                styles.inputContainer,
+                { borderColor: C.border },
+              ]}
               inputStyle={[styles.inputText, { color: C.text }]}
             />
           </View>
@@ -153,7 +165,10 @@ export default function AddCardScreen() {
             }
             {...mapFormikProps("cardPin", form)}
             containerStyle={styles.inputGroup}
-            inputContainerStyle={[styles.inputContainer, { borderColor: C.border }]}
+            inputContainerStyle={[
+              styles.inputContainer,
+              { borderColor: C.border },
+            ]}
             inputStyle={[styles.inputText, { color: C.text }]}
           />
         </View>

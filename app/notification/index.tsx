@@ -206,7 +206,6 @@ export default function NotificationScreen() {
       ) : (
         <View style={styles.emptyWrapper}>
           <EmptyState>
-            <BellIcon variant='TwoTone' size={24} color={C.primary} />
             <View style={{ gap: 4, alignItems: "center" }}>
               <ThemedText
                 type='defaultSemiBold'

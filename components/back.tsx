@@ -8,6 +8,7 @@ import { TouchableOpacity } from "react-native";
 const Back = ({ onPress }: { onPress?: () => void }) => {
   const router = useRouter();
   const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
 
   return (
     <TouchableOpacity
@@ -17,16 +18,11 @@ const Back = ({ onPress }: { onPress?: () => void }) => {
         borderRadius: 22,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#F4F4F5",
+        backgroundColor: C.inputBg,
       }}
       onPress={onPress || router.back}
     >
-      <ArrowLeft
-        color={
-          colorScheme === "light" ? Colors?.light.icon : Colors?.dark?.icon
-        }
-        size={24}
-      />
+      <ArrowLeft color={C.icon} size={24} />
     </TouchableOpacity>
   );
 };

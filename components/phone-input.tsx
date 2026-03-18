@@ -138,8 +138,12 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   const theme = colorScheme === "dark" ? Colors.dark : Colors.light;
 
   const inputBg = theme.inputBackground;
-  const borderColor =  colorScheme === "dark" ? Colors.dark.borderColor : Colors.light.borderColor;
-  //const muted = colorScheme === "dark"? "#AAA" : "#999";
+  const borderColor =
+    colorScheme === "dark" ? Colors.dark.borderColor : Colors.light.borderColor;
+  const errorColor = theme.error;
+  const mutedColor = theme.muted;
+  const textColor = theme.text;
+  const primaryColor = theme.primary;
 
   const formatPhoneNumber = (text: string, country: Country): string => {
     if (!autoFormat) return text;
@@ -217,7 +221,6 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     </TouchableOpacity>
   );
 
-
   return (
     <View style={styles.container}>
       {/* Labels */}
@@ -234,7 +237,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             styles.countryPicker,
             {
               backgroundColor: theme.inputBackground,
-              borderColor: error ? "#ee7474" : borderColor,
+              borderColor: error ? errorColor : borderColor,
             },
           ]}
           onPress={() => !disabled && setModalVisible(true)}
@@ -242,11 +245,15 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
         >
           <ThemedText style={styles.flag}>{selectedCountry.flag}</ThemedText>
           <ThemedText
-            style={[disabled && styles.dialCodeDisabled, { fontSize: 14 }]}
+            style={[
+              disabled && { opacity: 0.6 },
+              disabled && { color: mutedColor },
+              { fontSize: 14 },
+            ]}
           >
             {selectedCountry.dialCode}
           </ThemedText>
-          <ArrowDown2 size="13" color="#3B5120" />
+          <ArrowDown2 size='13' color={primaryColor} />
         </TouchableOpacity>
 
         {/* Phone Number Input */}
@@ -255,7 +262,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             styles.phoneInputContainer,
             {
               backgroundColor: inputBg,
-              borderColor: error ? "#ee7474" : borderColor,
+              borderColor: error ? errorColor : borderColor,
               gap: 6,
             },
           ]}
@@ -266,13 +273,13 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
               styles.phoneInput,
               disabled && styles.phoneInputDisabled,
               error && styles.inputContainerError,
-              { color: '#0B0014' },
+              { color: textColor },
             ]}
             value={autoFormat ? formattedNumber : phoneNumber}
             onChangeText={handlePhoneChange}
             placeholder={placeholder}
-            keyboardType="phone-pad"
-            placeholderTextColor="#999"
+            keyboardType='phone-pad'
+            placeholderTextColor={mutedColor}
             editable={!disabled}
             maxLength={selectedCountry.format.length}
           />
@@ -281,14 +288,16 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
       {/* Error Message */}
       {error && errorMessage ? (
-        <Text style={styles.errorText}>{errorMessage}</Text>
+        <Text style={[styles.errorText, { color: errorColor }]}>
+          {errorMessage}
+        </Text>
       ) : null}
 
       {/* Country Selection Modal */}
       <Modal
         visible={modalVisible}
         transparent={true}
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
@@ -334,8 +343,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#333",
-
     // flex: 1,
   },
   inputContainer: {
@@ -347,7 +354,6 @@ const styles = StyleSheet.create({
     borderColor: "#e53e3e",
   },
   inputContainerDisabled: {
-    backgroundColor: "#f7f7f7",
     opacity: 0.6,
   },
   countryPicker: {
@@ -362,7 +368,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   countryPickerDisabled: {
-    backgroundColor: "#e9ecef",
+    opacity: 0.6,
   },
   flag: {
     fontSize: 20,
@@ -370,7 +376,7 @@ const styles = StyleSheet.create({
   },
 
   chevronDisabled: {
-    color: "#999",
+    opacity: 0.6,
   },
   phoneInputContainer: {
     flex: 1,
@@ -387,20 +393,18 @@ const styles = StyleSheet.create({
     // Removed explicit right margin here as it's now handled in the flag style
   },
   dialCodeDisabled: {
-    color: "#999",
+    opacity: 0.6,
   },
   phoneInput: {
     flex: 1,
     fontSize: 14,
-    color: "#000000",
     paddingVertical: 12,
   },
   phoneInputDisabled: {
-    color: "#999",
+    opacity: 0.6,
   },
   errorText: {
     fontSize: 14,
-    color: "#e53e3e",
     marginTop: 4,
     marginLeft: 4,
   },

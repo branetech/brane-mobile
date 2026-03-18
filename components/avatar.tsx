@@ -1,6 +1,8 @@
 // components/Avatar.tsx
-import { getInitials } from '@/utils/helpers';
-import React from 'react';
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { getInitials } from "@/utils/helpers";
+import React from "react";
 import {
   Image,
   StyleSheet,
@@ -9,10 +11,10 @@ import {
   View,
   type StyleProp,
   type ViewStyle,
-} from 'react-native';
+} from "react-native";
 
-type AvatarShape = 'circle' | 'square' | 'rounded';
-type AvatarSize = number | 'sm' | 'md' | 'lg' | 'xl';
+type AvatarShape = "circle" | "square" | "rounded";
+type AvatarSize = number | "sm" | "md" | "lg" | "xl";
 
 interface AvatarProps {
   src?: string | null;
@@ -42,15 +44,21 @@ const BORDER_RADIUS_MAP: Record<AvatarShape, (size: number) => number> = {
 export const Avatar: React.FC<AvatarProps> = ({
   src,
   name,
-  size = 'md',
-  shape = 'circle',
-  backgroundColor = '#FFF3DB',
-  textColor = '#0B0014',
+  size = "md",
+  shape = "circle",
+  backgroundColor,
+  textColor,
   style,
   onPress,
   children,
 }) => {
-  const resolvedSize = typeof size === 'number' ? size : SIZE_MAP[size];
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+
+  const resolvedBackgroundColor = backgroundColor || C.inputBackground;
+  const resolvedTextColor = textColor || C.text;
+
+  const resolvedSize = typeof size === "number" ? size : SIZE_MAP[size];
   const borderRadius = BORDER_RADIUS_MAP[shape](resolvedSize);
   const fontSize = resolvedSize * 0.35;
 
@@ -60,22 +68,22 @@ export const Avatar: React.FC<AvatarProps> = ({
   const containerStyle: ViewStyle = {
     width: resolvedSize,
     height: resolvedSize,
-    borderRadius: 'circle' === shape ? '50%' : borderRadius,
-    backgroundColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
+    borderRadius: "circle" === shape ? "50%" : borderRadius,
+    backgroundColor: resolvedBackgroundColor,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
   };
 
   const content = src ? (
     <Image
       source={{ uri: src }}
       style={{ width: resolvedSize, height: resolvedSize }}
-      resizeMode="cover"
+      resizeMode='cover'
     />
   ) : (
-    <Text style={[styles.initials, { fontSize, color: textColor }]}>
-      {typeof displayText === 'string' ? displayText : null}
+    <Text style={[styles.initials, { fontSize, color: resolvedTextColor }]}>
+      {typeof displayText === "string" ? displayText : null}
     </Text>
   );
 
@@ -91,16 +99,12 @@ export const Avatar: React.FC<AvatarProps> = ({
     );
   }
 
-  return (
-    <View style={[containerStyle, style]}>
-      {content}
-    </View>
-  );
+  return <View style={[containerStyle, style]}>{content}</View>;
 };
 
 const styles = StyleSheet.create({
   initials: {
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
