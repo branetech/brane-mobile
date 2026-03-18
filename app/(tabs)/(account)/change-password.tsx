@@ -219,7 +219,7 @@ export default function ChangePasswordScreen() {
         onRequestClose={() => router.push("/(tabs)")}
       >
         <Pressable
-          style={[styles.modalBackdrop, { backgroundColor: "rgba(0,0,0,0.5)" }]}
+          style={[styles.modalBackdrop, { backgroundColor: "rgba(11, 0, 20, 0.5)" }]}
           onPress={() => router.push("/(tabs)")}
         >
           <RNView
@@ -252,6 +252,9 @@ export default function ChangePasswordScreen() {
           </RNView>
         </Pressable>
       </Modal>
+    </SafeAreaView>
+  );
+}
 
 const styles = StyleSheet.create({
   screen: {
@@ -285,5 +288,21 @@ const styles = StyleSheet.create({
     marginTop: 40,
     alignItems: "center",
     justifyContent: "center",
+  },
+  modalBackdrop: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  successCard: {
+    borderRadius: 16,
+    padding: 24,
+    width: "85%",
+    borderWidth: 1,
+  },
+  successText: {
+    marginTop: 8,
+    textAlign: "center",
+    fontSize: 13,
   },
 });

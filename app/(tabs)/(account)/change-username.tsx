@@ -10,11 +10,13 @@ import { AUTH_SERVICE } from "@/services/routes";
 import { showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
+import { TickCircle } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Modal,
   Platform,
+  Pressable,
   View as RNView,
   ScrollView,
   StyleSheet,
@@ -134,24 +136,30 @@ export default function ChangeUsernameScreen() {
         animationType='fade'
         onRequestClose={() => setSuccess(false)}
       >
-        <View
-          style={[styles.overlay, { backgroundColor: "rgba(11, 0, 20, 0.5)" }]}
+        <Pressable
+          style={[styles.overlay, { backgroundColor: "rgba(0,0,0,0.5)" }]}
+          onPress={() => setSuccess(false)}
         >
           <RNView
-            style={[
-              styles.card,
-              {
-                backgroundColor: C.background,
-                borderColor: C.border,
-                borderWidth: 1,
-              },
-            ]}
+            style={
+              [
+                styles.card,
+                {
+                  backgroundColor: C.background,
+                  borderColor: C.border,
+                  borderWidth: 1,
+                },
+              ] as any
+            }
           >
+            <RNView style={{ alignItems: "center", marginBottom: 12 }}>
+              <TickCircle size={48} color={C.primary} />
+            </RNView>
             <ThemedText
-              type='subtitle'
-              style={[{ textAlign: "center", color: C.text }]}
+              type='defaultSemiBold'
+              style={[{ textAlign: "center", color: C.text, fontSize: 18 }]}
             >
-              Successful
+              Success!
             </ThemedText>
             <ThemedText
               style={[
@@ -159,15 +167,17 @@ export default function ChangeUsernameScreen() {
                 { color: C.muted, textAlign: "center", marginTop: 8 },
               ]}
             >
-              Username change was successful.
+              Your username has been changed successfully.
             </ThemedText>
             <BraneButton
-              text='Dismiss'
+              text='Continue'
               onPress={() => router.push("/(tabs)")}
-              style={{ marginTop: 16 }}
+              height={48}
+              radius={10}
+              style={{ marginTop: 20 }}
             />
           </RNView>
-        </View>
+        </Pressable>
       </Modal>
     </SafeAreaView>
   );
@@ -186,7 +196,12 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
   },
-  card: { borderRadius: 12, padding: 18 },
+  card: {
+    borderRadius: 16,
+    padding: 20,
+    alignItems: "center",
+  },
 });

@@ -29,7 +29,7 @@ export default function ManagedPortfolioScreen() {
       showSuccess("Bracs Allocation Settings Saved Successfully");
       setShowTerms(false);
       router.push(
-        "/account/bracs-investment-trigger/managed-portfolio/about-managed-portfolio",
+        "/(tabs)/(account)/bracs-investment-trigger",
       );
     } catch (error) {
       catchError(error);
