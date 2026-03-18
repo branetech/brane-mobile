@@ -1,99 +1,191 @@
-import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useMemo } from "react";
+import { TouchableOpacity, Text } from "react-native";
+import { View } from "@idimma/rn-widget";
+import { ThemedText } from "../themed-text";
+import { EmptyState } from "../empty-state";
+import { TransactionCard } from "../transaction-card";
+import { useRequest } from "@/services/useRequest";
+import { TRANSACTION_SERVICE } from "@/services/routes";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { parseTransaction, formatDateWithSuffix } from "@/utils/helpers";
+import { ITransactionDetail } from "@/utils/index";
 
-const COLORS = {
-  green: "#1a6644",
-  text: "#1a1a1a",
-  subtext: "#9e9e9e",
-  iconBg: "#f0f0f0",
-  white: "#fff",
-};
+export const Transactions = () => {
+  const router = useRouter();
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
 
-type Transaction = {
-  id: string;
-  // add your transaction fields here
-};
+  const { data: _transactions, isLoading } = useRequest(
+    TRANSACTION_SERVICE.TRANSACTION_LIST,
+    {
+      initialValue: [],
+      params: { perPage: 5 },
+      revalidateOnFocus: true,
+      revalidateOnMount: true,
+      noCache: true,
+    },
+  );
 
-type Props = {
-  transactions?: Transaction[];
-  onSeeAll?: () => void;
-};
+  // Parse and memoize transactions
+  const transactions = useMemo(() => {
+    if (!Array.isArray(_transactions)) return [];
+    return _transactions.map((tx) => {
+      const parsed = parseTransaction(tx as ITransactionDetail);
+      return {
+        ...parsed,
+        id: parsed.id || parsed.transactionId || "",
+        title:
+          parsed.transactionDescription ||
+          parsed.transactionType ||
+          "Transaction",
+        description: parsed.service || undefined,
+        amount: Number(parsed.amount || 0),
+        type:
+          String(parsed.transactionType || "")
+            .toLowerCase()
+            .includes("debit") ||
+          String(parsed.actionType || "")
+            .toLowerCase()
+            .includes("debit")
+            ? "debit"
+            : "credit",
+        date: parsed.time || "",
+      };
+    });
+  }, [_transactions]);
 
-export default function Transactions() {
+  // Group transactions by date
+  const groupedTransactions = useMemo(() => {
+    return transactions.reduce(
+      (acc, tx) => {
+        const date = tx.createdAt
+          ? new Date(tx.createdAt).toISOString().split("T")[0]
+          : "today";
+        if (!acc[date]) acc[date] = [];
+        acc[date].push({
+          id: tx.id,
+          title: tx.title,
+          description: tx.description,
+          amount: tx.amount,
+          type: tx.type as "credit" | "debit",
+          date: tx.date,
+        });
+        return acc;
+      },
+      {} as Record<
+        string,
+        {
+          id: string;
+          title: string;
+          description?: string;
+          amount: number;
+          type: "credit" | "debit";
+          date: string;
+        }[]
+      >,
+    );
+  }, [transactions]);
+
+  const handleSeeAll = () => {
+    router.push("/(tabs)/transactions");
+  };
+
+  const handleTransactionPress = (transactionId: string) => {
+    router.push({
+      pathname: "/transaction-history/[details]",
+      params: { details: transactionId },
+    });
+  };
+
   return (
-    <View style={styles.container}>
+    <View w='100%' mt={24} mb={24} gap={20} minH={260}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Recent Transaction</Text>
-        <TouchableOpacity onPress={onSeeAll} activeOpacity={0.7}>
-          <Text style={styles.seeAll}>See All</Text>
+      <View row spaced>
+        <ThemedText type='defaultSemiBold'>Recent Transactions</ThemedText>
+        <TouchableOpacity onPress={handleSeeAll}>
+          <ThemedText
+            type='link'
+            style={{
+              fontWeight: "800",
+              fontSize: 14,
+              textDecorationStyle: "dashed",
+              textDecorationColor: C.primary,
+            }}
+          >
+            See All
+          </ThemedText>
         </TouchableOpacity>
       </View>
 
-      {/* Empty State */}
-      {transactions.length === 0 && (
-        <View style={styles.emptyState}>
-          {/* <EmptyState/> */}
-          <Text style={styles.emptyText}>
-            After initiating transactions, you can access the{"\n"}
-            history of your transactions here.
-          </Text>
-        </View>
-      )}
+      {/* Content */}
+      <View justified mt={10}>
+        {isLoading ? (
+          <EmptyState>
+            <ThemedText
+              numberOfLines={2}
+              style={{
+                textAlign: "center",
+                paddingHorizontal: 20,
+                color: C.muted,
+              }}
+            >
+              Loading transactions...
+            </ThemedText>
+          </EmptyState>
+        ) : transactions.length === 0 ? (
+          <EmptyState>
+            <ThemedText
+              numberOfLines={2}
+              style={{
+                textAlign: "center",
+                paddingHorizontal: 20,
+                color: C.muted,
+              }}
+            >
+              After initiating transactions, you can access the history of your
+              transactions here.
+            </ThemedText>
+          </EmptyState>
+        ) : (
+          <View gap={16} w='100%'>
+            {Object.keys(groupedTransactions)
+              .sort()
+              .reverse()
+              .map((date) => (
+                <View key={date} gap={8} w='100%'>
+                  {/* Date Header */}
+                  <Text
+                    style={{
+                      fontWeight: "500",
+                      fontSize: 12,
+                      color: C.muted,
+                    }}
+                  >
+                    {formatDateWithSuffix(date)}
+                  </Text>
 
-      {/* Transaction list goes here when transactions.length > 0 */}
+                  {/* Transactions for this date */}
+                  <View gap={8} w='100%'>
+                    {groupedTransactions[date].map((transaction) => (
+                      <TouchableOpacity
+                        key={transaction.id}
+                        onPress={() => handleTransactionPress(transaction.id)}
+                        activeOpacity={0.7}
+                      >
+                        <TransactionCard
+                          transaction={transaction}
+                          onPress={() => {}}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              ))}
+          </View>
+        )}
+      </View>
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: COLORS.white,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 18,
-    marginHorizontal: 16,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 28,
-  },
-  title: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: COLORS.text,
-  },
-  seeAll: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: COLORS.green,
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingVertical: 24,
-    paddingHorizontal: 12,
-  },
-  iconWrapper: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: COLORS.iconBg,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 18,
-  },
-  emptyText: {
-    fontSize: 13,
-    color: COLORS.subtext,
-    textAlign: "center",
-    lineHeight: 20,
-  },
-});
+};

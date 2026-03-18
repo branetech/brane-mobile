@@ -21,6 +21,7 @@ import { ThemedText } from "../themed-text";
 import { CardStyle, LearnCard, ServicesCard } from "./cards";
 import { useRequest } from "@/services/useRequest";
 import { TRANSACTION_SERVICE } from "@/services/routes";
+import { TransactionCard } from "../transaction-card";
 
 export const HomeCard = () => {
   const router = useRouter();
@@ -236,7 +237,7 @@ export const Transactions = () => {
       ) : transactions.length > 0 ? (
         <View gap={12}>
           {transactions.map((transaction: any) => (
-            <TransactionCardDisplay
+            <TransactionCard
               key={transaction.id}
               transaction={transaction}
             />
@@ -259,82 +260,7 @@ export const Transactions = () => {
   );
 };
 
-const TransactionCardDisplay = ({ transaction }: any) => {
-  const colorScheme = useColorScheme();
-  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
-  const getTransactionIcon = (type: string) => {
-    const icons: Record<string, string> = {
-      airtime: "📱",
-      data: "📡",
-      electricity: "⚡",
-      cable: "📺",
-      transfer: "💸",
-      deposit: "💰",
-      withdrawal: "🏦",
-      default: "📊",
-    };
-    return icons[type?.toLowerCase()] || icons.default;
-  };
 
-  const amount = Math.abs(transaction.amount || 0);
-  const isDebit = transaction.type === "debit" || transaction.amount < 0;
-
-  return (
-    <TouchableOpacity
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingVertical: 12,
-        paddingHorizontal: 12,
-        backgroundColor: C.inputBg,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: C.border,
-      }}
-    >
-      <View
-        style={{ flexDirection: "row", alignItems: "center", flex: 1, gap: 12 }}
-      >
-        <Text style={{ fontSize: 24 }}>
-          {getTransactionIcon(transaction.servicetype || transaction.type)}
-        </Text>
-        <View style={{ flex: 1 }}>
-          <ThemedText
-            type='defaultSemiBold'
-            numberOfLines={1}
-            style={{ fontSize: 13 }}
-          >
-            {transaction.description ||
-              transaction.servicetype ||
-              "Transaction"}
-          </ThemedText>
-          <ThemedText
-            style={{ fontSize: 11, color: C.muted, marginTop: 2 }}
-            numberOfLines={1}
-          >
-            {transaction.createdAt
-              ? new Date(transaction.createdAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              : ""}
-          </ThemedText>
-        </View>
-      </View>
-      <ThemedText
-        type='defaultSemiBold'
-        style={{
-          color: isDebit ? C.error : C.primary,
-          fontSize: 13,
-        }}
-      >
-        {isDebit ? "-" : "+"} {priceFormatter(amount)}
-      </ThemedText>
-    </TouchableOpacity>
-  );
-};
 
 export const Learning = () => {
   const scheme = useColorScheme();
