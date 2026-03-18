@@ -1,25 +1,15 @@
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
-<<<<<<< HEAD
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ArrowDown2 } from "iconsax-react-native";
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-=======
-import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
->>>>>>> 0b0149424735cd94f0f81dc0d26a60bb9ecfa268
 import type { SelectOption } from "./types";
 
 type Props = {
   bettingProviders: SelectOption[];
-<<<<<<< HEAD
   selectedBettingProvider?: SelectOption;
-=======
-  bettingProvider: string;
-  setBettingProvider: (id: string) => void;
->>>>>>> 0b0149424735cd94f0f81dc0d26a60bb9ecfa268
   customerId: string;
   setCustomerId: (v: string) => void;
   customerIdError?: string;
@@ -28,20 +18,12 @@ type Props = {
   setAmount: (v: string) => void;
   amountError?: string;
   setAmountError: (v: string | undefined) => void;
-<<<<<<< HEAD
   onOpenProviderModal: () => void;
-=======
->>>>>>> 0b0149424735cd94f0f81dc0d26a60bb9ecfa268
 };
 
 export function BettingForm({
   bettingProviders,
-<<<<<<< HEAD
   selectedBettingProvider,
-=======
-  bettingProvider,
-  setBettingProvider,
->>>>>>> 0b0149424735cd94f0f81dc0d26a60bb9ecfa268
   customerId,
   setCustomerId,
   customerIdError,
@@ -50,7 +32,6 @@ export function BettingForm({
   setAmount,
   amountError,
   setAmountError,
-<<<<<<< HEAD
   onOpenProviderModal,
 }: Props) {
   const scheme = useColorScheme();
@@ -82,38 +63,6 @@ export function BettingForm({
           No betting provider available.
         </ThemedText>
       )}
-=======
-}: Props) {
-  return (
-    <>
-      <ThemedText style={styles.label}>Betting Provider</ThemedText>
-      <View style={styles.providersRow}>
-        {bettingProviders.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={[
-              styles.providerBtn,
-              bettingProvider === item.id && styles.providerBtnActive,
-            ]}
-            onPress={() => setBettingProvider(item.id)}
-          >
-            <ThemedText
-              style={[
-                styles.providerText,
-                bettingProvider === item.id && styles.providerTextActive,
-              ]}
-            >
-              {item.label}
-            </ThemedText>
-          </TouchableOpacity>
-        ))}
-        {bettingProviders.length === 0 && (
-          <ThemedText style={styles.emptyText}>
-            No betting provider available.
-          </ThemedText>
-        )}
-      </View>
->>>>>>> 0b0149424735cd94f0f81dc0d26a60bb9ecfa268
 
       <ThemedText style={styles.label}>Customer ID</ThemedText>
       <FormInput
@@ -145,7 +94,6 @@ export function BettingForm({
   );
 }
 
-<<<<<<< HEAD
 const createStyles = (C: typeof Colors.light) =>
   StyleSheet.create({
     label: { fontSize: 10, color: C.muted, marginTop: 4 },
@@ -175,31 +123,3 @@ const createStyles = (C: typeof Colors.light) =>
     inputContainer: { height: 40, borderRadius: 8, borderColor: "#F0F0F0" },
     inputText: { fontSize: 11 },
   });
-=======
-const styles = StyleSheet.create({
-  label: { fontSize: 10, color: "#8E8E93", marginTop: 4 },
-  providersRow: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-    marginTop: 4,
-  },
-  providerBtn: {
-    borderWidth: 1,
-    borderColor: "#ECECEF",
-    borderRadius: 8,
-    minWidth: 66,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: "#FFFFFF",
-  },
-  providerBtnActive: { borderColor: "#013D25", backgroundColor: "#EAF4EF" },
-  providerText: { fontSize: 11, color: "#5A5660", fontWeight: "600" },
-  providerTextActive: { color: "#013D25" },
-  emptyText: { fontSize: 10, color: "#8E8E93" },
-  inputContainer: { height: 40, borderRadius: 8, borderColor: "#F0F0F0" },
-  inputText: { fontSize: 11 },
-});
->>>>>>> 0b0149424735cd94f0f81dc0d26a60bb9ecfa268
