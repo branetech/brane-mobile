@@ -4,7 +4,7 @@ import { Colors } from "@/constants/colors";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -31,6 +31,10 @@ const BracsInvestmentTrigger = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [allocation, setAllocation] = useState<BracsAllocation | null>(null);
+
+  useEffect(() => {
+    fetchAllocation();
+  }, []);
 
   const fetchAllocation = async () => {
     try {

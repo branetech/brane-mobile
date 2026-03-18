@@ -26,7 +26,7 @@ export const Account = ({ header }: { header?: ReactNode }) => {
       beneficiary: "/(account)/beneficiary",
       "update-kin-details": "/(account)/update-kin-details",
       "account-verification": "/(account)/account-verification",
-      "bracs-investment-trigger": "/(account)/bracs-investment-trigger",
+      "bracs-investment-trigger": "/bracs-investment-trigger",
       "change-password": "/(account)/change-password",
       "reset-transaction-pin": "/(account)/reset-transaction-pin",
       "change-username": "/(account)/change-username",
