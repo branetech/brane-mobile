@@ -10,12 +10,16 @@ import { PASSWORD_RESET_ROUTE } from "@/services/routes";
 import { showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
+import { TickCircle } from "iconsax-react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import {
     KeyboardAvoidingView,
+    Modal,
     Platform,
+    Pressable,
     ScrollView,
     StyleSheet,
+    View as RNView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -206,9 +210,48 @@ export default function ChangePasswordScreen() {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-}
+
+      {/* Success Modal */}
+      <Modal
+        visible={stage === 3}
+        transparent
+        animationType='fade'
+        onRequestClose={() => router.push("/(tabs)")}
+      >
+        <Pressable
+          style={[styles.modalBackdrop, { backgroundColor: "rgba(0,0,0,0.5)" }]}
+          onPress={() => router.push("/(tabs)")}
+        >
+          <RNView
+            style={
+              [
+                styles.successCard,
+                { backgroundColor: C.background, borderColor: C.border },
+              ] as any
+            }
+          >
+            <RNView style={{ alignItems: "center", marginBottom: 12 }}>
+              <TickCircle size={48} color={C.primary} />
+            </RNView>
+            <ThemedText
+              type='defaultSemiBold'
+              style={[{ textAlign: "center", color: C.text, fontSize: 18 }]}
+            >
+              Success!
+            </ThemedText>
+            <ThemedText style={[styles.successText, { color: C.muted }]}>
+              Your password has been changed successfully.
+            </ThemedText>
+            <BraneButton
+              text='Continue'
+              onPress={() => router.push("/(tabs)")}
+              height={48}
+              radius={10}
+              style={{ marginTop: 20 }}
+            />
+          </RNView>
+        </Pressable>
+      </Modal>
 
 const styles = StyleSheet.create({
   screen: {

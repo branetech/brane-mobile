@@ -1,4 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ArrowRight2 } from "iconsax-react-native";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
@@ -16,9 +18,16 @@ export default function KycItem({
   icon,
   title,
 }: KycItemProps) {
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+
   return (
     <Pressable
-      style={[styles.row, isVerified && styles.disabled]}
+      style={[
+        styles.row,
+        { borderBottomColor: C.border },
+        isVerified && styles.disabled,
+      ]}
       onPress={isVerified ? undefined : onPress}
     >
       <View style={styles.left}>
@@ -27,11 +36,13 @@ export default function KycItem({
       </View>
 
       {isVerified ? (
-        <View style={styles.badge}>
-          <ThemedText style={styles.badgeText}>Verified</ThemedText>
+        <View style={[styles.badge, { backgroundColor: C.primary + "20" }]}>
+          <ThemedText style={[styles.badgeText, { color: C.primary }]}>
+            Verified
+          </ThemedText>
         </View>
       ) : (
-        <ArrowRight2 size={18} color="#85808A" />
+        <ArrowRight2 size={18} color={C.muted} />
       )}
     </Pressable>
   );
@@ -41,7 +52,6 @@ const styles = StyleSheet.create({
   row: {
     height: 56,
     borderBottomWidth: 1,
-    borderBottomColor: "#F7F7F8",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -59,7 +69,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   badge: {
-    backgroundColor: "#F0FAF6",
     borderRadius: 12,
     paddingHorizontal: 10,
     height: 24,
@@ -67,7 +76,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   badgeText: {
-    color: "#008753",
     fontSize: 12,
     fontWeight: "600",
   },

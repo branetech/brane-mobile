@@ -28,11 +28,12 @@ export function PaymentMethodSelector({
 }: Props) {
   const colorScheme = useColorScheme();
   const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
   return (
     <View style={styles.wrapper}>
       {/* Header row */}
       <View style={styles.header}>
-        <ThemedText style={styles.heading}>Select Payment Method</ThemedText>
+        <ThemedText style={dynamicStyles.heading}>Select Payment Method</ThemedText>
         {onSeeAll && (
           <TouchableOpacity
             onPress={onSeeAll}
@@ -67,9 +68,9 @@ export function PaymentMethodSelector({
               {/* Left: icon + label */}
               <View style={styles.optionLeft}>
                 <View style={styles.iconWrap}>
-                  <ThemedText style={styles.iconText}>{option.icon}</ThemedText>
+                  <ThemedText style={dynamicStyles.iconText}>{option.icon}</ThemedText>
                 </View>
-                <ThemedText style={styles.optionLabel}>
+                <ThemedText style={dynamicStyles.optionLabel}>
                   {option.label}
                 </ThemedText>
               </View>
@@ -109,7 +110,6 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#0B0014",
   },
   seeAllBtn: {
     flexDirection: "row",
@@ -157,11 +157,9 @@ const styles = StyleSheet.create({
   iconText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#013D25",
   },
   optionLabel: {
     fontSize: 12,
-    color: "#0B0014",
     flex: 1,
   },
   radio: {
@@ -183,3 +181,22 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 });
+
+const createDynamicStyles = (C: typeof Colors.light) =>
+  StyleSheet.create({
+    heading: {
+      fontSize: 12,
+      fontWeight: "600",
+      color: C.text,
+    },
+    optionLabel: {
+      fontSize: 12,
+      color: C.text,
+      flex: 1,
+    },
+    iconText: {
+      fontSize: 12,
+      fontWeight: "700",
+      color: C.primary,
+    },
+  });

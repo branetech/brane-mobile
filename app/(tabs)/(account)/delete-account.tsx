@@ -148,7 +148,7 @@ export default function DeleteAccountScreen() {
               onPress={onConfirmDeletion}
               loading={loading}
               disabled={!otp || otp.length < 6}
-              backgroundColor='#D50000'
+              backgroundColor={C.error}
               style={styles.button}
             />
           </>

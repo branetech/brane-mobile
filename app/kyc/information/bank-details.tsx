@@ -44,15 +44,15 @@ export default function KycBankDetailsScreen() {
           <View row aligned gap={8}>
             <ThemedText type='defaultSemiBold'>Status</ThemedText>
             {hasLinkedBank ? (
-              <CheckCircle size={18} color='#027A48' />
+              <CheckCircle size={18} color={C.primary} />
             ) : (
-              <CloseCircle size={18} color='#B42318' />
+              <CloseCircle size={18} color={C.error} />
             )}
           </View>
           <ThemedText
             style={[
               styles.status,
-              { color: hasLinkedBank ? "#027A48" : "#B42318" },
+              { color: hasLinkedBank ? C.primary : C.error },
             ]}
           >
             {hasLinkedBank ? "Completed" : "Pending"}

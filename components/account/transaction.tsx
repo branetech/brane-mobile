@@ -14,12 +14,13 @@ export const AccountItem = ({ icon, text }: Accn) => {
   const [enabled, setEnabled] = useState(true);
   const colorScheme = useColorScheme();
   const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const dynamicStyles = createDynamicStyles(C);
 
   return (
     <View style={[styles.container, { borderBottomColor: C.border }]}>
       <View style={styles.left}>
         <View style={styles.iconWrapper}>{icon}</View>
-        <Text style={styles.text}>{text}</Text>
+        <Text style={dynamicStyles.text}>{text}</Text>
       </View>
 
       <View>
@@ -62,6 +63,14 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#0B0014",
   },
 });
+
+const createDynamicStyles = (C: typeof Colors.light) =>
+  StyleSheet.create({
+    text: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: C.text,
+    },
+  });

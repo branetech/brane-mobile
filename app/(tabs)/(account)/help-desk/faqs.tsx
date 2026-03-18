@@ -109,14 +109,14 @@ export default function FAQsScreen() {
               >
                 <ThemedText style={styles.question}>{faq.q}</ThemedText>
                 {isExpanded ? (
-                  <Minus size={20} color='#013D25' />
+                  <Minus size={20} color={C.primary} />
                 ) : (
-                  <Add size={20} color='#85808A' />
+                  <Add size={20} color={C.muted} />
                 )}
               </TouchableOpacity>
 
               {isExpanded && (
-                <ThemedText style={[styles.answer, { color: "#85808A" }]}>
+                <ThemedText style={[styles.answer, { color: C.muted }]}>
                   {faq.a}
                 </ThemedText>
               )}

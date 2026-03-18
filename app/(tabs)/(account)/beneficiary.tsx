@@ -1,4 +1,5 @@
 import Back from "@/components/back";
+import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -7,15 +8,17 @@ import { MOBILE_SERVICE } from "@/services/routes";
 import { showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { SearchNormal1, Trash } from "iconsax-react-native";
+import { SearchNormal1, Trash, Plus } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     ActivityIndicator,
     FlatList,
+    Modal,
     Pressable,
     RefreshControl,
     StyleSheet,
     TextInput,
+    View as RNView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -43,6 +46,9 @@ export default function ManageBeneficiaryScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [search, setSearch] = useState("");
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState(false);
+  const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchBeneficiaries = useCallback(async (refresh = false) => {
     if (refresh) setIsRefreshing(true);
@@ -69,12 +75,17 @@ export default function ManageBeneficiaryScreen() {
 
   const onDeleteBeneficiary = useCallback(
     async (item: Beneficiary) => {
+      setIsDeleting(true);
       try {
         await BaseRequest.delete(`${MOBILE_SERVICE.BENEFICIARY}/${item.id}`);
-        showSuccess("Beneficiary deleted successfully");
+        showSuccess("Beneficiary removed successfully");
+        setDeleteConfirmModal(false);
+        setSelectedBeneficiary(null);
         fetchBeneficiaries(true);
       } catch (error) {
         catchError(error);
+      } finally {
+        setIsDeleting(false);
       }
     },
     [fetchBeneficiaries],
@@ -162,15 +173,76 @@ export default function ManageBeneficiaryScreen() {
                 )}
               </View>
               <Pressable
-                style={[styles.deleteButton, { backgroundColor: "#FCE4E4" }]}
-                onPress={() => onDeleteBeneficiary(item)}
+                style={[
+                  styles.deleteButton,
+                  { backgroundColor: C.error + "20" },
+                ]}
+                onPress={() => {
+                  setSelectedBeneficiary(item);
+                  setDeleteConfirmModal(true);
+                }}
               >
-                <Trash size={16} color='#D50000' />
+                <Trash size={16} color={C.error} />
               </Pressable>
             </View>
           )}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        visible={deleteConfirmModal}
+        transparent
+        animationType='fade'
+        onRequestClose={() => setDeleteConfirmModal(false)}
+      >
+        <Pressable
+          style={[styles.modalBackdrop, { backgroundColor: "rgba(0,0,0,0.5)" }]}
+          onPress={() => setDeleteConfirmModal(false)}
+        >
+          <RNView
+            style={
+              [
+                styles.confirmCard,
+                { backgroundColor: C.background, borderColor: C.border },
+              ] as any
+            }
+          >
+            <ThemedText
+              type='defaultSemiBold'
+              style={[styles.confirmTitle, { color: C.text }]}
+            >
+              Remove Beneficiary?
+            </ThemedText>
+            <ThemedText style={[styles.confirmText, { color: C.muted }]}>
+              {selectedBeneficiary ? `Remove ${selectedBeneficiary.name} from your beneficiaries?` : "Are you sure you want to remove this beneficiary?"}
+            </ThemedText>
+
+            <RNView style={styles.confirmActions}>
+              <BraneButton
+                text='Remove'
+                onPress={() => selectedBeneficiary && onDeleteBeneficiary(selectedBeneficiary)}
+                loading={isDeleting}
+                disabled={isDeleting}
+                backgroundColor={C.error}
+                style={{ flex: 1 }}
+                height={44}
+                radius={8}
+              />
+              <BraneButton
+                text='Cancel'
+                onPress={() => setDeleteConfirmModal(false)}
+                disabled={isDeleting}
+                backgroundColor={C.primary + "20"}
+                textColor={C.primary}
+                style={{ flex: 1, marginLeft: 12 }}
+                height={44}
+                radius={8}
+              />
+            </RNView>
+          </RNView>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -231,5 +303,29 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 24,
     fontSize: 13,
+  },
+  modalBackdrop: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  confirmCard: {
+    margin: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 20,
+  },
+  confirmTitle: {
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  confirmText: {
+    fontSize: 14,
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  confirmActions: {
+    flexDirection: "row",
+    gap: 12,
   },
 });

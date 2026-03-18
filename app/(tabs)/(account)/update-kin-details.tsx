@@ -1,6 +1,7 @@
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
+import { PhoneInput } from "@/components/phone-input";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -8,16 +9,9 @@ import BaseRequest, { catchError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { ArrowDown2, TickCircle } from "iconsax-react-native";
+import { ArrowDown2, TickCircle, SearchNormal1 } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, Modal, Pressable, ScrollView, View as RNView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
 
@@ -114,6 +108,7 @@ export default function UpdateKinDetailsScreen() {
   const [fetching, setFetching] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showRelationshipModal, setShowRelationshipModal] = useState(false);
+  const [relationshipSearch, setRelationshipSearch] = useState("");
   const [form, setForm] = useState<KinForm>(initialForm);
   const [errors, setErrors] = useState<KinErrors>({});
 
@@ -123,6 +118,14 @@ export default function UpdateKinDetailsScreen() {
         ?.label || "Select your relationship"
     );
   }, [form.relationship]);
+
+  const filteredRelationships = useMemo(() => {
+    const q = relationshipSearch.trim().toLowerCase();
+    if (!q) return relationshipOptions;
+    return relationshipOptions.filter((item) =>
+      item.label.toLowerCase().includes(q)
+    );
+  }, [relationshipSearch]);
 
   const fetchNextOfKin = useCallback(async () => {
     setFetching(true);
@@ -243,7 +246,7 @@ export default function UpdateKinDetailsScreen() {
                       form.relationship
                         ? styles.selectText
                         : styles.selectPlaceholder,
-                      { color: form.relationship ? C.text : "#999" },
+                      { color: form.relationship ? C.text : C.muted },
                     ]}
                   >
                     {selectedRelationshipLabel}
@@ -251,7 +254,7 @@ export default function UpdateKinDetailsScreen() {
                   <ArrowDown2 size={16} color={C.muted} />
                 </Pressable>
                 {!!errors.relationship && (
-                  <ThemedText style={styles.errorText}>
+                  <ThemedText style={[styles.errorText, { color: C.error }]}>
                     {errors.relationship}
                   </ThemedText>
                 )}
@@ -271,26 +274,15 @@ export default function UpdateKinDetailsScreen() {
                 <ThemedText style={styles.inputLabel}>
                   Next of Kin Phone number
                 </ThemedText>
-                <TextInput
-                  style={[
-                    styles.phoneField,
-                    {
-                      backgroundColor: C.inputBg,
-                      borderColor: C.border,
-                      color: C.text,
-                    },
-                  ]}
-                  placeholder='+234 70000 0000'
-                  placeholderTextColor={C.muted}
-                  keyboardType='phone-pad'
+                <PhoneInput
                   value={form.phone}
-                  onChangeText={(value) => updateField("phone", value)}
+                  onFormattedChange={(_, raw) => {
+                    updateField("phone", raw);
+                  }}
+                  placeholder='+234 70000 0000'
+                  error={!!errors.phone}
+                  errorMessage={errors.phone}
                 />
-                {!!errors.phone && (
-                  <ThemedText style={styles.errorText}>
-                    {errors.phone}
-                  </ThemedText>
-                )}
               </View>
             </View>
           </ScrollView>
@@ -312,48 +304,97 @@ export default function UpdateKinDetailsScreen() {
         visible={showRelationshipModal}
         transparent
         animationType='fade'
-        onRequestClose={() => setShowRelationshipModal(false)}
+        onRequestClose={() => {
+          setShowRelationshipModal(false);
+          setRelationshipSearch("");
+        }}
       >
         <Pressable
           style={styles.modalBackdrop}
-          onPress={() => setShowRelationshipModal(false)}
+          onPress={() => {
+            setShowRelationshipModal(false);
+            setRelationshipSearch("");
+          }}
         >
           <Pressable
             style={[
               styles.modalCard,
               {
-                backgroundColor: C.inputBg,
+                backgroundColor: C.background,
                 borderColor: C.border,
                 borderWidth: 1,
               },
-            ]}
+            ] as any}
             onPress={() => {}}
           >
             <ThemedText
               type='defaultSemiBold'
               style={[styles.modalTitle, { color: C.text }]}
             >
-              Select relationship
+              Select Relationship
             </ThemedText>
-            <ScrollView style={{ maxHeight: 280 }}>
-              {relationshipOptions.map((item) => {
-                const selected = item.value === form.relationship;
-                return (
-                  <TouchableOpacity
-                    key={item.value}
-                    style={[styles.optionRow, { borderBottomColor: C.border }]}
-                    onPress={() => {
-                      updateField("relationship", item.value);
-                      setShowRelationshipModal(false);
-                    }}
-                  >
-                    <ThemedText style={[styles.optionText, { color: C.text }]}>
-                      {item.label}
-                    </ThemedText>
-                    {selected && <TickCircle size={18} color={C.primary} />}
-                  </TouchableOpacity>
-                );
-              })}
+
+            {/* Search Field */}
+            <View
+              style={[
+                styles.searchWrap,
+                { backgroundColor: C.inputBg, borderColor: C.border },
+              ] as any}
+              row
+              aligned
+            >
+              <SearchNormal1 size={16} color={C.muted} />
+              <TextInput
+                style={[styles.searchInput, { color: C.text }]}
+                placeholder='Search relationship'
+                placeholderTextColor={C.muted}
+                value={relationshipSearch}
+                onChangeText={setRelationshipSearch}
+              />
+            </View>
+
+            <ScrollView style={{ maxHeight: 320, marginTop: 12 }}>
+              {filteredRelationships.length > 0 ? (
+                filteredRelationships.map((item) => {
+                  const selected = item.value === form.relationship;
+                  return (
+                    <TouchableOpacity
+                      key={item.value}
+                      style={[
+                        styles.optionRow,
+                        {
+                          borderBottomColor: C.border,
+                          backgroundColor: selected ? C.primary + "10" : "transparent",
+                        },
+                      ]}
+                      onPress={() => {
+                        updateField("relationship", item.value);
+                        setShowRelationshipModal(false);
+                        setRelationshipSearch("");
+                      }}
+                    >
+                      <ThemedText
+                        style={[
+                          styles.optionText,
+                          { color: C.text, fontWeight: selected ? "600" : "400" },
+                        ]}
+                      >
+                        {item.label}
+                      </ThemedText>
+                      {selected && <TickCircle size={18} color={C.primary} />}
+                    </TouchableOpacity>
+                  );
+                })
+              ) : (
+                <ThemedText
+                  style={[
+                    styles.noResultsText,
+                    { color: C.muted, textAlign: "center", marginTop: 16 },
+                  ]}
+                >
+                  No relationships found
+                </ThemedText>
+              )}
             </ScrollView>
           </Pressable>
         </Pressable>
@@ -365,38 +406,44 @@ export default function UpdateKinDetailsScreen() {
         animationType='fade'
         onRequestClose={() => setShowSuccess(false)}
       >
-        <View style={styles.successBackdrop}>
-          <View
+        <Pressable
+          style={styles.successBackdrop}
+          onPress={() => setShowSuccess(false)}
+        >
+          <RNView
             style={[
               styles.successCard,
               {
-                backgroundColor: C.inputBg,
+                backgroundColor: C.background,
                 borderColor: C.border,
                 borderWidth: 1,
               },
-            ]}
+            ] as any}
           >
+            <RNView style={{ alignItems: "center", marginBottom: 12 }}>
+              <TickCircle size={48} color={C.primary} />
+            </RNView>
             <ThemedText
-              type='subtitle'
-              style={[{ textAlign: "center", color: C.text }]}
+              type='defaultSemiBold'
+              style={[{ textAlign: "center", color: C.text, fontSize: 18 }]}
             >
-              Successful
+              Success!
             </ThemedText>
             <ThemedText style={[styles.successText, { color: C.muted }]}>
               Next of Kin details updated successfully.
             </ThemedText>
             <BraneButton
-              text='Proceed'
+              text='Continue'
               onPress={() => {
                 setShowSuccess(false);
                 router.push("/(tabs)");
               }}
               height={48}
               radius={10}
-              style={{ marginTop: 16 }}
+              style={{ marginTop: 20 }}
             />
-          </View>
-        </View>
+          </RNView>
+        </Pressable>
       </Modal>
     </SafeAreaView>
   );
@@ -446,61 +493,78 @@ const styles = StyleSheet.create({
   },
   selectPlaceholder: {
     fontSize: 14,
-    color: "#999",
-  },
-  phoneField: {
-    height: 48,
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    fontSize: 14,
   },
   errorText: {
-    color: "#CB010B",
     fontSize: 11,
     marginTop: 4,
   },
   footer: {
     paddingHorizontal: 16,
     paddingTop: 8,
-    paddingBottom: 18,
+    paddingBottom: 70,
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     paddingHorizontal: 20,
   },
   modalCard: {
-    borderRadius: 14,
-    padding: 14,
+    borderRadius: 12,
+    padding: 16,
+    maxHeight: "80%",
   },
   modalTitle: {
-    marginBottom: 10,
+    marginBottom: 12,
+    fontSize: 16,
+  },
+  searchWrap: {
+    height: 40,
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 13,
+    padding: 0,
   },
   optionRow: {
-    height: 42,
+    height: 44,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingHorizontal: 12,
     borderBottomWidth: 1,
   },
   optionText: {
     fontSize: 14,
   },
+  noResultsText: {
+    fontSize: 13,
+    paddingVertical: 16,
+  },
   successBackdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     paddingHorizontal: 20,
+    paddingBottom: 60,
   },
   successCard: {
-    borderRadius: 14,
+    borderRadius: 12,
     padding: 20,
+    alignItems: "center",
+    marginBottom: 24,
   },
   successText: {
     marginTop: 8,
-    fontSize: 12,
+    fontSize: 13,
     textAlign: "center",
+    lineHeight: 20,
   },
 });

@@ -22,10 +22,10 @@ export const Account = ({ header }: { header?: ReactNode }) => {
     if (byLabel[label]) return byLabel[label];
 
     const byKey: Record<string, string> = {
-      "(account)-details": "/(account)/(account)-details",
+      "account-details": "/account-details",
       beneficiary: "/(account)/beneficiary",
       "update-kin-details": "/(account)/update-kin-details",
-      "(account)-verification": "/(account)/(account)-verification",
+      "account-verification": "/(account)/account-verification",
       "bracs-investment-trigger": "/(account)/bracs-investment-trigger",
       "change-password": "/(account)/change-password",
       "reset-transaction-pin": "/(account)/reset-transaction-pin",

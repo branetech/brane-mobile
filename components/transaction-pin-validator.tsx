@@ -33,6 +33,7 @@ export const TransactionPinValidator = ({
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
+  const dynamicStyles = createDynamicStyles(C);
 
   const [pin, setPin] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,11 +93,11 @@ export const TransactionPinValidator = ({
               onPress={handleClose}
               style={[styles.closeWrap, { backgroundColor: C.inputBg }]}
             >
-              <ThemedText style={styles.closeText}>×</ThemedText>
+              <ThemedText style={dynamicStyles.closeText}>×</ThemedText>
             </TouchableOpacity>
 
-            <ThemedText style={styles.title}>Confirm transaction</ThemedText>
-            <ThemedText style={styles.subtitle}>
+            <ThemedText style={dynamicStyles.title}>Confirm transaction</ThemedText>
+            <ThemedText style={dynamicStyles.subtitle}>
               Kindly enter your transaction PIN to authorize this transaction.
             </ThemedText>
 
@@ -116,7 +117,7 @@ export const TransactionPinValidator = ({
           {isLoading ? (
             <View style={styles.loadingWrap}>
               <ActivityIndicator size='small' color={C.primary} />
-              <ThemedText style={styles.loadingText}>Please wait</ThemedText>
+              <ThemedText style={dynamicStyles.loadingText}>Please wait</ThemedText>
             </View>
           ) : (
             <View style={styles.keypad}>
@@ -125,19 +126,19 @@ export const TransactionPinValidator = ({
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("1")}
                 >
-                  <ThemedText style={styles.keyText}>1</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>1</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("2")}
                 >
-                  <ThemedText style={styles.keyText}>2</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>2</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("3")}
                 >
-                  <ThemedText style={styles.keyText}>3</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>3</ThemedText>
                 </TouchableOpacity>
               </View>
 
@@ -146,19 +147,19 @@ export const TransactionPinValidator = ({
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("4")}
                 >
-                  <ThemedText style={styles.keyText}>4</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>4</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("5")}
                 >
-                  <ThemedText style={styles.keyText}>5</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>5</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("6")}
                 >
-                  <ThemedText style={styles.keyText}>6</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>6</ThemedText>
                 </TouchableOpacity>
               </View>
 
@@ -167,19 +168,19 @@ export const TransactionPinValidator = ({
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("7")}
                 >
-                  <ThemedText style={styles.keyText}>7</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>7</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("8")}
                 >
-                  <ThemedText style={styles.keyText}>8</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>8</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("9")}
                 >
-                  <ThemedText style={styles.keyText}>9</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>9</ThemedText>
                 </TouchableOpacity>
               </View>
 
@@ -191,7 +192,7 @@ export const TransactionPinValidator = ({
                   style={[styles.keyBtn, { backgroundColor: C.inputBg }]}
                   onPress={() => handleNumberClick("0")}
                 >
-                  <ThemedText style={styles.keyText}>0</ThemedText>
+                  <ThemedText style={dynamicStyles.keyText}>0</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.keyBtn} onPress={handleDelete}>
                   <ArrowLeft2 size={20} color='#CB010B' />
@@ -209,10 +210,10 @@ export const TransactionPinValidator = ({
         >
           <View style={styles.invalidOverlay}>
             <View style={[styles.invalidCard, { backgroundColor: C.screen }]}>
-              <ThemedText style={styles.invalidTitle}>
+              <ThemedText style={dynamicStyles.invalidTitle}>
                 Invalid transaction pin
               </ThemedText>
-              <ThemedText style={styles.invalidHint}>
+              <ThemedText style={dynamicStyles.invalidHint}>
                 Can’t remember PIN?
               </ThemedText>
               <BraneButton
@@ -255,7 +256,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   closeText: {
-    color: "#7C7C82",
     fontSize: 16,
     lineHeight: 16,
     fontWeight: "600",
@@ -264,13 +264,11 @@ const styles = StyleSheet.create({
     fontSize: 31,
     lineHeight: 38,
     fontWeight: "700",
-    color: "#0B0014",
   },
   subtitle: {
     width: "65%",
     fontSize: 10,
     lineHeight: 13,
-    color: "#85808A",
   },
   pinBox: {
     width: 186,
@@ -293,7 +291,6 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   loadingText: {
-    color: "#0B0014",
     fontSize: 12,
   },
   keypad: {
@@ -318,7 +315,6 @@ const styles = StyleSheet.create({
   keyText: {
     fontSize: 20,
     fontWeight: "500",
-    color: "#0B0014",
   },
   invalidOverlay: {
     flex: 1,
@@ -335,11 +331,50 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     fontWeight: "700",
-    color: "#0B0014",
   },
   invalidHint: {
     textAlign: "center",
-    color: "#D09129",
     fontSize: 12,
   },
 });
+
+const createDynamicStyles = (C: typeof Colors.light) =>
+  StyleSheet.create({
+    title: {
+      fontSize: 31,
+      lineHeight: 38,
+      fontWeight: "700",
+      color: C.text,
+    },
+    closeText: {
+      fontSize: 16,
+      lineHeight: 16,
+      fontWeight: "600",
+      color: C.muted,
+    },
+    subtitle: {
+      fontSize: 10,
+      lineHeight: 13,
+      color: C.muted,
+    },
+    loadingText: {
+      color: C.text,
+      fontSize: 12,
+    },
+    keyText: {
+      fontSize: 20,
+      fontWeight: "500",
+      color: C.text,
+    },
+    invalidTitle: {
+      textAlign: "center",
+      fontSize: 14,
+      fontWeight: "700",
+      color: C.text,
+    },
+    invalidHint: {
+      textAlign: "center",
+      fontSize: 12,
+      color: C.primary,
+    },
+  });

@@ -47,13 +47,13 @@ export default function KycInformationScreen() {
         <View style={{ marginTop: 12 }}>
           <KycItem
             title='Bvn Verification'
-            icon={<Note1 size={20} color='#013D25' />}
+            icon={<Note1 size={20} color={C.primary} />}
             isVerified={hasBvn}
             onPress={() => router.push("/kyc/information/bvn-verification")}
           />
           <KycItem
             title='Bank Verification'
-            icon={<Card size={20} color='#013D25' />}
+            icon={<Card size={20} color={C.primary} />}
             isVerified={hasBank}
             onPress={() => router.push("/kyc/information/bank-details")}
           />

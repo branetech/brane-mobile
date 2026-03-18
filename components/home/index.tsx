@@ -1,14 +1,21 @@
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { setShowSupportChat } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { Messages2, Notification } from "iconsax-react-native";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Avatar } from "../avatar";
 import { ThemedText } from "../themed-text";
 
 export const HomeHeader = () => {
   const { user } = useAppState();
   const router = useRouter();
+  const dispatch = useDispatch();
+  const colorScheme = useColorScheme();
+  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
   // const { data: notifications } = useRequest(
   //   "/notification-service/notifications/user",
   //   {
@@ -50,7 +57,7 @@ export const HomeHeader = () => {
   // }, [notifications]);
 
   return (
-    <View row justify="space-between" w="100%" aligned>
+    <View row justify='space-between' w='100%' aligned>
       {/* Left: Avatar + Greeting */}
       <View row gap={4} aligned>
         <TouchableOpacity onPress={() => router.push("/(tabs)/(account)")}>
@@ -65,13 +72,13 @@ export const HomeHeader = () => {
           <Avatar
             name={displayName}
             src={user?.image}
-            size="lg"
-            shape="rounded"
+            size='lg'
+            shape='rounded'
           />
         </TouchableOpacity>
         <View>
           <ThemedText>Good {timeOfDay} ☀️,</ThemedText>
-          <ThemedText type="defaultSemiBold">
+          <ThemedText type='defaultSemiBold'>
             {username || displayName}
           </ThemedText>
         </View>
@@ -79,12 +86,12 @@ export const HomeHeader = () => {
 
       {/* Right: Chat + Notifications */}
       <View row gap={24}>
-        <TouchableOpacity onPress={() => router.push("/support")}>
-          <Messages2 color="#0B0014" size={20} />
+        <TouchableOpacity onPress={() => dispatch(setShowSupportChat(true))}>
+          <Messages2 color={C.text} size={20} />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push("/notification")}>
-          <Notification color="#0B0014" size={20} />
+          <Notification color={C.text} size={20} />
           {/* {hasUnreadNotifications && (
               <View />
             )} */}
