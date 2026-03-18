@@ -29,49 +29,64 @@ export const CardStyle = ({ children }: any) => {
   );
 };
 
-export const LearnCard = () => {
+export const LearnCard = ({
+  title = "Learn about Brane",
+  description = "For you to have a seamless experience we require some details.",
+  onPress,
+  imageSource = require("@/assets/images/learn.png")
+}: {
+  title?: string;
+  description?: string;
+  onPress?: () => void;
+  imageSource?: any;
+}) => {
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
   const C = Colors[isDark ? "dark" : "light"];
 
   return (
-    <View
-      w='100%'
-      h={80}
-      p={16}
-      radius={12}
-      flex={1}
-      style={{
-        backgroundColor: C.inputBg,
-        borderColor: isDark ? C.border : "#CCCCCC",
-        borderWidth: 1,
-        shadowColor: isDark ? "#000000" : "#0B0014",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: isDark ? 0.1 : 0.08,
-        shadowRadius: 4,
-        elevation: 3,
-        overflow: "hidden",
-      }}
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.7}
     >
-      <View w='70%'>
-        <ThemedText type='defaultSemiBold' style={{ fontSize: 12 }}>
-          Learn about Brane
-        </ThemedText>
-        <ThemedText numberOfLines={2} style={{ fontSize: 10, lineHeight: 13 }}>
-          For you to have a seamless experience we require some details.
-        </ThemedText>
-      </View>
-      <Image
-        source={require("@/assets/images/learn.png")}
+      <View
+        w='100%'
+        h={80}
+        p={16}
+        radius={12}
+        flex={1}
         style={{
-          position: "absolute",
-          right: 0,
-          top: 0,
-          width: 80,
-          height: 110,
+          backgroundColor: C.inputBg,
+          borderColor: isDark ? C.border : "#CCCCCC",
+          borderWidth: 1,
+          shadowColor: isDark ? "#000000" : "#0B0014",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: isDark ? 0.1 : 0.08,
+          shadowRadius: 4,
+          elevation: 3,
+          overflow: "hidden",
         }}
-      />
-    </View>
+      >
+        <View w='70%'>
+          <ThemedText type='defaultSemiBold' style={{ fontSize: 12 }}>
+            {title}
+          </ThemedText>
+          <ThemedText numberOfLines={2} style={{ fontSize: 10, lineHeight: 13 }}>
+            {description}
+          </ThemedText>
+        </View>
+        <Image
+          source={imageSource}
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            width: 80,
+            height: 110,
+          }}
+        />
+      </View>
+    </TouchableOpacity>
   );
 };
 

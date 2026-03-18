@@ -340,27 +340,60 @@ export const Learning = () => {
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
   const C = Colors[isDark ? "dark" : "light"];
+  const router = useRouter();
+
+  const learningTopics = [
+    {
+      id: 1,
+      title: "Learn about Brane",
+      description: "For you to have a seamless experience we require some details.",
+      image: require("@/assets/images/learn.png"),
+      action: () => router.push("/learning/brane-basics"),
+    },
+    {
+      id: 2,
+      title: "Investment Tips",
+      description: "Strategies to grow your investment portfolio effectively.",
+      image: require("@/assets/images/learn.png"),
+      action: () => router.push("/learning/investment-tips"),
+    },
+    {
+      id: 3,
+      title: "Money Management",
+      description: "Smart ways to manage and save your money wisely.",
+      image: require("@/assets/images/learn.png"),
+      action: () => router.push("/learning/money-management"),
+    },
+  ];
 
   return (
     <View w='100%' gap={16}>
       <View row spaced>
         <ThemedText type='defaultSemiBold'>Learning Forum</ThemedText>
-        <ThemedText
-          type='link'
-          style={{
-            fontWeight: "800",
-            fontSize: 14,
-            textDecorationStyle: "dashed",
-            textDecorationColor: C.primary,
-          }}
-        >
-          See All
-        </ThemedText>
+        <TouchableOpacity onPress={() => router.push("/learning")}>
+          <ThemedText
+            type='link'
+            style={{
+              fontWeight: "800",
+              fontSize: 14,
+              textDecorationStyle: "dashed",
+              textDecorationColor: C.primary,
+            }}
+          >
+            See All
+          </ThemedText>
+        </TouchableOpacity>
       </View>
       <View justified gap={16} mb={60}>
-        <LearnCard />
-        <LearnCard />
-        <LearnCard />
+        {learningTopics.map((topic) => (
+          <LearnCard
+            key={topic.id}
+            title={topic.title}
+            description={topic.description}
+            imageSource={topic.image}
+            onPress={topic.action}
+          />
+        ))}
       </View>
     </View>
   );

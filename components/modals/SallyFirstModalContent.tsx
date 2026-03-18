@@ -63,7 +63,9 @@ export default function SallyFirstModalContent({
         <View style={styles.benefitsList}>
           {benefits.map((benefit, index) => (
             <View key={index} style={styles.benefitItem}>
-              <View style={[styles.bulletPoint, { backgroundColor: C.primary }]} />
+              <View
+                style={[styles.bulletPoint, { backgroundColor: C.primary }]}
+              />
               <ThemedText style={[styles.benefitText, { color: C.muted }]}>
                 {benefit}
               </ThemedText>

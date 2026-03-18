@@ -1,139 +1,115 @@
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { View } from "@idimma/rn-widget";
 import { Call, MessageAdd } from "iconsax-react-native";
 import React from "react";
-import { Linking, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Linking,
+  ScrollView,
+} from "react-native";
 import { ThemedText } from "../themed-text";
-import { BraneButton } from "../brane-button";
 
-const ContactComponent = () => {
+const PHONE = "+2348141805564";
+const EMAIL = "info@getbrane.co";
+
+export default function ContactComponent() {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
-  const phoneNumber = "+2348141805564";
-  const email = "info@getbrane.co";
-
-  const handleCall = () => {
-    Linking.openURL(`tel:${phoneNumber}`);
-  };
-
-  const handleEmail = () => {
-    Linking.openURL(`mailto:${email}`);
-  };
+  const cardBg = scheme === "dark" ? "#1A2420" : "#f7faf8";
+  const cardBorder = scheme === "dark" ? "#2A4030" : "#e8eeeb";
+  const buttonBg = scheme === "dark" ? `${C.primary}20` : "#d6f0e3";
 
   return (
-    <View style={[styles.container, { backgroundColor: C.background }]}>
-      <ThemedText style={[styles.description, { color: C.muted }]}>
+    <ScrollView style={[styles.container, { backgroundColor: C.background }]}>
+      {/* Subtitle */}
+      <ThemedText style={[styles.subtitle, { color: C.muted }]}>
         Any question or enquiries? Reach out to us.
       </ThemedText>
 
-      {/* Phone Section */}
-      <View style={[styles.contactBox, { borderBottomColor: C.border }]}>
-        <View style={styles.contactInfo}>
-          <ThemedText style={[styles.label, { color: C.muted }]}>
-            Phone Number
-          </ThemedText>
-          <ThemedText style={[styles.value, { color: C.text }]}>
-            +234 814 180 5564
-          </ThemedText>
+      {/* Cards */}
+      <View style={styles.list}>
+        {/* Phone Card */}
+        <View style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder }]}>
+          <View style={styles.cardText}>
+            <Text style={[styles.cardLabel, { color: C.muted }]}>Phone Number</Text>
+            <Text style={[styles.cardValue, { color: C.text }]}>{PHONE}</Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.actionBtn, { backgroundColor: buttonBg }]}
+            onPress={() => Linking.openURL(`tel:${PHONE}`)}
+            activeOpacity={0.75}
+          >
+            <Call size={16} color={C.primary} style={{ marginRight: 6 }} />
+            <Text style={[styles.actionLabel, { color: C.primary }]}>Call</Text>
+          </TouchableOpacity>
         </View>
-        <BraneButton
-          text='Call'
-          onPress={handleCall}
-          backgroundColor={C.primary}
-          textColor={C.background}
-          height={40}
-          radius={10}
-          width={100}
-        />
-      </View>
 
-      {/* Email Section */}
-      <View style={styles.contactBox}>
-        <View style={styles.contactInfo}>
-          <ThemedText style={[styles.label, { color: C.muted }]}>
-            Email Address
-          </ThemedText>
-          <ThemedText style={[styles.value, { color: C.text }]}>
-            {email}
-          </ThemedText>
-        </View>
-        <BraneButton
-          text='Email'
-          onPress={handleEmail}
-          backgroundColor={C.primary}
-          textColor={C.background}
-          height={40}
-          radius={10}
-          width={100}
-        />
-      </View>
-
-      {/* Support Chat CTA */}
-      <View
-        style={[
-          styles.liveChat,
-          { backgroundColor: C.inputBg, borderColor: C.border },
-        ]}
-      >
-        <MessageAdd size={20} color={C.primary} />
-        <View style={{ flex: 1 }}>
-          <ThemedText type='defaultSemiBold'>Live Chat Support</ThemedText>
-          <ThemedText style={[styles.chatDesc, { color: C.muted }]}>
-            Available during business hours
-          </ThemedText>
+        {/* Email Card */}
+        <View style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder }]}>
+          <View style={styles.cardText}>
+            <Text style={[styles.cardLabel, { color: C.muted }]}>Email Address</Text>
+            <Text style={[styles.cardValue, { color: C.text }]}>{EMAIL}</Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.actionBtn, { backgroundColor: buttonBg }]}
+            onPress={() => Linking.openURL(`mailto:${EMAIL}`)}
+            activeOpacity={0.75}
+          >
+            <MessageAdd size={16} color={C.primary} style={{ marginRight: 6 }} />
+            <Text style={[styles.actionLabel, { color: C.primary }]}>Email</Text>
+          </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
-};
-
-export default ContactComponent;
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 20,
-    gap: 20,
+    paddingTop: 16,
   },
-  description: {
+
+  subtitle: {
     fontSize: 13,
-    marginBottom: 8,
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
-  contactBox: {
+
+  list: { paddingHorizontal: 16, gap: 12, paddingBottom: 24 },
+
+  card: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    gap: 12,
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingVertical: 18,
+    paddingHorizontal: 18,
   },
-  contactInfo: {
-    flex: 1,
-    gap: 3,
-  },
-  label: {
+  cardText: { flex: 1, paddingRight: 12 },
+  cardLabel: {
     fontSize: 12,
-    fontWeight: "500",
+    marginBottom: 5,
   },
-  value: {
-    fontSize: 14,
-    fontWeight: "500",
+  cardValue: {
+    fontSize: 15,
+    fontWeight: "600",
   },
-  liveChat: {
+
+  actionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    borderRadius: 10,
-    borderWidth: 1,
-    marginTop: 8,
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
   },
-  chatDesc: {
-    fontSize: 11,
-    marginTop: 2,
+  actionLabel: {
+    fontSize: 14,
+    fontWeight: "700",
   },
 });

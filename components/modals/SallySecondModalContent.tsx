@@ -119,7 +119,7 @@ export default function SallySecondModalContent({
         disabled={isSaving}
       >
         {isSaving ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color='#fff' />
         ) : (
           <ThemedText style={styles.buttonText}>Save and Activate</ThemedText>
         )}

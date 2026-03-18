@@ -2,7 +2,7 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { Call, DocumentFavourite, ArrowRight2 } from "iconsax-react-native";
+import { Call, MessageQuestion, ArrowRight2 } from "iconsax-react-native";
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "../themed-text";
@@ -14,31 +14,46 @@ const HelpDeskComponent = () => {
 
   const menuItems = [
     {
+      key: "contact",
       label: "Contact us",
-      icon: <Call size={20} color={C.primary} />,
-      onPress: () => router.push("/help-desk/contact"),
+      icon: <Call size={22} color={C.primary} />,
+      bordered: true,
+      onPress: () => router.push("/(tabs)/(account)/help-desk/contact"),
     },
     {
+      key: "livechat",
+      label: "Live chat",
+      icon: <MessageQuestion size={22} color={C.primary} />,
+      bordered: true,
+      onPress: () => router.push("/support"),
+    },
+    {
+      key: "faqs",
       label: "FAQs",
-      icon: <DocumentFavourite size={20} color={C.primary} />,
-      onPress: () => router.push("/help-desk/faqs"),
+      icon: <MessageQuestion size={22} color={C.primary} />,
+      bordered: false,
+      onPress: () => router.push("/(tabs)/(account)/help-desk/faqs"),
     },
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.list, { paddingTop: 12 }]}>
       {menuItems.map((item) => (
         <TouchableOpacity
-          key={item.label}
-          style={[styles.menuItem, { borderBottomColor: C.border }]}
-          activeOpacity={0.7}
+          key={item.key}
+          style={[
+            styles.row,
+            { backgroundColor: C.background },
+            item.bordered && [styles.rowBordered, { borderColor: C.border }],
+          ]}
           onPress={item.onPress}
+          activeOpacity={0.65}
         >
-          <View style={styles.menuContent}>
-            <View style={styles.iconWrap}>{item.icon}</View>
-            <ThemedText style={styles.menuLabel}>{item.label}</ThemedText>
-          </View>
-          <ArrowRight2 size={16} color={C.text} />
+          <View style={styles.rowIconWrap}>{item.icon}</View>
+          <ThemedText style={[styles.rowLabel, { color: C.text }]}>
+            {item.label}
+          </ThemedText>
+          <ArrowRight2 size={18} color={C.muted} />
         </TouchableOpacity>
       ))}
     </View>
@@ -48,31 +63,25 @@ const HelpDeskComponent = () => {
 export default HelpDeskComponent;
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 8,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-  },
-  menuContent: {
-    flexDirection: "row",
-    alignItems: "center",
+  list: {
     gap: 12,
-    flex: 1,
   },
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    justifyContent: "center",
+  row: {
+    flexDirection: "row",
     alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderRadius: 12,
   },
-  menuLabel: {
-    fontSize: 14,
+  rowBordered: {
+    borderWidth: 1,
+  },
+  rowIconWrap: {
+    marginRight: 14,
+  },
+  rowLabel: {
+    flex: 1,
+    fontSize: 15,
     fontWeight: "500",
   },
 });
