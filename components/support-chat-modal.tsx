@@ -12,6 +12,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import {Image}  from "expo-image";
 
 const FAQS = [
   "How can I get stock rewards?",
@@ -40,9 +41,10 @@ export default function SupportScreen() {
       {/* 🔥 HEADER */}
       <View style={[styles.header, { backgroundColor: C.primary }]}>
         <View style={styles.headerTop}>
-          <ThemedText style={styles.brand}>
-            brane <ThemedText style={[styles.support, { color: `${C.primary}50` }]}>Support</ThemedText>
-          </ThemedText>
+          <View style={styles.brand}>
+            <Image source={require("../assets/images/icn.png")} style={{ width: 24, height: 24 }} />
+             <ThemedText style={[styles.support, { color: "#fff" }]}>Support</ThemedText>
+          </View>
 
           <TouchableOpacity onPress={() => router.back()}>
             <ThemedText style={styles.close}>×</ThemedText>
@@ -54,7 +56,7 @@ export default function SupportScreen() {
         </ThemedText>
 
         {/* 🔍 SEARCH */}
-        <View style={[styles.searchBox, { backgroundColor: C.inputBg }]}>
+        <View style={[styles.searchBox, { backgroundColor: "#fff" }]}>
           <SearchNormal1 size={16} color={C.muted} />
           <TextInput
             placeholder="Search anything"
@@ -73,7 +75,7 @@ export default function SupportScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* FAQ LIST */}
           {filteredFaq.map((item, index) => (
-            <TouchableOpacity key={index} style={[styles.faqItem, { backgroundColor: C.inputBg, borderColor: C.border, borderWidth: 1 }]}>
+            <TouchableOpacity key={index} style={[styles.faqItem, { backgroundColor: C.inputBg }]}>
               <ThemedText style={[styles.faqText, { color: C.text }]}>{item}</ThemedText>
               <Add size={16} color={C.primary} />
             </TouchableOpacity>
@@ -85,7 +87,7 @@ export default function SupportScreen() {
           </ThemedText>
 
           {[1, 2, 3].map((_, i) => (
-            <TouchableOpacity key={i} style={[styles.docCard, { backgroundColor: C.inputBg, borderColor: C.border, borderWidth: 1 }]}>
+            <TouchableOpacity key={i} style={[styles.docCard, { backgroundColor: C.inputBg }]}>
               <ThemedText style={[styles.docTitle, { color: C.text }]}>
                 How to Put My Bracs To Work
               </ThemedText>
@@ -100,10 +102,10 @@ export default function SupportScreen() {
 
         {/* 💬 CTA BUTTON */}
         <TouchableOpacity
-          style={[styles.cta, { backgroundColor: `${C.primary}15`, borderColor: C.primary, borderWidth: 1 }]}
+          style={[styles.cta, { backgroundColor: C.primary }]}
           onPress={() => router.push("/live-chat")}
         >
-          <ThemedText style={[styles.ctaText, { color: C.primary }]}>
+          <ThemedText style={[styles.ctaText, { color: "#fff" }]}>
             Start Conversation
           </ThemedText>
         </TouchableOpacity>
@@ -128,14 +130,15 @@ const styles = StyleSheet.create({
   },
 
   brand: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "bold",
-    fontStyle: "italic",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
 
   support: {
     fontSize: 12,
+    fontWeight: "bold",
+    color: "#fff",
   },
 
   close: {
