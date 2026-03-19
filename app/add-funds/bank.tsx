@@ -1,354 +1,180 @@
-import Back from "@/components/back";
-import { BraneButton } from "@/components/brane-button";
-import { FormInput } from "@/components/formInput";
-import { SuccessModal } from "@/components/success-modal";
+import { BankIcon } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
+import { WalletNotFound } from "@/components/wallet-not-found";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import BaseRequest, { catchError } from "@/services";
+import { useAppState } from "@/redux/store";
+import { TRANSACTION_SERVICE } from "@/services/routes";
+import { useRequest } from "@/services/useRequest";
+import { showError, showSuccess } from "@/utils/helpers";
+import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
-import { Add } from "iconsax-react-native";
+import { Copy, ExportCurve } from "iconsax-react-native";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  ActivityIndicator,
+  Share as RNShare,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-type Scheme = "light" | "dark";
+const BANK_NAME = "FCMB MFB";
 
-const PRESET_AMOUNTS = ["200", "500", "750", "1000"];
-
-const BANK_ACCOUNT = {
-  id: "1",
-  name: "Fatimo Temitope Salami",
-  bank: "Guarantee Trust Bank",
-  accountNumber: "01234567890",
-};
-
-export default function FundWithBankScreen() {
+export function FundWithBankScren() {
   const router = useRouter();
-  const rawScheme = useColorScheme();
-  const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
-  const C = Colors[scheme];
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+  const { user } = useAppState();
 
-  const [amount, setAmount] = useState("2000");
-  const [selectedBankId, setSelectedBankId] = useState<string | null>(
-    BANK_ACCOUNT.id,
+  const [errorStatus, setErrorStatus] = useState("");
+
+  const { data: account, isLoading } = useRequest(
+    TRANSACTION_SERVICE.ROVA_ACCOUNT_NO,
+    {
+      handleError: (error: any) => {
+        setErrorStatus(error?.message || "Wallet not found");
+      },
+    },
   );
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const isFundEnabled = !!amount && !!selectedBankId && !loading;
-  const formattedAmount = Number(amount || 0).toLocaleString("en-NG");
+  // ─── Guards ───────────────────────────────────────────────
+  if (isLoading)
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size='small' color={C.primary} />
+      </View>
+    );
+  if (errorStatus)
+    return (
+      <WalletNotFound
+        message={errorStatus}
+        onCompleteKYC={() => router.push("/kyc")}
+      />
+    );
 
-  const handleFundAccount = async () => {
-    if (!isFundEnabled) return;
-    setLoading(true);
+  // ─── Data ─────────────────────────────────────────────────
+  const accountName = `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
+  const accountNumber = account?.accountNumber ?? "";
+
+  // ─── Actions ──────────────────────────────────────────────
+  const handleCopy = async () => {
+    await Clipboard.setStringAsync(accountNumber);
+    showSuccess("Copied to clipboard");
+  };
+
+  const handleShare = async () => {
     try {
-      await BaseRequest.post("/payment/fund-wallet", {
-        amount: parseFloat(amount),
-        bankAccountId: selectedBankId,
-        method: "bank_transfer",
+      await RNShare.share({
+        title: "Bank Transfer Details",
+        message: `Account Name: ${accountName}\nAccount Number: ${accountNumber}\nBank: ${BANK_NAME}`,
       });
-      setShowSuccessModal(true);
-    } catch (error) {
-      catchError(error);
-    } finally {
-      setLoading(false);
+    } catch {
+      showError("Unable to share at this time.");
     }
   };
 
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-          Fund Wallet With Bank
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+    <View style={styles.wrapper}>
+      {/* Section header */}
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+      {/* Outer sand card */}
+      <View
+        style={[
+          styles.outerCard,
+        ]}
       >
-        <View style={styles.section}>
-          <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
-            Fund Method
+        {/* Bank Transfer label row */}
+        <View style={styles.labelRow}>
+          {/* Bank icon placeholder — swap with your <BankIcn /> SVG */}
+          <BankIcon />
+          <ThemedText style={[styles.labelText, { color: C.text }]}>
+            Bank Transfer
           </ThemedText>
+        </View>
 
-          <View
-            style={[
-              styles.methodContainer,
-              { backgroundColor: C.inputBg, borderColor: C.border },
-            ]}
-          >
-            <View style={styles.subHeaderRow}>
-              <ThemedText style={[styles.addedText, { color: C.muted }]}>
-                Added Banks
-              </ThemedText>
-              <TouchableOpacity activeOpacity={0.8}>
-                <View style={styles.addNewWrap}>
-                  <Add size={12} color={C.primary} />
-                  <ThemedText style={[styles.addNewText, { color: C.primary }]}>
-                    Add New
-                  </ThemedText>
-                </View>
-              </TouchableOpacity>
-            </View>
+        {/* Dark inner card */}
+        <View style={[styles.innerCard, { backgroundColor: C.primary }]}>
+          {/* Account details */}
+          <View style={styles.detailsCol}>
+            <ThemedText style={styles.accountName}>{accountName}</ThemedText>
+            <ThemedText style={styles.accountNumber}>
+              {accountNumber}
+            </ThemedText>
+            <ThemedText style={styles.bankName}>{BANK_NAME}</ThemedText>
+          </View>
 
-            <TouchableOpacity
-              activeOpacity={0.85}
-              onPress={() => setSelectedBankId(BANK_ACCOUNT.id)}
-              style={[
-                styles.bankRow,
-                {
-                  borderColor:
-                    selectedBankId === BANK_ACCOUNT.id ? C.primary : C.border,
-                  backgroundColor:
-                    selectedBankId === BANK_ACCOUNT.id
-                      ? C.primary + "15"
-                      : C.inputBg,
-                },
-              ]}
-            >
-              <View style={styles.bankDetails}>
-                <View
-                  style={[styles.initialsBadge, { backgroundColor: "#E4580A" }]}
-                >
-                  <ThemedText style={styles.initialsText}>F</ThemedText>
-                </View>
-                <View>
-                  <ThemedText style={[styles.bankName, { color: C.text }]}>
-                    {BANK_ACCOUNT.name}
-                  </ThemedText>
-                  <ThemedText style={[styles.bankMeta, { color: C.muted }]}>
-                    {BANK_ACCOUNT.bank} · {BANK_ACCOUNT.accountNumber}
-                  </ThemedText>
-                </View>
-              </View>
-
-              <View
-                style={[
-                  styles.radioCircle,
-                  {
-                    borderColor:
-                      selectedBankId === BANK_ACCOUNT.id ? C.primary : C.border,
-                  },
-                ]}
-              >
-                {selectedBankId === BANK_ACCOUNT.id && (
-                  <View
-                    style={[styles.radioInner, { backgroundColor: C.primary }]}
-                  />
-                )}
-              </View>
+          {/* Action icons */}
+          <View style={styles.actionsRow}>
+            <TouchableOpacity onPress={handleShare} activeOpacity={0.7}>
+              <ExportCurve size={16} color='#AFC9BE' />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleCopy} activeOpacity={0.7}>
+              <Copy size={22} color='#AFC9BE' />
             </TouchableOpacity>
           </View>
         </View>
-
-        <View style={styles.section}>
-          <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
-            Fund Amount
-          </ThemedText>
-          <FormInput
-            placeholder='Enter amount'
-            keyboardType='number-pad'
-            value={amount}
-            onChangeText={setAmount}
-            inputContainerStyle={styles.amountInputContainer}
-            inputStyle={styles.amountInputText}
-          />
-
-          <View style={styles.presetRow}>
-            {PRESET_AMOUNTS.map((preset) => (
-              <TouchableOpacity
-                key={preset}
-                style={[
-                  styles.presetBtn,
-                  {
-                    backgroundColor:
-                      amount === preset ? C.primary + "20" : C.inputBg,
-                    borderColor: amount === preset ? C.primary : C.border,
-                  },
-                ]}
-                onPress={() => setAmount(preset)}
-              >
-                <View style={styles.presetInner}>
-                  <View
-                    style={[styles.presetDot, { backgroundColor: C.primary }]}
-                  />
-                  <ThemedText
-                    style={[
-                      styles.presetText,
-                      { color: amount === preset ? C.primary : C.text },
-                    ]}
-                  >
-                    ₦ {preset}
-                  </ThemedText>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      </ScrollView>
-
-      <View style={styles.footer}>
-        <BraneButton
-          text={loading ? "Processing..." : "Fund Account"}
-          onPress={handleFundAccount}
-          loading={loading}
-          disabled={!isFundEnabled}
-          height={48}
-          radius={8}
-          fontSize={12}
-        />
       </View>
-
-      <SuccessModal
-        visible={showSuccessModal}
-        title='Transaction Successful'
-        description={`You've successfully funded your account with ₦${formattedAmount}.`}
-        actionText='Dismiss'
-        onAction={() => {
-          setShowSuccessModal(false);
-          router.replace("/(tabs)");
-        }}
-      />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
+  wrapper: { width: "100%" },
+  loader: {
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 14,
-    paddingTop: 12,
-    paddingBottom: 12,
+    justifyContent: "center",
+    minHeight: 200,
   },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
-  section: {
-    marginTop: 24,
+
+  sectionHeader: {
+    // paddingVertical: 12,
+    borderBottomWidth: 2,
+    marginBottom: 12,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 14,
-  },
-  methodContainer: {
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-  },
-  subHeaderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  addedText: {
-    fontSize: 10,
-  },
-  addNewWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  addNewText: {
-    fontSize: 10,
-  },
-  bankRow: {
-    height: 56,
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  bankDetails: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  initialsBadge: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  initialsText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontWeight: "700",
-  },
-  bankName: {
-    fontSize: 10,
     fontWeight: "500",
   },
-  bankMeta: {
-    fontSize: 8,
-    marginTop: 2,
+
+  // Outer sand card
+  outerCard: {
+    width: "100%",
+    borderRadius: 12,
+    // paddingHorizontal: 14,
+    // paddingVertical: 16,
+    gap: 16,
   },
-  radioCircle: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
+
+  // Label row
+  labelRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  bankIconPlaceholder: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
   },
-  radioInner: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  amountInputContainer: {
-    height: 36,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  amountInputText: {
-    fontSize: 12,
-  },
-  presetRow: {
+  labelText: { fontSize: 15, fontWeight: "600" },
+
+  // Dark inner card
+  innerCard: {
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 16,
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
+    minHeight: 95,
   },
-  presetBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: 8,
-    borderWidth: 1,
+  detailsCol: { gap: 2 },
+  accountName: { fontSize: 13, color: "#AFC9BE", textTransform: "capitalize" },
+  accountNumber: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    marginVertical: 2,
   },
-  presetInner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  presetDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-  },
-  presetText: {
-    fontSize: 11,
-    fontWeight: "400",
-  },
-  footer: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 16,
-  },
+  bankName: { fontSize: 13, color: "#AFC9BE" },
+
+  actionsRow: { flexDirection: "row", gap: 16, alignItems: "center" },
 });

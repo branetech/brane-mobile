@@ -3,40 +3,34 @@ import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { type Scheme } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
+import { useRequest } from "@/services/useRequest";
 import {
-    hideAppLoader,
-    priceFormatter,
-    showAppLoader,
-    showSuccess,
+  hideAppLoader,
+  priceFormatter,
+  showAppLoader,
+  showSuccess,
+  toArray,
 } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type Scheme = "light" | "dark";
 type Stage = "form" | "account" | "success";
-
-const toArray = (v: any): any[] => {
-  if (Array.isArray(v)) return v;
-  if (Array.isArray(v?.data)) return v.data;
-  if (Array.isArray(v?.records)) return v.records;
-  if (Array.isArray(v?.data?.records)) return v.data.records;
-  return [];
-};
 
 export default function DividendWithdrawScreen() {
   const router = useRouter();
@@ -47,16 +41,17 @@ export default function DividendWithdrawScreen() {
   const [stage, setStage] = useState<Stage>("form");
   const [amount, setAmount] = useState("");
   const [amountError, setAmountError] = useState<string | undefined>();
-  const [dividendBalance, setDividendBalance] = useState(0);
   const [accounts, setAccounts] = useState<any[]>([]);
-  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(false);
 
-  const fetchDividendBalance = useCallback(async () => {
-    setIsLoadingBalance(true);
-    try {
-      const res: any = await BaseRequest.get(STOCKS_SERVICE.WALLET_BALANCE);
-      setDividendBalance(
+  // Fetch dividend balance using useRequest hook - auto-refetches on screen focus
+  const { data: dividendBalance = 0, isLoading: isLoadingBalance } = useRequest(
+    STOCKS_SERVICE.WALLET_BALANCE,
+    {
+      initialValue: 0,
+      revalidateOnFocus: true,
+      revalidateOnMount: true,
+      transform: (res: any) =>
         Number(
           res?.data?.dividendBalance ||
             res?.dividendBalance ||
@@ -64,13 +59,8 @@ export default function DividendWithdrawScreen() {
             res?.balance ||
             0,
         ),
-      );
-    } catch (error) {
-      catchError(error);
-    } finally {
-      setIsLoadingBalance(false);
-    }
-  }, []);
+    },
+  );
 
   const fetchAccounts = useCallback(async () => {
     setIsLoadingAccounts(true);
@@ -83,10 +73,6 @@ export default function DividendWithdrawScreen() {
       setIsLoadingAccounts(false);
     }
   }, []);
-
-  useEffect(() => {
-    fetchDividendBalance();
-  }, [fetchDividendBalance]);
 
   const handleContinueForm = () => {
     const num = Number(amount);

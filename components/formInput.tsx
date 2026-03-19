@@ -111,7 +111,7 @@ export const FormInput = forwardRef<TextInput, FormInputProp>(
             styles.inputContainer,
             {
               backgroundColor: inputBg,
-              borderColor: error ? theme.error : borderColor,
+              borderColor: error ? theme.error : inputBg,
             },
             inputContainerStyle,
           ]}

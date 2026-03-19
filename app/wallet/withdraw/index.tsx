@@ -4,42 +4,36 @@ import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
+import { type Scheme } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
+import { useRequest } from "@/services/useRequest";
 import {
-    hideAppLoader,
-    priceFormatter,
-    showAppLoader,
-    showSuccess,
+  hideAppLoader,
+  priceFormatter,
+  showAppLoader,
+  showSuccess,
+  toArray,
 } from "@/utils/helpers";
 import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type Scheme = "light" | "dark";
 type Stage = "form" | "account" | "pin" | "success";
 
 const PRESET_AMOUNTS = [500, 1000, 2000, 5000];
-
-const toArray = (v: any): any[] => {
-  if (Array.isArray(v)) return v;
-  if (Array.isArray(v?.data)) return v.data;
-  if (Array.isArray(v?.records)) return v.records;
-  if (Array.isArray(v?.data?.records)) return v.data.records;
-  return [];
-};
 
 export default function WalletWithdrawScreen() {
   const router = useRouter();
@@ -50,24 +44,20 @@ export default function WalletWithdrawScreen() {
   const [stage, setStage] = useState<Stage>("form");
   const [amount, setAmount] = useState("");
   const [amountError, setAmountError] = useState<string | undefined>();
-  const [walletBalance, setWalletBalance] = useState(0);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
-  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(false);
   const [showPin, setShowPin] = useState(false);
 
-  const fetchBalance = useCallback(async () => {
-    setIsLoadingBalance(true);
-    try {
-      const res: any = await BaseRequest.get(TRANSACTION_SERVICE.BALANCE);
-      setWalletBalance(Number(res?.data?.balance || res?.balance || 0));
-    } catch (error) {
-      catchError(error);
-    } finally {
-      setIsLoadingBalance(false);
-    }
-  }, []);
+  // Fetch wallet balance using useRequest hook - auto-refetches on screen focus
+  const { data: walletBalance = 0, isLoading: isLoadingBalance } = useRequest(
+    TRANSACTION_SERVICE.BALANCE,
+    {
+      initialValue: 0,
+      revalidateOnFocus: true,
+      revalidateOnMount: true,
+    },
+  );
 
   const fetchAccounts = useCallback(async () => {
     setIsLoadingAccounts(true);
@@ -80,10 +70,6 @@ export default function WalletWithdrawScreen() {
       setIsLoadingAccounts(false);
     }
   }, []);
-
-  useEffect(() => {
-    fetchBalance();
-  }, [fetchBalance]);
 
   const handleContinueForm = () => {
     const num = Number(amount);

@@ -12,6 +12,9 @@ import {
 } from "@/components/payment-method-selector";
 import { BracsInfoIcon } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useEarnedBracs } from "@/utils/brac";
 import { CloseCircle, SearchNormal1 } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
@@ -53,11 +56,14 @@ export function ContactPickerModal({
   onClose,
   onSelect,
 }: ContactPickerProps) {
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType='slide'
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -67,22 +73,22 @@ export function ContactPickerModal({
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={[styles.modalCard, { maxHeight: "80%" }]}
+          style={[styles.modalCard, { maxHeight: "80%", backgroundColor: C.background }]}
           onPress={() => {}}
         >
           <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>Select Contact</ThemedText>
+            <ThemedText style={[styles.modalTitle, { color: C.text }]}>Select Contact</ThemedText>
             <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+              <CloseCircle size={18} color={C.muted} variant='Outline' />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.contactSearchRow}>
-            <SearchNormal1 size={16} color="#88888F" variant="Outline" />
+          <View style={[styles.contactSearchRow, { backgroundColor: C.inputBg, borderColor: C.border }]}>
+            <SearchNormal1 size={16} color={C.muted} variant='Outline' />
             <TextInput
-              style={styles.searchInput}
-              placeholder="Search contacts"
-              placeholderTextColor="#A9A9AE"
+              style={[styles.searchInput, { color: C.text }]}
+              placeholder='Search contacts'
+              placeholderTextColor={C.muted}
               value={contactSearch}
               onChangeText={setContactSearch}
             />
@@ -91,12 +97,12 @@ export function ContactPickerModal({
           <ScrollView
             style={styles.modalList}
             showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps='handled'
           >
             {filteredContacts.map((c, idx) => (
               <TouchableOpacity
                 key={`${c.phone}-${idx}`}
-                style={styles.contactRow}
+                style={[styles.contactRow, { borderBottomColor: C.border }]}
                 onPress={() => {
                   const digits = c.phone.replace(/\D/g, "");
                   const normalized = digits.startsWith("0")
@@ -107,19 +113,19 @@ export function ContactPickerModal({
                   onSelect(normalized);
                 }}
               >
-                <View style={styles.contactAvatar}>
-                  <ThemedText style={styles.contactAvatarText}>
+                <View style={[styles.contactAvatar, { backgroundColor: C.primary + "20" }]}>
+                  <ThemedText style={[styles.contactAvatarText, { color: C.primary }]}>
                     {(c.name[0] || "?").toUpperCase()}
                   </ThemedText>
                 </View>
                 <View style={{ flex: 1 }}>
-                  <ThemedText style={styles.contactName}>{c.name}</ThemedText>
-                  <ThemedText style={styles.contactPhone}>{c.phone}</ThemedText>
+                  <ThemedText style={[styles.contactName, { color: C.text }]}>{c.name}</ThemedText>
+                  <ThemedText style={[styles.contactPhone, { color: C.muted }]}>{c.phone}</ThemedText>
                 </View>
               </TouchableOpacity>
             ))}
             {filteredContacts.length === 0 ? (
-              <ThemedText style={[styles.emptyText, { padding: 16 }]}>
+              <ThemedText style={[styles.emptyText, { padding: 16, color: C.muted }]}>
                 No contacts found
               </ThemedText>
             ) : null}
@@ -147,11 +153,14 @@ export function BoostModal({
   onSkip,
   onAdd,
 }: BoostModalProps) {
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType='slide'
       onRequestClose={onSkip}
     >
       <TouchableOpacity
@@ -161,17 +170,17 @@ export function BoostModal({
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={styles.boostModalCard}
+          style={[styles.boostModalCard, { backgroundColor: C.background }]}
           onPress={() => {}}
         >
-          <ThemedText style={styles.boostModalTitle}>
+          <ThemedText style={[styles.boostModalTitle, { color: C.text }]}>
             Boost Bracs Balance
           </ThemedText>
-          <ThemedText style={styles.boostModalDesc}>
+          <ThemedText style={[styles.boostModalDesc, { color: C.muted }]}>
             You can boost your investment wallet by adding a tip to this
             transaction, which would be added to your bracs balance.
           </ThemedText>
-          <ThemedText style={styles.boostSelectLabel}>
+          <ThemedText style={[styles.boostSelectLabel, { color: C.muted }]}>
             Select amount to add
           </ThemedText>
           <View style={styles.boostPresetsRow}>
@@ -180,14 +189,16 @@ export function BoostModal({
                 key={preset}
                 style={[
                   styles.boostPresetChip,
-                  boostAmount === preset && styles.boostPresetChipActive,
+                  { backgroundColor: C.inputBg, borderColor: C.border },
+                  boostAmount === preset && { borderColor: C.primary, borderWidth: 2, backgroundColor: C.background },
                 ]}
                 onPress={() => setBoostAmount(preset)}
               >
                 <ThemedText
                   style={[
                     styles.boostPresetChipText,
-                    boostAmount === preset && styles.boostPresetChipTextActive,
+                    { color: C.text },
+                    boostAmount === preset && { color: C.primary },
                   ]}
                 >
                   ₦{Number(preset).toLocaleString()}
@@ -197,19 +208,19 @@ export function BoostModal({
           </View>
           <View style={styles.boostActions}>
             <BraneButton
-              text="Dont Add"
+              text='Ignore'
               onPress={onSkip}
-              backgroundColor="#D2F1E4"
-              textColor="#013D25"
+              backgroundColor={C.inputBg}
+              textColor={C.primary}
               height={50}
               radius={32}
               style={{ flex: 1 }}
             />
             <BraneButton
-              text="Add Fee"
+              text='Boost It!'
               onPress={onAdd}
-              backgroundColor="#013D25"
-              textColor="#D2F1E4"
+              backgroundColor={C.primary}
+              textColor={C.googleBg}
               height={50}
               radius={32}
               style={{ flex: 1 }}
@@ -266,12 +277,20 @@ export function SummaryModal({
   onConfirm,
 }: SummaryModalProps) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
 
+  const calculatedBracs = useEarnedBracs({
+    amount: Number(amountToPay || 0),
+    serviceType: "airtime",
+    serviceId: networkLabel.toLowerCase(),
+  });
+  console.log("Calculated bracs:", calculatedBracs, paymentId, networkLabel);
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType='slide'
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -281,30 +300,30 @@ export function SummaryModal({
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={styles.summaryModalCard}
+          style={[styles.summaryModalCard, { backgroundColor: C.background }]}
           onPress={() => {}}
         >
-          <View style={styles.summaryModalHandle} />
+          <View style={[styles.summaryModalHandle, { backgroundColor: C.border }]} />
 
           <View style={styles.summaryAmountWrap}>
-            <View style={styles.summaryNetworkCircle}>
+            <View style={[styles.summaryNetworkCircle, { backgroundColor: C.inputBg }]}>
               {NETWORK_IMAGES[networkImageKey] ? (
                 <Image
                   source={NETWORK_IMAGES[networkImageKey]}
                   style={styles.summaryNetworkImg}
-                  resizeMode="contain"
+                  resizeMode='contain'
                 />
               ) : (
                 <Text style={styles.summaryCoinEmoji}>🪙</Text>
               )}
             </View>
-            <ThemedText style={styles.summaryAmountText}>
+            <ThemedText style={{ fontSize: 28, fontWeight: "700" }}>
               ₦{formatMoney(amountToPay)}
             </ThemedText>
           </View>
 
-          <View style={styles.summaryCard}>
-            <ThemedText style={styles.summaryTitle}>
+          <View style={[styles.summaryCard, { backgroundColor: C.inputBg }]}>
+            <ThemedText style={[styles.summaryTitle, { color: C.text }]}>
               Transaction Summary
             </ThemedText>
             {[
@@ -326,15 +345,16 @@ export function SummaryModal({
               },
             ].map((row, idx) => (
               <View key={idx}>
-                {idx === 5 && <View style={styles.summaryDivider} />}
+                {idx === 5 && <View style={[styles.summaryDivider, { backgroundColor: C.border }]} />}
                 <View style={styles.summaryRow}>
-                  <ThemedText style={styles.summaryRowLabel}>
+                  <ThemedText style={[styles.summaryRowLabel, { color: C.muted }]}>
                     {row.label}
                   </ThemedText>
                   <ThemedText
                     style={[
                       styles.summaryRowValue,
-                      row.bold && { color: "#013D25", fontWeight: "700" },
+                      { color: C.text },
+                      row.bold && { color: C.primary, fontWeight: "700" },
                     ]}
                   >
                     {row.value}
@@ -345,18 +365,18 @@ export function SummaryModal({
           </View>
 
           <TouchableOpacity
-            style={styles.bracsRewardBanner}
+            style={[styles.bracsRewardBanner, { backgroundColor: C.primary + "15" }]}
             onPress={() => setShowTooltip(true)}
             activeOpacity={0.8}
           >
             <View style={styles.bracsRewardLeft}>
               <BracsInfoIcon size={16} />
-              <ThemedText style={styles.bracsRewardText}>
-                Bracs reward + cash boost
+              <ThemedText style={[styles.bracsRewardText, { color: C.text }]}>
+                Bracs + Brac booster
               </ThemedText>
             </View>
-            <ThemedText style={styles.bracsRewardValue}>
-              {bracsRewardAmount}+{boostAmount || "0"}
+            <ThemedText style={[styles.bracsRewardValue, { color: C.text }]}>
+              {calculatedBracs}+{boostAmount || "0"}
             </ThemedText>
           </TouchableOpacity>
 
@@ -372,8 +392,8 @@ export function SummaryModal({
           <BraneButton
             text={ctaLabel}
             onPress={onConfirm}
-            backgroundColor="#013D25"
-            textColor="#D2F1E4"
+            backgroundColor={C.primary}
+            textColor={C.googleBg}
             height={52}
             radius={12}
             loading={isSubmitting}
@@ -383,38 +403,34 @@ export function SummaryModal({
           <Modal
             visible={showTooltip}
             transparent
-            animationType="fade"
+            animationType='fade'
             onRequestClose={() => setShowTooltip(false)}
           >
-            <View style={styles.inlineTooltipOverlay}>
+            <View style={[styles.inlineTooltipOverlay, { backgroundColor: "#013D254D" }]}>
               <TouchableOpacity
                 activeOpacity={1}
-                style={styles.inlineTooltipCard}
+                style={[styles.inlineTooltipCard, { backgroundColor: C.background }]}
                 onPress={() => {}}
               >
-                <ThemedText style={styles.bracsTooltipTitle}>
+                <ThemedText style={[styles.bracsTooltipTitle, { color: C.text }]}>
                   Rebate+ Added Funds
                 </ThemedText>
-                <Text style={styles.bracsTooltipBody}>
-                  {
-                    "Bracs reward is the bonus you get from every transaction and "
-                  }
-                  <Text style={styles.bracsTooltipGold}>
+                <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
+                  Bracs are the bonus you get from every transaction and{" "}
+                  <ThemedText style={[styles.bracsTooltipGold]}>
                     can be use for investment
-                  </Text>
-                  {"."}
-                </Text>
-                <Text style={styles.bracsTooltipBody}>
-                  {
-                    "Cash boost are additional tip added to boost your portfolio balance (200 on 15 transactions a month = extra 3000 in your investment portfolio)"
-                  }
-                </Text>
+                  </ThemedText>
+                  .
+                </ThemedText>
+                <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
+                  Cash boost are additional tip added to boost your portfolio balance (200 on 15 transactions a month = extra 3000 in your investment portfolio)
+                </ThemedText>
                 <TouchableOpacity
-                  style={styles.tooltipOkayBtn}
+                  style={[styles.tooltipOkayBtn, { backgroundColor: C.primary }]}
                   onPress={() => setShowTooltip(false)}
                   activeOpacity={0.85}
                 >
-                  <Text style={styles.tooltipOkayText}>Okay</Text>
+                  <Text style={[styles.tooltipOkayText, { color: C.googleBg }]}>Okay</Text>
                 </TouchableOpacity>
               </TouchableOpacity>
             </View>
@@ -433,40 +449,43 @@ type BracsTooltipProps = {
 };
 
 export function BracsTooltipModal({ visible, onClose }: BracsTooltipProps) {
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType='fade'
       onRequestClose={onClose}
     >
       <TouchableOpacity
-        style={styles.tooltipOverlay}
+        style={[styles.tooltipOverlay, { backgroundColor: "#013D254D" }]}
         activeOpacity={1}
         onPress={onClose}
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={styles.bracsTooltipCard}
+          style={[styles.bracsTooltipCard, { backgroundColor: C.background }]}
           onPress={() => {}}
         >
-          <ThemedText style={styles.bracsTooltipTitle}>
+          <ThemedText style={[styles.bracsTooltipTitle, { color: C.text }]}>
             Rebate+ Added Funds
           </ThemedText>
-          <ThemedText style={styles.bracsTooltipBody}>
+          <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
             Bracs reward is the bonus you get from every transaction and can be
             used for investment.
           </ThemedText>
-          <ThemedText style={styles.bracsTooltipBody}>
+          <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
             Cash boost are additional tips added to boost your portfolio balance
             (200 on 15 transactions a month = extra 3000 in your investment
             portfolio).
           </ThemedText>
           <BraneButton
-            text="Okay"
+            text='Okay'
             onPress={onClose}
-            backgroundColor="#013D25"
-            textColor="#D2F1E4"
+            backgroundColor={C.primary}
+            textColor={C.googleBg}
             height={46}
             radius={10}
             style={{ marginTop: 4 }}
@@ -552,7 +571,7 @@ export function DataPlanModal({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType='slide'
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -568,7 +587,7 @@ export function DataPlanModal({
           <View style={styles.modalHeader}>
             <ThemedText style={styles.modalTitle}>Select Plan</ThemedText>
             <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
             </TouchableOpacity>
           </View>
 
@@ -669,7 +688,7 @@ export function ElectricityProviderModal({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType='slide'
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -685,7 +704,7 @@ export function ElectricityProviderModal({
           <View style={styles.modalHeader}>
             <ThemedText style={styles.modalTitle}>Select Provider</ThemedText>
             <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
             </TouchableOpacity>
           </View>
 
@@ -712,7 +731,7 @@ export function ElectricityProviderModal({
                     <Image
                       source={logo}
                       style={styles.providerModalLogo}
-                      resizeMode="contain"
+                      resizeMode='contain'
                     />
                   ) : null}
                   <View style={styles.providerModalTextWrap}>
@@ -758,7 +777,7 @@ export function TransportPlanModal({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType='slide'
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -776,7 +795,7 @@ export function TransportPlanModal({
               Select Transport Plan
             </ThemedText>
             <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
             </TouchableOpacity>
           </View>
 
@@ -842,7 +861,7 @@ export function CablePlanModal({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType='slide'
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -860,7 +879,7 @@ export function CablePlanModal({
               Select Subscription Plan
             </ThemedText>
             <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color="#6E6E75" variant="Outline" />
+              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
             </TouchableOpacity>
           </View>
 
@@ -910,7 +929,7 @@ export function CablePlanModal({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(11,0,20,0.35)",
+    backgroundColor: "#013D254D",
     justifyContent: "flex-end",
   },
   modalCard: {
@@ -1103,7 +1122,7 @@ const styles = StyleSheet.create({
   // Bracs tooltip modal
   tooltipOverlay: {
     flex: 1,
-    backgroundColor: "rgba(11,0,20,0.45)",
+    backgroundColor: "#013D254D",
     justifyContent: "center",
     paddingHorizontal: 24,
   },
@@ -1134,7 +1153,7 @@ const styles = StyleSheet.create({
   // Inline tooltip — full-screen scrim modal
   inlineTooltipOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.55)",
+    backgroundColor: "#013D254D",
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 24,

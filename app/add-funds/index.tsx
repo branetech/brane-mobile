@@ -10,6 +10,7 @@ import { Bank, Coin, Coin1, Copy, ExportCurve } from "iconsax-react-native";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { FundWithBankScren } from "./bank";
 
 export default function FundScreen() {
   const router = useRouter();
@@ -36,45 +37,14 @@ export default function FundScreen() {
           selected={selected === "bank"}
           onPress={() => setSelected("bank")}
           size={16}
-          bg={C.inputBg}
+          bg={selected === "bank" ? '#FAF6E6' : C.background}
           color={C.primary}
         >
-          <View w='100%' gap={16}>
-            <View row gap={8} aligned>
-              <BankIcon />
-              <ThemedText style={{ color: C.text }}>Bank Transfer</ThemedText>
-            </View>
-            <View
-              bg={C.primary}
-              h={100}
-              w='100%'
-              radius={12}
-              spaced
-              aligned
-              p={16}
-              row
-            >
-              <View gap={4}>
-                <Text color={C.background}>Wema bank</Text>
-                <Text color={C.background} fs={20} fw='bold'>
-                  0124356780
-                </Text>
-                <Text color={C.background}>Brane - Oluayo Bankole</Text>
-              </View>
-              <View row gap={16}>
-                <View center w={32} h={32} bg={C.primary + "CC"} radius={8}>
-                  <ExportCurve size={16} color={C.background} />
-                </View>
-                <View center w={32} h={32} bg={C.primary + "CC"} radius={8}>
-                  <Copy size={16} color={C.background} />
-                </View>
-              </View>
-            </View>
-          </View>
+         <FundWithBankScren />
         </BraneRadioButton>
 
         {/* Card */}
-        <BraneRadioButton
+        {/* <BraneRadioButton
           selected={selected === "card"}
           onPress={() => {
             setSelected("card");
@@ -87,10 +57,10 @@ export default function FundScreen() {
             <CardIcon />
             <ThemedText style={{ color: C.text }}>Card</ThemedText>
           </View>
-        </BraneRadioButton>
+        </BraneRadioButton> */}
 
         {/* Bank Account */}
-        <BraneRadioButton
+        {/* <BraneRadioButton
           selected={selected === "account"}
           onPress={() => {
             setSelected("account");
@@ -103,10 +73,10 @@ export default function FundScreen() {
             <Bank size='20' color={C.primary} />
             <ThemedText style={{ color: C.text }}>Bank Account</ThemedText>
           </View>
-        </BraneRadioButton>
+        </BraneRadioButton> */}
 
         {/* USSD */}
-        <BraneRadioButton
+        {/* <BraneRadioButton
           selected={selected === "ussd"}
           onPress={() => setSelected("ussd")}
           size={16}
@@ -116,10 +86,10 @@ export default function FundScreen() {
             <USSD />
             <ThemedText style={{ color: C.text }}>USSD</ThemedText>
           </View>
-        </BraneRadioButton>
+        </BraneRadioButton> */}
 
         {/* Stable Coin */}
-        <BraneRadioButton
+        {/* <BraneRadioButton
           selected={selected === "coin"}
           onPress={() => setSelected("coin")}
           size={16}
@@ -132,10 +102,10 @@ export default function FundScreen() {
             </View>
             <ThemedText style={{ color: C.muted }}>Coming soon</ThemedText>
           </View>
-        </BraneRadioButton>
+        </BraneRadioButton> */}
 
         {/* USDC */}
-        <BraneRadioButton
+        {/* <BraneRadioButton
           selected={selected === "usdc"}
           onPress={() => setSelected("usdc")}
           size={16}
@@ -148,10 +118,10 @@ export default function FundScreen() {
             </View>
             <ThemedText style={{ color: C.muted }}>Coming soon</ThemedText>
           </View>
-        </BraneRadioButton>
+        </BraneRadioButton> */}
 
         {/* USDT */}
-        <BraneRadioButton
+        {/* <BraneRadioButton
           selected={selected === "usdt"}
           onPress={() => setSelected("usdt")}
           size={16}
@@ -164,7 +134,7 @@ export default function FundScreen() {
             </View>
             <ThemedText style={{ color: C.muted }}>Coming soon</ThemedText>
           </View>
-        </BraneRadioButton>
+        </BraneRadioButton> */}
       </View>
     </SafeAreaView>
   );

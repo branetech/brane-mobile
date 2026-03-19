@@ -12,12 +12,12 @@ import { useRouter } from "expo-router";
 import { Add, Card, Trash } from "iconsax-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  Modal,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    Modal,
+    RefreshControl,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "#013D254D",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 24,

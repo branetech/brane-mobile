@@ -231,8 +231,7 @@ export default function TransactionScreen() {
           style={[
             styles.modalOverlay,
             {
-              backgroundColor:
-                scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)",
+              backgroundColor: "#013D254D",
             },
           ]}
           activeOpacity={1}
@@ -445,7 +444,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(11,0,20,0.35)",
+    backgroundColor: "#013D254D",
     justifyContent: "flex-end",
   },
   modalCard: {
@@ -477,8 +476,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
   },
-  filterChipActive: {
-  },
+  filterChipActive: {},
   filterChipText: {
     fontSize: 11,
     textTransform: "capitalize",

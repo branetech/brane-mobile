@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Modal,
+  View as RNView,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
@@ -96,12 +97,14 @@ export const TransactionPinValidator = ({
               <ThemedText style={dynamicStyles.closeText}>×</ThemedText>
             </TouchableOpacity>
 
-            <ThemedText style={dynamicStyles.title}>Confirm transaction</ThemedText>
+            <ThemedText style={dynamicStyles.title}>
+              Confirm transaction
+            </ThemedText>
             <ThemedText style={dynamicStyles.subtitle}>
               Kindly enter your transaction PIN to authorize this transaction.
             </ThemedText>
 
-            <View style={[styles.pinBox, { backgroundColor: C.inputBg }]}>
+            <RNView style={[styles.pinBox, { backgroundColor: C.inputBg }]}>
               {Array.from({ length: 6 }).map((_, index) => (
                 <View
                   key={index}
@@ -111,13 +114,15 @@ export const TransactionPinValidator = ({
                   }}
                 />
               ))}
-            </View>
+            </RNView>
           </View>
 
           {isLoading ? (
             <View style={styles.loadingWrap}>
               <ActivityIndicator size='small' color={C.primary} />
-              <ThemedText style={dynamicStyles.loadingText}>Please wait</ThemedText>
+              <ThemedText style={dynamicStyles.loadingText}>
+                Please wait
+              </ThemedText>
             </View>
           ) : (
             <View style={styles.keypad}>
@@ -205,19 +210,37 @@ export const TransactionPinValidator = ({
         <Modal
           visible={showInvalid}
           transparent
-          animationType="fade"
+          animationType='fade'
           onRequestClose={() => setShowInvalid(false)}
         >
-          <View style={[styles.invalidOverlay, { backgroundColor: scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)" }]}>
-            <View style={[styles.invalidCard, { backgroundColor: C.screen }]}>
-              <ThemedText style={dynamicStyles.invalidTitle}>
-                Invalid transaction pin
-              </ThemedText>
+          <RNView
+            style={[
+              styles.invalidOverlay,
+              {
+                backgroundColor:
+                  scheme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(11,0,20,0.35)",
+              },
+            ]}
+          >
+            <RNView
+              style={[styles.invalidCard, { backgroundColor: C.background }]}
+            >
+              <View row spaced>
+                <ThemedText style={dynamicStyles.invalidTitle}>
+                  Invalid transaction pin
+                </ThemedText>
+                <TouchableOpacity
+                  onPress={() => setShowInvalid(false)}
+                  style={[styles.closeWrap, { backgroundColor: C.inputBg }]}
+                >
+                  <ThemedText style={dynamicStyles.closeText}>×</ThemedText>
+                </TouchableOpacity>
+              </View>
               <ThemedText style={dynamicStyles.invalidHint}>
                 Can’t remember PIN?
               </ThemedText>
               <BraneButton
-                text="Click here to reset"
+                text='Click here to reset'
                 onPress={() => {
                   setShowInvalid(false);
                   onResetPin?.();
@@ -227,8 +250,8 @@ export const TransactionPinValidator = ({
                 height={44}
                 radius={12}
               />
-            </View>
-          </View>
+            </RNView>
+          </RNView>
         </Modal>
       </SafeAreaView>
     </Modal>
@@ -296,7 +319,8 @@ const styles = StyleSheet.create({
   keypad: {
     marginTop: "auto",
     marginBottom: 26,
-    width: "78%",
+    paddingHorizontal: 20,
+    // width: "78%",
     alignSelf: "center",
     gap: 18,
   },
