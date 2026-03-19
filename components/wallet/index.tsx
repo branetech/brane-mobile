@@ -8,7 +8,7 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
-import { formatDate, parseTransaction, priceFormatter } from "@/utils/helpers";
+import { formatDate, parseTransaction, priceFormatter, toArray } from "@/utils/helpers";
 import { ITransactionDetail } from "@/utils/index";
 import { useRouter } from "expo-router";
 import { Add, ArrowDown2, Eye, EyeSlash, Receipt1 } from "iconsax-react-native";
@@ -32,14 +32,6 @@ type WalletTransaction = {
   rebateAmount: number;
   date: string;
   time: string;
-};
-
-const toArray = (v: any): any[] => {
-  if (Array.isArray(v)) return v;
-  if (Array.isArray(v?.data)) return v.data;
-  if (Array.isArray(v?.records)) return v.records;
-  if (Array.isArray(v?.data?.records)) return v.data.records;
-  return [];
 };
 
 export default function WalletScreen() {
@@ -75,7 +67,6 @@ export default function WalletScreen() {
           const createdAt = String(
             parsed?.createdAt ?? new Date().toISOString(),
           );
-          const dateObj = new Date(createdAt);
 
           return {
             id: String(parsed?.id ?? parsed?.transactionId ?? `tx-${idx}`),
@@ -110,15 +101,15 @@ export default function WalletScreen() {
     <>
       <View style={[styles.balanceCard, { backgroundColor: C.primary }]}>
         <View style={styles.cardRow}>
-          <ThemedText style={styles.balanceLabel}>Wallet balance</ThemedText>
+          <ThemedText style={[styles.balanceLabel, { color: C.googleBg }]}>Wallet balance</ThemedText>
           <TouchableOpacity
             onPress={() => setBalanceVisible((v) => !v)}
             hitSlop={8}
           >
             {balanceVisible ? (
-              <Eye size={20} color='#D2F1E4' />
+              <Eye size={20} color={C.googleBg} />
             ) : (
-              <EyeSlash size={20} color='#D2F1E4' />
+              <EyeSlash size={20} color={C.googleBg} />
             )}
           </TouchableOpacity>
         </View>
@@ -134,9 +125,9 @@ export default function WalletScreen() {
             text='Withdraw'
             onPress={() => setShowWithdrawModal(true)}
             style={styles.cardBtn}
-            backgroundColor='rgba(210,241,228,0.25)'
-            textColor='#D2F1E4'
-            leftIcon={<ArrowDown2 size={16} color='#D2F1E4' />}
+            backgroundColor={`${C.googleBg}40`}
+            textColor={C.googleBg}
+            leftIcon={<ArrowDown2 size={16} color={C.googleBg} />}
             height={44}
             radius={12}
           />
@@ -144,7 +135,7 @@ export default function WalletScreen() {
             text='Fund Wallet'
             onPress={() => router.push("/add-funds" as any)}
             style={styles.cardBtn}
-            backgroundColor='#D2F1E4'
+            backgroundColor={C.googleBg}
             textColor={C.primary}
             leftIcon={<Add size={16} color={C.primary} />}
             height={44}
@@ -162,7 +153,7 @@ export default function WalletScreen() {
         </ThemedText>
         <TouchableOpacity
           onPress={() => router.push("/(tabs)/(transaction)" as any)}
-          style={styles.seeAllButton}
+          style={[styles.seeAllButton, { backgroundColor: C.googleBg }]}
           activeOpacity={0.7}
         >
           <ThemedText
@@ -262,7 +253,6 @@ const styles = StyleSheet.create({
   listContent: { paddingHorizontal: 16, paddingBottom: 40 },
 
   balanceCard: {
-    backgroundColor: "#013D25",
     borderRadius: 18,
     padding: 18,
     marginBottom: 28,
@@ -273,7 +263,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  balanceLabel: { color: "#AFC9BE", fontSize: 14, fontWeight: "600" },
+  balanceLabel: { fontSize: 14, fontWeight: "600" },
 
   balanceAmount: {
     fontSize: 24,
@@ -301,6 +291,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#D2F1E4",
   },
 });

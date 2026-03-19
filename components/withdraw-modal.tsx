@@ -1,13 +1,14 @@
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { EmptyState } from "@/components/empty-state";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
-import { type Scheme } from "@/constants/theme";
+import { type Scheme, MODAL_OVERLAY_COLOR } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
-import { TRANSACTION_SERVICE } from "@/services/routes";
+import { TRANSACTION_SERVICE, STOCKS_SERVICE } from "@/services/routes";
 import {
   hideAppLoader,
   priceFormatter,
@@ -15,7 +16,7 @@ import {
   showSuccess,
   toArray,
 } from "@/utils/helpers";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -27,9 +28,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Bank } from "iconsax-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type Stage = "form" | "account" | "pin" | "success";
+type Stage = "choice" | "form" | "account" | "pin" | "success";
+type WithdrawType = "wallet" | "dividend";
 
 const PRESET_AMOUNTS = [500, 1000, 2000, 5000];
 
@@ -43,10 +46,12 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
 
-  const [stage, setStage] = useState<Stage>("form");
+  const [stage, setStage] = useState<Stage>("choice");
+  const [withdrawType, setWithdrawType] = useState<WithdrawType>("wallet");
   const [amount, setAmount] = useState("");
   const [amountError, setAmountError] = useState<string | undefined>();
   const [walletBalance, setWalletBalance] = useState(0);
+  const [dividendBalance, setDividendBalance] = useState(0);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
@@ -56,8 +61,20 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
   const fetchBalance = useCallback(async () => {
     setIsLoadingBalance(true);
     try {
-      const res: any = await BaseRequest.get(TRANSACTION_SERVICE.BALANCE);
-      setWalletBalance(Number(res?.data?.balance || res?.balance || 0));
+      const [walletRes, dividendRes]: any[] = await Promise.all([
+        BaseRequest.get(TRANSACTION_SERVICE.BALANCE),
+        BaseRequest.get("/stocks-service/wallet/balance"),
+      ]);
+      setWalletBalance(Number(walletRes?.data?.balance || walletRes?.balance || 0));
+      setDividendBalance(
+        Number(
+          dividendRes?.data?.dividendBalance ||
+            dividendRes?.dividendBalance ||
+            dividendRes?.data?.balance ||
+            dividendRes?.balance ||
+            0
+        )
+      );
     } catch (error) {
       catchError(error);
     } finally {
@@ -77,12 +94,13 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
     }
   }, []);
 
-  // Fetch balance when modal opens
+  // Fetch balances when modal opens
   React.useEffect(() => {
     if (visible) {
-      setStage("form");
+      setStage("choice");
       setAmount("");
       setAmountError(undefined);
+      setWithdrawType("wallet");
       fetchBalance();
     }
   }, [visible, fetchBalance]);
@@ -93,8 +111,8 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
       setAmountError("Enter a valid amount");
       return;
     }
-    if (num > walletBalance) {
-      setAmountError("Insufficient wallet balance");
+    if (num > currentBalance) {
+      setAmountError("Insufficient balance");
       return;
     }
     setAmountError(undefined);
@@ -111,7 +129,11 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
     setShowPin(false);
     showAppLoader({ message: "Processing withdrawal..." });
     try {
-      await BaseRequest.post("/transactions-service/wallet/withdraw", {
+      const endpoint = withdrawType === "wallet"
+        ? "/transactions-service/wallet/withdraw"
+        : "/stocks-service/wallet/withdraw-dividend";
+
+      await BaseRequest.post(endpoint, {
         amount: Number(amount),
         bankAccountId: selectedAccount?.id || selectedAccount?._id,
       });
@@ -125,12 +147,62 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
   };
 
   const handleClose = () => {
-    setStage("form");
+    setStage("choice");
     setAmount("");
     setAmountError(undefined);
     setSelectedAccount(null);
+    setWithdrawType("wallet");
     onClose();
   };
+
+  // Memoized helper to check if account is selected
+  const isAccountSelected = useCallback((item: any) => {
+    return selectedAccount?.id === item?.id || selectedAccount?._id === item?._id;
+  }, [selectedAccount?.id, selectedAccount?._id]);
+
+  // Memoized preset button styles
+  const getPresetButtonStyle = useCallback((preset: number) => {
+    return {
+      backgroundColor: amount === String(preset) ? C.primary + "20" : C.inputBg,
+      borderColor: amount === String(preset) ? C.primary : C.border,
+    };
+  }, [amount, C.primary, C.inputBg, C.border]);
+
+  const renderChoiceStage = () => (
+    <View style={styles.choiceContainer}>
+      <TouchableOpacity
+        style={[styles.choiceCard, { backgroundColor: C.inputBg, borderColor: C.border }]}
+        onPress={() => {
+          setWithdrawType("wallet");
+          setStage("form");
+        }}
+      >
+        <ThemedText style={[styles.choiceTitle, { color: C.text }]}>
+          Withdraw from wallet balance
+        </ThemedText>
+        <ThemedText style={[styles.choiceAmount, { color: C.primary }]}>
+          {priceFormatter(walletBalance, 2)}
+        </ThemedText>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.choiceCard, { backgroundColor: C.inputBg, borderColor: C.border }]}
+        onPress={() => {
+          setWithdrawType("dividend");
+          setStage("form");
+        }}
+      >
+        <ThemedText style={[styles.choiceTitle, { color: C.text }]}>
+          Withdraw from total dividend
+        </ThemedText>
+        <ThemedText style={[styles.choiceAmount, { color: C.primary }]}>
+          {priceFormatter(dividendBalance, 2)}
+        </ThemedText>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const currentBalance = withdrawType === "wallet" ? walletBalance : dividendBalance;
 
   const renderFormStage = () => (
     <KeyboardAvoidingView
@@ -143,13 +215,13 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
       >
         <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
           <ThemedText style={[styles.balanceLabel, { color: C.googleBg }]}>
-            Wallet Balance
+            {withdrawType === "wallet" ? "Wallet Balance" : "Available Dividend Balance"}
           </ThemedText>
           {isLoadingBalance ? (
-            <ActivityIndicator color='#fff' size='small' />
+            <ActivityIndicator color={C.googleBg} size='small' />
           ) : (
-            <ThemedText style={styles.balanceValue}>
-              {priceFormatter(walletBalance, 2)}
+            <ThemedText style={[styles.balanceValue, { color: C.googleBg }]}>
+              {priceFormatter(currentBalance, 2)}
             </ThemedText>
           )}
         </View>
@@ -161,14 +233,7 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
           {PRESET_AMOUNTS.map((preset) => (
             <TouchableOpacity
               key={preset}
-              style={[
-                styles.presetBtn,
-                {
-                  backgroundColor:
-                    amount === String(preset) ? C.primary + "20" : C.inputBg,
-                  borderColor: amount === String(preset) ? C.primary : C.border,
-                },
-              ]}
+              style={[styles.presetBtn, getPresetButtonStyle(preset)]}
               onPress={() => {
                 setAmount(String(preset));
                 setAmountError(undefined);
@@ -217,11 +282,12 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
           keyExtractor={(item, i) => String(item?.id || item?._id || i)}
           contentContainerStyle={styles.scrollContent}
           ListEmptyComponent={
-            <View style={styles.emptyWrap}>
-              <ThemedText style={[styles.emptyText, { color: C.muted }]}>
+            <EmptyState>
+              <Bank size={40} color={C.muted} />
+              <ThemedText style={{ color: C.muted, textAlign: "center", marginTop: 8 }}>
                 No linked bank accounts found.
               </ThemedText>
-            </View>
+            </EmptyState>
           }
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -246,11 +312,7 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
                 style={{
                   ...styles.selectDot,
                   borderColor: C.primary,
-                  backgroundColor:
-                    selectedAccount?.id === item?.id ||
-                    selectedAccount?._id === item?._id
-                      ? C.primary
-                      : "transparent",
+                  backgroundColor: isAccountSelected(item) ? C.primary : "transparent",
                 }}
               />
             </TouchableOpacity>
@@ -310,6 +372,7 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
           </View>
 
           {/* Content */}
+          {stage === "choice" && renderChoiceStage()}
           {stage === "form" && renderFormStage()}
           {stage === "account" && renderAccountStage()}
           {stage === "pin" && (
@@ -358,7 +421,7 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "#013D254D",
+    backgroundColor: MODAL_OVERLAY_COLOR,
     justifyContent: "flex-end",
   },
   modalCard: {
@@ -393,7 +456,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   balanceLabel: { fontSize: 12 },
-  balanceValue: { fontSize: 28, fontWeight: "800", color: "#fff" },
+  balanceValue: { fontSize: 28, fontWeight: "800" },
   fieldLabel: { fontSize: 12, marginBottom: 4, marginTop: 12 },
   presetsRow: {
     flexDirection: "row",
@@ -429,8 +492,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
   },
-  emptyWrap: { alignItems: "center", paddingTop: 40 },
-  emptyText: { fontSize: 14 },
   successWrap: {
     flex: 1,
     alignItems: "center",
@@ -440,4 +501,26 @@ const styles = StyleSheet.create({
   },
   successTitle: { fontSize: 22, fontWeight: "800", textAlign: "center" },
   successDesc: { fontSize: 13, textAlign: "center", lineHeight: 20 },
+  choiceContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
+    justifyContent: "center",
+    gap: 16,
+  },
+  choiceCard: {
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 20,
+    gap: 8,
+  },
+  choiceTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  choiceAmount: {
+    fontSize: 18,
+    fontWeight: "700",
+  },
 });

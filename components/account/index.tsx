@@ -19,7 +19,7 @@ export const Account = ({ header }: { header?: ReactNode }) => {
     const byLabel: Record<string, string> = {
       Preferences: "/(account)/preferences",
       "Help desk": "/(account)/help-desk",
-      "Terms & conditions": "/(account)/terms-condition",
+      "Terms & conditions": "/(account)/terms-conditions",
       "Privacy policy": "/(account)/privacy-policy",
     };
 
@@ -34,7 +34,7 @@ export const Account = ({ header }: { header?: ReactNode }) => {
       "change-password": "/(account)/change-password",
       "reset-transaction-pin": "/(account)/reset-transaction-pin",
       "change-username": "/(account)/change-username",
-      preferences: "/(account)/preference",
+      preferences: "/(account)/preferences",
       "help-desk": "/(account)/help-desk",
       "terms-conditions": "/(account)/terms-conditions",
       "privacy-policy": "/(account)/privacy-policy",
