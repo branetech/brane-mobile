@@ -3,7 +3,12 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatMoney } from "@/utils/helpers";
 import React, { memo, useMemo } from "react";
-import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 export type PaymentOption = {
@@ -19,6 +24,7 @@ type Props = {
   options: PaymentOption[];
   selectedId: string;
   onSelect: (id: string) => void;
+  onSeeAll?: () => void;
   walletBalance?: number;
   amount?: number;
   onFundWallet?: () => void;
@@ -66,7 +72,8 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
   options,
   selectedId,
   onSelect,
-  walletBalance = 0,
+  onSeeAll,
+  walletBalance,
   amount = 0,
   onFundWallet,
   isLoadingBalance = false,
@@ -74,31 +81,46 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
-  // ✅ ALL hooks before any return
-  const braneWalletOption = useMemo(
-    () => options.find((opt) => opt.id === "brane_wallet"),
-    [options]
+  const normalizedOptions = useMemo(
+    () =>
+      options.length > 0
+        ? options
+        : [
+            {
+              id: "brane_wallet",
+              label: "Brane Wallet - ₦ --",
+              icon: "B",
+            },
+          ],
+    [options],
   );
 
-  const formattedBalance = useMemo(
-    () => formatMoney(walletBalance),
-    [walletBalance]
+  const hasWalletOption = useMemo(
+    () => normalizedOptions.some((opt) => opt.id === "brane_wallet"),
+    [normalizedOptions],
   );
+
+  const formattedBalance = useMemo(() => {
+    if (typeof walletBalance !== "number") return "--";
+    return formatMoney(walletBalance);
+  }, [walletBalance]);
 
   const isInsufficientBalance = useMemo(
-    () => !isLoadingBalance && (walletBalance <= 0 || amount > walletBalance),
-    [isLoadingBalance, walletBalance, amount]
+    () =>
+      !isLoadingBalance &&
+      typeof walletBalance === "number" &&
+      amount > walletBalance,
+    [isLoadingBalance, walletBalance, amount],
   );
 
   const showFundButton = useMemo(
-    () => !isLoadingBalance && (walletBalance === 0 || amount > walletBalance),
-    [isLoadingBalance, walletBalance, amount]
+    () =>
+      hasWalletOption &&
+      !isLoadingBalance &&
+      typeof walletBalance === "number" &&
+      amount > walletBalance,
+    [hasWalletOption, isLoadingBalance, walletBalance, amount],
   );
-
-  // ✅ Early return AFTER all hooks
-  if (!braneWalletOption) {
-    return null;
-  }
 
   const displayLabel = isLoadingBalance
     ? `Brane Wallet - ₦ --`
@@ -108,59 +130,93 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
     <View style={styles.wrapper}>
       <View style={styles.header}>
         <ThemedText style={styles.heading}>Select Payment Method</ThemedText>
+        {onSeeAll ? (
+          <TouchableOpacity style={styles.seeAllBtn} onPress={onSeeAll}>
+            <ThemedText style={styles.seeAll}>See all</ThemedText>
+          </TouchableOpacity>
+        ) : null}
       </View>
 
       <View style={styles.card}>
-        <TouchableOpacity
-          activeOpacity={isInsufficientBalance ? 1 : 0.7}
-          onPress={() => !isInsufficientBalance && onSelect(braneWalletOption.id)}
-          disabled={isInsufficientBalance}
-          style={[
-            styles.optionRow,
-            isInsufficientBalance ? styles.optionRowDisabled : styles.optionRowActive,
-          ]}
-        >
-          <View style={styles.optionLeft}>
-            <View
+        {normalizedOptions.map((option, index) => {
+          const isWalletOption = option.id === "brane_wallet";
+          const isDisabled = isWalletOption && isInsufficientBalance;
+          const isSelected = !isDisabled && selectedId === option.id;
+          const optionLabel = isWalletOption ? displayLabel : option.label;
+
+          return (
+            <TouchableOpacity
+              key={option.id}
+              activeOpacity={isDisabled ? 1 : 0.7}
+              onPress={() => !isDisabled && onSelect(option.id)}
+              disabled={isDisabled}
               style={[
-                styles.iconWrap,
-                isInsufficientBalance ? styles.iconWrapDisabled : styles.iconWrapActive,
+                styles.optionRow,
+                isDisabled ? styles.optionRowDisabled : styles.optionRowActive,
+                index > 0 && styles.optionRowSpaced,
               ]}
             >
-              <WalletIcon />
-            </View>
-            <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                <ThemedText
+              <View style={styles.optionLeft}>
+                <View
                   style={[
-                    styles.optionLabel,
-                    !isInsufficientBalance && styles.optionLabelActive,
-                    isInsufficientBalance && { color: C.muted },
+                    styles.iconWrap,
+                    isDisabled
+                      ? styles.iconWrapDisabled
+                      : styles.iconWrapActive,
                   ]}
                 >
-                  {displayLabel}
-                </ThemedText>
-                {isLoadingBalance && (
-                  <ActivityIndicator size="small" color={C.primary} />
-                )}
+                  {isWalletOption ? (
+                    <WalletIcon />
+                  ) : (
+                    <ThemedText style={styles.iconText}>
+                      {option.icon}
+                    </ThemedText>
+                  )}
+                </View>
+                <View style={{ flex: 1 }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
+                  >
+                    <ThemedText
+                      style={[
+                        styles.optionLabel,
+                        !isDisabled && styles.optionLabelActive,
+                        isDisabled && { color: C.muted },
+                      ]}
+                    >
+                      {optionLabel}
+                    </ThemedText>
+                    {isWalletOption && isLoadingBalance && (
+                      <ActivityIndicator size='small' color={C.primary} />
+                    )}
+                  </View>
+                  {isWalletOption &&
+                    isInsufficientBalance &&
+                    !isLoadingBalance && (
+                      <ThemedText
+                        style={[styles.insufficientText, { color: C.muted }]}
+                      >
+                        Insufficient balance
+                      </ThemedText>
+                    )}
+                </View>
               </View>
-              {isInsufficientBalance && !isLoadingBalance && (
-                <ThemedText style={[styles.insufficientText, { color: C.muted }]}>
-                  Insufficient balance
-                </ThemedText>
-              )}
-            </View>
-          </View>
 
-          <View
-            style={[
-              styles.radio,
-              isInsufficientBalance ? styles.radioUnselected : styles.radioSelected,
-            ]}
-          >
-            {!isInsufficientBalance && <View style={styles.radioInner} />}
-          </View>
-        </TouchableOpacity>
+              <View
+                style={[
+                  styles.radio,
+                  isSelected ? styles.radioSelected : styles.radioUnselected,
+                ]}
+              >
+                {isSelected && <View style={styles.radioInner} />}
+              </View>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       {showFundButton && onFundWallet && (
@@ -205,7 +261,7 @@ const styles = StyleSheet.create({
     color: "#013D25",
     fontWeight: "500",
   },
- 
+
   card: {
     overflow: "hidden",
   },
@@ -229,6 +285,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     opacity: 0.6,
+  },
+  optionRowSpaced: {
+    marginTop: 8,
   },
   optionDivider: {},
   optionLeft: {
@@ -259,6 +318,11 @@ const styles = StyleSheet.create({
   },
   optionLabelActive: {
     fontWeight: "500",
+  },
+  iconText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#013D25",
   },
   insufficientText: {
     fontSize: 10,

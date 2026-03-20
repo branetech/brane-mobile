@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import Back from "../back";
 import { BraneButton } from "../brane-button";
@@ -11,7 +11,7 @@ interface RegisterProps {
   isLoading: boolean;
   isDisabled: boolean;
   back?: () => void;
-  requestOtp?: () => void;
+  requestOtp?: () => Promise<void> | void;
   isResending?: boolean;
   handleOtpChange?: (otp: string) => void;
   otp?: string;
@@ -29,13 +29,37 @@ export default function OTP({
   email,
 }: RegisterProps) {
   const [localOtp, setLocalOtp] = useState("");
+  const [cooldown, setCooldown] = useState(0);
 
   const isOtpComplete = localOtp.length === 6;
   const buttonDisabled = isDisabled || isLoading || !isOtpComplete;
+  const resendDisabled = isResending || isLoading || cooldown > 0;
 
   const handleChange = (value: string) => {
     setLocalOtp(value);
     handleOtpChange?.(value);
+  };
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  const handleResendPress = async () => {
+    if (!requestOtp || resendDisabled) return;
+    await Promise.resolve(requestOtp());
+    // Prevent rapid resend taps even if request returns instantly.
+    setCooldown(30);
   };
 
   return (
@@ -57,14 +81,18 @@ export default function OTP({
           </View>
           <TouchableOpacity
             mt={8}
-            onPress={requestOtp}
-            disabled={isResending || isLoading}
+            onPress={handleResendPress}
+            disabled={resendDisabled}
           >
             <ThemedText style={{ color: "#342A3B" }}>
               Didn&apos;t get verification code?
               <ThemedText style={{ color: "#013D25", fontWeight: "bold" }}>
                 {" "}
-                {isResending ? "Sending..." : "Resend"}
+                {isResending
+                  ? "Sending..."
+                  : cooldown > 0
+                    ? `Resend in ${cooldown}s`
+                    : "Resend"}
               </ThemedText>
             </ThemedText>
           </TouchableOpacity>
@@ -77,6 +105,7 @@ export default function OTP({
             textColor='#D2F1E4'
             height={52}
             radius={12}
+            style={{ marginBottom: 70 }}
             onPress={() => onSubmitEmail(localOtp)}
           />
         </View>

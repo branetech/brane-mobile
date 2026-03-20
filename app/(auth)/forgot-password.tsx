@@ -1,7 +1,6 @@
 import ForgotPassword from "@/components/forgot-password";
 import ConfirmPassword from "@/components/forgot-password/confirm-password";
 import OTP from "@/components/forgot-password/otp";
-import { useReduxState } from "@/redux/useReduxState";
 import BaseRequest, { parseNetworkError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
 import { formatPhoneNumber, showError, showSuccess } from "@/utils/helpers";
@@ -10,29 +9,43 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 
 type Page = "forgotPassword" | "otp" | "createPassword";
+const pattern = /^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+type ResetIdentity = {
+  email?: string;
+  phone?: string;
+};
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
-  const [page, setPage] = useReduxState<Page>(
-    "forgotPassword",
-    "forgotPassword",
-  );
-  const [otp, setOtp] = useReduxState("otp-page", "");
+  const [page, setPage] = useState<Page>("forgotPassword");
+  const [otp, setOtp] = useState("");
+  const [formData, setFormData] = useState<ResetIdentity>({});
+  const [plainOTP, setPlainOTP] = useState("");
   const [isResending, setIsResending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
 
   const handleEmailSubmit = async (data: { email: string }) => {
     try {
       setIsLoading(true);
-      const phone = formatPhoneNumber(data.email);
-      setPhoneNumber(phone);
+      const identity = String(data.email || "")
+        .replace("+", "")
+        .trim();
+      const payload: ResetIdentity = pattern.test(identity)
+        ? { email: identity }
+        : { phone: formatPhoneNumber(identity) };
+      setFormData(payload);
 
-      // Request password reset OTP
-      await BaseRequest.post(AUTH_SERVICE.PASSWORD_RESET, { phone });
+      const response: any = await BaseRequest.post(
+        AUTH_SERVICE.PASSWORD_RESET,
+        payload,
+      );
+      const returnedOtp = response?.data?.otp || response?.otp;
+      console.log("OTP response:", response);
+      if (returnedOtp) setPlainOTP(String(returnedOtp));
 
       setPage("otp");
-      showSuccess("OTP sent to your phone number");
+      showSuccess("OTP sent successfully!");
     } catch (error: any) {
       const { message } = parseNetworkError(error);
       showError(message);
@@ -46,12 +59,10 @@ export default function ForgotPasswordScreen() {
       setIsLoading(true);
       setOtp(otpValue);
 
-      // Verify OTP before moving to password reset
-      await BaseRequest.post("/auth-service/verify-password-reset-otp", {
-        phone: phoneNumber,
+      const res = await BaseRequest.post("/auth-service/verify-reset-password", {
+        ...formData,
         otp: otpValue,
       });
-
       setPage("createPassword");
       showSuccess("OTP verified successfully");
     } catch (error: any) {
@@ -65,9 +76,7 @@ export default function ForgotPasswordScreen() {
   const handleResendOtp = async () => {
     try {
       setIsResending(true);
-      await BaseRequest.post(AUTH_SERVICE.PASSWORD_RESET, {
-        phone: phoneNumber,
-      });
+      await BaseRequest.post(AUTH_SERVICE.PASSWORD_RESET, formData);
       showSuccess("New OTP sent successfully");
     } catch (error: any) {
       const { message } = parseNetworkError(error);
@@ -89,14 +98,14 @@ export default function ForgotPasswordScreen() {
         return;
       }
 
-      await BaseRequest.post("/auth-service/confirm-password-reset", {
-        phone: phoneNumber,
+      await BaseRequest.patch(AUTH_SERVICE.PASSWORD_RESET, {
+        ...formData,
         otp: otp,
         password: data.password,
       });
 
       showSuccess("Password reset successfully");
-      router.replace("/(auth)/login");
+      router.replace("/login");
     } catch (error: any) {
       const { message } = parseNetworkError(error);
       showError(message);
@@ -121,6 +130,7 @@ export default function ForgotPasswordScreen() {
           back={() => setPage("forgotPassword")}
           handleOtpChange={setOtp}
           otp={otp}
+          email={formData.email || formData.phone || plainOTP}
           isResending={isResending}
           requestOtp={handleResendOtp}
         />

@@ -11,6 +11,8 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatMoney } from "@/utils/helpers";
 import React, { useState } from "react";
 import {
+  Image,
+  type ImageSourcePropType,
   Modal,
   StyleSheet,
   Text,
@@ -29,8 +31,11 @@ export interface TransactionSummaryModalProps {
   onClose: () => void;
   amount: number;
   rows: TransactionRow[];
+  headerIconSource?: ImageSourcePropType;
   bracsReward?: number;
   bracsBoost?: string | number;
+  rewardBannerLabel?: string;
+  rewardBannerValue?: string;
   paymentOptions?: PaymentOption[];
   selectedPaymentId?: string;
   onPaymentSelect?: (id: string) => void;
@@ -48,14 +53,17 @@ export function TransactionSummaryModal({
   onClose,
   amount,
   rows,
+  headerIconSource,
   bracsReward = 0,
   bracsBoost = 0,
+  rewardBannerLabel,
+  rewardBannerValue,
   paymentOptions = [],
   selectedPaymentId,
   onPaymentSelect,
   onSeeAll,
   onFundWallet,
-  walletBalance = 0,
+  walletBalance,
   isLoadingBalance = false,
   ctaLabel = "Confirm",
   isSubmitting = false,
@@ -64,15 +72,36 @@ export function TransactionSummaryModal({
   const [showTooltip, setShowTooltip] = useState(false);
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
+  const numericBoost = Number(bracsBoost || 0);
+  const effectivePaymentOptions =
+    paymentOptions.length > 0
+      ? paymentOptions
+      : [
+          {
+            id: "brane_wallet",
+            label: "Brane Wallet - ₦ --",
+            icon: "B",
+          },
+        ];
+  const effectiveSelectedPaymentId =
+    selectedPaymentId || effectivePaymentOptions[0]?.id || "brane_wallet";
+  const effectiveOnPaymentSelect = onPaymentSelect || (() => {});
+  const defaultRewardValue =
+    numericBoost > 0
+      ? `${Number(bracsReward || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}+${numericBoost.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      : `${Number(bracsReward || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bracs`;
 
-  // Check if wallet balance is insufficient
-  const isInsufficientBalance = walletBalance <= 0 || amount > walletBalance;
+  // Only enforce balance checks when payment methods are shown and a numeric
+  // wallet balance is explicitly provided by the caller.
+  const shouldCheckBalance =
+    effectivePaymentOptions.length > 0 && typeof walletBalance === "number";
+  const isInsufficientBalance = shouldCheckBalance && amount > walletBalance;
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType='slide'
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -90,6 +119,14 @@ export function TransactionSummaryModal({
             style={[styles.summaryModalHandle, { backgroundColor: C.border }]}
           />
 
+          {headerIconSource ? (
+            <Image
+              source={headerIconSource}
+              style={[styles.summaryHeaderIcon, { borderRadius: 50 }]}
+              resizeMode='contain'
+            />
+          ) : null}
+
           {/* Amount */}
           <ThemedText style={[styles.summaryAmountText, { color: C.text }]}>
             ₦{formatMoney(amount)}
@@ -101,7 +138,7 @@ export function TransactionSummaryModal({
               Transaction Summary
             </ThemedText>
             {rows.map((row, idx) => (
-              <View key={row.label}>
+              <View key={`${row.label}-${idx}`}>
                 {idx === rows.length - 1 && (
                   <View
                     style={[
@@ -130,22 +167,6 @@ export function TransactionSummaryModal({
             ))}
           </View>
 
-          {/* Payment Method Selector */}
-          {paymentOptions.length > 0 &&
-            selectedPaymentId !== undefined &&
-            onPaymentSelect !== undefined && (
-              <PaymentMethodSelector
-                options={paymentOptions}
-                selectedId={selectedPaymentId}
-                onSelect={onPaymentSelect}
-                onSeeAll={onSeeAll}
-                walletBalance={walletBalance}
-                amount={amount}
-                onFundWallet={onFundWallet}
-                isLoadingBalance={isLoadingBalance}
-              />
-            )}
-
           {/* Bracs Reward Banner */}
           {bracsReward > 0 && (
             <TouchableOpacity
@@ -155,28 +176,37 @@ export function TransactionSummaryModal({
             >
               <View style={styles.bracsRewardLeft}>
                 <BracsInfoIcon size={18} />
-                <ThemedText
-                  style={[styles.bracsRewardText, { color: C.text }]}
-                >
-                  You earned/Reward Bracs
+                <ThemedText style={[styles.bracsRewardText, { color: C.text }]}>
+                  {rewardBannerLabel || "Bracs reward + cash boost"}
                 </ThemedText>
               </View>
-              <ThemedText
-                style={[styles.bracsRewardValue, { color: C.text }]}
-              >
-                {bracsReward.toLocaleString()} Bracs
+              <ThemedText style={[styles.bracsRewardValue, { color: C.text }]}>
+                {rewardBannerValue || defaultRewardValue}
               </ThemedText>
             </TouchableOpacity>
           )}
+
+          {/* Payment Method Selector */}
+          <PaymentMethodSelector
+            options={effectivePaymentOptions}
+            selectedId={effectiveSelectedPaymentId}
+            onSelect={effectiveOnPaymentSelect}
+            onSeeAll={onSeeAll}
+            walletBalance={walletBalance}
+            amount={amount}
+            onFundWallet={onFundWallet}
+            isLoadingBalance={isLoadingBalance}
+          />
 
           {/* CTA Button */}
           <BraneButton
             text={ctaLabel}
             backgroundColor={isInsufficientBalance ? C.muted : C.primary}
             textColor={C.googleBg}
-            height={56}
+            height={52}
+            style={{ marginBottom: 20 }}
             loading={isSubmitting}
-            onPress={!isInsufficientBalance ? onConfirm : undefined}
+            onPress={() => !isInsufficientBalance && onConfirm()}
           />
         </TouchableOpacity>
       </TouchableOpacity>
@@ -185,7 +215,7 @@ export function TransactionSummaryModal({
       <Modal
         visible={showTooltip}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setShowTooltip(false)}
       >
         <View
@@ -205,7 +235,7 @@ export function TransactionSummaryModal({
             onPress={() => {}}
           >
             <ThemedText style={[styles.bracsTooltipTitle, { color: C.text }]}>
-              Rebate+ Added Funds
+              Rebate + Added Funds
             </ThemedText>
             <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
               Bracs are the bonus you get from every transaction and{" "}
@@ -263,6 +293,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
     paddingVertical: 8,
+  },
+  summaryHeaderIcon: {
+    width: 42,
+    height: 42,
+    alignSelf: "center",
+    marginTop: 4,
   },
   summaryCard: {
     gap: 4,

@@ -6,23 +6,22 @@
  */
 
 import { BraneButton } from "@/components/brane-button";
-import {
-  PaymentMethodSelector,
-  type PaymentOption,
-} from "@/components/payment-method-selector";
-import { BracsInfoIcon } from "@/components/svg";
+import type { PaymentOption } from "@/components/payment-method-selector";
 import { ThemedText } from "@/components/themed-text";
+import {
+  TransactionSummaryModal,
+  type TransactionRow,
+} from "@/components/transaction-summary-modal";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useEarnedBracs } from "@/utils/brac";
 import { CloseCircle, SearchNormal1 } from "iconsax-react-native";
-import React, { useState } from "react";
+import React from "react";
 import {
   Image,
   Modal,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -73,17 +72,27 @@ export function ContactPickerModal({
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={[styles.modalCard, { maxHeight: "80%", backgroundColor: C.background }]}
+          style={[
+            styles.modalCard,
+            { maxHeight: "80%", backgroundColor: C.background },
+          ]}
           onPress={() => {}}
         >
           <View style={styles.modalHeader}>
-            <ThemedText style={[styles.modalTitle, { color: C.text }]}>Select Contact</ThemedText>
+            <ThemedText style={[styles.modalTitle, { color: C.text }]}>
+              Select Contact
+            </ThemedText>
             <TouchableOpacity onPress={onClose}>
               <CloseCircle size={18} color={C.muted} variant='Outline' />
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.contactSearchRow, { backgroundColor: C.inputBg, borderColor: C.border }]}>
+          <View
+            style={[
+              styles.contactSearchRow,
+              { backgroundColor: C.inputBg, borderColor: C.border },
+            ]}
+          >
             <SearchNormal1 size={16} color={C.muted} variant='Outline' />
             <TextInput
               style={[styles.searchInput, { color: C.text }]}
@@ -113,19 +122,32 @@ export function ContactPickerModal({
                   onSelect(normalized);
                 }}
               >
-                <View style={[styles.contactAvatar, { backgroundColor: C.primary + "20" }]}>
-                  <ThemedText style={[styles.contactAvatarText, { color: C.primary }]}>
+                <View
+                  style={[
+                    styles.contactAvatar,
+                    { backgroundColor: C.primary + "20" },
+                  ]}
+                >
+                  <ThemedText
+                    style={[styles.contactAvatarText, { color: C.primary }]}
+                  >
                     {(c.name[0] || "?").toUpperCase()}
                   </ThemedText>
                 </View>
                 <View style={{ flex: 1 }}>
-                  <ThemedText style={[styles.contactName, { color: C.text }]}>{c.name}</ThemedText>
-                  <ThemedText style={[styles.contactPhone, { color: C.muted }]}>{c.phone}</ThemedText>
+                  <ThemedText style={[styles.contactName, { color: C.text }]}>
+                    {c.name}
+                  </ThemedText>
+                  <ThemedText style={[styles.contactPhone, { color: C.muted }]}>
+                    {c.phone}
+                  </ThemedText>
                 </View>
               </TouchableOpacity>
             ))}
             {filteredContacts.length === 0 ? (
-              <ThemedText style={[styles.emptyText, { padding: 16, color: C.muted }]}>
+              <ThemedText
+                style={[styles.emptyText, { padding: 16, color: C.muted }]}
+              >
                 No contacts found
               </ThemedText>
             ) : null}
@@ -190,7 +212,11 @@ export function BoostModal({
                 style={[
                   styles.boostPresetChip,
                   { backgroundColor: C.inputBg, borderColor: C.border },
-                  boostAmount === preset && { borderColor: C.primary, borderWidth: 2, backgroundColor: C.background },
+                  boostAmount === preset && {
+                    borderColor: C.primary,
+                    borderWidth: 2,
+                    backgroundColor: C.background,
+                  },
                 ]}
                 onPress={() => setBoostAmount(preset)}
               >
@@ -237,6 +263,7 @@ export function BoostModal({
 type SummaryModalProps = {
   visible: boolean;
   onClose: () => void;
+  isAirtime: boolean;
   amountToPay: number;
   bracsRewardAmount: number;
   networkImageKey: string;
@@ -244,11 +271,14 @@ type SummaryModalProps = {
   phone: string;
   boostAmount: string;
   paymentOptions: PaymentOption[];
+  walletBalance?: number;
   paymentId: string;
   setPaymentId: (v: string) => void;
   ctaLabel: string;
   isSubmitting: boolean;
   onSeeAll?: () => void;
+  onFundWallet?: () => void;
+  showPaymentMethod?: boolean;
   onConfirm: () => void;
 };
 
@@ -259,9 +289,17 @@ function formatMoney(value: number) {
   });
 }
 
+function formatBracs(value: number) {
+  return Number(value || 0).toLocaleString("en-NG", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 export function SummaryModal({
   visible,
   onClose,
+  isAirtime,
   amountToPay,
   bracsRewardAmount,
   networkImageKey,
@@ -269,175 +307,74 @@ export function SummaryModal({
   phone,
   boostAmount,
   paymentOptions,
+  walletBalance,
   paymentId,
   setPaymentId,
   ctaLabel,
   isSubmitting,
   onSeeAll,
+  onFundWallet,
+  showPaymentMethod = true,
   onConfirm,
 }: SummaryModalProps) {
-  const [showTooltip, setShowTooltip] = useState(false);
-  const scheme = useColorScheme();
-  const C = Colors[scheme === "dark" ? "dark" : "light"];
+  const boostValue = Number(boostAmount || 0);
+  const appliedBoost = isAirtime ? boostValue : 0;
 
-  const calculatedBracs = useEarnedBracs({
-    amount: Number(amountToPay || 0),
+  const rows: TransactionRow[] = [
+    { label: "Provider", value: networkLabel },
+    { label: "Sending to", value: phone },
+    {
+      label: "Transaction Amount",
+      value: `₦ ${formatMoney(amountToPay)}`,
+    },
+    ...(isAirtime
+      ? [
+          {
+            label: "Cash Boost",
+            value: `₦ ${formatMoney(appliedBoost)}`,
+          } as TransactionRow,
+        ]
+      : []),
+    { label: "Service Fee", value: "₦ 0.00" },
+    {
+      label: "Total Debit",
+      value: `₦ ${formatMoney(amountToPay + appliedBoost)}`,
+      bold: true,
+    },
+  ];
+  const bracs = useEarnedBracs({
+    serviceId: networkLabel,
+    amount: amountToPay,
     serviceType: "airtime",
-    serviceId: networkLabel.toLowerCase(),
   });
-  console.log("Calculated bracs:", calculatedBracs, paymentId, networkLabel);
+
   return (
-    <Modal
+    <TransactionSummaryModal
       visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={[styles.summaryModalCard, { backgroundColor: C.background }]}
-          onPress={() => {}}
-        >
-          <View style={[styles.summaryModalHandle, { backgroundColor: C.border }]} />
-
-          <View style={styles.summaryAmountWrap}>
-            <View style={[styles.summaryNetworkCircle, { backgroundColor: C.inputBg }]}>
-              {NETWORK_IMAGES[networkImageKey] ? (
-                <Image
-                  source={NETWORK_IMAGES[networkImageKey]}
-                  style={styles.summaryNetworkImg}
-                  resizeMode='contain'
-                />
-              ) : (
-                <Text style={styles.summaryCoinEmoji}>🪙</Text>
-              )}
-            </View>
-            <ThemedText style={{ fontSize: 28, fontWeight: "700" }}>
-              ₦{formatMoney(amountToPay)}
-            </ThemedText>
-          </View>
-
-          <View style={[styles.summaryCard, { backgroundColor: C.inputBg }]}>
-            <ThemedText style={[styles.summaryTitle, { color: C.text }]}>
-              Transaction Summary
-            </ThemedText>
-            {[
-              { label: "Provider", value: networkLabel },
-              { label: "Sending to", value: phone },
-              {
-                label: "Transaction Amount",
-                value: `₦ ${formatMoney(amountToPay)}`,
-              },
-              {
-                label: "Cash Boost",
-                value: `₦ ${formatMoney(Number(boostAmount || 0))}`,
-              },
-              { label: "Service Fee", value: "₦ 0.00" },
-              {
-                label: "Total Debit",
-                value: `₦ ${formatMoney(amountToPay + Number(boostAmount || 0))}`,
-                bold: true,
-              },
-            ].map((row, idx) => (
-              <View key={idx}>
-                {idx === 5 && <View style={[styles.summaryDivider, { backgroundColor: C.border }]} />}
-                <View style={styles.summaryRow}>
-                  <ThemedText style={[styles.summaryRowLabel, { color: C.muted }]}>
-                    {row.label}
-                  </ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.summaryRowValue,
-                      { color: C.text },
-                      row.bold && { color: C.primary, fontWeight: "700" },
-                    ]}
-                  >
-                    {row.value}
-                  </ThemedText>
-                </View>
-              </View>
-            ))}
-          </View>
-
-          <TouchableOpacity
-            style={[styles.bracsRewardBanner, { backgroundColor: C.primary + "15" }]}
-            onPress={() => setShowTooltip(true)}
-            activeOpacity={0.8}
-          >
-            <View style={styles.bracsRewardLeft}>
-              <BracsInfoIcon size={16} />
-              <ThemedText style={[styles.bracsRewardText, { color: C.text }]}>
-                Bracs + Brac booster
-              </ThemedText>
-            </View>
-            <ThemedText style={[styles.bracsRewardValue, { color: C.text }]}>
-              {calculatedBracs}+{boostAmount || "0"}
-            </ThemedText>
-          </TouchableOpacity>
-
-          {paymentOptions.length > 0 ? (
-            <PaymentMethodSelector
-              options={paymentOptions}
-              selectedId={paymentId}
-              onSelect={setPaymentId}
-              onSeeAll={onSeeAll}
-            />
-          ) : null}
-
-          <BraneButton
-            text={ctaLabel}
-            onPress={onConfirm}
-            backgroundColor={C.primary}
-            textColor={C.googleBg}
-            height={52}
-            radius={12}
-            loading={isSubmitting}
-          />
-
-          {/* Bracs tooltip — full-screen modal on top of summary sheet */}
-          <Modal
-            visible={showTooltip}
-            transparent
-            animationType='fade'
-            onRequestClose={() => setShowTooltip(false)}
-          >
-            <View style={[styles.inlineTooltipOverlay, { backgroundColor: "#013D254D" }]}>
-              <TouchableOpacity
-                activeOpacity={1}
-                style={[styles.inlineTooltipCard, { backgroundColor: C.background }]}
-                onPress={() => {}}
-              >
-                <ThemedText style={[styles.bracsTooltipTitle, { color: C.text }]}>
-                  Rebate+ Added Funds
-                </ThemedText>
-                <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
-                  Bracs are the bonus you get from every transaction and{" "}
-                  <ThemedText style={[styles.bracsTooltipGold]}>
-                    can be use for investment
-                  </ThemedText>
-                  .
-                </ThemedText>
-                <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
-                  Cash boost are additional tip added to boost your portfolio balance (200 on 15 transactions a month = extra 3000 in your investment portfolio)
-                </ThemedText>
-                <TouchableOpacity
-                  style={[styles.tooltipOkayBtn, { backgroundColor: C.primary }]}
-                  onPress={() => setShowTooltip(false)}
-                  activeOpacity={0.85}
-                >
-                  <Text style={[styles.tooltipOkayText, { color: C.googleBg }]}>Okay</Text>
-                </TouchableOpacity>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+      onClose={onClose}
+      amount={amountToPay}
+      rows={rows}
+      headerIconSource={NETWORK_IMAGES[networkImageKey] || NETWORK_IMAGES.mtn}
+      bracsReward={bracs}
+      bracsBoost={appliedBoost}
+      rewardBannerLabel={
+        isAirtime ? "Bracs reward + cash boost" : "Bracs reward"
+      }
+      rewardBannerValue={
+        isAirtime
+          ? `${formatBracs(bracs)}+${formatBracs(appliedBoost)}`
+          : `${formatBracs(bracs)}`
+      }
+      paymentOptions={showPaymentMethod ? paymentOptions : []}
+      walletBalance={walletBalance}
+      selectedPaymentId={showPaymentMethod ? paymentId : undefined}
+      onPaymentSelect={showPaymentMethod ? setPaymentId : undefined}
+      onSeeAll={onSeeAll}
+      onFundWallet={showPaymentMethod ? onFundWallet : undefined}
+      ctaLabel={ctaLabel}
+      isSubmitting={isSubmitting}
+      onConfirm={onConfirm}
+    />
   );
 }
 

@@ -27,8 +27,8 @@ type RowItem = {
 };
 
 const passwordRows: RowItem[] = [
-  { key: "change", label: "Change password", onPress: () => router.push("/change-password") },
-  { key: "forgot", label: "Forgot password",  onPress: () => router.push("/forgot-password") },
+  { key: "change", label: "Change password", onPress: () => router.push("/(account)/change-password/reset-password") },
+  { key: "forgot", label: "Forgot password",  onPress: () => router.push("/(auth)/forgot-password") },
 ];
 
 export default function LoginSettingsScreen() {
@@ -81,7 +81,7 @@ export default function LoginSettingsScreen() {
       </View>
 
       {/* Footer */}
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <TouchableOpacity
           style={styles.footerBtn}
           onPress={() => router.push("/add-next-of-kin")}
@@ -89,7 +89,7 @@ export default function LoginSettingsScreen() {
         >
           <Text style={styles.footerBtnLabel}>Add Next of Kin</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
 }

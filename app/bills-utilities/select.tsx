@@ -17,7 +17,6 @@ import {
   AUTH_SERVICE,
   MOBILE_SERVICE,
   PAYMENT_CALLBACK_URL,
-  STOCKS_SERVICE,
   TRANSACTION_SERVICE,
 } from "@/services/routes";
 import { showError } from "@/utils/helpers";
@@ -115,6 +114,7 @@ export default function UtilitySelectScreen() {
   const [beneficiaryName, setBeneficiaryName] = useState("");
   const [paymentId, setPaymentId] = useState<string>("wallet");
   const [paymentOptions, setPaymentOptions] = useState<PaymentOption[]>([]);
+  const [walletBalance, setWalletBalance] = useState<number | undefined>();
 
   const [customerId, setCustomerId] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -270,19 +270,16 @@ export default function UtilitySelectScreen() {
 
   const fetchPaymentOptions = useCallback(async () => {
     try {
-      const [walletRes, bracsRes] = await Promise.all([
-        BaseRequest.get(TRANSACTION_SERVICE.BALANCE).catch(() => null),
-        BaseRequest.get(STOCKS_SERVICE.BRACS).catch(() => null),
-      ]);
+      const walletRes: any = await BaseRequest.get(
+        TRANSACTION_SERVICE.BALANCE,
+      ).catch(() => null);
       const walletBalance = Number(
         walletRes?.data?.balance ??
           walletRes?.data?.data?.balance ??
           walletRes?.data ??
           0,
       );
-      const bracsBalance = Number(
-        bracsRes?.data?.totalBalance ?? bracsRes?.data?.data?.totalBalance ?? 0,
-      );
+      setWalletBalance(walletBalance);
       const options: PaymentOption[] = [
         // {
         //   id: "total_balance",
@@ -290,7 +287,7 @@ export default function UtilitySelectScreen() {
         //   icon: "\u20A6",
         // },
         {
-          id: "wallet",
+          id: "brane_wallet",
           label: `Brane Wallet \u2013 \u20A6 ${formatMoney(walletBalance)}`,
           icon: "B",
         },
@@ -300,6 +297,7 @@ export default function UtilitySelectScreen() {
         options.some((item) => item.id === prev) ? prev : options[0]?.id || "",
       );
     } catch {
+      setWalletBalance(undefined);
       setPaymentOptions([]);
     }
   }, []);
@@ -923,6 +921,7 @@ export default function UtilitySelectScreen() {
       <SummaryModal
         visible={showSummaryModal}
         onClose={() => setShowSummaryModal(false)}
+        isAirtime={service === "airtime"}
         amountToPay={amountToPay}
         bracsRewardAmount={bracsRewardAmount}
         networkImageKey={networkImageKey}
@@ -930,30 +929,38 @@ export default function UtilitySelectScreen() {
         phone={phone}
         boostAmount={boostAmount}
         paymentOptions={paymentOptions}
+        walletBalance={walletBalance}
         paymentId={paymentId}
         setPaymentId={setPaymentId}
         ctaLabel={ctaLabel}
         isSubmitting={isSubmitting}
+        showPaymentMethod
+        onFundWallet={() => {
+          setShowSummaryModal(false);
+          router.push("/add-funds" as any);
+        }}
         onConfirm={() => {
           setShowSummaryModal(false);
           setTimeout(() => setShowPinValidator(true), 300);
         }}
       />
 
-      <BoostModal
-        visible={showBoostModal}
-        boostAmount={boostAmount}
-        setBoostAmount={setBoostAmount}
-        onSkip={() => {
-          setBoostAmount("");
-          setShowBoostModal(false);
-          setTimeout(() => setShowSummaryModal(true), 300);
-        }}
-        onAdd={() => {
-          setShowBoostModal(false);
-          setTimeout(() => setShowSummaryModal(true), 300);
-        }}
-      />
+      {service === "airtime" && (
+        <BoostModal
+          visible={showBoostModal}
+          boostAmount={boostAmount}
+          setBoostAmount={setBoostAmount}
+          onSkip={() => {
+            setBoostAmount("");
+            setShowBoostModal(false);
+            setTimeout(() => setShowSummaryModal(true), 300);
+          }}
+          onAdd={() => {
+            setShowBoostModal(false);
+            setTimeout(() => setShowSummaryModal(true), 300);
+          }}
+        />
+      )}
 
       <ContactPickerModal
         visible={showContactsModal}

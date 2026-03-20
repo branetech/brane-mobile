@@ -1,7 +1,7 @@
-import { accnt, VERSION } from "@/utils";
-import { useBooleans } from "@/utils/hooks";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { accnt, VERSION } from "@/utils";
+import { useBooleans } from "@/utils/hooks";
 import { useRouter } from "expo-router";
 import { LogoutCurve } from "iconsax-react-native";
 import { ReactNode } from "react";
