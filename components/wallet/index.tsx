@@ -298,7 +298,7 @@ export default function WalletScreen() {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.modalOption}
               onPress={() => {
                 setShowWithdrawModal(false);
@@ -320,7 +320,7 @@ export default function WalletScreen() {
                 </View>
               </View>
               <ArrowRight2 size={20} color={C.muted} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>

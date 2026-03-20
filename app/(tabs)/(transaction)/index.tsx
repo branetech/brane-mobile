@@ -1,516 +1,337 @@
 import Back from "@/components/back";
+import { EmptyState } from "@/components/empty-state";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import BaseRequest from "@/services";
+import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
-import { formatDate, parseTransaction, priceFormatter } from "@/utils/helpers";
+import { formatDate, parseTransaction } from "@/utils/helpers";
 import { ITransactionDetail } from "@/utils/index";
 import { useRouter } from "expo-router";
 import { SearchNormal1, Setting3 } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    Modal,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Modal,
+  RefreshControl,
+  SafeAreaView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-type TxStatus = "pending" | "success" | "failed" | "";
-
-const TX_TYPES = [
-  "Airtime",
-  "Data",
-  "Electricity",
-  "Cable",
-  "Betting",
-  "Wallet Top Up",
-  "Wallet Deduction",
-  "Buy Stocks",
-  "Sell Stocks",
-  "Stock Swap",
-];
-
-const toArray = (value: any): any[] => {
-  if (Array.isArray(value)) return value;
-  if (Array.isArray(value?.data)) return value.data;
-  if (Array.isArray(value?.records)) return value.records;
-  if (Array.isArray(value?.data?.records)) return value.data.records;
-  return [];
-};
-
-const getStatusStyles = (status?: string) => {
-  const key = String(status || "").toLowerCase();
-  if (key.includes("success")) {
-    return { bg: "#EAF8F1", color: "#0E8A4D", border: "#CBECD9" };
-  }
-  if (key.includes("pending")) {
-    return { bg: "#FFF7E8", color: "#B5760A", border: "#F1D9A8" };
-  }
-  return { bg: "#FDECEC", color: "#C53333", border: "#F6C8C8" };
-};
-
-export default function TransactionScreen() {
+const TransactionHistory = () => {
   const router = useRouter();
-  const scheme = useColorScheme();
-  const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const [transactions, setTransactions] = useState<ITransactionDetail[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<TxStatus>("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [showFilterModal, setShowFilterModal] = useState(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const fetchTransactions = useCallback(
-    async (refresh = false) => {
-      if (refresh) setIsRefreshing(true);
-      else setIsLoading(true);
-
-      try {
-        const params = new URLSearchParams();
-        params.append("perPage", "50");
-        if (search.trim()) params.append("search", search.trim());
-        if (statusFilter) params.append("status", statusFilter);
-        if (typeFilter) params.append("type", typeFilter);
-
-        const response: any = await BaseRequest.get(
-          `${TRANSACTION_SERVICE.TRANSACTION_LIST}?${params.toString()}`,
-        );
-
-        const records = toArray(response)
-          .map((item) => parseTransaction(item as ITransactionDetail))
-          .sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
-
-        setTransactions(records);
-      } finally {
-        setIsLoading(false);
-        setIsRefreshing(false);
-      }
+  const {
+    data: _transactions,
+    onChangeParams,
+    params,
+    setParams,
+    isLoading,
+    ...other
+  } = useRequest(TRANSACTION_SERVICE.TRANSACTION_LIST, {
+    initialValue: [],
+    params: {
+      perPage: 20,
     },
-    [search, statusFilter, typeFilter],
+  });
+
+  const clearFilters = () =>
+    setParams({
+      currentPage: params.currentPage,
+      perPage: params.perPage,
+    });
+
+  const removeParam = (key: string) => setParams(omit(params, [key]));
+
+  const emptyTransaction = useMemo(
+    () => Array.isArray(_transactions) && _transactions.length < 1,
+    [_transactions],
   );
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
-
-  const grouped = useMemo(() => {
-    return transactions.reduce<Record<string, ITransactionDetail[]>>(
-      (acc, item) => {
-        const key = formatDate(item.createdAt, "MMMM dd, yyyy");
-        if (!acc[key]) acc[key] = [];
-        acc[key].push(item);
-        return acc;
-      },
-      {},
-    );
-  }, [transactions]);
+  const filters = useMemo(
+    () => Object.keys(omit(params, ["currentPage", "perPage"])),
+    [params],
+  );
 
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={[styles.title, { color: C.text }]}>
-          Transaction History
-        </ThemedText>
-        <TouchableOpacity onPress={() => setShowFilterModal(true)}>
-          <Setting3 size={20} color={C.text} variant='Outline' />
-        </TouchableOpacity>
-      </View>
-
-      <View
-        style={[
-          styles.searchRow,
-          { backgroundColor: C.inputBg, borderColor: C.border },
-        ]}
-      >
-        <SearchNormal1 size={16} color={C.muted} variant='Outline' />
-        <TextInput
-          style={[styles.searchInput, { color: C.text }]}
-          placeholder='Search transactions'
-          placeholderTextColor={C.muted}
-          value={search}
-          onChangeText={setSearch}
-          onSubmitEditing={() => fetchTransactions()}
-        />
-      </View>
-
-      {isLoading ? (
-        <View style={styles.loaderWrap}>
-          <ActivityIndicator color={C.primary} />
-        </View>
-      ) : (
-        <ScrollView
-          contentContainerStyle={styles.content}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={() => fetchTransactions(true)}
-              tintColor={C.primary}
-            />
+    <>
+      <div className='brane-container h-full'>
+        <Header
+          handleBackPress={router.back}
+          title='Transaction History'
+          rightContent={
+            <div onClick={onOpen}>
+              <FilterIcon />
+            </div>
           }
-        >
-          {Object.keys(grouped).length < 1 ? (
-            <ThemedText style={[styles.emptyText, { color: C.muted }]}>
-              No transactions yet.
-            </ThemedText>
-          ) : (
-            Object.entries(grouped).map(([date, records]) => (
-              <View key={date} style={styles.groupWrap}>
-                <ThemedText style={[styles.groupDate, { color: C.muted }]}>
-                  {date}
-                </ThemedText>
-                {records.map((item) => {
-                  const statusUI = getStatusStyles(item.status);
-                  return (
-                    <TouchableOpacity
-                      key={String(item.id)}
-                      style={[
-                        styles.row,
-                        { backgroundColor: C.screen, borderColor: C.border },
-                      ]}
-                      onPress={() =>
-                        router.push({
-                          pathname: "/(tabs)/(transaction)/[details]",
-                          params: { details: String(item.id) },
-                        })
-                      }
-                    >
-                      <View style={styles.rowLeft}>
-                        <ThemedText
-                          style={[styles.rowTitle, { color: C.text }]}
-                        >
-                          {item.transactionDescription || item.transactionType}
-                        </ThemedText>
-                        <ThemedText style={[styles.rowSub, { color: C.muted }]}>
-                          {formatDate(item.createdAt, "hh:mm a")}
-                        </ThemedText>
-                      </View>
-                      <View style={styles.rowRight}>
-                        <ThemedText
-                          style={[styles.rowAmount, { color: C.text }]}
-                        >
-                          {priceFormatter(Number(item.amount || 0))}
-                        </ThemedText>
-                        <View
-                          style={[
-                            styles.statusPill,
-                            {
-                              backgroundColor: statusUI.bg,
-                              borderColor: statusUI.border,
-                            },
-                          ]}
-                        >
-                          <ThemedText
-                            style={[
-                              styles.statusText,
-                              { color: statusUI.color },
-                            ]}
+        />
+        <div className='flex-1 flex-col flex gap-3 no-scrollbar overflow-y-auto pb-[40px]'>
+          <div className='flex flex-col w-full gap-3'>
+            {!emptyTransaction && (
+              <FormInput
+                wrapper='mb-[0px]'
+                leftContent={<SearchIcon />}
+                placeholder='Search transactions'
+                value={params?.search}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  onChangeParams({ search: event.target.value })
+                }
+              />
+            )}
+
+            {!!filters.length && (
+              <div className='overflow-x-auto w-full no-scrollbar'>
+                <div className='flex flex-row gap-2 min-w-max'>
+                  {filters.map((key: string, i: number) => {
+                    const isDate = ["startDate", "endDate"].includes(key);
+                    return (
+                      <Tags
+                        key={i}
+                        border='1px solid #F3EED8'
+                        bg='#F8F5E8'
+                        bRadius='8px'
+                        p='5px 8px 5px 10px'
+                      >
+                        <div className='flex gap-[8px] items-center'>
+                          <span className='text-[#013D25]'>
+                            {isDate
+                              ? formatDate(params[key], "MMMM dd, yyyy")
+                              : params[key]}
+                          </span>
+                          <span
+                            onClick={() => removeParam(key)}
+                            className='cursor-pointer'
                           >
-                            {String(item.status || "").toUpperCase()}
-                          </ThemedText>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            ))
-          )}
-        </ScrollView>
-      )}
+                            <CloseIcon />
+                          </span>
+                        </div>
+                      </Tags>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-      <Modal visible={showFilterModal} transparent animationType='slide'>
-        <TouchableOpacity
-          style={[
-            styles.modalOverlay,
-            {
-              backgroundColor: "#013D254D",
-            },
-          ]}
-          activeOpacity={1}
-          onPress={() => setShowFilterModal(false)}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            style={[styles.modalCard, { backgroundColor: C.background }]}
-            onPress={() => {}}
-          >
-            <ThemedText style={[styles.modalTitle, { color: C.text }]}>
-              Filter
-            </ThemedText>
-
-            <ThemedText style={[styles.filterHeading, { color: C.muted }]}>
-              Status
-            </ThemedText>
-            <View style={styles.filterRow}>
-              {(["", "pending", "success", "failed"] as TxStatus[]).map(
-                (status) => (
-                  <TouchableOpacity
-                    key={status || "all"}
-                    style={[
-                      styles.filterChip,
-                      statusFilter === status && {
-                        backgroundColor: C.primary,
-                      },
-                      statusFilter !== status && {
-                        backgroundColor: C.inputBg,
-                        borderColor: C.border,
-                      },
-                    ]}
-                    onPress={() => setStatusFilter(status)}
-                  >
-                    <ThemedText
-                      style={[
-                        styles.filterChipText,
-                        {
-                          color:
-                            statusFilter === status ? C.background : C.text,
-                        },
-                      ]}
-                    >
-                      {status ? status : "All"}
-                    </ThemedText>
-                  </TouchableOpacity>
-                ),
-              )}
-            </View>
-
-            <ThemedText style={[styles.filterHeading, { color: C.muted }]}>
-              Type
-            </ThemedText>
-            <View style={styles.filterRow}>
-              {TX_TYPES.map((type) => (
-                <TouchableOpacity
-                  key={type}
-                  style={[
-                    styles.filterChip,
-                    typeFilter === type && {
-                      backgroundColor: C.primary,
-                    },
-                    typeFilter !== type && {
-                      backgroundColor: C.inputBg,
-                      borderColor: C.border,
-                    },
-                  ]}
-                  onPress={() =>
-                    setTypeFilter((prev) => (prev === type ? "" : type))
-                  }
-                >
-                  <ThemedText
-                    style={[
-                      styles.filterChipText,
-                      {
-                        color: typeFilter === type ? C.background : C.text,
-                      },
-                    ]}
-                  >
-                    {type}
-                  </ThemedText>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={[styles.secondaryBtn, { borderColor: C.border }]}
-                onPress={() => {
-                  setStatusFilter("");
-                  setTypeFilter("");
-                }}
+            {!!filters.length && (
+              <span
+                className='font-medium text-[14px] text-[#013D25] underline cursor-pointer'
+                onClick={clearFilters}
               >
-                <ThemedText
-                  style={[styles.secondaryBtnText, { color: C.text }]}
-                >
-                  Clear
-                </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.primaryBtn, { backgroundColor: C.primary }]}
-                onPress={() => {
-                  setShowFilterModal(false);
-                  fetchTransactions();
+                Clear all Filters
+              </span>
+            )}
+
+            {isLoading && (
+              <div className='flex justify-center items-center w-full'>
+                <Spinner color='primary' />
+              </div>
+            )}
+          </div>
+
+          <div className='mb-[50px]'>
+            <GroupedTransactions transactions={_transactions} />
+            {_transactions?.length > 0 && (
+              <Pagination
+                align='center'
+                current={other.currentPage}
+                pageSize={other?.perPage || params.perPage || 20}
+                total={other?.totalRecords || 0}
+                onChange={(page, pageSize) => {
+                  onChangeParams({
+                    page: Number(page),
+                    perPage: pageSize,
+                  });
                 }}
+                showSizeChanger
+                responsive
+                size='small'
+                pageSizeOptions={["10", "20", "50", "100"]}
+              />
+            )}
+          </div>
+        </div>
+
+        <BraneModal isOpen={isOpen} onOpenChange={onOpenChange}>
+          <h1 className='text-[16px]'>Filter</h1>
+          <div className='flex flex-col gap-6'>
+            <div className='border-b-2 border-[#f7f7f8] py-3 flex flex-col gap-4'>
+              <p className='font-[600]'>Status</p>
+              <RadioGroup
+                size='lg'
+                value={params?.status}
+                onValueChange={(value) => onChangeParams({ status: value })}
               >
-                <ThemedText
-                  style={[styles.primaryBtnText, { color: C.background }]}
+                <Radio
+                  classNames={{
+                    base: cn(
+                      "inline-flex items-center justify-between",
+                      "flex-row-reverse max-w-[500px] cursor-pointer gap-4 border-transparent",
+                    ),
+                    label: "text-[#0B0014] text-[14px] font-medium",
+                    labelWrapper: "ml-0 my-4",
+                  }}
+                  value='pending'
                 >
-                  Apply
-                </ThemedText>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
-    </SafeAreaView>
+                  Pending
+                </Radio>
+                <Radio
+                  classNames={{
+                    base: cn(
+                      "inline-flex items-center justify-between",
+                      "flex-row-reverse max-w-[500px] cursor-pointer gap-4 border-transparent",
+                    ),
+                    label: "text-[#0B0014] text-[14px] font-medium",
+                    labelWrapper: "ml-0 my-4",
+                  }}
+                  value='success'
+                >
+                  Success
+                </Radio>
+                <Radio
+                  classNames={{
+                    base: cn(
+                      "inline-flex items-center justify-between",
+                      "flex-row-reverse max-w-[500px] cursor-pointer gap-4 border-transparent",
+                    ),
+                    label: "text-[#0B0014] text-[14px] font-medium",
+                    labelWrapper: "ml-0 my-4",
+                  }}
+                  value='failed'
+                >
+                  Failed
+                </Radio>
+              </RadioGroup>
+            </div>
+
+            <div className='border-b-2 border-[#f7f7f8] py-3 flex flex-col gap-4'>
+              <p className='font-[600]'>Type</p>
+              <RadioGroup
+                size='lg'
+                value={params?.type}
+                onValueChange={(value) => onChangeParams({ type: value })}
+              >
+                <Radio
+                  classNames={{
+                    base: cn(
+                      "inline-flex items-center justify-between",
+                      "flex-row-reverse max-w-[500px] cursor-pointer gap-4 border-transparent",
+                    ),
+                    label: "text-[#0B0014] text-[14px] font-medium",
+                    labelWrapper: "ml-0 my-4",
+                  }}
+                  value='Airtime'
+                >
+                  Airtime
+                </Radio>
+                <Radio
+                  classNames={{
+                    base: cn(
+                      "inline-flex items-center justify-between",
+                      "flex-row-reverse max-w-[500px] cursor-pointer gap-4 border-transparent",
+                    ),
+                    label: "text-[#0B0014] text-[14px] font-medium",
+                    labelWrapper: "ml-0 my-4",
+                  }}
+                  value='Data'
+                >
+                  Data
+                </Radio>
+                <Radio
+                  classNames={{
+                    base: cn(
+                      "inline-flex items-center justify-between",
+                      "flex-row-reverse max-w-[500px] cursor-pointer gap-4 border-transparent",
+                    ),
+                    label: "text-[#0B0014] text-[14px] font-medium",
+                    labelWrapper: "ml-0 my-4",
+                  }}
+                  value='Buy Stocks'
+                >
+                  Stock
+                </Radio>
+                <Radio
+                  classNames={{
+                    base: cn(
+                      "inline-flex items-center justify-between",
+                      "flex-row-reverse max-w-[500px] cursor-pointer gap-4 border-transparent",
+                    ),
+                    label: "text-[#0B0014] text-[14px] font-medium",
+                    labelWrapper: "ml-0 my-4",
+                  }}
+                  value='Stock Swap'
+                >
+                  Bracs
+                </Radio>
+                <Radio
+                  classNames={{
+                    base: cn(
+                      "inline-flex items-center justify-between",
+                      "flex-row-reverse max-w-[500px] cursor-pointer gap-4 border-transparent",
+                    ),
+                    label: "text-[#0B0014] text-[14px] font-medium",
+                    labelWrapper: "ml-0 my-4",
+                  }}
+                  value='Wallet Top Up'
+                >
+                  Wallet Top Up
+                </Radio>
+                <Radio
+                  classNames={{
+                    base: cn(
+                      "inline-flex items-center justify-between",
+                      "flex-row-reverse max-w-[500px] cursor-pointer gap-4 border-transparent",
+                    ),
+                    label: "text-[#0B0014] text-[14px] font-medium",
+                    labelWrapper: "ml-0 my-4",
+                  }}
+                  value='Wallet Deduction'
+                >
+                  Wallet Deduction
+                </Radio>
+              </RadioGroup>
+            </div>
+
+            <div className='max-w-full'>
+              <p className='font-[600]'>Date</p>
+              <div className='flex flex-row gap-6 items-center mt-3 justify-between'>
+                <div className='flex flex-col gap-3'>
+                  <p>Start Date</p>
+                  <DatePicker
+                    {...(params?.startDate && {
+                      defaultValue: dayjs(params.startDate, "YYYY/MM/DD"),
+                    })}
+                    size='large'
+                    onChange={(date, dateString) => {
+                      if (dateString) onChangeParams({ startDate: dateString });
+                    }}
+                  />
+                </div>
+                <span className='w-[12px] h-[2px] bg-[#013d25c5] mt-8'></span>
+                <div className='flex flex-col gap-3'>
+                  <p>End Date</p>
+                  <DatePicker
+                    {...(params?.endDate && {
+                      defaultValue: dayjs(params.endDate, "YYYY/MM/DD"),
+                    })}
+                    size='large'
+                    onChange={(date, dateString) => {
+                      if (dateString) onChangeParams({ endDate: dateString });
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </BraneModal>
+      </div>
+      <TabsNav />
+    </>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  searchRow: {
-    marginHorizontal: 16,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderRadius: 10,
-    height: 42,
-    paddingHorizontal: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 12,
-  },
-  loaderWrap: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  content: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
-    gap: 12,
-  },
-  emptyText: {
-    textAlign: "center",
-    marginTop: 20,
-  },
-  groupWrap: {
-    gap: 8,
-  },
-  groupDate: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  row: {
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  rowLeft: {
-    flex: 1,
-  },
-  rowRight: {
-    alignItems: "flex-end",
-    gap: 5,
-  },
-  rowTitle: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  rowSub: {
-    fontSize: 10,
-  },
-  rowAmount: {
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  statusPill: {
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  statusText: {
-    fontSize: 9,
-    fontWeight: "700",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "#013D254D",
-    justifyContent: "flex-end",
-  },
-  modalCard: {
-    maxHeight: "80%",
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 20,
-    gap: 10,
-  },
-  modalTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  filterHeading: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 2,
-  },
-  filterRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  filterChip: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderRadius: 16,
-  },
-  filterChipActive: {},
-  filterChipText: {
-    fontSize: 11,
-    textTransform: "capitalize",
-  },
-  filterChipTextActive: {
-    color: "#013D25",
-    fontWeight: "700",
-  },
-  modalActions: {
-    marginTop: 4,
-    flexDirection: "row",
-    gap: 8,
-  },
-  secondaryBtn: {
-    flex: 1,
-    height: 42,
-    borderRadius: 10,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  secondaryBtnText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  primaryBtn: {
-    flex: 1,
-    height: 42,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  primaryBtnText: {
-    fontSize: 12,
-    fontWeight: "700",
-  },
-});
+export default TransactionHistory;

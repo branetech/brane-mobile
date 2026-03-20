@@ -14,7 +14,7 @@ export const Account = ({ header }: { header?: ReactNode }) => {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const acc = accnt(C.primary);
+  const acc = accnt();
   const resolveRoute = (label: string, routeKey?: string) => {
     const byLabel: Record<string, string> = {
       Preferences: "/(account)/preferences",
