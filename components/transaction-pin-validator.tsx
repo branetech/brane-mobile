@@ -84,7 +84,7 @@ export const TransactionPinValidator = ({
     <Modal
       visible={visible}
       transparent={false}
-      animationType='slide'
+      animationType="slide"
       onRequestClose={handleClose}
     >
       <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 6,
+    paddingTop: 56,
   },
   topContent: {
     gap: 8,

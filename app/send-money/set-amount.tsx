@@ -18,6 +18,8 @@ import { addBeneficiary } from "@/services/send-money";
 import { useRequest } from "@/services/useRequest";
 import { formatMoney } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
+import BaseRequest from "@/services";
+import { AUTH_SERVICE } from "@/services/routes";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Copy } from "iconsax-react-native";
 import React, { useState } from "react";

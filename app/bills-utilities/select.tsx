@@ -40,6 +40,7 @@ import { BettingForm } from "./BettingForm";
 import { CableForm } from "./CableForm";
 import { ElectricityForm } from "./ElectricityForm";
 import {
+  BettingProviderModal,
   BoostModal,
   CablePlanModal,
   ContactPickerModal,
@@ -50,6 +51,8 @@ import {
 } from "./Modals";
 import { TransportationForm } from "./TransportationForm";
 import {
+  getBettingImageKey,
+  getElectricityImageKey,
   getNetworkImageKey,
   normalizeCablePlan,
   normalizeDataPlan,
@@ -58,6 +61,9 @@ import {
   toArray,
 } from "./helpers";
 import {
+  BETTING_ORDER,
+  ELECTRICITY_IMAGES,
+  NETWORK_IMAGES,
   NETWORK_ORDER,
   TRANSPORT_KEYWORDS,
   type Beneficiary,
@@ -70,12 +76,13 @@ import {
 export default function UtilitySelectScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const auth = useAppState("auth");
+  const auth = useAppState();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const styles = createStyles(C);
 
   const initialService = String(params.service || "airtime").toLowerCase();
+  const preselectedProviderId = String(params.providerId || "").toLowerCase();
   const currentService: UtilityService =
     initialService === "data" ||
     initialService === "betting" ||
@@ -141,6 +148,8 @@ export default function UtilitySelectScreen() {
   const [dataPlanCategory, setDataPlanCategory] = useState<
     "hot" | "daily" | "weekly" | "monthly" | "yearly"
   >("hot");
+  const [showBettingProviderModal, setShowBettingProviderModal] =
+    useState(false);
   const [showElectricityProviderModal, setShowElectricityProviderModal] =
     useState(false);
   const [showCablePlanModal, setShowCablePlanModal] = useState(false);
@@ -153,6 +162,8 @@ export default function UtilitySelectScreen() {
     { name: string; phone: string }[]
   >([]);
   const [contactSearch, setContactSearch] = useState("");
+  const [hasAppliedProviderPrefill, setHasAppliedProviderPrefill] =
+    useState(false);
 
   // ── Derived values ────────────────────────────────────────────────────────────
 
@@ -169,6 +180,11 @@ export default function UtilitySelectScreen() {
   const selectedTransportPlan = useMemo(
     () => transportPlans.find((p) => p.id === selectedTransportPlanId),
     [transportPlans, selectedTransportPlanId],
+  );
+
+  const selectedBettingProvider = useMemo(
+    () => bettingProviders.find((p) => p.id === bettingProvider),
+    [bettingProvider, bettingProviders],
   );
 
   const selectedElectricityProvider = useMemo(
@@ -235,12 +251,92 @@ export default function UtilitySelectScreen() {
   const networkImageKey = getNetworkImageKey(
     `${network} ${selectedNetworkObj?.label || ""} ${selectedNetworkObj?.description || ""}`,
   );
+  const electricityImageKey = getElectricityImageKey(
+    `${selectedElectricityProvider?.label || ""} ${selectedElectricityProvider?.description || ""}`,
+  );
   const ctaLabel =
     service === "data"
       ? "Buy Data"
       : service === "airtime"
         ? "Buy Airtime"
-        : "Proceed";
+        : service === "electricity"
+          ? "Buy Electricity"
+          : "Proceed";
+  const screenTitle =
+    service === "airtime"
+      ? "Buy Airtime"
+      : service === "data"
+        ? "Buy Data"
+        : service === "electricity"
+          ? "Electricity"
+          : service === "cable"
+            ? "Cable TV"
+            : service === "betting"
+              ? "Betting"
+              : service === "transportation"
+                ? "Transportation"
+                : "Bills & Utility";
+
+  const summaryIconSource =
+    service === "electricity"
+      ? electricityImageKey
+        ? ELECTRICITY_IMAGES[electricityImageKey]
+        : undefined
+      : NETWORK_IMAGES[networkImageKey];
+
+  const summaryRows = useMemo(() => {
+    if (service === "electricity") {
+      return [
+        {
+          label: "Biller",
+          value: selectedElectricityProvider?.label.toUpperCase() || "-",
+        },
+        { label: "Meter Number", value: meterNumber || "-" },
+        {
+          label: "Customer Name",
+          value: electricityAccountName || meterNumber || "-",
+        },
+        {
+          label: "Transaction Amount",
+          value: `₦ ${formatMoney(amountToPay)}`,
+        },
+        { label: "Service Fee", value: "₦ 0.00" },
+        {
+          label: "Total Debit",
+          value: `₦ ${formatMoney(amountToPay)}`,
+          bold: true,
+        },
+      ];
+    }
+
+    return [
+      { label: "Provider", value: networkLabel },
+      { label: "Sending to", value: phone },
+      {
+        label: "Transaction Amount",
+        value: `₦ ${formatMoney(amountToPay)}`,
+      },
+      {
+        label: "Cash Boost",
+        value: `₦ ${formatMoney(Number(boostAmount || 0))}`,
+      },
+      { label: "Service Fee", value: "₦ 0.00" },
+      {
+        label: "Total Debit",
+        value: `₦ ${formatMoney(amountToPay + Number(boostAmount || 0))}`,
+        bold: true,
+      },
+    ];
+  }, [
+    amountToPay,
+    boostAmount,
+    electricityAccountName,
+    meterNumber,
+    networkLabel,
+    phone,
+    selectedElectricityProvider,
+    service,
+  ]);
 
   const transactionTarget =
     service === "airtime" || service === "data"
@@ -417,7 +513,19 @@ export default function UtilitySelectScreen() {
           BaseRequest.get(MOBILE_SERVICE.VT_PASS_SERVICE).catch(() => null),
         ]);
 
-      const remoteBetting = toArray(bettingRes).map(normalizeOption);
+      const remoteBetting = toArray(bettingRes)
+        .map(normalizeOption)
+        .sort((a, b) => {
+          const aKey = getBettingImageKey(
+            `${a.id} ${a.label} ${a.description || ""}`,
+          );
+          const bKey = getBettingImageKey(
+            `${b.id} ${b.label} ${b.description || ""}`,
+          );
+          const ai = BETTING_ORDER.findIndex((item) => item === aKey);
+          const bi = BETTING_ORDER.findIndex((item) => item === bKey);
+          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+        });
       const remoteCable = toArray(cableRes).map(normalizeOption);
       const remoteElectricity = normalizeElectricityProviders(
         electricityRes?.data || electricityRes,
@@ -515,6 +623,67 @@ export default function UtilitySelectScreen() {
       setBeneficiarySearch("");
     }
   }, [fetchBeneficiaries, fetchConnectivityProviders, service]);
+
+  useEffect(() => {
+    setHasAppliedProviderPrefill(false);
+  }, [preselectedProviderId]);
+
+  useEffect(() => {
+    if (!preselectedProviderId || hasAppliedProviderPrefill) return;
+
+    if (
+      (service === "airtime" || service === "data") &&
+      networks.some((item) => item.id === preselectedProviderId)
+    ) {
+      setNetwork(preselectedProviderId);
+      setHasAppliedProviderPrefill(true);
+      return;
+    }
+
+    if (
+      service === "betting" &&
+      bettingProviders.some((item) => item.id === preselectedProviderId)
+    ) {
+      setBettingProvider(preselectedProviderId);
+      setHasAppliedProviderPrefill(true);
+      return;
+    }
+
+    if (
+      service === "cable" &&
+      cableProviders.some((item) => item.id === preselectedProviderId)
+    ) {
+      setCableProvider(preselectedProviderId);
+      setHasAppliedProviderPrefill(true);
+      return;
+    }
+
+    if (
+      service === "electricity" &&
+      electricityProviders.some((item) => item.id === preselectedProviderId)
+    ) {
+      setElectricityProvider(preselectedProviderId);
+      setHasAppliedProviderPrefill(true);
+      return;
+    }
+
+    if (
+      service === "transportation" &&
+      transportProviders.some((item) => item.id === preselectedProviderId)
+    ) {
+      setTransportProvider(preselectedProviderId);
+      setHasAppliedProviderPrefill(true);
+    }
+  }, [
+    bettingProviders,
+    cableProviders,
+    electricityProviders,
+    hasAppliedProviderPrefill,
+    networks,
+    preselectedProviderId,
+    service,
+    transportProviders,
+  ]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────────
 
@@ -722,9 +891,7 @@ export default function UtilitySelectScreen() {
 
       if (service === "electricity" && selectedElectricityProvider) {
         await onTransactionPinElectricityValidation({
-          serviceId:
-            selectedElectricityProvider.description ||
-            selectedElectricityProvider.label,
+          serviceId: selectedElectricityProvider.id,
           billersCode: Number(meterNumber),
           user: auth?.user,
           amount: String(amountToPay),
@@ -760,15 +927,51 @@ export default function UtilitySelectScreen() {
     }
   };
 
+  const prepareElectricitySummary = useCallback(async () => {
+    if (!selectedElectricityProvider) return;
+
+    if (!electricityAccountName.trim()) {
+      setIsSubmitting(true);
+      try {
+        const response: any = await BaseRequest.post(
+          MOBILE_SERVICE.ELECTRICITY_METER_VERIFY,
+          {
+            serviceId: selectedElectricityProvider.id,
+            billersCode: meterNumber,
+            variationCode: electricityProduct,
+          },
+        );
+        const details = response?.data || response;
+        const name =
+          details?.customerName ||
+          details?.name ||
+          details?.Customer_Name ||
+          meterNumber;
+        setElectricityAccountName(String(name));
+      } catch (error) {
+        const { message } = parseNetworkError(error);
+        showError(message);
+        return;
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+
+    setShowSummaryModal(true);
+  }, [
+    electricityAccountName,
+    electricityProduct,
+    meterNumber,
+    selectedElectricityProvider,
+  ]);
+
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
         <Back onPress={() => router.back()} />
-        <ThemedText style={styles.headerTitle}>
-          {isAirtimeOrData ? "Airtime & Data" : "Bills & Utility"}
-        </ThemedText>
+        <ThemedText style={styles.headerTitle}>{screenTitle}</ThemedText>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -820,8 +1023,7 @@ export default function UtilitySelectScreen() {
             {service === "betting" && (
               <BettingForm
                 bettingProviders={bettingProviders}
-                bettingProvider={bettingProvider}
-                setBettingProvider={setBettingProvider}
+                selectedBettingProvider={selectedBettingProvider}
                 customerId={customerId}
                 setCustomerId={setCustomerId}
                 customerIdError={customerIdError}
@@ -830,6 +1032,7 @@ export default function UtilitySelectScreen() {
                 setAmount={setAmount}
                 amountError={amountError}
                 setAmountError={setAmountError}
+                onOpenProviderModal={() => setShowBettingProviderModal(true)}
               />
             )}
 
@@ -853,8 +1056,6 @@ export default function UtilitySelectScreen() {
             {service === "electricity" && (
               <ElectricityForm
                 electricityProviders={electricityProviders}
-                electricityProvider={electricityProvider}
-                setElectricityProvider={setElectricityProvider}
                 selectedElectricityProvider={selectedElectricityProvider}
                 electricityProduct={electricityProduct}
                 setElectricityProduct={setElectricityProduct}
@@ -863,11 +1064,12 @@ export default function UtilitySelectScreen() {
                 cardError={cardError}
                 setCardError={setCardError}
                 electricityAccountName={electricityAccountName}
-                setElectricityAccountName={setElectricityAccountName}
                 amount={amount}
                 setAmount={setAmount}
                 amountError={amountError}
                 setAmountError={setAmountError}
+                addToBeneficiaries={addToBeneficiaries}
+                setAddToBeneficiaries={setAddToBeneficiaries}
                 onOpenProviderModal={() =>
                   setShowElectricityProviderModal(true)
                 }
@@ -896,12 +1098,16 @@ export default function UtilitySelectScreen() {
               text={
                 isAirtimeOrData
                   ? ctaLabel
-                  : `Proceed \u2013 \u20A6 ${Number(amountToPay || 0).toLocaleString("en-NG")}`
+                  : service === "electricity"
+                    ? ctaLabel
+                    : `Proceed \u2013 \u20A6 ${Number(amountToPay || 0).toLocaleString("en-NG")}`
               }
-              onPress={() => {
+              onPress={async () => {
                 if (!validateForm()) return;
                 if (service === "airtime") {
                   setShowBoostModal(true);
+                } else if (service === "electricity") {
+                  await prepareElectricitySummary();
                 } else {
                   setShowSummaryModal(true);
                 }
@@ -923,10 +1129,14 @@ export default function UtilitySelectScreen() {
         onClose={() => setShowSummaryModal(false)}
         isAirtime={service === "airtime"}
         amountToPay={amountToPay}
+        iconSource={summaryIconSource}
+        iconFallbackText={
+          service === "electricity"
+            ? selectedElectricityProvider?.label?.charAt(0).toUpperCase() || "E"
+            : networkLabel.charAt(0).toUpperCase()
+        }
+        summaryRows={summaryRows}
         bracsRewardAmount={bracsRewardAmount}
-        networkImageKey={networkImageKey}
-        networkLabel={networkLabel}
-        phone={phone}
         boostAmount={boostAmount}
         paymentOptions={paymentOptions}
         walletBalance={walletBalance}
@@ -1000,6 +1210,17 @@ export default function UtilitySelectScreen() {
         }}
       />
 
+      <BettingProviderModal
+        visible={showBettingProviderModal}
+        onClose={() => setShowBettingProviderModal(false)}
+        providers={bettingProviders}
+        selectedId={bettingProvider}
+        onSelect={(id) => {
+          setBettingProvider(id);
+          setShowBettingProviderModal(false);
+        }}
+      />
+
       <CablePlanModal
         visible={showCablePlanModal}
         onClose={() => setShowCablePlanModal(false)}
@@ -1043,6 +1264,7 @@ export default function UtilitySelectScreen() {
       <TransactionPinValidator
         visible={showPinValidator}
         onClose={() => setShowPinValidator(false)}
+        onResetPin={() => router.push("/account/reset-transaction-pin" as any)}
         onValidatePin={async (pin) => {
           console.log("Validating PIN:", pin);
           try {

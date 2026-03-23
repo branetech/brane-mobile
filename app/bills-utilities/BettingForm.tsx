@@ -1,13 +1,15 @@
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ArrowDown2 } from "iconsax-react-native";
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import type { SelectOption } from "./types";
 
 type Props = {
   bettingProviders: SelectOption[];
-  bettingProvider: string;
-  setBettingProvider: (id: string) => void;
+  selectedBettingProvider?: SelectOption;
   customerId: string;
   setCustomerId: (v: string) => void;
   customerIdError?: string;
@@ -16,12 +18,12 @@ type Props = {
   setAmount: (v: string) => void;
   amountError?: string;
   setAmountError: (v: string | undefined) => void;
+  onOpenProviderModal: () => void;
 };
 
 export function BettingForm({
   bettingProviders,
-  bettingProvider,
-  setBettingProvider,
+  selectedBettingProvider,
   customerId,
   setCustomerId,
   customerIdError,
@@ -30,36 +32,37 @@ export function BettingForm({
   setAmount,
   amountError,
   setAmountError,
+  onOpenProviderModal,
 }: Props) {
+  const scheme = useColorScheme();
+  const themeKey: "light" | "dark" = scheme === "dark" ? "dark" : "light";
+  const C = Colors[themeKey];
+  const styles = createStyles(C);
+
   return (
     <>
       <ThemedText style={styles.label}>Betting Provider</ThemedText>
-      <View style={styles.providersRow}>
-        {bettingProviders.map((item) => (
-          <TouchableOpacity
-            key={item.id}
+      {bettingProviders.length > 0 ? (
+        <TouchableOpacity
+          style={styles.selectField}
+          onPress={onOpenProviderModal}
+          activeOpacity={0.85}
+        >
+          <ThemedText
             style={[
-              styles.providerBtn,
-              bettingProvider === item.id && styles.providerBtnActive,
+              styles.selectText,
+              !selectedBettingProvider && styles.placeholderText,
             ]}
-            onPress={() => setBettingProvider(item.id)}
           >
-            <ThemedText
-              style={[
-                styles.providerText,
-                bettingProvider === item.id && styles.providerTextActive,
-              ]}
-            >
-              {item.label}
-            </ThemedText>
-          </TouchableOpacity>
-        ))}
-        {bettingProviders.length === 0 && (
-          <ThemedText style={styles.emptyText}>
-            No betting provider available.
+            {selectedBettingProvider?.label || "Select betting provider"}
           </ThemedText>
-        )}
-      </View>
+          <ArrowDown2 size={18} color={C.muted} />
+        </TouchableOpacity>
+      ) : (
+        <ThemedText style={styles.emptyText}>
+          No betting provider available.
+        </ThemedText>
+      )}
 
       <ThemedText style={styles.label}>Customer ID</ThemedText>
       <FormInput
@@ -91,29 +94,32 @@ export function BettingForm({
   );
 }
 
-const styles = StyleSheet.create({
-  label: { fontSize: 10, color: "#8E8E93", marginTop: 4 },
-  providersRow: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-    marginTop: 4,
-  },
-  providerBtn: {
-    borderWidth: 1,
-    borderColor: "#ECECEF",
-    borderRadius: 8,
-    minWidth: 66,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: "#FFFFFF",
-  },
-  providerBtnActive: { borderColor: "#013D25", backgroundColor: "#EAF4EF" },
-  providerText: { fontSize: 11, color: "#5A5660", fontWeight: "600" },
-  providerTextActive: { color: "#013D25" },
-  emptyText: { fontSize: 10, color: "#8E8E93" },
-  inputContainer: { height: 40, borderRadius: 8, borderColor: "#F0F0F0" },
-  inputText: { fontSize: 11 },
-});
+const createStyles = (C: typeof Colors.light) =>
+  StyleSheet.create({
+    label: { fontSize: 10, color: C.muted, marginTop: 4 },
+    selectField: {
+      minHeight: 48,
+      borderRadius: 12,
+      backgroundColor: C.inputBg,
+      paddingHorizontal: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderWidth: 1,
+      borderColor: "#EEF0F3",
+      marginTop: 4,
+    },
+    selectText: {
+      fontSize: 12,
+      color: C.text,
+      fontWeight: "500",
+      flex: 1,
+    },
+    placeholderText: {
+      color: C.muted,
+      fontWeight: "400",
+    },
+    emptyText: { fontSize: 10, color: C.muted, marginTop: 4 },
+    inputContainer: { height: 40, borderRadius: 8, borderColor: "#F0F0F0" },
+    inputText: { fontSize: 11 },
+  });
