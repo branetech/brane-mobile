@@ -42,34 +42,13 @@ export default function WalletScreen() {
   const C = Colors[scheme];
 
   const [balance, setBalance] = useState(0);
-  const [dividendBalance, setDividendBalance] = useState(0);
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-  const [isLoadingDividend, setIsLoadingDividend] = useState(false);
 
-  const fetchDividendBalance = useCallback(async () => {
-    setIsLoadingDividend(true);
-    try {
-      const res: any = await BaseRequest.get(STOCKS_SERVICE.WALLET_BALANCE);
-      setDividendBalance(
-        Number(
-          res?.data?.dividendBalance ??
-            res?.dividendBalance ??
-            res?.data?.balance ??
-            res?.balance ??
-            0,
-        ),
-      );
-    } catch (error) {
-      catchError(error);
-    } finally {
-      setIsLoadingDividend(false);
-    }
-  }, []);
-
+ 
   const fetchData = useCallback(async (refresh = false) => {
     if (refresh) setIsRefreshing(true);
     else setIsLoading(true);
@@ -122,7 +101,6 @@ export default function WalletScreen() {
 
   const handleWithdrawModalOpen = () => {
     setShowWithdrawModal(true);
-    fetchDividendBalance();
   };
 
   const ListHeader = (
@@ -284,7 +262,7 @@ export default function WalletScreen() {
                 style={styles.modalOption}
                 onPress={() => {
                   setShowWithdrawModal(false);
-                  router.push("/wallet/withdraw");
+                  router.push("/send-money");
                 }}
                 activeOpacity={0.7}
               >

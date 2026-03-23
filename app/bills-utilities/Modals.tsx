@@ -25,13 +25,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  type ImageSourcePropType,
 } from "react-native";
-import { getBettingImageKey, getElectricityImageKey } from "./helpers";
+import { getElectricityImageKey } from "./helpers";
 import {
-  BETTING_IMAGES,
   BOOST_PRESETS,
   ELECTRICITY_IMAGES,
+  NETWORK_IMAGES,
   type CablePlan,
   type DataPlan,
   type SelectOption,
@@ -266,31 +265,26 @@ type SummaryModalProps = {
   onClose: () => void;
   isAirtime: boolean;
   amountToPay: number;
-  iconSource?: ImageSourcePropType;
-  iconFallbackText?: string;
-  summaryRows: {
-    label: string;
-    value: string;
-    bold?: boolean;
-  }[];
-  bracsRewardAmount?: number;
-  boostAmount?: string;
+  bracsRewardAmount: number;
+  networkImageKey: string;
+  networkLabel: string;
+  phone: string;
+  boostAmount: string;
   paymentOptions: PaymentOption[];
   walletBalance?: number;
   paymentId: string;
   setPaymentId: (v: string) => void;
   ctaLabel: string;
   isSubmitting: boolean;
-  showRewardBanner?: boolean;
   onSeeAll?: () => void;
   onFundWallet?: () => void;
   showPaymentMethod?: boolean;
   onConfirm: () => void;
 };
 
-function formatHeadlineMoney(value: number) {
+function formatMoney(value: number) {
   return Number(value || 0).toLocaleString("en-NG", {
-    minimumFractionDigits: Number.isInteger(Number(value || 0)) ? 0 : 2,
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 }
@@ -307,18 +301,17 @@ export function SummaryModal({
   onClose,
   isAirtime,
   amountToPay,
-  iconSource,
-  iconFallbackText,
-  summaryRows,
-  bracsRewardAmount = 0,
-  boostAmount = "0",
+  bracsRewardAmount,
+  networkImageKey,
+  networkLabel,
+  phone,
+  boostAmount,
   paymentOptions,
   walletBalance,
   paymentId,
   setPaymentId,
   ctaLabel,
   isSubmitting,
-  showRewardBanner = true,
   onSeeAll,
   onFundWallet,
   showPaymentMethod = true,
@@ -611,6 +604,82 @@ export function DataPlanModal({
   );
 }
 
+// ─── BettingProviderModal ──────────────────────────────────────────────────────
+
+type BettingProviderModalProps = {
+  visible: boolean;
+  onClose: () => void;
+  providers: SelectOption[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+};
+
+export function BettingProviderModal({
+  visible,
+  onClose,
+  providers,
+  selectedId,
+  onSelect,
+}: BettingProviderModalProps) {
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType='slide'
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalCard}
+          onPress={() => {}}
+        >
+          <View style={styles.modalHeader}>
+            <ThemedText style={styles.modalTitle}>
+              Select Betting Provider
+            </ThemedText>
+            <TouchableOpacity onPress={onClose}>
+              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            style={styles.modalList}
+            showsVerticalScrollIndicator={false}
+          >
+            {providers.map((item) => {
+              const selected = selectedId === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.providerModalRow,
+                    selected && styles.providerModalRowActive,
+                  ]}
+                  onPress={() => {
+                    onSelect(item.id);
+                    onClose();
+                  }}
+                >
+                  <View style={styles.providerModalTextWrap}>
+                    <ThemedText style={styles.providerModalTitle}>
+                      {item.label}
+                    </ThemedText>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
+
 // ─── ElectricityProviderModal ──────────────────────────────────────────────────
 
 type ElectricityProviderModalProps = {
@@ -689,91 +758,6 @@ export function ElectricityProviderModal({
                         .toUpperCase()}
                       )
                     </ThemedText>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
-  );
-}
-
-type BettingProviderModalProps = {
-  visible: boolean;
-  onClose: () => void;
-  providers: SelectOption[];
-  selectedId: string;
-  onSelect: (id: string) => void;
-};
-
-export function BettingProviderModal({
-  visible,
-  onClose,
-  providers,
-  selectedId,
-  onSelect,
-}: BettingProviderModalProps) {
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.modalCard}
-          onPress={() => {}}
-        >
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>Select Provider</ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color="#6E6E75" variant="Outline" />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            style={styles.modalList}
-            showsVerticalScrollIndicator={false}
-          >
-            {providers.map((item) => {
-              const imageKey = getBettingImageKey(
-                `${item.id} ${item.label} ${item.description || ""}`,
-              );
-              const logo = imageKey ? BETTING_IMAGES[imageKey] : undefined;
-              const selected = selectedId === item.id;
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  style={[
-                    styles.providerModalRow,
-                    selected && styles.providerModalRowActive,
-                  ]}
-                  onPress={() => onSelect(item.id)}
-                >
-                  {logo ? (
-                    <Image
-                      source={logo}
-                      style={styles.providerModalLogo}
-                      resizeMode="contain"
-                    />
-                  ) : null}
-                  <View style={styles.providerModalTextWrap}>
-                    <ThemedText style={styles.providerModalTitle}>
-                      {item.label}
-                    </ThemedText>
-                    {item.description ? (
-                      <ThemedText style={styles.providerModalSubtitle}>
-                        {item.description}
-                      </ThemedText>
-                    ) : null}
                   </View>
                 </TouchableOpacity>
               );

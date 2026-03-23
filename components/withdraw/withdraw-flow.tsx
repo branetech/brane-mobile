@@ -10,24 +10,24 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { AUTH_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
 import {
-    hideAppLoader,
-    priceFormatter,
-    showAppLoader,
-    showSuccess,
-    toArray,
+  hideAppLoader,
+  priceFormatter,
+  showAppLoader,
+  showSuccess,
+  toArray,
 } from "@/utils/helpers";
 import { useRouter } from "expo-router";
 import { Bank, TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -261,7 +261,7 @@ export default function WithdrawFlow({
     <View style={styles.flex}>
       {isLoadingAccounts ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color={C.primary} />
+          <ActivityIndicator color={C.primary} size='small' />
         </View>
       ) : (
         <FlatList

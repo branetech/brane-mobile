@@ -9,10 +9,10 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -90,14 +90,10 @@ const getServiceColor = (
 ): string => {
   const isDark = scheme === "dark";
   if (service === "airtime") return C.primary + "25";
-  if (service === "data")
-    return isDark ? C.primary + "15" : "#FFF3DB";
-  if (service === "electricity")
-    return isDark ? C.primary + "15" : "#E1F0FF";
-  if (service === "cable")
-    return isDark ? C.primary + "15" : "#FFE8E8";
-  if (service === "betting")
-    return isDark ? C.primary + "15" : "#EDE1FF";
+  if (service === "data") return isDark ? C.primary + "15" : "#FFF3DB";
+  if (service === "electricity") return isDark ? C.primary + "15" : "#E1F0FF";
+  if (service === "cable") return isDark ? C.primary + "15" : "#FFE8E8";
+  if (service === "betting") return isDark ? C.primary + "15" : "#EDE1FF";
   return C.primary + "15";
 };
 
@@ -226,7 +222,7 @@ export default function SpendingPatternScreen() {
 
         {loading ? (
           <View style={styles.loaderWrap}>
-            <ActivityIndicator color={C.primary} size='large' />
+            <ActivityIndicator color={C.primary} size='small' />
             <ThemedText style={{ color: C.muted, marginTop: 10 }}>
               Loading spending data…
             </ThemedText>
@@ -257,7 +253,8 @@ export default function SpendingPatternScreen() {
               <View
                 style={{
                   ...styles.summaryCard,
-                  backgroundColor: themeScheme === "dark" ? C.primary + "15" : "#FFF3DB",
+                  backgroundColor:
+                    themeScheme === "dark" ? C.primary + "15" : "#FFF3DB",
                   flex: 1,
                 }}
                 gap={4}

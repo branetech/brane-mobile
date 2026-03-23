@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatMoney } from "@/utils/helpers";
+import { Add } from "iconsax-react-native";
 import React, { memo, useMemo } from "react";
 import {
   ActivityIndicator,
@@ -219,17 +220,18 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
         })}
       </View>
 
-      {/* {showFundButton && onFundWallet && (
+      {showFundButton && onFundWallet && (
         <TouchableOpacity
           onPress={onFundWallet}
-          style={[styles.fundButton, { backgroundColor: C.primary }]}
+          style={[styles.fundButton, { backgroundColor: C.googleBg }]}
           activeOpacity={0.8}
         >
-          <ThemedText style={[styles.fundButtonText, { color: C.googleBg }]}>
+          <Add color={C.primary} size={16} />
+          <ThemedText style={[styles.fundButtonText, { color: C.primary }]}>
             Fund Wallet
           </ThemedText>
         </TouchableOpacity>
-      )} */}
+      )}
     </View>
   );
 });
@@ -350,13 +352,17 @@ const styles = StyleSheet.create({
   },
   fundButton: {
     borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    // paddingVertical: 10,
+    paddingHorizontal: 6,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    width: 107,
+    height: 28,
+    flexDirection: "row",
+    gap: 6,
   },
   fundButtonText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
   },
 });

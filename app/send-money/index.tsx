@@ -6,7 +6,6 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import {
   RecipientAccountSelector,
   BeneficiarySelector,
-  RecipientDetailsConfirm,
   type Beneficiary,
 } from "@/components/send-money";
 import { getBeneficiaries, verifyAccountDetails, getBanks } from "@/services/send-money";
