@@ -188,7 +188,7 @@ export const accnt = (): Acc[] => [
     content: [
       { icon: <Setting3 size={20} color="#013D25" />, text: "Preferences", routes: "preferences" },
       { icon: <MessageQuestion size={20} color="#013D25" />, text: "Help desk", routes: "help-desk" },
-      { icon: <Message2 size={20} color="#013D25" />, text: "Live chat", routes: "chat" },
+      { icon: <Message2 size={20} color="#013D25" />, text: "Live chat", routes: "support" },
       { icon: <Verify size={20} color="#013D25" />, text: "Terms & conditions", routes: "terms-conditions" },
       { icon: <Verify size={20} color="#013D25" />, text: "Privacy policy", routes: "privacy-policy" },
     ],

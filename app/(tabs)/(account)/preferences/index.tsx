@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import {
-  SafeAreaView,
   View,
   StyleSheet,
   ScrollView,
@@ -16,6 +15,7 @@ import { RootState } from "@/redux/store";
 import { setTransactionSound, setShowBalance } from "@/redux/slice/preferencesSlice";
 import Back from "@/components/back";
 import { Volume, Eye, Setting } from "iconsax-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PreferencesScreen() {
   const router = useRouter();
@@ -66,12 +66,13 @@ export default function PreferencesScreen() {
           onValueChange={handleTransactionSoundChange}
           textColor={C.text}
           borderColor={C.border}
+          thumbColor={C.primary}
         />
 
         {/* Theme Selection */}
         <TouchableOpacity
-          style={[styles.row, { borderBottomColor: C.border }]}
-          onPress={() => router.push("/account/preferences/themes")}
+          style={[styles.row]}
+          onPress={() => router.push("/(tabs)/(account)/preferences/themes")}
         >
           <View style={styles.rowContent}>
             <Setting size={24} color={C.primary} />
@@ -90,6 +91,7 @@ export default function PreferencesScreen() {
           onValueChange={handleShowBalanceChange}
           textColor={C.text}
           borderColor={C.border}
+          thumbColor={C.primary}
           isLast
         />
       </ScrollView>
@@ -104,6 +106,7 @@ interface PreferenceRowProps {
   onValueChange: (value: boolean) => void;
   textColor: string;
   borderColor: string;
+  thumbColor?: string;
   isLast?: boolean;
 }
 
@@ -114,6 +117,7 @@ function PreferenceRow({
   onValueChange,
   textColor,
   borderColor,
+  thumbColor,
   isLast = false,
 }: PreferenceRowProps) {
   return (
@@ -127,8 +131,8 @@ function PreferenceRow({
       <RNSwitch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: borderColor, true: "#13C96580" }}
-        thumbColor={value ? "#13C965" : "#8E8E93"}
+        trackColor={{ false: borderColor, true: thumbColor ? `${thumbColor}80` : `${borderColor}80` }}
+        thumbColor={value ? thumbColor : undefined}
       />
     </View>
   );
@@ -159,7 +163,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 14,
-    borderBottomWidth: 1,
   },
   rowContent: {
     flexDirection: "row",

@@ -1,133 +1,138 @@
-import React, { useMemo } from "react";
-import {
-  View,
-  ScrollView,
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  Linking,
-  Alert,
-} from "react-native";
-import { useRouter } from "expo-router";
 import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useRouter } from "expo-router";
+import React, { useMemo } from "react";
+import {
+  Alert,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const TermsConditions = () => {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
-  const styles = useMemo(() => StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: C.background,
-    },
-    contentContainer: {
-      padding: 16,
-      paddingBottom: 32,
-    },
-    backButton: {
-      marginBottom: 16,
-    },
-    header: {
-      marginBottom: 16,
-    },
-    headerText: {
-      fontSize: 20,
-      fontWeight: "700",
-      color: C.text,
-    },
-    lastModificationContainer: {
-      marginBottom: 12,
-    },
-    lastModificationText: {
-      fontSize: 14,
-      color: C.text,
-    },
-    lastModificationLabel: {
-      fontWeight: "600",
-    },
-    introductionContainer: {
-      marginBottom: 12,
-      gap: 12,
-    },
-    paragraphText: {
-      fontSize: 14,
-      lineHeight: 20,
-      color: C.text,
-    },
-    sectionContainer: {
-      marginTop: 20,
-      marginBottom: 12,
-      gap: 8,
-    },
-    sectionTitle: {
-      fontSize: 16,
-      fontWeight: "700",
-      color: C.text,
-      marginBottom: 8,
-    },
-    subsectionTitle: {
-      fontSize: 14,
-      fontWeight: "600",
-      color: C.text,
-      marginBottom: 6,
-    },
-    subsubsectionTitle: {
-      fontSize: 13,
-      fontWeight: "600",
-      color: C.text,
-      marginBottom: 6,
-    },
-    definitionContainer: {
-      borderBottomWidth: 1,
-      borderBottomColor: C.border,
-      paddingVertical: 12,
-      paddingHorizontal: 12,
-      marginVertical: 2,
-    },
-    definitionTerm: {
-      fontSize: 13,
-      fontWeight: "600",
-      color: C.text,
-      marginBottom: 6,
-    },
-    definitionValue: {
-      fontSize: 13,
-      lineHeight: 18,
-      color: C.text,
-    },
-    tableContainer: {
-      borderWidth: 1,
-      borderColor: C.border,
-      borderRadius: 4,
-      overflow: "hidden",
-      marginVertical: 12,
-    },
-    link: {
-      color: C.primary,
-      textDecorationLine: "underline",
-    },
-    listItemContainer: {
-      marginVertical: 6,
-      paddingLeft: 20,
-    },
-    listItemText: {
-      fontSize: 14,
-      lineHeight: 20,
-      color: C.text,
-      marginLeft: -20,
-      paddingLeft: 20,
-    },
-  }), [C]);
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flex: 1,
+          backgroundColor: C.background,
+        },
+        contentContainer: {
+          padding: 16,
+          paddingBottom: 32,
+        },
+        backButton: {
+          marginBottom: 16,
+        },
+        header: {
+          marginBottom: 16,
+        },
+        headerText: {
+          fontSize: 20,
+          fontWeight: "700",
+          color: C.text,
+        },
+        lastModificationContainer: {
+          marginBottom: 12,
+        },
+        lastModificationText: {
+          fontSize: 14,
+          color: C.text,
+        },
+        lastModificationLabel: {
+          fontWeight: "600",
+        },
+        introductionContainer: {
+          marginBottom: 12,
+          gap: 12,
+        },
+        paragraphText: {
+          fontSize: 14,
+          lineHeight: 20,
+          color: C.text,
+        },
+        sectionContainer: {
+          marginTop: 20,
+          marginBottom: 12,
+          gap: 8,
+        },
+        sectionTitle: {
+          fontSize: 16,
+          fontWeight: "700",
+          color: C.text,
+          marginBottom: 8,
+        },
+        subsectionTitle: {
+          fontSize: 14,
+          fontWeight: "600",
+          color: C.text,
+          marginBottom: 6,
+        },
+        subsubsectionTitle: {
+          fontSize: 13,
+          fontWeight: "600",
+          color: C.text,
+          marginBottom: 6,
+        },
+        definitionContainer: {
+          borderBottomWidth: 1,
+          borderBottomColor: C.border,
+          paddingVertical: 12,
+          paddingHorizontal: 12,
+          marginVertical: 2,
+        },
+        definitionTerm: {
+          fontSize: 13,
+          fontWeight: "600",
+          color: C.text,
+          marginBottom: 6,
+        },
+        definitionValue: {
+          fontSize: 13,
+          lineHeight: 18,
+          color: C.text,
+        },
+        tableContainer: {
+          borderWidth: 1,
+          borderColor: C.border,
+          borderRadius: 4,
+          overflow: "hidden",
+          marginVertical: 12,
+        },
+        link: {
+          color: C.primary,
+          textDecorationLine: "underline",
+        },
+        listItemContainer: {
+          marginVertical: 6,
+          paddingLeft: 20,
+        },
+        listItemText: {
+          fontSize: 14,
+          lineHeight: 20,
+          color: C.text,
+          marginLeft: -20,
+          paddingLeft: 20,
+        },
+      }),
+    [C],
+  );
 
   const handleEmail = (email: string) => {
     Linking.openURL(`mailto:${email}`).catch(() => {
       Alert.alert(
         "Email Not Available",
-        "Your device does not have an email client configured. Please contact us at " + email
+        "Your device does not have an email client configured. Please contact us at " +
+          email,
       );
     });
   };
@@ -157,9 +162,9 @@ const TermsConditions = () => {
           <ThemedText style={styles.paragraphText}>
             Please read the following Terms and Conditions of Service (&quot;
             <ThemedText style={{ fontWeight: "600" }}>Terms</ThemedText>
-            &quot;) carefully before using the Platform (as defined below). The Terms
-            govern the access and use of the Platform owned and/or controlled by
-            Brane Technologies Limited (&quot;
+            &quot;) carefully before using the Platform (as defined below). The
+            Terms govern the access and use of the Platform owned and/or
+            controlled by Brane Technologies Limited (&quot;
             <ThemedText style={{ fontWeight: "600" }}>Brane</ThemedText>&quot;).
           </ThemedText>
 
@@ -186,7 +191,7 @@ const TermsConditions = () => {
 
           <View style={styles.tableContainer}>
             <View style={styles.definitionContainer}>
-              <ThemedText style={styles.definitionTerm}>"Affiliate"</ThemedText>
+              <ThemedText style={styles.definitionTerm}>Affiliate</ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means any entity, individual, firm, or corporation, directly or
                 indirectly, through one or more intermediaries, controlling,
@@ -195,7 +200,7 @@ const TermsConditions = () => {
             </View>
 
             <View style={styles.definitionContainer}>
-              <ThemedText style={styles.definitionTerm}>"Account"</ThemedText>
+              <ThemedText style={styles.definitionTerm}>Account</ThemedText>
               <ThemedText style={styles.definitionValue}>
                 shall have the meaning given to it in paragraph 4;
               </ThemedText>
@@ -203,7 +208,7 @@ const TermsConditions = () => {
 
             <View style={styles.definitionContainer}>
               <ThemedText style={styles.definitionTerm}>
-                "Applicable Laws"
+                Applicable Laws
               </ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means the constitution of the Federal Republic of Nigeria, any
@@ -219,7 +224,7 @@ const TermsConditions = () => {
             </View>
 
             <View style={styles.definitionContainer}>
-              <ThemedText style={styles.definitionTerm}>"Content"</ThemedText>
+              <ThemedText style={styles.definitionTerm}>Content</ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means the Platform, and the information, writings, images and/or
                 other works that the User sees, hears, or otherwise experiences
@@ -231,32 +236,32 @@ const TermsConditions = () => {
 
             <View style={styles.definitionContainer}>
               <ThemedText style={styles.definitionTerm}>
-                "Confidential Information"
+                Confidential Information
               </ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means all information, however recorded or preserved, disclosed
-                by a Party (the "Disclosing Party&quot;) or its representatives to
-                another Party (the "Receiving Party&quot;) under this Terms, or that
-                a Receiving Party accesses from the Disclosing Party in
-                connection with the Services that Brane provides under this
-                Terms that meets one of the following two criteria: the
-                information either (i) is identified by a "CONFIDENTIAL" legend
-                or similar legend of the Disclosing Party, or (ii) is obtained
-                under circumstances such that the Receiving Party knew or
-                reasonably should have known that the information should be
-                treated as confidential to the Disclosing Party. Confidential
-                Information includes information in any form or medium (whether
-                oral, written, electronic, or other) and includes inventions;
-                specifications; drawings; models; samples; reports; plans;
-                financial information; work-in-progress; forecasts; computer
-                programs or documentation; trade secrets; know-how; strategies;
-                User Data including any User's non-public personal information;
+                by a Party (the Disclosing Party) or its representatives to
+                another Party (the Receiving Party) under this Terms, or that a
+                Receiving Party accesses from the Disclosing Party in connection
+                with the Services that Brane provides under this Terms that
+                meets one of the following two criteria: the information either
+                (i) is identified by a CONFIDENTIAL legend or similar legend of
+                the Disclosing Party, or (ii) is obtained under circumstances
+                such that the Receiving Party knew or reasonably should have
+                known that the information should be treated as confidential to
+                the Disclosing Party. Confidential Information includes
+                information in any form or medium (whether oral, written,
+                electronic, or other) and includes inventions; specifications;
+                drawings; models; samples; reports; plans; financial
+                information; work-in-progress; forecasts; computer programs or
+                documentation; trade secrets; know-how; strategies; User Data
+                including any User&apos;s non-public personal information;
               </ThemedText>
             </View>
 
             <View style={styles.definitionContainer}>
               <ThemedText style={styles.definitionTerm}>
-                "Data Protection Law"
+                Data Protection Law
               </ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means the Applicable Laws relating to data protection and
@@ -268,7 +273,7 @@ const TermsConditions = () => {
 
             <View style={styles.definitionContainer}>
               <ThemedText style={styles.definitionTerm}>
-                "Login Credentials"
+                Login Credentials
               </ThemedText>
               <ThemedText style={styles.definitionValue}>
                 shall have the meaning in paragraph 4.2;
@@ -277,7 +282,7 @@ const TermsConditions = () => {
 
             <View style={styles.definitionContainer}>
               <ThemedText style={styles.definitionTerm}>
-                "Intellectual Property Rights"
+                Intellectual Property Rights
               </ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means the patents, rights to inventions and discoveries, utility
@@ -295,7 +300,7 @@ const TermsConditions = () => {
             </View>
 
             <View style={styles.definitionContainer}>
-              <ThemedText style={styles.definitionTerm}>"Materials"</ThemedText>
+              <ThemedText style={styles.definitionTerm}>Materials</ThemedText>
               <ThemedText style={styles.definitionValue}>
                 has the meaning given to it in paragraph 9.1;
               </ThemedText>
@@ -303,7 +308,7 @@ const TermsConditions = () => {
 
             <View style={styles.definitionContainer}>
               <ThemedText style={styles.definitionTerm}>
-                "Personal Data"
+                Personal Data
               </ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means any information relating to an identified or identifiable
@@ -314,7 +319,7 @@ const TermsConditions = () => {
             </View>
 
             <View style={styles.definitionContainer}>
-              <ThemedText style={styles.definitionTerm}>"Platform"</ThemedText>
+              <ThemedText style={styles.definitionTerm}>Platform</ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means the Brane Platform, available via website at
                 www.getbrane.co;
@@ -323,7 +328,7 @@ const TermsConditions = () => {
 
             <View style={styles.definitionContainer}>
               <ThemedText style={styles.definitionTerm}>
-                "Registration Data"
+                Registration Data
               </ThemedText>
               <ThemedText style={styles.definitionValue}>
                 has the meaning given to it in paragraph 4.3;
@@ -331,7 +336,7 @@ const TermsConditions = () => {
             </View>
 
             <View style={styles.definitionContainer}>
-              <ThemedText style={styles.definitionTerm}>"Services"</ThemedText>
+              <ThemedText style={styles.definitionTerm}>Services</ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means the services provided by Brane through the Platform
                 including the purchase, sale, or transacting in:
@@ -345,29 +350,27 @@ const TermsConditions = () => {
             </View>
 
             <View style={styles.definitionContainer}>
-              <ThemedText style={styles.definitionTerm}>
-                "Transaction"
-              </ThemedText>
+              <ThemedText style={styles.definitionTerm}>Transaction</ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means Services undertaken by each User on the Platform.
               </ThemedText>
             </View>
 
             <View style={styles.definitionContainer}>
-              <ThemedText style={styles.definitionTerm}>"User(s)"</ThemedText>
+              <ThemedText style={styles.definitionTerm}>User(s)</ThemedText>
               <ThemedText style={styles.definitionValue}>
-                means Brane's clients and potential clients that accesses the
-                Platform to participate in any Transaction; references to "you",
-                "your" and "yours" should all be read as referring to a User.
+                means Brane&apos;s clients and potential clients that accesses the
+                Platform to participate in any Transaction; references to you,
+                your and yours should all be read as referring to a User.
               </ThemedText>
             </View>
 
             <View style={styles.definitionContainer}>
-              <ThemedText style={styles.definitionTerm}>"User Data"</ThemedText>
+              <ThemedText style={styles.definitionTerm}>User Data</ThemedText>
               <ThemedText style={styles.definitionValue}>
                 means all data and information regarding a User which may be
                 provided by a User or gathered by Brane as part of a Transaction
-                on the Platform. It includes each User's provision of content,
+                on the Platform. It includes each User&apos;s provision of content,
                 including but not limited to Personal Data, Registration Data,
                 Login Credentials, Confidential Information, payment
                 information, biometric information, and documentational or other
@@ -409,8 +412,10 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>4.1</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              To use the Platform, you must register and create an account (&quot;
-              <ThemedText style={{ fontWeight: "600" }}>Account</ThemedText>&quot;).
+              To use the Platform, you must register and create an account
+              (&quot;
+              <ThemedText style={{ fontWeight: "600" }}>Account</ThemedText>
+              &quot;).
             </ThemedText>
           </View>
 
@@ -436,7 +441,7 @@ const TermsConditions = () => {
             <ThemedText style={styles.paragraphText}>
               In registering for the Services, you agree (a) to provide true,
               accurate, current and complete information about yourself as
-              prompted by the Platform's registration form (&quot;
+              prompted by the Platform&apos;s registration form (
               <ThemedText style={{ fontWeight: "600" }}>
                 Registration Data
               </ThemedText>
@@ -599,8 +604,9 @@ const TermsConditions = () => {
             <ThemedText style={styles.subsubsectionTitle}>6.2.4</ThemedText>
             <ThemedText style={styles.paragraphText}>
               To transmit, or procure the sending of, any advertising or
-              promotional material, including any &quot;junk mail,&quot; &quot;chain letter,&quot;
-              "spam," or any other similar solicitation.
+              promotional material, including any &quot;junk mail,&quot;
+              &quot;chain letter,&quot; &quot;spam,&quot; or any other similar
+              solicitation.
             </ThemedText>
           </View>
 
@@ -617,10 +623,10 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsubsectionTitle}>6.2.6</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              To engage in any other conduct that restricts or inhibits anyone&apos;s
-              use or enjoyment of the Platform, or which, as determined by
-              Brane, may harm Brane or users of the Platform or expose them to
-              liability.
+              To engage in any other conduct that restricts or inhibits
+              anyone&apos;s use or enjoyment of the Platform, or which, as
+              determined by Brane, may harm Brane or users of the Platform or
+              expose them to liability.
             </ThemedText>
           </View>
 
@@ -731,8 +737,8 @@ const TermsConditions = () => {
               You shall not license, sell, rent, lease, transfer, assign,
               reproduce, distribute, host, or otherwise commercially exploit or
               create derivative works based on the Platform, Content, and
-              back-end databases, (collectively, &quot;Brane Properties&quot;) or any
-              portion of Brane&apos;s Properties.
+              back-end databases, (collectively, &quot;Brane Properties&quot;)
+              or any portion of Brane&apos;s Properties.
             </ThemedText>
           </View>
 
@@ -748,7 +754,7 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsubsectionTitle}>7.3.3</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              You shall not use any metatags or other hidden text using Brane's
+              You shall not use any metatags or other hidden text using Brane&apos;s
               name or trademarks.
             </ThemedText>
           </View>
@@ -758,7 +764,7 @@ const TermsConditions = () => {
             <ThemedText style={styles.paragraphText}>
               You shall not modify, translate, adapt, merge, make derivative
               works of, disassemble, decompile, reverse compile or reverse
-              engineer any part of Brane's Properties except to the extent the
+              engineer any part of Brane&apos;s Properties except to the extent the
               foregoing restrictions are expressly prohibited by Applicable Law.
             </ThemedText>
           </View>
@@ -766,7 +772,7 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsubsectionTitle}>7.3.5</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              You shall not access Brane's Properties in order to build a
+              You shall not access Brane&apos;s Properties in order to build a
               similar or competitive website, application, or service.
             </ThemedText>
           </View>
@@ -774,7 +780,7 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsubsectionTitle}>7.3.6</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              Except as expressly stated herein, no part of Brane's Properties
+              Except as expressly stated herein, no part of Brane&apos;s Properties
               may be copied, reproduced, distributed, republished, downloaded,
               displayed, posted, or transmitted in any form or by any means.
             </ThemedText>
@@ -784,14 +790,14 @@ const TermsConditions = () => {
             <ThemedText style={styles.subsubsectionTitle}>7.3.7</ThemedText>
             <ThemedText style={styles.paragraphText}>
               You shall not remove or destroy any copyright notices or other
-              proprietary markings contained on or in Brane's Properties.
+              proprietary markings contained on or in Brane&apos;s Properties.
             </ThemedText>
           </View>
 
           <View>
             <ThemedText style={styles.subsubsectionTitle}>7.3.8</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              You shall not use Brane's Properties for any illegal or unlawful
+              You shall not use Brane&apos;s Properties for any illegal or unlawful
               purpose.
             </ThemedText>
           </View>
@@ -799,7 +805,7 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>7.4</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              Any unauthorized use of Brane's Properties may result in the
+              Any unauthorized use of Brane&apos;s Properties may result in the
               immediate termination of your right to use the Platform, as well
               as potential liability for copyright infringement or other claims
               depending on the circumstances.
@@ -844,9 +850,9 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>8.4</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              The User authorizes and consents to Brane's engagement of third
+              The User authorizes and consents to Brane&apos;s engagement of third
               parties to provide services on the Platform as may be reasonably
-              required, at Brane's sole discretion.
+              required, at Brane&apos;s sole discretion.
             </ThemedText>
           </View>
 
@@ -868,7 +874,7 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsubsectionTitle}>8.5.2</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              Capture and store data and information relating to the User's
+              Capture and store data and information relating to the User&apos;s
               account, identity validation, Transaction, and Services.
             </ThemedText>
           </View>
@@ -880,10 +886,11 @@ const TermsConditions = () => {
               Transaction information, documents, and identity validation
               information of the User for any valid legal or business purpose,
               and further to maintain and display such information on the
-              Platform&apos;s Verification Portal to Customer and other Verification
-              Portal Users, including, without limitation User Confidential
-              Information and User Personal Data that is part of any Transaction
-              information, documents, and identity validation information.
+              Platform&apos;s Verification Portal to Customer and other
+              Verification Portal Users, including, without limitation User
+              Confidential Information and User Personal Data that is part of
+              any Transaction information, documents, and identity validation
+              information.
             </ThemedText>
           </View>
 
@@ -910,8 +917,8 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsubsectionTitle}>8.5.6</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              Transmit User&apos;s information to service providers in connection
-              with services rendered.
+              Transmit User&apos;s information to service providers in
+              connection with services rendered.
             </ThemedText>
           </View>
 
@@ -1062,8 +1069,8 @@ const TermsConditions = () => {
               timeliness, security, or accuracy of the Platform or the Content
               for any purpose. To the maximum extent permitted by Applicable
               Law, all such information, software, products, service, and
-              related graphics are provided &quot;as is&quot; without warranty or
-              condition of any kind.
+              related graphics are provided &quot;as is&quot; without warranty
+              or condition of any kind.
             </ThemedText>
           </View>
 
@@ -1153,8 +1160,8 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>15.3</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              In no event shall Brane&apos;s total liability to you for all damages
-              (other than as may be required by applicable law in cases
+              In no event shall Brane&apos;s total liability to you for all
+              damages (other than as may be required by applicable law in cases
               involving personal injury) exceed ₦5,000 (Five Thousand Naira).
             </ThemedText>
           </View>
@@ -1212,13 +1219,13 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>17.2</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              Brane will post the revised terms on the Platform with a &quot;Last
-              Modification&quot; date. Please review the Platform on a regular basis
-              to obtain timely notice of any revisions. If you continue to use
-              the Platform after the revisions take effect, you agree to be
-              bound by the revised terms. You agree that Brane shall not be
-              liable to you or to any third party for any modification of the
-              Terms.
+              Brane will post the revised terms on the Platform with a
+              &quot;Last Modification&quot; date. Please review the Platform on
+              a regular basis to obtain timely notice of any revisions. If you
+              continue to use the Platform after the revisions take effect, you
+              agree to be bound by the revised terms. You agree that Brane shall
+              not be liable to you or to any third party for any modification of
+              the Terms.
             </ThemedText>
           </View>
 
@@ -1227,15 +1234,16 @@ const TermsConditions = () => {
             <ThemedText style={styles.paragraphText}>
               You agree to receive all communications, agreements, newsletters,
               marketing or promotional materials and notices that Brane provides
-              in connection with the Services (&quot;Communication&quot;), including, but
-              not limited to, Communications related to Brane&apos;s delivery of the
-              Services and your purchase of or subscription to the Platform via
-              electronic means, including by e-mail, text, in-product
-              notifications, or by posting them on the Platform. You agree that
-              all Communications that Brane provides to you electronically
-              satisfies any legal requirement that such Communications be in
-              writing or be delivered in a particular manner and to agree to
-              keep your Account contact information current.
+              in connection with the Services (&quot;Communication&quot;),
+              including, but not limited to, Communications related to
+              Brane&apos;s delivery of the Services and your purchase of or
+              subscription to the Platform via electronic means, including by
+              e-mail, text, in-product notifications, or by posting them on the
+              Platform. You agree that all Communications that Brane provides to
+              you electronically satisfies any legal requirement that such
+              Communications be in writing or be delivered in a particular
+              manner and to agree to keep your Account contact information
+              current.
             </ThemedText>
           </View>
 
@@ -1302,7 +1310,7 @@ const TermsConditions = () => {
               Policy that covers how it collects, uses, discloses, transfers and
               stores your information. For more information, please review our{" "}
               <TouchableOpacity
-                onPress={() => router.push('/account/privacy-policy')}
+                onPress={() => router.push("/account/privacy-policy")}
                 activeOpacity={0.7}
               >
                 <ThemedText style={styles.link}>Privacy Policy</ThemedText>
@@ -1440,9 +1448,9 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>23.3</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              Both Parties agree that the mediator&apos;s decision is final and that
-              they shall be bound by same and keep the contents of the mediation
-              proceedings strictly confidential.
+              Both Parties agree that the mediator&apos;s decision is final and
+              that they shall be bound by same and keep the contents of the
+              mediation proceedings strictly confidential.
             </ThemedText>
           </View>
 
@@ -1486,7 +1494,7 @@ const TermsConditions = () => {
           <View>
             <ThemedText style={styles.subsectionTitle}>25.1</ThemedText>
             <ThemedText style={styles.paragraphText}>
-              These Terms create no third-party beneficiary rights to Brane's
+              These Terms create no third-party beneficiary rights to Brane&apos;s
               products and Services made available through the Platform.
             </ThemedText>
           </View>
@@ -1506,7 +1514,7 @@ const TermsConditions = () => {
             If you have questions or concerns with respect to these Terms,
             please contact us at{" "}
             <TouchableOpacity
-              onPress={() => handleEmail('info@getbrane.co')}
+              onPress={() => handleEmail("info@getbrane.co")}
               activeOpacity={0.7}
             >
               <ThemedText style={styles.link}>info@getbrane.co</ThemedText>

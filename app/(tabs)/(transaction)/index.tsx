@@ -46,6 +46,7 @@ const TYPE_OPTIONS: FilterOption[] = [
   { label: "Dividend Withdrawals", value: "Stock Dividend" },
 ];
 
+
 const formatDisplayDate = (dateStr: string) => {
   if (!dateStr) return "";
   try {

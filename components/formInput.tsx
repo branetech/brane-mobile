@@ -100,7 +100,7 @@ export const FormInput = forwardRef<TextInput, FormInputProp>(
           <ThemedText
             style={[
               styles.label,
-              // { color: theme.text },
+              { color: theme.text },
               labelStyle,
             ]}
           >
