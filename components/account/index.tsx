@@ -21,12 +21,14 @@ export const Account = ({ header }: { header?: ReactNode }) => {
       "Help desk": "/(account)/help-desk",
       "Terms & conditions": "/(account)/terms-conditions",
       "Privacy policy": "/(account)/privacy-policy",
+      "bracs-investment-trigger": "/(account)/bracs-investment-trigger",
+
     };
 
     if (byLabel[label]) return byLabel[label];
 
     const byKey: Record<string, string> = {
-      "account-details": "/account-details",
+      "account-details": "/(account)/account-details",
       beneficiary: "/(account)/beneficiary",
       "update-kin-details": "/(account)/update-kin-details",
       "account-verification": "/(account)/account-verification",

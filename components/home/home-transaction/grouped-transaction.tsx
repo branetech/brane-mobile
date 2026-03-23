@@ -31,27 +31,56 @@ function groupBy<T extends Record<string, any>>(
 // ─── Component ───────────────────────────────────────────────
 export const GroupedTransactions = ({
   transactions: _transactions,
+  onPressTransaction,
 }: {
   transactions: any[];
+  onPressTransaction?: (id: string) => void;
 }) => {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
-  const transactions = useMemo(
-    () => collection(_transactions).map(parseTransaction),
-    [_transactions],
-  );
+  const transactions = useMemo(() => {
+    return collection(_transactions).map((item) => {
+      const tx: any = parseTransaction(item);
+      const rawDate = tx?.createdAt || tx?.timestamp;
+      const parsed = new Date(rawDate);
+      const hasValidDate = !isNaN(parsed.getTime());
+
+      const groupKey = hasValidDate
+        ? parsed.toISOString().slice(0, 10)
+        : String(tx?.date || "Unknown Date");
+
+      const groupTs = hasValidDate ? parsed.getTime() : 0;
+      const groupLabel = hasValidDate
+        ? formatDateWithSuffix(groupKey)
+        : tx?.date && tx.date !== "Invalid Date"
+          ? String(tx.date)
+          : "Unknown Date";
+
+      return {
+        ...tx,
+        __groupKey: groupKey,
+        __groupTs: groupTs,
+        __groupLabel: groupLabel,
+      };
+    });
+  }, [_transactions]);
 
   const groupedTransactions = useMemo(
-    () => groupBy(transactions, "date"),
+    () => groupBy(transactions, "__groupKey"),
     [transactions],
   );
 
-  const sortedDates = useMemo(
-    () => Object.keys(groupedTransactions).sort().reverse(),
-    [groupedTransactions],
-  );
+  const sortedDates = useMemo(() => {
+    return Object.keys(groupedTransactions).sort((a, b) => {
+      const aTs = Number(groupedTransactions[a]?.[0]?.__groupTs || 0);
+      const bTs = Number(groupedTransactions[b]?.[0]?.__groupTs || 0);
+
+      if (aTs && bTs) return bTs - aTs;
+      return String(b).localeCompare(String(a));
+    });
+  }, [groupedTransactions]);
 
   if (!transactions.length) {
     return (
@@ -76,7 +105,7 @@ export const GroupedTransactions = ({
         <View key={date} style={styles.group}>
           {/* Date header */}
           <ThemedText style={styles.dateLabel}>
-            {formatDateWithSuffix(date)}
+            {groupedTransactions[date]?.[0]?.__groupLabel || date}
           </ThemedText>
 
           {/* Transactions for this date */}
@@ -86,22 +115,45 @@ export const GroupedTransactions = ({
               .map((item) => (
                 <TouchableOpacity
                   key={item.id}
-                  onPress={() =>
-                    router.push(`/transaction-history/${item.id}` as any)
-                  }
+                  onPress={() => {
+                    if (onPressTransaction) {
+                      onPressTransaction(String(item.id));
+                      return;
+                    }
+
+                    router.push({
+                      pathname: "/(tabs)/(transaction)/[details]" as any,
+                      params: { details: String(item.id) },
+                    });
+                  }}
                   activeOpacity={0.7}
                 >
-                  <TransactionLineItem2
-                    id={item.id}
-                    amount={Number(item.amount ?? 0)}
-                    rebateAmount={item.rebateAmount ?? undefined}
-                    time={item.time ?? ""}
-                    date={item.date ?? ""}
-                    transactionDescription={item.transactionDescription ?? ""}
-                    transactionType={item.transactionType ?? ""}
-                    borderColor='#f7f7f8'
-                    borderRadius={12}
-                  />
+                  {(() => {
+                    const safeDate =
+                      item?.date && item.date !== "Invalid Date"
+                        ? item.date
+                        : "";
+                    const safeTime =
+                      item?.time && item.time !== "Invalid Date"
+                        ? item.time
+                        : "";
+
+                    return (
+                      <TransactionLineItem2
+                        id={item.id}
+                        amount={Number(item.amount ?? 0)}
+                        rebateAmount={item.rebateAmount ?? undefined}
+                        time={safeTime}
+                        date={safeDate}
+                        transactionDescription={
+                          item.transactionDescription ?? ""
+                        }
+                        transactionType={item.transactionType ?? ""}
+                        borderColor='#f7f7f8'
+                        borderRadius={12}
+                      />
+                    );
+                  })()}
                 </TouchableOpacity>
               ))}
           </View>

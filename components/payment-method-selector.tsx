@@ -219,7 +219,7 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
         })}
       </View>
 
-      {showFundButton && onFundWallet && (
+      {/* {showFundButton && onFundWallet && (
         <TouchableOpacity
           onPress={onFundWallet}
           style={[styles.fundButton, { backgroundColor: C.primary }]}
@@ -229,7 +229,7 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
             Fund Wallet
           </ThemedText>
         </TouchableOpacity>
-      )}
+      )} */}
     </View>
   );
 });
