@@ -1,4 +1,3 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { EmptyState } from "@/components/empty-state";
 import { FormInput } from "@/components/formInput";
@@ -8,7 +7,7 @@ import { Colors } from "@/constants/colors";
 import { type Scheme, MODAL_OVERLAY_COLOR } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
-import { TRANSACTION_SERVICE, STOCKS_SERVICE } from "@/services/routes";
+import { TRANSACTION_SERVICE } from "@/services/routes";
 import {
   hideAppLoader,
   priceFormatter,
@@ -16,7 +15,8 @@ import {
   showSuccess,
   toArray,
 } from "@/utils/helpers";
-import React, { useCallback, useMemo, useState } from "react";
+import { Bank } from "iconsax-react-native";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -28,8 +28,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Bank } from "iconsax-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 type Stage = "choice" | "form" | "account" | "pin" | "success";
 type WithdrawType = "wallet" | "dividend";
@@ -65,15 +63,17 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
         BaseRequest.get(TRANSACTION_SERVICE.BALANCE),
         BaseRequest.get("/stocks-service/wallet/balance"),
       ]);
-      setWalletBalance(Number(walletRes?.data?.balance || walletRes?.balance || 0));
+      setWalletBalance(
+        Number(walletRes?.data?.balance || walletRes?.balance || 0),
+      );
       setDividendBalance(
         Number(
           dividendRes?.data?.dividendBalance ||
             dividendRes?.dividendBalance ||
             dividendRes?.data?.balance ||
             dividendRes?.balance ||
-            0
-        )
+            0,
+        ),
       );
     } catch (error) {
       catchError(error);
@@ -129,9 +129,10 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
     setShowPin(false);
     showAppLoader({ message: "Processing withdrawal..." });
     try {
-      const endpoint = withdrawType === "wallet"
-        ? "/transactions-service/wallet/withdraw"
-        : "/stocks-service/wallet/withdraw-dividend";
+      const endpoint =
+        withdrawType === "wallet"
+          ? "/transactions-service/wallet/withdraw"
+          : "/stocks-service/wallet/withdraw-dividend";
 
       await BaseRequest.post(endpoint, {
         amount: Number(amount),
@@ -156,22 +157,34 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
   };
 
   // Memoized helper to check if account is selected
-  const isAccountSelected = useCallback((item: any) => {
-    return selectedAccount?.id === item?.id || selectedAccount?._id === item?._id;
-  }, [selectedAccount?.id, selectedAccount?._id]);
+  const isAccountSelected = useCallback(
+    (item: any) => {
+      return (
+        selectedAccount?.id === item?.id || selectedAccount?._id === item?._id
+      );
+    },
+    [selectedAccount?.id, selectedAccount?._id],
+  );
 
   // Memoized preset button styles
-  const getPresetButtonStyle = useCallback((preset: number) => {
-    return {
-      backgroundColor: amount === String(preset) ? C.primary + "20" : C.inputBg,
-      borderColor: amount === String(preset) ? C.primary : C.border,
-    };
-  }, [amount, C.primary, C.inputBg, C.border]);
+  const getPresetButtonStyle = useCallback(
+    (preset: number) => {
+      return {
+        backgroundColor:
+          amount === String(preset) ? C.primary + "20" : C.inputBg,
+        borderColor: amount === String(preset) ? C.primary : C.border,
+      };
+    },
+    [amount, C.primary, C.inputBg, C.border],
+  );
 
   const renderChoiceStage = () => (
     <View style={styles.choiceContainer}>
       <TouchableOpacity
-        style={[styles.choiceCard, { backgroundColor: C.inputBg, borderColor: C.border }]}
+        style={[
+          styles.choiceCard,
+          { backgroundColor: C.inputBg, borderColor: C.border },
+        ]}
         onPress={() => {
           setWithdrawType("wallet");
           setStage("form");
@@ -186,7 +199,10 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.choiceCard, { backgroundColor: C.inputBg, borderColor: C.border }]}
+        style={[
+          styles.choiceCard,
+          { backgroundColor: C.inputBg, borderColor: C.border },
+        ]}
         onPress={() => {
           setWithdrawType("dividend");
           setStage("form");
@@ -202,7 +218,8 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
     </View>
   );
 
-  const currentBalance = withdrawType === "wallet" ? walletBalance : dividendBalance;
+  const currentBalance =
+    withdrawType === "wallet" ? walletBalance : dividendBalance;
 
   const renderFormStage = () => (
     <KeyboardAvoidingView
@@ -215,7 +232,9 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
       >
         <View style={{ ...styles.balanceCard, backgroundColor: C.primary }}>
           <ThemedText style={[styles.balanceLabel, { color: C.googleBg }]}>
-            {withdrawType === "wallet" ? "Wallet Balance" : "Available Dividend Balance"}
+            {withdrawType === "wallet"
+              ? "Wallet Balance"
+              : "Available Dividend Balance"}
           </ThemedText>
           {isLoadingBalance ? (
             <ActivityIndicator color={C.googleBg} size='small' />
@@ -274,7 +293,7 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
     <View style={styles.flex}>
       {isLoadingAccounts ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color={C.primary} />
+          <ActivityIndicator color={C.primary} size='small' />
         </View>
       ) : (
         <FlatList
@@ -284,7 +303,9 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
           ListEmptyComponent={
             <EmptyState>
               <Bank size={40} color={C.muted} />
-              <ThemedText style={{ color: C.muted, textAlign: "center", marginTop: 8 }}>
+              <ThemedText
+                style={{ color: C.muted, textAlign: "center", marginTop: 8 }}
+              >
                 No linked bank accounts found.
               </ThemedText>
             </EmptyState>
@@ -312,7 +333,9 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
                 style={{
                   ...styles.selectDot,
                   borderColor: C.primary,
-                  backgroundColor: isAccountSelected(item) ? C.primary : "transparent",
+                  backgroundColor: isAccountSelected(item)
+                    ? C.primary
+                    : "transparent",
                 }}
               />
             </TouchableOpacity>

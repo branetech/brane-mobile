@@ -5,10 +5,10 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { User } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export interface Beneficiary {
@@ -44,14 +44,15 @@ export function BeneficiarySelector({
 
   const filteredBeneficiaries = beneficiaries.filter(
     (b) =>
-      ((b.name || b.name)?.toLowerCase() || "").includes(search.toLowerCase()) ||
-      (b.accountNumber || b.account_number || "").includes(search)
+      ((b.name || b.name)?.toLowerCase() || "").includes(
+        search.toLowerCase(),
+      ) || (b.accountNumber || b.account_number || "").includes(search),
   );
 
   if (loading) {
     return (
       <View style={styles.centerLoader}>
-        <ActivityIndicator color={C.primary} size='large' />
+        <ActivityIndicator color={C.primary} size='small' />
       </View>
     );
   }
@@ -108,21 +109,23 @@ export function BeneficiarySelector({
                 },
               ]}
             >
-              <View style={[styles.avatar, { backgroundColor: C.primary + "20" }]}>
+              <View
+                style={[styles.avatar, { backgroundColor: C.primary + "20" }]}
+              >
                 <User size={20} color={C.primary} />
               </View>
               <View style={styles.beneficiaryInfo}>
                 <ThemedText
                   style={[styles.beneficiaryName, { color: C.text }]}
                   numberOfLines={1}
-                  ellipsizeMode="tail"
+                  ellipsizeMode='tail'
                 >
                   {beneficiary.name || beneficiary.name || ""}
                 </ThemedText>
                 <ThemedText
                   style={[styles.beneficiaryBank, { color: C.muted }]}
                   numberOfLines={1}
-                  ellipsizeMode="tail"
+                  ellipsizeMode='tail'
                 >
                   {beneficiary.bankName || beneficiary.bank_name || ""}
                 </ThemedText>
@@ -134,7 +137,6 @@ export function BeneficiarySelector({
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   title: {
