@@ -105,6 +105,7 @@ export interface ITransactionDetail {
   tickerSymbol?: string;
   toTickerSymbol?: string;
   numOfStocks?: number;
+  bracValue?: number;
 }
 
 export interface IdentityVerification {

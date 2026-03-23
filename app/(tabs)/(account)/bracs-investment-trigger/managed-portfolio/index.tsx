@@ -1,88 +1,34 @@
-import Back from "@/components/back";
-import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import BaseRequest, { catchError } from "@/services";
-import { TRANSACTION_SERVICE } from "@/services/routes";
 import { useRouter } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { ArrowLeft } from "iconsax-react-native";
+import React from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type ManagedPortfolio = {
-  id: string;
-  name: string;
-  description: string;
-  allocation?: Record<string, number>;
-};
-
-export default function ManagedPortfolioScreen() {
+export default function ManagedPortfolioPage() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
-  const [loading, setLoading] = useState(false);
-  const [portfolios, setPortfolios] = useState<ManagedPortfolio[]>([]);
-
-  const fetchPortfolios = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response: any = await BaseRequest.get(
-        TRANSACTION_SERVICE.ACCOUNT_MANAGED_PORTFOLIO,
-      );
-      setPortfolios(response?.data || []);
-    } catch (error) {
-      catchError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPortfolios();
-  }, [fetchPortfolios]);
-
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText type='subtitle' style={styles.title}>
+        <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <ArrowLeft size={18} color={C.text} />
+        </Pressable>
+        <ThemedText style={[styles.title, { color: C.text }]}>
           Managed Portfolio
         </ThemedText>
-        <View style={{ width: 44 }} />
+        <View style={styles.backSpacer} />
       </View>
 
-      {loading ? (
-        <View style={styles.loaderWrap}>
-          <ActivityIndicator size='large' color={C.primary} />
-        </View>
-      ) : (
-        <ScrollView contentContainerStyle={styles.content}>
-          <ThemedText style={[styles.description, { color: C.muted }]}>
-            Explore our managed investment portfolios
-          </ThemedText>
-
-          {portfolios.length === 0 ? (
-            <ThemedText style={[styles.emptyText, { color: C.muted }]}>
-              No portfolios available
-            </ThemedText>
-          ) : (
-            portfolios.map((portfolio) => (
-              <BraneButton
-                key={portfolio.id}
-                text={portfolio.name}
-                onPress={() =>
-                  router.push(
-                    `/(tabs)/(account)/bracs-investment-trigger/managed-portfolio/about-managed-portfolio?id=${portfolio.id}`,
-                  )
-                }
-                style={styles.portfolioButton}
-              />
-            ))
-          )}
-        </ScrollView>
-      )}
+      <View style={styles.content}>
+        <ThemedText style={[styles.bodyText, { color: C.muted }]}>
+          Managed portfolio settings are being migrated to the native app flow.
+        </ThemedText>
+      </View>
     </SafeAreaView>
   );
 }
@@ -90,34 +36,21 @@ export default function ManagedPortfolioScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: {
-    justifyContent: "space-between",
-    alignItems: "center",
+    height: 56,
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 16,
   },
-  title: { fontSize: 16, fontWeight: "600" },
-  loaderWrap: {
-    flex: 1,
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 30,
-  },
-  description: {
-    fontSize: 14,
-    marginBottom: 20,
-  },
-  emptyText: {
-    fontSize: 14,
-    textAlign: "center",
-    marginTop: 40,
-  },
-  portfolioButton: {
-    marginBottom: 12,
-  },
+  backSpacer: { width: 36 },
+  title: { fontSize: 16, fontWeight: "700" },
+  content: { paddingHorizontal: 20, paddingTop: 16 },
+  bodyText: { fontSize: 14, lineHeight: 22 },
 });

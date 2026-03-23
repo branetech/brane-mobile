@@ -1,16 +1,16 @@
-import { useRouter } from "expo-router";
-import React, { useMemo } from "react";
-import { TouchableOpacity, Text } from "react-native";
-import { View } from "@idimma/rn-widget";
-import { ThemedText } from "../themed-text";
-import { EmptyState } from "../empty-state";
-import { TransactionCard } from "../transaction-card";
-import { useRequest } from "@/services/useRequest";
-import { TRANSACTION_SERVICE } from "@/services/routes";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { parseTransaction, formatDateWithSuffix } from "@/utils/helpers";
+import { TRANSACTION_SERVICE } from "@/services/routes";
+import { useRequest } from "@/services/useRequest";
+import { formatDateWithSuffix, parseTransaction } from "@/utils/helpers";
 import { ITransactionDetail } from "@/utils/index";
+import { View } from "@idimma/rn-widget";
+import { useRouter } from "expo-router";
+import React, { useMemo } from "react";
+import { Text, TouchableOpacity } from "react-native";
+import { EmptyState } from "../../empty-state";
+import { ThemedText } from "../../themed-text";
+import { TransactionLineItem2 } from "../cards";
 
 export const Transactions = () => {
   const router = useRouter();
@@ -33,25 +33,27 @@ export const Transactions = () => {
     if (!Array.isArray(_transactions)) return [];
     return _transactions.map((tx) => {
       const parsed = parseTransaction(tx as ITransactionDetail);
+      const createdAt = parsed.createdAt || (tx as any)?.createdAt || "";
+      const dateKey = createdAt
+        ? new Date(createdAt).toISOString().split("T")[0]
+        : String(parsed.date || "today");
+
       return {
         ...parsed,
         id: parsed.id || parsed.transactionId || "",
-        title:
+        amount: Number(parsed.amount || 0),
+        rebateAmount:
+          parsed.rebateAmount !== undefined
+            ? Number(parsed.rebateAmount)
+            : undefined,
+        time: parsed.time || "",
+        date: parsed.date || dateKey,
+        transactionDescription:
           parsed.transactionDescription ||
           parsed.transactionType ||
           "Transaction",
-        description: parsed.service || undefined,
-        amount: Number(parsed.amount || 0),
-        type:
-          String(parsed.transactionType || "")
-            .toLowerCase()
-            .includes("debit") ||
-          String(parsed.actionType || "")
-            .toLowerCase()
-            .includes("debit")
-            ? "debit"
-            : "credit",
-        date: parsed.time || "",
+        transactionType: parsed.transactionType || parsed.actionType || "",
+        dateKey,
       };
     });
   }, [_transactions]);
@@ -60,17 +62,16 @@ export const Transactions = () => {
   const groupedTransactions = useMemo(() => {
     return transactions.reduce(
       (acc, tx) => {
-        const date = tx.createdAt
-          ? new Date(tx.createdAt).toISOString().split("T")[0]
-          : "today";
+        const date = tx.dateKey || "today";
         if (!acc[date]) acc[date] = [];
         acc[date].push({
           id: tx.id,
-          title: tx.title,
-          description: tx.description,
           amount: tx.amount,
-          type: tx.type as "credit" | "debit",
+          rebateAmount: tx.rebateAmount,
+          time: tx.time,
           date: tx.date,
+          transactionDescription: tx.transactionDescription,
+          transactionType: tx.transactionType,
         });
         return acc;
       },
@@ -78,11 +79,12 @@ export const Transactions = () => {
         string,
         {
           id: string;
-          title: string;
-          description?: string;
           amount: number;
-          type: "credit" | "debit";
+          rebateAmount?: number;
+          time: string;
           date: string;
+          transactionDescription: string;
+          transactionType: string;
         }[]
       >,
     );
@@ -94,7 +96,7 @@ export const Transactions = () => {
 
   const handleTransactionPress = (transactionId: string) => {
     router.push({
-      pathname: "/transaction-history/[details]",
+      pathname: "/(tabs)/(transaction)/[details]",
       params: { details: transactionId },
     });
   };
@@ -174,9 +176,18 @@ export const Transactions = () => {
                         onPress={() => handleTransactionPress(transaction.id)}
                         activeOpacity={0.7}
                       >
-                        <TransactionCard
-                          transaction={transaction}
-                          onPress={() => {}}
+                        <TransactionLineItem2
+                          id={transaction.id}
+                          amount={Number(transaction.amount || 0)}
+                          rebateAmount={transaction.rebateAmount}
+                          time={transaction.time || ""}
+                          date={transaction.date || ""}
+                          transactionDescription={
+                            transaction.transactionDescription || "Transaction"
+                          }
+                          transactionType={transaction.transactionType || ""}
+                          borderColor='#f7f7f8'
+                          borderRadius={12}
                         />
                       </TouchableOpacity>
                     ))}

@@ -3,6 +3,7 @@ import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { PhoneInput } from "@/components/phone-input";
 import { ThemedText } from "@/components/themed-text";
+import { SuccessModal } from "@/components/success-modal";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
@@ -11,9 +12,18 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { ArrowDown2, TickCircle, SearchNormal1 } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { StyleSheet, TextInput, TouchableOpacity, Modal, Pressable, ScrollView, View as RNView } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+  ScrollView,
+  View as RNView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
+import { formatPhoneNumber } from "@/utils/helpers";
 
 type RelationshipOption = {
   value: string;
@@ -92,13 +102,6 @@ const normalizeKin = (payload: any): KinForm => {
   };
 };
 
-const normalizePhone = (value: string) => {
-  const cleaned = String(value || "").replace(/\s+/g, "");
-  if (!cleaned) return "";
-  if (cleaned.startsWith("+")) return cleaned;
-  return `+${cleaned.replace(/^\+/, "")}`;
-};
-
 export default function UpdateKinDetailsScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
@@ -123,7 +126,7 @@ export default function UpdateKinDetailsScreen() {
     const q = relationshipSearch.trim().toLowerCase();
     if (!q) return relationshipOptions;
     return relationshipOptions.filter((item) =>
-      item.label.toLowerCase().includes(q)
+      item.label.toLowerCase().includes(q),
     );
   }, [relationshipSearch]);
 
@@ -178,7 +181,7 @@ export default function UpdateKinDetailsScreen() {
         lastName: form.lastName.trim(),
         relationship: form.relationship,
         email: form.email.trim(),
-        phone: normalizePhone(form.phone),
+        phone: formatPhoneNumber(form.phone),
       });
       setShowSuccess(true);
     } catch (error) {
@@ -213,7 +216,7 @@ export default function UpdateKinDetailsScreen() {
               contact them if we can&apos;t reach you for an extended period.
             </ThemedText>
 
-            <View gap={12} style={{ marginTop: 18 }}>
+            <View gap={16} style={{ marginTop: 18 }}>
               <FormInput
                 labelText='Next Of Kin First Name'
                 placeholder='Enter first name'
@@ -317,14 +320,16 @@ export default function UpdateKinDetailsScreen() {
           }}
         >
           <Pressable
-            style={[
-              styles.modalCard,
-              {
-                backgroundColor: C.background,
-                borderColor: C.border,
-                borderWidth: 1,
-              },
-            ] as any}
+            style={
+              [
+                styles.modalCard,
+                {
+                  backgroundColor: C.background,
+                  borderColor: C.border,
+                  borderWidth: 1,
+                },
+              ] as any
+            }
             onPress={() => {}}
           >
             <ThemedText
@@ -336,10 +341,12 @@ export default function UpdateKinDetailsScreen() {
 
             {/* Search Field */}
             <View
-              style={[
-                styles.searchWrap,
-                { backgroundColor: C.inputBg, borderColor: C.border },
-              ] as any}
+              style={
+                [
+                  styles.searchWrap,
+                  { backgroundColor: C.inputBg, borderColor: C.border },
+                ] as any
+              }
               row
               aligned
             >
@@ -364,7 +371,9 @@ export default function UpdateKinDetailsScreen() {
                         styles.optionRow,
                         {
                           borderBottomColor: C.border,
-                          backgroundColor: selected ? C.primary + "10" : "transparent",
+                          backgroundColor: selected
+                            ? C.primary + "10"
+                            : "transparent",
                         },
                       ]}
                       onPress={() => {
@@ -376,7 +385,10 @@ export default function UpdateKinDetailsScreen() {
                       <ThemedText
                         style={[
                           styles.optionText,
-                          { color: C.text, fontWeight: selected ? "600" : "400" },
+                          {
+                            color: C.text,
+                            fontWeight: selected ? "600" : "400",
+                          },
                         ]}
                       >
                         {item.label}
@@ -400,51 +412,17 @@ export default function UpdateKinDetailsScreen() {
         </Pressable>
       </Modal>
 
-      <Modal
+      <SuccessModal
         visible={showSuccess}
-        transparent
-        animationType='fade'
+        title='Success!'
+        description='Next of Kin details updated successfully.'
+        actionText='Continue'
+        onAction={() => {
+          setShowSuccess(false);
+          router.push("/(tabs)");
+        }}
         onRequestClose={() => setShowSuccess(false)}
-      >
-        <Pressable
-          style={styles.successBackdrop}
-          onPress={() => setShowSuccess(false)}
-        >
-          <RNView
-            style={[
-              styles.successCard,
-              {
-                backgroundColor: C.background,
-                borderColor: C.border,
-                borderWidth: 1,
-              },
-            ] as any}
-          >
-            <RNView style={{ alignItems: "center", marginBottom: 12 }}>
-              <TickCircle size={48} color={C.primary} />
-            </RNView>
-            <ThemedText
-              type='defaultSemiBold'
-              style={[{ textAlign: "center", color: C.text, fontSize: 18 }]}
-            >
-              Success!
-            </ThemedText>
-            <ThemedText style={[styles.successText, { color: C.muted }]}>
-              Next of Kin details updated successfully.
-            </ThemedText>
-            <BraneButton
-              text='Continue'
-              onPress={() => {
-                setShowSuccess(false);
-                router.push("/(tabs)");
-              }}
-              height={48}
-              radius={10}
-              style={{ marginTop: 20 }}
-            />
-          </RNView>
-        </Pressable>
-      </Modal>
+      />
     </SafeAreaView>
   );
 }

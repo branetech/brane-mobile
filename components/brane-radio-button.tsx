@@ -1,7 +1,5 @@
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { Colors } from "@/constants/colors";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 
 type RadioButtonProps = {
   selected: boolean;
@@ -10,6 +8,8 @@ type RadioButtonProps = {
   color?: string;
   children?: React.ReactNode;
   bg?: string;
+  borderColor?: string;
+  showRadio?: boolean;
 };
 
 export const BraneRadioButton = ({
@@ -18,41 +18,50 @@ export const BraneRadioButton = ({
   size = 24,
   color = "#013D25",
   children,
-  bg,
+  bg = "#FAF6E6",
+  borderColor = "#F6F0D5",
+  showRadio = false,
 }: RadioButtonProps) => {
-  const colorScheme = useColorScheme();
-  const C = Colors[colorScheme === "dark" ? "dark" : "light"];
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.wrapper, { backgroundColor: bg, borderColor: C.border }]}
+      style={[
+        styles.wrapper,
+        {
+          backgroundColor: bg,
+          borderColor,
+          justifyContent: showRadio ? "space-between" : "flex-start",
+        },
+      ]}
     >
       {/* Content */}
       <View style={styles.content}>{children}</View>
 
       {/* Radio */}
-      <View
-        style={[
-          styles.outer,
-          {
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            borderColor: selected ? color : "#D1D5DB",
-          },
-        ]}
-      >
-        {selected && (
-          <View
-            style={{
-              width: size * 0.55,
-              height: size * 0.55,
-              borderRadius: (size * 0.55) / 2,
-              backgroundColor: color,
-            }}
-          />
-        )}
-      </View>
+      {showRadio && (
+        <View
+          style={[
+            styles.outer,
+            {
+              width: size,
+              height: size,
+              borderRadius: size / 2,
+              borderColor: selected ? color : "#D1D5DB",
+            },
+          ]}
+        >
+          {selected && (
+            <View
+              style={{
+                width: size * 0.55,
+                height: size * 0.55,
+                borderRadius: (size * 0.55) / 2,
+                backgroundColor: color,
+              }}
+            />
+          )}
+        </View>
+      )}
     </Pressable>
   );
 };

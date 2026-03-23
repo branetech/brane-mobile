@@ -1,270 +1,139 @@
 import * as LocalAuthentication from "expo-local-authentication";
-import * as SecureStore from 'expo-secure-store';
-import { useCallback, useEffect, useState } from 'react';
-import { parseBiometricError } from '@/utils/biometric-error-handler';
+import { useEffect, useState } from "react";
+import * as SecureStore from "expo-secure-store";
 
-export interface BiometricCredentials {
+const CREDENTIALS_KEY = "brane_biometric_credentials";
+
+type Credentials = {
   phoneNumber: string;
   password: string;
-  mode: 'auto-login' | '2fa';
-}
+};
 
-export interface BiometricAvailability {
+type Availability = {
   available: boolean;
-  type?: 'Fingerprint' | 'Face' | 'Iris';
-  error?: string;
-}
+  biometricType: "fingerprint" | "facial" | "iris" | null;
+};
 
-export const BIOMETRIC_CREDENTIALS_KEY = 'brane_biometric_credentials';
-export const BIOMETRIC_MODE_KEY = 'brane_biometric_mode';
-export const BIOMETRIC_TYPE_KEY = 'brane_biometric_type';
+type AuthResult =
+  | { success: true; error?: never }
+  | { success: false; error: string };
 
-export const useBiometricAuth = () => {
+type CredentialsResult =
+  | { credentials: Credentials; error?: never }
+  | { credentials?: never; error: string };
+
+export function useBiometricAuth() {
   const [isLoading, setIsLoading] = useState(false);
-  const [availability, setAvailability] = useState<BiometricAvailability>({
+  const [availability, setAvailability] = useState<Availability>({
     available: false,
+    biometricType: null,
   });
 
-  /**
-   * Check if biometric authentication is available on the device
-   */
-  const checkAvailability = useCallback(async () => {
+  useEffect(() => {
+    checkAvailability();
+  }, []);
+
+  const checkAvailability = async () => {
     try {
-      setIsLoading(true);
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
 
-      // Check if biometric authentication is compatible
-      const compatible = await LocalAuthentication.hasHardwareAsync();
-      if (!compatible) {
-        setAvailability({
-          available: false,
-          error: 'Biometric sensor not available',
-        });
-        return { available: false };
+      if (!hasHardware || !isEnrolled) {
+        setAvailability({ available: false, biometricType: null });
+        return;
       }
 
-      // Check what types of biometrics are enrolled
-      const enrolled = await LocalAuthentication.isEnrolledAsync();
-      if (!enrolled) {
-        setAvailability({
-          available: false,
-          error: 'No biometric data enrolled on device',
-        });
-        return { available: false };
+      const supportedTypes =
+        await LocalAuthentication.supportedAuthenticationTypesAsync();
+
+      let biometricType: Availability["biometricType"] = "fingerprint";
+      if (
+        supportedTypes.includes(
+          LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+        )
+      ) {
+        biometricType = "facial";
+      } else if (
+        supportedTypes.includes(LocalAuthentication.AuthenticationType.IRIS)
+      ) {
+        biometricType = "iris";
       }
 
-      // Get supported authentication types
-      const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync();
+      setAvailability({ available: true, biometricType });
+    } catch {
+      setAvailability({ available: false, biometricType: null });
+    }
+  };
 
-      let biometricType: 'Fingerprint' | 'Face' | 'Iris' = 'Fingerprint';
-
-      // Determine the type of biometric available
-      // iris (4) > face (2) > fingerprint (1)
-      if (supportedTypes.includes(LocalAuthentication.AuthenticationType.IRIS)) {
-        biometricType = 'Iris';
-      } else if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
-        biometricType = 'Face';
-      } else if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
-        biometricType = 'Fingerprint';
-      }
-
-      setAvailability({
-        available: true,
-        type: biometricType,
+  const authenticate = async (): Promise<AuthResult> => {
+    setIsLoading(true);
+    try {
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: "Authenticate to continue",
+        fallbackLabel: "Use PIN",
+        cancelLabel: "Cancel",
+        disableDeviceFallback: false,
       });
-      return { available: true, type: biometricType };
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to check biometric availability';
-      setAvailability({
-        available: false,
-        error: errorMsg,
-      });
-      return { available: false, error: errorMsg };
+
+      if (result.success) return { success: true };
+
+      const errorMap: Record<string, string> = {
+        UserCancel: "Authentication cancelled",
+        UserFallback: "Please login manually",
+        SystemCancel: "Authentication was cancelled by the system",
+        PasscodeNotSet: "No passcode set on device",
+        BiometryNotAvailable: "Biometry not available",
+        BiometryNotEnrolled: "No biometrics enrolled",
+        BiometryLockout: "Too many attempts. Please try again later",
+      };
+
+      return {
+        success: false,
+        error: errorMap[result.error ?? ""] ?? "Authentication failed",
+      };
+    } catch (e: any) {
+      return { success: false, error: e?.message ?? "Authentication failed" };
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
-  /**
-   * Authenticate user with biometric (fingerprint/face)
-   */
-  const authenticate = useCallback(
-    async (): Promise<{ success: boolean; error?: string }> => {
-      try {
-        setIsLoading(true);
-
-        const result = await LocalAuthentication.authenticateAsync({
-          promptMessage: `Authenticate with ${availability.type || 'biometric'}`,
-          fallbackLabel: 'Use passcode',
-          disableDeviceFallback: false,
-          reason: 'Authenticate to access your account',
-        });
-
-        if (result.success) {
-          return { success: true };
-        } else {
-          return {
-            success: false,
-            error: 'Biometric authentication failed',
-          };
-        }
-      } catch (error: any) {
-        const errorInfo = parseBiometricError(error);
-        return {
-          success: false,
-          error: errorInfo.userMessage,
-        };
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [availability.type]
-  );
-
-  /**
-   * Store credentials securely for biometric login
-   */
-  const storeCredentials = useCallback(
-    async (
-      credentials: BiometricCredentials
-    ): Promise<{ success: boolean; error?: string }> => {
-      try {
-        setIsLoading(true);
-
-        // Store credentials as encrypted JSON
-        const credentialsJson = JSON.stringify({
-          phoneNumber: credentials.phoneNumber,
-          password: credentials.password,
-          timestamp: Date.now(),
-        });
-
-        await SecureStore.setItemAsync(
-          BIOMETRIC_CREDENTIALS_KEY,
-          credentialsJson
-        );
-
-        // Store mode preference
-        await SecureStore.setItemAsync(BIOMETRIC_MODE_KEY, credentials.mode);
-
-        // Store biometric type for reference
-        const biometricType = availability.type || 'Fingerprint';
-        await SecureStore.setItemAsync(BIOMETRIC_TYPE_KEY, biometricType);
-
-        return { success: true };
-      } catch (error: any) {
-        const errorMsg = error?.message || 'Failed to store credentials';
-        return { success: false, error: errorMsg };
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [availability.type]
-  );
-
-  /**
-   * Retrieve stored credentials from secure storage
-   */
-  const retrieveCredentials = useCallback(
-    async (): Promise<{
-      credentials?: BiometricCredentials;
-      error?: string;
-    }> => {
-      try {
-        setIsLoading(true);
-
-        const credentialsJson = await SecureStore.getItemAsync(
-          BIOMETRIC_CREDENTIALS_KEY
-        );
-        const mode = (await SecureStore.getItemAsync(
-          BIOMETRIC_MODE_KEY
-        )) as 'auto-login' | '2fa';
-
-        if (!credentialsJson || !mode) {
-          return { error: 'No stored credentials found' };
-        }
-
-        const parsed = JSON.parse(credentialsJson);
-
-        return {
-          credentials: {
-            phoneNumber: parsed.phoneNumber,
-            password: parsed.password,
-            mode,
-          },
-        };
-      } catch (error: any) {
-        const errorMsg = error?.message || 'Failed to retrieve credentials';
-        return { error: errorMsg };
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
-
-  /**
-   * Remove stored credentials (disable biometric login)
-   */
-  const deleteCredentials = useCallback(async (): Promise<boolean> => {
+  const saveCredentials = async (
+    phoneNumber: string,
+    password: string
+  ): Promise<boolean> => {
     try {
-      setIsLoading(true);
-      await SecureStore.deleteItemAsync(BIOMETRIC_CREDENTIALS_KEY);
-      await SecureStore.deleteItemAsync(BIOMETRIC_MODE_KEY);
-      await SecureStore.deleteItemAsync(BIOMETRIC_TYPE_KEY);
-      return true;
-    } catch (error: any) {
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  /**
-   * Check if biometric credentials are already stored
-   */
-  const hasStoredCredentials = useCallback(async (): Promise<boolean> => {
-    try {
-      const credentials = await SecureStore.getItemAsync(
-        BIOMETRIC_CREDENTIALS_KEY
+      await SecureStore.setItemAsync(
+        CREDENTIALS_KEY,
+        JSON.stringify({ phoneNumber, password })
       );
-      return !!credentials;
+      return true;
     } catch {
       return false;
     }
-  }, []);
+  };
 
-  /**
-   * Get stored biometric mode (auto-login or 2fa)
-   */
-  const getStoredMode = useCallback(
-    async (): Promise<'auto-login' | '2fa' | null> => {
-      try {
-        const mode = (await SecureStore.getItemAsync(
-          BIOMETRIC_MODE_KEY
-        )) as 'auto-login' | '2fa' | null;
-        return mode;
-      } catch {
-        return null;
-      }
-    },
-    []
-  );
+  const retrieveCredentials = async (): Promise<CredentialsResult> => {
+    try {
+      const raw = await SecureStore.getItemAsync(CREDENTIALS_KEY);
+      if (!raw) return { error: "No stored credentials found" };
+      const credentials = JSON.parse(raw) as Credentials;
+      return { credentials };
+    } catch {
+      return { error: "Failed to retrieve credentials" };
+    }
+  };
 
-  /**
-   * Initialize hook - check availability on mount
-   */
-  useEffect(() => {
-    checkAvailability();
-  }, [checkAvailability]);
+  const clearCredentials = async (): Promise<void> => {
+    await SecureStore.deleteItemAsync(CREDENTIALS_KEY);
+  };
 
   return {
     isLoading,
     availability,
-    checkAvailability,
     authenticate,
-    storeCredentials,
+    saveCredentials,
     retrieveCredentials,
-    deleteCredentials,
-    hasStoredCredentials,
-    getStoredMode,
+    clearCredentials,
   };
-};
+}

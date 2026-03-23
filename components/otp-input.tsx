@@ -1,13 +1,13 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
-  useColorScheme,
   View,
 } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Colors } from "@/constants/colors";
 
 interface OTPProps {
@@ -20,9 +20,8 @@ export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => 
   const [otpValues, setOtpValues] = useState<string[]>(Array(length).fill(""));
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const inputsRef = useRef<TextInput[]>([]);
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const C = Colors[isDark ? "dark" : "light"];
+  const scheme = useColorScheme();
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
 
   const scaleAnims = useRef(
     Array(length)
@@ -93,19 +92,23 @@ export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => 
 
   // Split indices into groups of 3: [[0,1,2], [3,4,5]]
   // Works for OTP but PIN mode shows all cells without separator
-  const groups: number[][] = [];
+  const groups = useMemo(() => {
+    const groupsArray: number[][] = [];
 
-  if (mode === "pin") {
-    // For PIN mode, show all cells in one row without grouping
-    groups.push(Array.from({ length }, (_, i) => i));
-  } else {
-    // For OTP mode, group by 3 with separator
-    for (let i = 0; i < length; i += 3) {
-      groups.push(
-        Array.from({ length: Math.min(3, length - i) }, (_, k) => i + k),
-      );
+    if (mode === "pin") {
+      // For PIN mode, show all cells in one row without grouping
+      groupsArray.push(Array.from({ length }, (_, i) => i));
+    } else {
+      // For OTP mode, group by 3 with separator
+      for (let i = 0; i < length; i += 3) {
+        groupsArray.push(
+          Array.from({ length: Math.min(3, length - i) }, (_, k) => i + k),
+        );
+      }
     }
-  }
+
+    return groupsArray;
+  }, [mode, length]);
 
   const showSeparator = mode === "otp" && length === 6;
 
@@ -119,21 +122,21 @@ export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => 
           style={[
             styles.cell,
             {
-              backgroundColor: C.inputBg,
+              backgroundColor: C.inputBackground,
               borderColor: C.border,
             },
             filled && {
-              backgroundColor: isDark ? "#0D2A1E" : "#FFFFFF",
+              backgroundColor: C.inputBackground,
               borderColor: C.primary,
             },
             focused && {
-              backgroundColor: isDark ? "#0D2A1E" : "#FFFFFF",
+              backgroundColor: C.inputBg,
               borderColor: C.primary,
               shadowColor: C.primary,
               shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.25,
+              shadowOpacity: 0.3,
               shadowRadius: 8,
-              elevation: 4,
+              elevation: 5,
             },
             { transform: [{ scale: scaleAnims[index] }] },
           ]}
@@ -172,7 +175,7 @@ export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => 
             <Text
               style={[
                 styles.separator,
-                { color: isDark ? C.muted : C.border },
+                { color: C.muted },
               ]}
             >
               —

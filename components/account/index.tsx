@@ -1,7 +1,7 @@
-import { accnt, VERSION } from "@/utils";
-import { useBooleans } from "@/utils/hooks";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { accnt, VERSION } from "@/utils";
+import { useBooleans } from "@/utils/hooks";
 import { useRouter } from "expo-router";
 import { LogoutCurve } from "iconsax-react-native";
 import { ReactNode } from "react";
@@ -14,19 +14,21 @@ export const Account = ({ header }: { header?: ReactNode }) => {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const acc = accnt(C.primary);
+  const acc = accnt();
   const resolveRoute = (label: string, routeKey?: string) => {
     const byLabel: Record<string, string> = {
       Preferences: "/(account)/preferences",
       "Help desk": "/(account)/help-desk",
-      "Terms & conditions": "/(account)/terms-condition",
+      "Terms & conditions": "/(account)/terms-conditions",
       "Privacy policy": "/(account)/privacy-policy",
+      "bracs-investment-trigger": "/(account)/bracs-investment-trigger",
+
     };
 
     if (byLabel[label]) return byLabel[label];
 
     const byKey: Record<string, string> = {
-      "account-details": "/account-details",
+      "account-details": "/(account)/account-details",
       beneficiary: "/(account)/beneficiary",
       "update-kin-details": "/(account)/update-kin-details",
       "account-verification": "/(account)/account-verification",
@@ -34,7 +36,7 @@ export const Account = ({ header }: { header?: ReactNode }) => {
       "change-password": "/(account)/change-password",
       "reset-transaction-pin": "/(account)/reset-transaction-pin",
       "change-username": "/(account)/change-username",
-      preferences: "/(account)/preference",
+      preferences: "/(account)/preferences",
       "help-desk": "/(account)/help-desk",
       "terms-conditions": "/(account)/terms-conditions",
       "privacy-policy": "/(account)/privacy-policy",
@@ -114,7 +116,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontWeight: "600",
     fontSize: 14,
-    marginTop: 24,
+    marginTop: 16,
     marginBottom: 4,
   },
   logoutRow: {

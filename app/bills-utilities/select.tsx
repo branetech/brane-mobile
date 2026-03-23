@@ -1,7 +1,6 @@
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { type PaymentOption } from "@/components/payment-method-selector";
-import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
@@ -18,18 +17,21 @@ import {
   AUTH_SERVICE,
   MOBILE_SERVICE,
   PAYMENT_CALLBACK_URL,
-  STOCKS_SERVICE,
   TRANSACTION_SERVICE,
 } from "@/services/routes";
 import { showError } from "@/utils/helpers";
 import * as Contacts from "expo-contacts";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { ExportCurve, TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Modal,
   ScrollView,
+  Share,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -119,6 +121,7 @@ export default function UtilitySelectScreen() {
   const [beneficiaryName, setBeneficiaryName] = useState("");
   const [paymentId, setPaymentId] = useState<string>("wallet");
   const [paymentOptions, setPaymentOptions] = useState<PaymentOption[]>([]);
+  const [walletBalance, setWalletBalance] = useState<number | undefined>();
 
   const [customerId, setCustomerId] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -335,31 +338,52 @@ export default function UtilitySelectScreen() {
     service,
   ]);
 
+  const transactionTarget =
+    service === "airtime" || service === "data"
+      ? phone
+      : service === "betting"
+        ? customerId
+        : service === "cable"
+          ? cardNumber
+          : service === "electricity"
+            ? meterNumber
+            : transportReference;
+
+  const successDescription = `Your ₦${Number(amountToPay || 0).toLocaleString("en-NG")} ${service} purchase on ${transactionTarget || "your account"} was successful. You have received ${bracsRewardAmount} bracs, which has been added to your bracs balance.`;
+
+  const shareReceipt = useCallback(async () => {
+    try {
+      await Share.share({
+        title: "Transaction Receipt",
+        message: `Transaction Successful\n\nService: ${service}\nAmount: ₦${Number(amountToPay || 0).toLocaleString("en-NG")}\nBeneficiary: ${transactionTarget || "N/A"}\nBracs Reward: ${bracsRewardAmount}`,
+      });
+    } catch {
+      showError("Unable to share receipt right now.");
+    }
+  }, [amountToPay, bracsRewardAmount, service, transactionTarget]);
+
   // ── API fetches ───────────────────────────────────────────────────────────────
 
   const fetchPaymentOptions = useCallback(async () => {
     try {
-      const [walletRes, bracsRes] = await Promise.all([
-        BaseRequest.get(TRANSACTION_SERVICE.BALANCE).catch(() => null),
-        BaseRequest.get(STOCKS_SERVICE.BRACS).catch(() => null),
-      ]);
+      const walletRes: any = await BaseRequest.get(
+        TRANSACTION_SERVICE.BALANCE,
+      ).catch(() => null);
       const walletBalance = Number(
         walletRes?.data?.balance ??
           walletRes?.data?.data?.balance ??
           walletRes?.data ??
           0,
       );
-      const bracsBalance = Number(
-        bracsRes?.data?.totalBalance ?? bracsRes?.data?.data?.totalBalance ?? 0,
-      );
+      setWalletBalance(walletBalance);
       const options: PaymentOption[] = [
+        // {
+        //   id: "total_balance",
+        //   label: `Total balance \u2013 \u20A6 ${formatMoney(bracsBalance)}`,
+        //   icon: "\u20A6",
+        // },
         {
-          id: "total_balance",
-          label: `Total balance \u2013 \u20A6 ${formatMoney(bracsBalance)}`,
-          icon: "\u20A6",
-        },
-        {
-          id: "wallet",
+          id: "brane_wallet",
           label: `Brane Wallet \u2013 \u20A6 ${formatMoney(walletBalance)}`,
           icon: "B",
         },
@@ -369,6 +393,7 @@ export default function UtilitySelectScreen() {
         options.some((item) => item.id === prev) ? prev : options[0]?.id || "",
       );
     } catch {
+      setWalletBalance(undefined);
       setPaymentOptions([]);
     }
   }, []);
@@ -793,7 +818,10 @@ export default function UtilitySelectScreen() {
     setShowPinValidator(false);
     let wasSuccessful = false;
     const onRender = (value: string) => {
-      if (value === "success") wasSuccessful = true;
+      if (value === "success") {
+        wasSuccessful = true;
+        setTimeout(() => setShowSuccess(true), 300);
+      }
     };
 
     try {
@@ -817,6 +845,11 @@ export default function UtilitySelectScreen() {
           setRender: onRender,
           setIsLoading: setIsSubmitting,
         });
+        // If function completes without error and onRender wasn't called, mark as successful
+        if (!wasSuccessful) {
+          wasSuccessful = true;
+          setShowSuccess(true);
+        }
       }
 
       if (service === "betting") {
@@ -831,6 +864,10 @@ export default function UtilitySelectScreen() {
           variationCode: "",
           router,
         });
+        if (!wasSuccessful) {
+          wasSuccessful = true;
+          setShowSuccess(true);
+        }
       }
 
       if (service === "cable") {
@@ -846,6 +883,10 @@ export default function UtilitySelectScreen() {
           subscription_type: selectedCablePlan?.subscriptionType || "change",
           router,
         });
+        if (!wasSuccessful) {
+          wasSuccessful = true;
+          setShowSuccess(true);
+        }
       }
 
       if (service === "electricity" && selectedElectricityProvider) {
@@ -860,6 +901,10 @@ export default function UtilitySelectScreen() {
           name: electricityAccountName,
           router,
         });
+        if (!wasSuccessful) {
+          wasSuccessful = true;
+          setShowSuccess(true);
+        }
       }
 
       if (service === "transportation") {
@@ -872,10 +917,11 @@ export default function UtilitySelectScreen() {
           amount: String(amountToPay),
           phone: auth?.user?.phone,
         });
-        if (result?.message) wasSuccessful = true;
+        if (result?.message) {
+          wasSuccessful = true;
+          setShowSuccess(true);
+        }
       }
-
-      if (wasSuccessful) setShowSuccess(true);
     } catch {
       // handled by service helpers via toast
     }
@@ -931,7 +977,7 @@ export default function UtilitySelectScreen() {
 
       {isFetchingMeta ? (
         <View style={styles.fullPageLoader}>
-          <ActivityIndicator size="large" color="#013D25" />
+          <ActivityIndicator size='large' color='#013D25' />
           <ThemedText style={styles.loadingText}>
             Loading services...
           </ThemedText>
@@ -1058,16 +1104,16 @@ export default function UtilitySelectScreen() {
               }
               onPress={async () => {
                 if (!validateForm()) return;
-                if (isAirtimeOrData) {
+                if (service === "airtime") {
                   setShowBoostModal(true);
                 } else if (service === "electricity") {
                   await prepareElectricitySummary();
                 } else {
-                  setShowPinValidator(true);
+                  setShowSummaryModal(true);
                 }
               }}
-              backgroundColor="#013D25"
-              textColor="#D2F1E4"
+              backgroundColor='#013D25'
+              textColor='#D2F1E4'
               height={52}
               radius={12}
               loading={isSubmitting}
@@ -1081,6 +1127,7 @@ export default function UtilitySelectScreen() {
       <SummaryModal
         visible={showSummaryModal}
         onClose={() => setShowSummaryModal(false)}
+        isAirtime={service === "airtime"}
         amountToPay={amountToPay}
         iconSource={summaryIconSource}
         iconFallbackText={
@@ -1092,31 +1139,38 @@ export default function UtilitySelectScreen() {
         bracsRewardAmount={bracsRewardAmount}
         boostAmount={boostAmount}
         paymentOptions={paymentOptions}
+        walletBalance={walletBalance}
         paymentId={paymentId}
         setPaymentId={setPaymentId}
         ctaLabel={ctaLabel}
         isSubmitting={isSubmitting}
-        showRewardBanner={isAirtimeOrData}
+        showPaymentMethod
+        onFundWallet={() => {
+          setShowSummaryModal(false);
+          router.push("/add-funds" as any);
+        }}
         onConfirm={() => {
           setShowSummaryModal(false);
           setTimeout(() => setShowPinValidator(true), 300);
         }}
       />
 
-      <BoostModal
-        visible={showBoostModal}
-        boostAmount={boostAmount}
-        setBoostAmount={setBoostAmount}
-        onSkip={() => {
-          setBoostAmount("");
-          setShowBoostModal(false);
-          setTimeout(() => setShowSummaryModal(true), 300);
-        }}
-        onAdd={() => {
-          setShowBoostModal(false);
-          setTimeout(() => setShowSummaryModal(true), 300);
-        }}
-      />
+      {service === "airtime" && (
+        <BoostModal
+          visible={showBoostModal}
+          boostAmount={boostAmount}
+          setBoostAmount={setBoostAmount}
+          onSkip={() => {
+            setBoostAmount("");
+            setShowBoostModal(false);
+            setTimeout(() => setShowSummaryModal(true), 300);
+          }}
+          onAdd={() => {
+            setShowBoostModal(false);
+            setTimeout(() => setShowSummaryModal(true), 300);
+          }}
+        />
+      )}
 
       <ContactPickerModal
         visible={showContactsModal}
@@ -1190,18 +1244,38 @@ export default function UtilitySelectScreen() {
         }}
       />
 
-      <TransactionPinValidator
+      {/* <TransactionPinValidator
         visible={showPinValidator}
         onClose={() => setShowPinValidator(false)}
         onResetPin={() => router.push("/account/reset-transaction-pin" as any)}
         onValidatePin={async (pin) => {
           try {
-            await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
-              transactionPin: pin,
+            const res = await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, { pin });
+            console.log("PIN validation response:", res);
+            return true;
+          } catch {
+            return false;
+          }
+        }}
+        onTransactionPinValidated={startPayment}
+
+      /> */}
+
+      <TransactionPinValidator
+        visible={showPinValidator}
+        onClose={() => setShowPinValidator(false)}
+        onResetPin={() => router.push("/account/reset-transaction-pin" as any)}
+        onValidatePin={async (pin) => {
+          console.log("Validating PIN:", pin);
+          try {
+            const res = await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
+              transactionPin: String(pin),
             });
+            console.log("PIN validation response:", res.data);
             return true;
           } catch (error) {
             const { message } = parseNetworkError(error);
+            console.log("PIN validation error:", error, message);
             showError(message || "Invalid transaction pin");
             return false;
           }
@@ -1209,16 +1283,71 @@ export default function UtilitySelectScreen() {
         onTransactionPinValidated={startPayment}
       />
 
-      <SuccessModal
+      <Modal
         visible={showSuccess}
-        title="Transaction Successful"
-        description={`Your ${service} payment of \u20A6${Number(amountToPay || 0).toLocaleString("en-NG")} has been processed.`}
-        actionText="Done"
-        onAction={() => {
-          setShowSuccess(false);
-          router.back();
-        }}
-      />
+        animationType='slide'
+        transparent={false}
+        onRequestClose={() => setShowSuccess(false)}
+      >
+        <SafeAreaView
+          style={[styles.successScreen, { backgroundColor: C.background }]}
+        >
+          <View style={styles.successContent}>
+            <View
+              style={[
+                styles.successIconWrap,
+                { backgroundColor: C.googleBg, borderColor: C.fingerBorder },
+              ]}
+            >
+              <TickCircle size={46} color={C.primary} variant='Bold' />
+            </View>
+
+            <ThemedText style={styles.successTitle}>
+              Transaction Successful
+            </ThemedText>
+            <ThemedText style={[styles.successDescription, { color: C.muted }]}>
+              {successDescription}
+            </ThemedText>
+
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[styles.shareReceiptBtn, { backgroundColor: C.inputBg }]}
+              onPress={shareReceipt}
+            >
+              <ThemedText
+                style={[styles.shareReceiptText, { color: C.primary }]}
+              >
+                Share Receipt
+              </ThemedText>
+              <ExportCurve size={18} color={C.primary} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.successFooter}>
+            <BraneButton
+              text='Buy Again'
+              onPress={() => setShowSuccess(false)}
+              backgroundColor={C.primary}
+              textColor={C.googleBg}
+              height={56}
+              radius={32}
+              style={styles.successActionBtn}
+            />
+            <BraneButton
+              text='Dismiss'
+              onPress={() => {
+                setShowSuccess(false);
+                router.back();
+              }}
+              backgroundColor={C.googleBg}
+              textColor={C.primary}
+              height={56}
+              radius={32}
+              style={styles.successActionBtn}
+            />
+          </View>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -1293,5 +1422,62 @@ const createStyles = (C: (typeof Colors)["light"]) =>
       paddingHorizontal: 20,
       paddingTop: 8,
       paddingBottom: 16,
+    },
+    successScreen: {
+      flex: 1,
+      justifyContent: "space-between",
+      paddingHorizontal: 20,
+      paddingTop: 32,
+      paddingBottom: 16,
+    },
+    successContent: {
+      alignItems: "center",
+      marginTop: 36,
+      paddingHorizontal: 8,
+    },
+    successIconWrap: {
+      width: 72,
+      height: 72,
+      borderRadius: 36,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+      marginBottom: 20,
+    },
+    successTitle: {
+      fontSize: 22,
+      fontWeight: "700",
+      textAlign: "center",
+      color: C.text,
+      marginBottom: 12,
+    },
+    successDescription: {
+      fontSize: 14,
+      lineHeight: 22,
+      textAlign: "center",
+      maxWidth: 420,
+      marginBottom: 20,
+    },
+    shareReceiptBtn: {
+      minHeight: 46,
+      borderRadius: 24,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      paddingHorizontal: 22,
+      marginTop: 6,
+    },
+    shareReceiptText: {
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    successFooter: {
+      flexDirection: "row",
+      gap: 14,
+      paddingBottom: 4,
+    },
+    successActionBtn: {
+      flex: 1,
     },
   });

@@ -11,76 +11,93 @@ import { useBiometricAuth } from "@/hooks/useBiometricAuth";
 import { setRefreshToken, setToken, setUser } from "@/redux/slice/auth-slice";
 import BaseRequest, { parseNetworkError } from "@/services";
 import { formatPhoneNumber, showError } from "@/utils/helpers";
-import { Image, TouchableOpacity, View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { Eye, EyeSlash } from "iconsax-react-native";
+import { Eye, EyeSlash, FingerScan } from "iconsax-react-native";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
+
+const LOGIN_ENDPOINT = "/auth-service/signin";
+
+function extractAuthData(response: any) {
+  const authCredentials =
+    response?.data?.authCredentials || response?.authCredentials;
+  const user = response?.data
+    ? { ...response.data, authCredentials: undefined }
+    : response;
+  return { authCredentials, user };
+}
 
 export default function LoginScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
   const scheme = useColorScheme();
-  const themeKey: "light" | "dark" = scheme === "dark" ? "dark" : "light";
-  const C = Colors[themeKey];
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { isLoading: isBiometricLoading, availability, authenticate, retrieveCredentials } = useBiometricAuth();
 
+  const {
+    isLoading: isBiometricLoading,
+    availability,
+    authenticate,
+    retrieveCredentials,
+    saveCredentials,
+  } = useBiometricAuth();
+
+  // ─── Shared post-login handler ──────────────────────────
+  const handleLoginSuccess = (response: any) => {
+    const { authCredentials, user } = extractAuthData(response);
+    if (!authCredentials?.accessToken) {
+      showError("Unable to complete login. Please try again.");
+      return false;
+    }
+    dispatch(setUser(user));
+    dispatch(setToken(authCredentials.accessToken));
+    dispatch(setRefreshToken(authCredentials.refreshToken || null));
+    return true;
+  };
+
+  // ─── Biometric login ────────────────────────────────────
   const handleBiometricLogin = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-
-      // Authenticate with biometric
       const authResult = await authenticate();
       if (!authResult.success) {
         showError(authResult.error || "Biometric authentication failed");
         return;
       }
 
-      // Retrieve stored credentials
-      const credentialsResult = await retrieveCredentials();
-      if (credentialsResult.error || !credentialsResult.credentials) {
+      const credResult = await retrieveCredentials();
+      if (credResult.error || !credResult.credentials) {
         showError("No stored credentials found. Please login manually.");
         return;
       }
 
-      // Login with retrieved credentials
-      const payload = {
-        phone: credentialsResult.credentials.phoneNumber,
-        password: credentialsResult.credentials.password,
-      };
+      const response: any = await BaseRequest.post(LOGIN_ENDPOINT, {
+        phone: credResult.credentials.phoneNumber,
+        password: credResult.credentials.password,
+      });
 
-      const response: any = await BaseRequest.post(
-        "/auth-service/signin",
-        payload,
-      );
-      const authCredentials =
-        response?.data?.authCredentials || response?.authCredentials;
-      const user = response?.data
-        ? { ...response.data, authCredentials: undefined }
-        : response;
-
-      if (!authCredentials?.accessToken) {
-        showError("Unable to complete login. Please try again.");
-        return;
+      if (handleLoginSuccess(response)) {
+        router.replace("/(tabs)");
       }
-
-      dispatch(setUser(user));
-      dispatch(setToken(authCredentials.accessToken));
-      dispatch(setRefreshToken(authCredentials.refreshToken || null));
-      router.replace("/(tabs)");
     } catch (error: any) {
-      const { message } = parseNetworkError(error);
-      showError(message);
+      showError(parseNetworkError(error).message);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // ─── Form login ─────────────────────────────────────────
   const { form, isDisabled } = useFormHandler({
     initialValues: { phone: "", password: "" },
     validationSchema: yup.object().shape({
@@ -94,7 +111,7 @@ export default function LoginScreen() {
         .required("Password is required")
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\.,_-])(?=.{8,})/,
-          "Your password must have at least 8 characters, a digit (0-9), an uppercase letter (A), a special character ($, @, etc.)",
+          "Must have 8+ chars, a digit, uppercase, and special character",
         ),
     }),
     onSubmit: async (data) => {
@@ -105,211 +122,217 @@ export default function LoginScreen() {
           password: data.password,
         };
 
-        const response: any = await BaseRequest.post(
-          "/auth-service/signin",
-          payload,
-        );
-        const authCredentials =
-          response?.data?.authCredentials || response?.authCredentials;
-        const user = response?.data
-          ? { ...response.data, authCredentials: undefined }
-          : response;
+        const response: any = await BaseRequest.post(LOGIN_ENDPOINT, payload);
 
-        if (!authCredentials?.accessToken) {
-          showError("Unable to complete login. Please try again.");
-          return;
+        if (handleLoginSuccess(response)) {
+          // Save credentials for future biometric logins
+          await saveCredentials(payload.phone, data.password);
+          router.replace("/(tabs)");
         }
-
-        dispatch(setUser(user));
-        dispatch(setToken(authCredentials.accessToken));
-        dispatch(setRefreshToken(authCredentials.refreshToken || null));
-        router.replace("/(tabs)");
       } catch (error: any) {
-        const { message } = parseNetworkError(error);
-        showError(message);
+        showError(parseNetworkError(error).message);
       } finally {
         setIsLoading(false);
       }
     },
   });
 
+  const busy = isLoading || isBiometricLoading;
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+        style={styles.keyboardView}
       >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "space-between",
-            paddingHorizontal: "6%",
-          }}
-        >
-          <View>
-            <View style={{ gap: 30 }}>
-              <View style={{ alignItems: "center", gap: 8 }}>
-                <ThemedText type={"subtitle"}>Welcome back!</ThemedText>
-              </View>
-
-              <View style={{ gap: 16 }}>
-                <View>
-                  <ThemedText
-                    style={{ fontSize: 12, color: C.muted, marginBottom: 6 }}
-                  >
-                    Phone Number
-                  </ThemedText>
-                  <PhoneInput
-                    value={form.values.phone}
-                    onPhoneChange={(val) => form.setFieldValue("phone", val)}
-                    placeholder='8092738 223776'
-                  />
-                </View>
-
-                <View gap={8}>
-                  <FormInput
-                    leftContent={
-                      <PassWrd
-                        color={
-                          form.errors.password && form.touched.password
-                            ? C.error
-                            : C.muted
-                        }
-                        size={20}
-                      />
-                    }
-                    placeholder='Enter password'
-                    secureTextEntry={!showPassword}
-                    rightContent={
-                      <TouchableOpacity
-                        onPress={() => setShowPassword((p) => !p)}
-                      >
-                        {showPassword ? (
-                          <EyeSlash size='20' color={C.muted} />
-                        ) : (
-                          <Eye size='20' color={C.muted} />
-                        )}
-                      </TouchableOpacity>
-                    }
-                    {...mapFormikProps("password", form)}
-                    labelText='Password'
-                  />
-                  <TouchableOpacity
-                    onPress={() => router.push("/(auth)/forgot-password")}
-                  >
-                    <ThemedText
-                      style={{
-                        fontSize: 12,
-                        fontWeight: "500",
-                        color: C.primary,
-                        marginBottom: 32,
-                      }}
-                    >
-                      I Forgot My Password
-                    </ThemedText>
-                  </TouchableOpacity>
-                </View>
-              </View>
+        <View style={styles.container}>
+          {/* ── Top section ── */}
+          <View style={styles.topSection}>
+            {/* Title */}
+            <View style={styles.titleWrap}>
+              <ThemedText type='subtitle'>Welcome back!</ThemedText>
             </View>
 
-            <View style={{ gap: 16 }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 32,
-                }}
-              >
-                <BraneButton
-                  text='Login'
-                  onPress={() => form.handleSubmit()}
-                  disabled={isDisabled || isLoading}
-                  loading={isLoading}
-                  textColor={C.googleBg}
-                  backgroundColor={C.primary}
-                  height={52}
-                  radius={12}
-                  style={{ flex: 1, marginRight: 12 }}
+            {/* Fields */}
+            <View style={styles.fields}>
+              {/* Phone */}
+              <View>
+                <ThemedText style={[styles.fieldLabel, { color: C.muted }]}>
+                  Phone Number
+                </ThemedText>
+                <PhoneInput
+                  value={form.values.phone}
+                  onPhoneChange={(val) => form.setFieldValue("phone", val)}
+                  placeholder='809 327 3776'
                 />
-                {availability.available && (
-                  <TouchableOpacity
-                    onPress={handleBiometricLogin}
-                    disabled={isLoading || isBiometricLoading}
-                    style={{
-                      width: 52,
-                      height: 52,
-                      borderRadius: 12,
-                      borderWidth: 1,
-                      borderColor: C.fingerBorder,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      opacity: isLoading || isBiometricLoading ? 0.6 : 1,
-                    }}
-                  >
-                    <Image
-                      source={require("@/assets/images/finger-scan.png")}
-                      style={{ width: 32, height: 32 }}
+              </View>
+
+              {/* Password */}
+              <View style={styles.passwordWrap}>
+                <FormInput
+                  leftContent={
+                    <PassWrd
+                      color={
+                        form.errors.password && form.touched.password
+                          ? C.error
+                          : C.muted
+                      }
+                      size={20}
                     />
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 32,
-                }}
-              >
-                <View
-                  style={{ flex: 1, height: 1, backgroundColor: C.border }}
+                  }
+                  placeholder='Enter password'
+                  secureTextEntry={!showPassword}
+                  rightContent={
+                    <TouchableOpacity
+                      onPress={() => setShowPassword((p) => !p)}
+                    >
+                      {showPassword ? (
+                        <EyeSlash size='20' color={C.muted} />
+                      ) : (
+                        <Eye size='20' color={C.muted} />
+                      )}
+                    </TouchableOpacity>
+                  }
+                  {...mapFormikProps("password", form)}
+                  labelText='Password'
                 />
-                <ThemedText
-                  style={{
-                    marginHorizontal: 12,
-                    fontSize: 12,
-                    color: C.muted,
-                    backgroundColor: C.inputBg,
-                    paddingHorizontal: 6,
-                    paddingBottom: 2,
-                    fontWeight: "500",
-                    borderRadius: 6,
-                  }}
+                <TouchableOpacity
+                  onPress={() => router.push("/(auth)/forgot-password")}
                 >
-                  or
-                </ThemedText>
-                <View
-                  style={{ flex: 1, height: 1, backgroundColor: C.border }}
-                />
-              </View>
-
-              <ContinueWithGoogle action='Continue with Google' />
-
-              <View style={{ alignItems: "center", marginTop: 32 }}>
-                <ThemedText style={{ fontSize: 12, color: C.muted }}>
-                  Are you a new user?{" "}
-                  <ThemedText
-                    style={{
-                      color: C.primary,
-                      fontWeight: "400",
-                      fontSize: 12,
-                    }}
-                    onPress={() => router.replace("/signup")}
-                  >
-                    Create Account
+                  <ThemedText style={[styles.forgotPw, { color: C.primary }]}>
+                    I Forgot My Password
                   </ThemedText>
-                </ThemedText>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
 
-          <View style={{ alignItems: "center", marginTop: 20 }}>
-            <ThemedText style={{ fontSize: 12, color: C.muted }}>
-              Version 1.0.6
-            </ThemedText>
+          {/* ── Bottom section ── */}
+          <View style={styles.bottomSection}>
+            {/* Login + Biometric row */}
+            <View style={styles.loginRow}>
+              <BraneButton
+                text='Login'
+                onPress={() => form.handleSubmit()}
+                disabled={isDisabled || busy}
+                loading={isLoading}
+                textColor={C.googleBg}
+                backgroundColor={C.primary}
+                height={52}
+                radius={12}
+                style={styles.loginBtn}
+              />
+
+              {availability.available && (
+                <TouchableOpacity
+                  onPress={handleBiometricLogin}
+                  disabled={busy}
+                  style={[
+                    styles.biometricBtn,
+                    {
+                      borderColor: C.fingerBorder,
+                      opacity: busy ? 0.6 : 1,
+                    },
+                  ]}
+                >
+                  <FingerScan size={32} color={C.icon} />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Divider */}
+            <View style={styles.dividerRow}>
+              <View
+                style={[styles.dividerLine, { backgroundColor: C.border }]}
+              />
+              <ThemedText
+                style={[
+                  styles.dividerText,
+                  { color: C.muted, backgroundColor: C.inputBg },
+                ]}
+              >
+                or
+              </ThemedText>
+              <View
+                style={[styles.dividerLine, { backgroundColor: C.border }]}
+              />
+            </View>
+
+            {/* Google */}
+            <ContinueWithGoogle action='Continue with Google' />
+
+            {/* Sign up */}
+            <View style={styles.signupRow}>
+              <ThemedText style={[styles.signupText, { color: C.muted }]}>
+                Are you a new user?{" "}
+                <ThemedText
+                  style={[styles.signupLink, { color: C.primary }]}
+                  onPress={() => router.replace("/signup")}
+                >
+                  Create Account
+                </ThemedText>
+              </ThemedText>
+            </View>
+
+            {/* Version */}
+            <View style={styles.versionWrap}>
+              <ThemedText style={[styles.version, { color: C.muted }]}>
+                Version 1.0.6
+              </ThemedText>
+            </View>
           </View>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safe: { flex: 1 },
+  keyboardView: { flex: 1 },
+  container: {
+    flex: 1,
+    justifyContent: "flex-start",
+    paddingHorizontal: "6%" as any,
+    paddingTop: 24,
+  },
+
+  topSection: { gap: 30 },
+  titleWrap: { alignItems: "center", gap: 8 },
+  fields: { gap: 16 },
+  fieldLabel: { fontSize: 12, marginBottom: 6 },
+
+  passwordWrap: { gap: 8 },
+  forgotPw: { fontSize: 12, fontWeight: "500" },
+
+  bottomSection: { gap: 16, marginTop: 28 },
+
+  loginRow: { flexDirection: "row", alignItems: "center", marginBottom: 32 },
+  loginBtn: { flex: 1, marginRight: 12 },
+  biometricBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 12,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  dividerRow: { flexDirection: "row", alignItems: "center", marginBottom: 32 },
+  dividerLine: { flex: 1, height: 1 },
+  dividerText: {
+    marginHorizontal: 12,
+    fontSize: 12,
+    paddingHorizontal: 6,
+    paddingBottom: 2,
+    fontWeight: "500",
+    borderRadius: 6,
+  },
+
+  signupRow: { alignItems: "center", marginTop: 32 },
+  signupText: { fontSize: 12 },
+  signupLink: { fontWeight: "400", fontSize: 12 },
+
+  versionWrap: { alignItems: "center", marginTop: 20 },
+  version: { fontSize: 12 },
+});

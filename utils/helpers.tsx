@@ -1,5 +1,9 @@
 // utils/helpers.ts
-import { onShowInsFunds, setLoader, setLoaderConfig } from "@/redux/slice/auth-slice";
+import {
+  onShowInsFunds,
+  setLoader,
+  setLoaderConfig,
+} from "@/redux/slice/auth-slice";
 import { dispatch } from "@/redux/store";
 import { ITransactionDetail } from "@/utils/index";
 import universities from "@/utils/universities.json";
@@ -10,7 +14,8 @@ import { getEarnedBracs } from "./brac";
 import { TextStyle, ViewStyle } from "react-native";
 
 export const getSchoolInitials = (name: string): string => {
-  const school = universities?.universities?.find((s) => s.name === name) || null;
+  const school =
+    universities?.universities?.find((s) => s.name === name) || null;
   return String(school?.code || getInitials(name)).toUpperCase();
 };
 
@@ -22,35 +27,64 @@ declare global {
 }
 
 Number.prototype.format = function (n: number, x: number = 3) {
-  let re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
-  return Number(this).toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');
+  let re = "\\d(?=(\\d{" + (x || 3) + "})+" + (n > 0 ? "\\." : "$") + ")";
+  return Number(this)
+    .toFixed(Math.max(0, ~~n))
+    .replace(new RegExp(re, "g"), "$&,");
 };
 
-export const priceFormatter = (value?: number, dec = 0): string => 
+export const priceFormatter = (value?: number, dec = 0): string =>
   `₦${Number(value || 0).format(dec)}`;
 
+/**
+ * Converts various API response formats to arrays.
+ * Handles nested structures like { data: [...] }, { records: [...] }, etc.
+ */
+export const toArray = (value: any): any[] => {
+  if (Array.isArray(value)) return value;
+  if (Array.isArray(value?.data?.providers)) return value.data.providers;
+  if (Array.isArray(value?.providers)) return value.providers;
+  if (Array.isArray(value?.data?.variations)) return value.data.variations;
+  if (Array.isArray(value?.variations)) return value.variations;
+  if (Array.isArray(value?.data?.records)) return value.data.records;
+  if (Array.isArray(value?.data)) return value.data;
+  if (Array.isArray(value?.records)) return value.records;
+  return [];
+};
+
+/**
+ * Formats a number as Nigerian Naira with proper decimal places.
+ */
+export const formatMoney = (value: number): string =>
+  Number(value || 0).toLocaleString("en-NG", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
 // Toast notifications for React Native
-export const showSuccess = (description: string, message: string = 'Success') => 
-  showMessage(message, description, 'success');
+export const showSuccess = (description: string, message: string = "Success") =>
+  showMessage(message, description, "success");
 
-export const showInfo = (description: string, message: string = 'Information') => 
-  showMessage(message, description, 'info');
+export const showInfo = (
+  description: string,
+  message: string = "Information",
+) => showMessage(message, description, "info");
 
-export const showWarning = (description: string, message: string = 'Warning') => 
-  showMessage(message, description, 'warning');
+export const showWarning = (description: string, message: string = "Warning") =>
+  showMessage(message, description, "warning");
 
-export const showError = (description: string, message: string = 'Error') => 
-  showMessage(message, description, 'error');
+export const showError = (description: string, message: string = "Error") =>
+  showMessage(message, description, "error");
 
-type NotificationType = 'success' | 'info' | 'warning' | 'error';
+type NotificationType = "success" | "info" | "warning" | "error";
 
 export const showMessage = (
-  _: string, 
-  description: string, 
-  type: NotificationType
+  _: string,
+  description: string,
+  type: NotificationType,
 ) => {
   // @ts-ignore
-  toast[type](description, { 
+  toast[type](description, {
     duration: 3000,
     // You can customize these based on sonner-native options
   });
@@ -64,24 +98,28 @@ export interface ILoaderConfig {
   bg?: string;
 }
 
-export const showAppLoader = (config: ILoaderConfig = {
-  message: "Please wait...",
-  spinnerColor: "#013D25",
-  bg: "#FFFFFF",
-  style: {},
-  textStyle: {}
-}) => {
-  dispatch(setLoaderConfig(config));
-};
-
-export const hideAppLoader = () => {
-  dispatch(setLoaderConfig({
+export const showAppLoader = (
+  config: ILoaderConfig = {
     message: "Please wait...",
     spinnerColor: "#013D25",
     bg: "#FFFFFF",
     style: {},
-    textStyle: {}
-  }));
+    textStyle: {},
+  },
+) => {
+  dispatch(setLoaderConfig(config));
+};
+
+export const hideAppLoader = () => {
+  dispatch(
+    setLoaderConfig({
+      message: "Please wait...",
+      spinnerColor: "#013D25",
+      bg: "#FFFFFF",
+      style: {},
+      textStyle: {},
+    }),
+  );
   dispatch(setLoader(false));
 };
 
@@ -90,10 +128,12 @@ export const onShowInsufficientFunds = () => {
 };
 
 export function formatPhoneNumber(phoneNumber: string): string {
-  const cleanedNumber = phoneNumber.replace(/\D/g, '');
-  if (cleanedNumber.startsWith('234')) return `+${cleanedNumber.replace('+', '')}`;
-  if (cleanedNumber.startsWith('0')) return `+234${cleanedNumber.slice(1).replace('+', '')}`;
-  return `+${cleanedNumber.replace('+', '').replaceAll(' ', '')}`;
+  const cleanedNumber = phoneNumber.replace(/\D/g, "");
+  if (cleanedNumber.startsWith("234"))
+    return `+${cleanedNumber.replace("+", "")}`;
+  if (cleanedNumber.startsWith("0"))
+    return `+234${cleanedNumber.slice(1).replace("+", "")}`;
+  return `+${cleanedNumber.replace("+", "").replaceAll(" ", "")}`;
 }
 
 // For React Native, you'll need to use Image component differently
@@ -118,45 +158,47 @@ export function formatPhoneNumber(phoneNumber: string): string {
 // {iconSource && <Image source={iconSource} style={{ width: 40, height: 40 }} />}
 
 export const pluralize = (
-  count: number, 
-  noun: string, 
-  suffix = 's', 
-  pluralForm?: string
-) => `${new Intl.NumberFormat().format(count)} ${count === 1 || count === 0 ? noun : pluralForm || noun + suffix}`;
+  count: number,
+  noun: string,
+  suffix = "s",
+  pluralForm?: string,
+) =>
+  `${new Intl.NumberFormat().format(count)} ${count === 1 || count === 0 ? noun : pluralForm || noun + suffix}`;
 
 export const pluralizeString = (
-  count: number, 
-  noun: string, 
-  suffix = 's', 
-  pluralForm?: string
+  count: number,
+  noun: string,
+  suffix = "s",
+  pluralForm?: string,
 ) => `${count === 1 || count === 0 ? noun : pluralForm || noun + suffix}`;
 
-export const formatNumber = (number: number | string | undefined) => 
+export const formatNumber = (number: number | string | undefined) =>
   Number(number || 0).format(0);
 
 export const convertCamelCaseToReadable = (str?: string): string => {
   if (!str) return "";
-  const spaced = str.replace(/([A-Z])/g, ' $1');
+  const spaced = str.replace(/([A-Z])/g, " $1");
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 };
 
 export const toPascalCase = (str?: string): string => {
-  if (!str) return '';
+  if (!str) return "";
   return str
     .toLowerCase()
-    .replace(/_/g, ' ')
-    .replace(/(\w)(\w*)/g, (_, firstChar, rest) => 
-      firstChar.toUpperCase() + rest.toLowerCase()
+    .replace(/_/g, " ")
+    .replace(
+      /(\w)(\w*)/g,
+      (_, firstChar, rest) => firstChar.toUpperCase() + rest.toLowerCase(),
     )
-    .replace(/\s+/g, ' ');
+    .replace(/\s+/g, " ");
 };
 
-export const collection = (collect: any) => 
+export const collection = (collect: any) =>
   Array.isArray(collect) ? collect : [];
 
 export const formatDate = (
-  dateString: any, 
-  formatStr = "MMMM dd, yyyy | hh:mm a"
+  dateString: any,
+  formatStr = "MMMM dd, yyyy | hh:mm a",
 ) => {
   try {
     const date = new Date(dateString);
@@ -171,28 +213,34 @@ export const formatDate = (
 };
 
 export const parseTransaction = (transaction: ITransactionDetail) => {
-  const wasSuccessful = String(transaction?.status).toLowerCase().includes('success');
+  const wasSuccessful = String(transaction?.status)
+    .toLowerCase()
+    .includes("success");
 
-  const service = transaction?.serviceId 
-    ? `(${String(transaction?.serviceId).toUpperCase()})` 
-    : '';
+  const service = transaction?.serviceId
+    ? `(${String(transaction?.serviceId).toUpperCase()})`
+    : "";
   const amount = Number(transaction?.amount || 0);
-  
+
   const {
-    bracValue, 
-    rate, 
-    commissionVal, 
-    paymentGatewayFees, 
-    allocatable: rebate
+    bracValue,
+    rate,
+    commissionVal,
+    paymentGatewayFees,
+    allocatable: rebate,
   } = getEarnedBracs({
     amount,
-    serviceType: transaction?.transactionType?.toLowerCase() as any || 'brane',
-    serviceId: transaction?.serviceId
+    serviceType:
+      (transaction?.transactionType?.toLowerCase() as any) || "brane",
+    serviceId: transaction?.serviceId,
   });
 
   if (transaction) {
     transaction.timestamp = new Date(String(transaction?.createdAt)).getTime();
-    transaction.date = formatDate(String(transaction?.createdAt), "MMMM dd, yyyy");
+    transaction.date = formatDate(
+      String(transaction?.createdAt),
+      "MMMM dd, yyyy",
+    );
     transaction.time = formatDate(String(transaction?.createdAt), "hh:mm:ss a");
     transaction.points = wasSuccessful ? bracValue : 0;
     transaction.paymentGatewayFees = wasSuccessful ? paymentGatewayFees : 0;
@@ -200,7 +248,7 @@ export const parseTransaction = (transaction: ITransactionDetail) => {
     transaction.rebate = wasSuccessful ? Number(rebate) : 0;
     transaction.rate = wasSuccessful ? Number(rate) : 0;
 
-    if (String(transaction?.transactionType).toLowerCase().includes('stock')) {
+    if (String(transaction?.transactionType).toLowerCase().includes("stock")) {
       transaction.amount = Number(transaction.rebateAmount);
     }
   }
@@ -218,14 +266,19 @@ export const formatTimestampToHumanReadable = (timestamp: number) => {
   const currentDayOfWeek = currentDate.getDay();
 
   const daysOfWeek = [
-    "Sunday", "Monday", "Tuesday", "Wednesday", 
-    "Thursday", "Friday", "Saturday"
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
   ];
 
   const today = new Date(
-    currentDate.getFullYear(), 
-    currentDate.getMonth(), 
-    currentDate.getDate()
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate(),
   );
 
   const yesterday = new Date(today);
@@ -261,16 +314,18 @@ export function calculatePercentageChange(oldValue: number, newValue: number) {
 }
 
 export const parseTicker = (oldValue: number, newValue: number) => {
-  if (oldValue === 0 || !oldValue) return '';
+  if (oldValue === 0 || !oldValue) return "";
   const change = newValue - oldValue;
-  if (change > 0) return 'up';
-  if (change < 0) return 'down';
-  return '';
+  if (change > 0) return "up";
+  if (change < 0) return "down";
+  return "";
 };
 
 function getSuffix(day: number): string {
   const suffixes = new Map([
-    [1, "st"], [2, "nd"], [3, "rd"]
+    [1, "st"],
+    [2, "nd"],
+    [3, "rd"],
   ]);
 
   if (day % 10 >= 4 || day === 11 || day === 12 || day === 13) {
@@ -300,12 +355,12 @@ export function formatNumberToDecimal(value: number): string {
 }
 
 export function formatPercentageToDecimal(value: number): string {
-  return value?.toFixed(2) + '%';
+  return value?.toFixed(2) + "%";
 }
 
 export function calculateBracsPercentage(part: number, total: number): number {
   if (total === 0) return 0;
-  const percentage = (part / total);
+  const percentage = part / total;
   return parseFloat(percentage.toFixed(3));
 }
 
@@ -320,30 +375,30 @@ export function getFirstWord(text: string): string {
   return noHyphens.split(" ")[0];
 }
 
-const toSnakeCase = (value: string) => 
+const toSnakeCase = (value: string) =>
   value.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 
-export const toCamelCase = (s: string) => 
-  s.replace(/([-_][a-z])/gi, ($1) => 
-    $1.toUpperCase().replace('_', '').replace(' ', '')
+export const toCamelCase = (s: string) =>
+  s.replace(/([-_][a-z])/gi, ($1) =>
+    $1.toUpperCase().replace("_", "").replace(" ", ""),
   );
 
 const isArray = (value: unknown) => Array.isArray(value);
 
-const isObject = (value: unknown) => 
-  value === Object(value) && !isArray(value) && typeof value !== 'function';
+const isObject = (value: unknown) =>
+  value === Object(value) && !isArray(value) && typeof value !== "function";
 
-export type caseType = 'snakeCase' | 'camelCase';
+export type caseType = "snakeCase" | "camelCase";
 
 export const convertKeysCase = (o: unknown, type?: caseType): object => {
   if (isObject(o)) {
     let value = {};
     Object.keys(o as object).forEach((k) => {
       const val = o as { [key: string]: string | object | number | [] };
-      value = { 
-        ...value, 
-        [type === 'snakeCase' ? toSnakeCase(k) : toCamelCase(k)]: 
-          convertKeysCase(val[k], type) 
+      value = {
+        ...value,
+        [type === "snakeCase" ? toSnakeCase(k) : toCamelCase(k)]:
+          convertKeysCase(val[k], type),
       };
     });
     return value;
@@ -356,11 +411,11 @@ export const convertKeysCase = (o: unknown, type?: caseType): object => {
 };
 
 export const objectToFormData = (
-  obj: Record<string, any>, 
-  formData: FormData = new FormData(), 
-  parentKey?: string
+  obj: Record<string, any>,
+  formData: FormData = new FormData(),
+  parentKey?: string,
 ): FormData => {
-  if (obj && typeof obj === 'object' && !(obj instanceof File)) {
+  if (obj && typeof obj === "object" && !(obj instanceof File)) {
     Object.keys(obj).forEach((key) => {
       const value = obj[key];
       const fullKey = parentKey ? `${parentKey}[${key}]` : key;
@@ -371,16 +426,16 @@ export const objectToFormData = (
         formData.append(fullKey, value.toISOString());
       } else if (Array.isArray(value)) {
         value.forEach((item, index) => {
-          if (typeof item === 'object' && item !== null) {
+          if (typeof item === "object" && item !== null) {
             objectToFormData(item, formData, `${fullKey}[${index}]`);
           } else {
-            formData.append(`${fullKey}[${index}]`, item?.toString() || '');
+            formData.append(`${fullKey}[${index}]`, item?.toString() || "");
           }
         });
-      } else if (typeof value === 'object' && value !== null) {
+      } else if (typeof value === "object" && value !== null) {
         objectToFormData(value, formData, fullKey);
       } else {
-        formData.append(fullKey, value?.toString() || '');
+        formData.append(fullKey, value?.toString() || "");
       }
     });
   }
@@ -411,7 +466,7 @@ export const calculateRemainingDays = (maturityDate: string) => {
 
 // utils/getInitials.ts
 export const getInitials = (name: string, maxChars = 2): string => {
-  if (!name) return '';
+  if (!name) return "";
 
   const words = name.trim().split(/\s+/);
 
@@ -422,7 +477,7 @@ export const getInitials = (name: string, maxChars = 2): string => {
   return words
     .slice(0, maxChars)
     .map((word) => word[0])
-    .join('')
+    .join("")
     .toUpperCase();
 };
 

@@ -4,14 +4,14 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ArrowDown2 } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  FlatList,
-  ListRenderItem,
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    FlatList,
+    ListRenderItem,
+    Modal,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 // Type definitions
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "#013D254D",
     justifyContent: "center",
     alignItems: "center",
   },

@@ -6,10 +6,9 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
-import { showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { Add, Bank, Trash, TickCircle } from "iconsax-react-native";
+import { Add, Bank, TickCircle, Trash } from "iconsax-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -239,10 +238,7 @@ export default function BankAccountScreen() {
             {/* Trash Icon */}
             <View style={{ alignItems: "center", marginBottom: 16 }}>
               <View
-                style={[
-                  styles.iconCircle,
-                  { backgroundColor: C.error + "15" },
-                ]}
+                style={[styles.iconCircle, { backgroundColor: C.error + "15" }]}
               >
                 <Trash size={28} color={C.error} />
               </View>
@@ -283,10 +279,7 @@ export default function BankAccountScreen() {
                 </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[
-                  styles.modalBtn,
-                  { backgroundColor: C.error },
-                ]}
+                style={[styles.modalBtn, { backgroundColor: C.error }]}
                 activeOpacity={0.7}
                 onPress={handleDelete}
                 disabled={isDeleting}
@@ -296,7 +289,7 @@ export default function BankAccountScreen() {
                 ) : (
                   <ThemedText
                     type='defaultSemiBold'
-                    style={{ fontSize: 14, color: '#FFFFFF' }}
+                    style={{ fontSize: 14, color: "#FFFFFF" }}
                   >
                     Remove
                   </ThemedText>
@@ -413,7 +406,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "#013D254D",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 24,

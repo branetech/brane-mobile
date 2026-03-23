@@ -68,3 +68,28 @@ export const Fonts = Platform.select({
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });
+
+/**
+ * Global type definitions for theme
+ */
+export type Scheme = "light" | "dark";
+
+/**
+ * Modal overlay color - branded green with 30% opacity
+ * Used consistently across all modal backdrops in the app
+ */
+export const MODAL_OVERLAY_COLOR = "#013D254D";
+
+/**
+ * Chat message types
+ */
+export type ChatMessage = {
+  id: string;
+  text: string;
+  sender: "support" | "user";
+};
+
+/**
+ * FAQ entry
+ */
+export type FAQ = { q: string; a: string };

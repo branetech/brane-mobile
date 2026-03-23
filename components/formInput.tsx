@@ -4,15 +4,15 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { FormikHandlers, FormikState } from "formik";
 import React, { forwardRef } from "react";
 import {
-    StyleProp,
-    StyleSheet,
-    Text,
-    TextInput,
-    TextInputProps,
-    TextStyle,
-    TouchableOpacity,
-    View,
-    ViewStyle,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputProps,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from "react-native";
 
 /* ===================== TYPES ===================== */
@@ -53,7 +53,11 @@ const FormikError = ({
   errorColor?: string;
 }) => {
   if (!message) return null;
-  return <Text style={[styles.errorText, { color: errorColor }, style]}>{message}</Text>;
+  return (
+    <Text style={[styles.errorText, { color: errorColor }, style]}>
+      {message}
+    </Text>
+  );
 };
 
 export const FormInput = forwardRef<TextInput, FormInputProp>(
@@ -87,7 +91,6 @@ export const FormInput = forwardRef<TextInput, FormInputProp>(
     const theme = colorScheme === "dark" ? Colors.dark : Colors.light;
 
     const inputBg = theme.inputBackground;
-    const borderColor = theme.border;
     const muted = theme.muted;
 
     return (
@@ -111,7 +114,7 @@ export const FormInput = forwardRef<TextInput, FormInputProp>(
             styles.inputContainer,
             {
               backgroundColor: inputBg,
-              borderColor: error ? theme.error : borderColor,
+              borderColor: error ? theme.error : inputBg,
             },
             inputContainerStyle,
           ]}
@@ -160,7 +163,11 @@ export const FormInput = forwardRef<TextInput, FormInputProp>(
         </View>
 
         {/* Error */}
-        <FormikError message={error} style={errorTextStyle} errorColor={theme.error} />
+        <FormikError
+          message={error}
+          style={errorTextStyle}
+          errorColor={theme.error}
+        />
       </View>
     );
   },
@@ -197,19 +204,20 @@ const styles = StyleSheet.create({
   inputContainer: {
     position: "relative",
     justifyContent: "center",
-    borderWidth: 1,
-    borderRadius: 8,
+    borderWidth: 0,
+    borderRadius: 12,
     height: 48,
+    paddingHorizontal: 12,
   },
 
   textInput: {
-    height: 48,
+    height: "100%",
     paddingHorizontal: 12,
     fontSize: 14,
   },
 
   textInputWithLeftContent: {
-    paddingLeft: 40,
+    paddingLeft: 24,
   },
 
   textInputWithRightContent: {
@@ -219,14 +227,14 @@ const styles = StyleSheet.create({
   leftContent: {
     position: "absolute",
     left: 10,
-    top: 12,
+    top: 16,
     zIndex: 1,
   },
 
   rightContent: {
     position: "absolute",
     right: 10,
-    top: 12,
+    top: 24,
     zIndex: 1,
   },
 

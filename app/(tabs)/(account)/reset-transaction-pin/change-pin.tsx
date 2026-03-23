@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   headerTitle: { flex: 1, textAlign: "center", fontSize: 16, fontWeight: "500" },
   stepWrap: { flex: 1 },
   body: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16 },
-  prompt: { fontSize: 13, marginBottom: 20 },
+  prompt: { fontSize: 13, marginBottom: 10 },
   error: { fontSize: 12, fontWeight: "500", marginTop: 12 },
   successBody: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
   successIcon: {
