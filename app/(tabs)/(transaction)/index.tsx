@@ -1,3 +1,4 @@
+import { BraneButton } from "@/components/brane-button";
 import { MyCalendar } from "@/components/calandar";
 import { EmptyState } from "@/components/empty-state";
 import { FormInput } from "@/components/formInput";
@@ -11,7 +12,7 @@ import { toArray } from "@/utils/helpers";
 import { ITransactionDetail } from "@/utils/index";
 import { useRouter } from "expo-router";
 import { CloseCircle, SearchNormal1, Setting4 } from "iconsax-react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useRef, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -23,8 +24,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { format, parseISO, isValid } from "date-fns";
-
-type TxStatus = "" | "pending" | "success" | "failed";
 
 type FilterOption = {
   label: string;
@@ -47,6 +46,15 @@ const TYPE_OPTIONS: FilterOption[] = [
   { label: "Dividend Withdrawals", value: "Stock Dividend" },
 ];
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Formats a given date string into a human-readable format.
+ * If the date string is invalid, it will be returned as is.
+ * If the date string is valid, it will be formatted into "MMM dd, yyyy" format.
+ * @param {string} dateStr - The date string to be formatted.
+ * @returns {string} - The formatted date string.
+ */
+/*******  3b5eaf8f-ab4c-4a9f-9dff-017373693652  *******/
 const formatDisplayDate = (dateStr: string) => {
   if (!dateStr) return "";
   try {
@@ -57,6 +65,9 @@ const formatDisplayDate = (dateStr: string) => {
   }
 };
 
+const toggleItem = (arr: string[], value: string): string[] =>
+  arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
+
 export default function TransactionScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
@@ -66,16 +77,26 @@ export default function TransactionScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Single source of truth for all filters — mirrors web's `params` pattern
+  // Applied filters — what the API actually uses
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<TxStatus>("");
-  const [typeFilter, setTypeFilter] = useState("");
+  const [statusFilters, setStatusFilters] = useState<string[]>([]);
+  const [typeFilters, setTypeFilters] = useState<string[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  // Temp filters — staged in the modal until OK is pressed
+  const [tempStatus, setTempStatus] = useState<string[]>([]);
+  const [tempType, setTempType] = useState<string[]>([]);
+  const [tempStartDate, setTempStartDate] = useState("");
+  const [tempEndDate, setTempEndDate] = useState("");
 
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateTarget, setDateTarget] = useState<"start" | "end">("start");
+
+  // Track whether the filter modal is in a date-picker round-trip so we
+  // don't re-sync temp state when it re-opens after date selection.
+  const isDatePickerRoundTrip = useRef(false);
 
   const fetchTransactions = useCallback(
     async (refresh = false) => {
@@ -86,8 +107,8 @@ export default function TransactionScreen() {
         const params = new URLSearchParams();
         params.append("perPage", "50");
         if (search.trim()) params.append("search", search.trim());
-        if (statusFilter) params.append("status", statusFilter);
-        if (typeFilter) params.append("type", typeFilter);
+        statusFilters.forEach((s) => params.append("status", s));
+        typeFilters.forEach((t) => params.append("type", t));
         if (startDate) params.append("startDate", startDate);
         if (endDate) params.append("endDate", endDate);
 
@@ -103,81 +124,109 @@ export default function TransactionScreen() {
         setIsRefreshing(false);
       }
     },
-    [endDate, search, startDate, statusFilter, typeFilter],
+    [endDate, search, startDate, statusFilters, typeFilters],
   );
 
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  // Active filter pills — mirrors web's `filters` useMemo
+  // Open the filter modal — seed temp state from live filters only on a
+  // fresh open, not when returning from the date picker.
+  const openFilterModal = useCallback(() => {
+    if (!isDatePickerRoundTrip.current) {
+      setTempStatus(statusFilters);
+      setTempType(typeFilters);
+      setTempStartDate(startDate);
+      setTempEndDate(endDate);
+    }
+    isDatePickerRoundTrip.current = false;
+    setShowFilterModal(true);
+  }, [endDate, startDate, statusFilters, typeFilters]);
+
+  // Active filter pills
   const activeFilters = useMemo(() => {
     const filters: { key: string; label: string }[] = [];
-    if (statusFilter)
+    statusFilters.forEach((s) =>
       filters.push({
-        key: "status",
-        label:
-          STATUS_OPTIONS.find((i) => i.value === statusFilter)?.label ||
-          statusFilter,
-      });
-    if (typeFilter)
+        key: `status:${s}`,
+        label: STATUS_OPTIONS.find((i) => i.value === s)?.label || s,
+      })
+    );
+    typeFilters.forEach((t) =>
       filters.push({
-        key: "type",
-        label:
-          TYPE_OPTIONS.find((i) => i.value === typeFilter)?.label || typeFilter,
-      });
+        key: `type:${t}`,
+        label: TYPE_OPTIONS.find((i) => i.value === t)?.label || t,
+      })
+    );
     if (startDate)
       filters.push({ key: "startDate", label: formatDisplayDate(startDate) });
     if (endDate)
       filters.push({ key: "endDate", label: formatDisplayDate(endDate) });
     return filters;
-  }, [endDate, startDate, statusFilter, typeFilter]);
+  }, [endDate, startDate, statusFilters, typeFilters]);
 
-  // Mirrors web's removeParam
   const removeFilter = (key: string) => {
-    if (key === "status") setStatusFilter("");
-    if (key === "type") setTypeFilter("");
-    if (key === "startDate") setStartDate("");
-    if (key === "endDate") setEndDate("");
+    if (key.startsWith("status:")) {
+      const val = key.replace("status:", "");
+      setStatusFilters((prev) => prev.filter((v) => v !== val));
+    } else if (key.startsWith("type:")) {
+      const val = key.replace("type:", "");
+      setTypeFilters((prev) => prev.filter((v) => v !== val));
+    } else if (key === "startDate") {
+      setStartDate("");
+    } else if (key === "endDate") {
+      setEndDate("");
+    }
   };
 
-  // Mirrors web's clearFilters
   const clearAllFilters = () => {
-    setStatusFilter("");
-    setTypeFilter("");
+    setStatusFilters([]);
+    setTypeFilters([]);
     setStartDate("");
     setEndDate("");
   };
 
-  // Filters apply immediately on select — mirrors web's onChangeParams
-  const handleStatusChange = (value: TxStatus) => {
-    setStatusFilter((prev) => (prev === value ? "" : value));
+  // Apply temp → live and close modal
+  const applyFilters = () => {
+    setStatusFilters(tempStatus);
+    setTypeFilters(tempType);
+    setStartDate(tempStartDate);
+    setEndDate(tempEndDate);
+    setShowFilterModal(false);
   };
 
-  const handleTypeChange = (value: string) => {
-    setTypeFilter((prev) => (prev === value ? "" : value));
+  // Clear only temp state inside the modal
+  const resetTempFilters = () => {
+    setTempStatus([]);
+    setTempType([]);
+    setTempStartDate("");
+    setTempEndDate("");
   };
 
   const openDatePicker = (target: "start" | "end") => {
     setDateTarget(target);
+    // Mark this as a round-trip so openFilterModal doesn't re-seed temp state
+    isDatePickerRoundTrip.current = true;
     setShowFilterModal(false);
     setShowDatePicker(true);
   };
 
   const handleSelectDate = (date: string) => {
     if (dateTarget === "start") {
-      setStartDate(date);
-      if (endDate && new Date(date) > new Date(endDate)) {
-        setEndDate(date);
+      setTempStartDate(date);
+      if (tempEndDate && new Date(date) > new Date(tempEndDate)) {
+        setTempEndDate(date);
       }
     } else {
-      setEndDate(date);
-      if (startDate && new Date(date) < new Date(startDate)) {
-        setStartDate(date);
+      setTempEndDate(date);
+      if (tempStartDate && new Date(date) < new Date(tempStartDate)) {
+        setTempStartDate(date);
       }
     }
     setShowDatePicker(false);
-    setShowFilterModal(true);
+    // Re-open filter modal — flag is already set so temp state is preserved
+    openFilterModal();
   };
 
   return (
@@ -187,12 +236,12 @@ export default function TransactionScreen() {
         <ThemedText style={[styles.title, { color: C.text }]}>
           Transaction History
         </ThemedText>
-        <TouchableOpacity onPress={() => setShowFilterModal(true)}>
+        <TouchableOpacity onPress={openFilterModal}>
           <Setting4 size={20} color={C.text} variant="Outline" />
         </TouchableOpacity>
       </View>
 
-      {/* Search — hidden when no transactions, mirrors web */}
+      {/* Search */}
       {transactions.length > 0 && (
         <View style={[styles.searchRow, { backgroundColor: C.inputBg }]}>
           <FormInput
@@ -233,9 +282,7 @@ export default function TransactionScreen() {
             ))}
           </ScrollView>
           <TouchableOpacity onPress={clearAllFilters}>
-            <ThemedText
-              style={[styles.clearFiltersText, { color: C.primary }]}
-            >
+            <ThemedText style={[styles.clearFiltersText, { color: C.primary }]}>
               Clear all Filters
             </ThemedText>
           </TouchableOpacity>
@@ -284,7 +331,7 @@ export default function TransactionScreen() {
         </ScrollView>
       )}
 
-      {/* Filter Modal — filters apply immediately on select, no "Show Result" needed */}
+      {/* Filter Modal */}
       <Modal visible={showFilterModal} transparent animationType="slide">
         <TouchableOpacity
           style={styles.modalOverlay}
@@ -308,13 +355,13 @@ export default function TransactionScreen() {
               </ThemedText>
               <View style={styles.filterList}>
                 {STATUS_OPTIONS.map((status) => {
-                  const active = statusFilter === status.value;
+                  const active = tempStatus.includes(status.value);
                   return (
                     <TouchableOpacity
                       key={status.value}
                       style={styles.filterOptionRow}
                       onPress={() =>
-                        handleStatusChange(status.value as TxStatus)
+                        setTempStatus((prev) => toggleItem(prev, status.value))
                       }
                     >
                       <ThemedText
@@ -324,17 +371,15 @@ export default function TransactionScreen() {
                       </ThemedText>
                       <View
                         style={[
-                          styles.radioOuter,
-                          { borderColor: active ? C.primary : C.borderColor },
+                          styles.checkbox,
+                          {
+                            borderColor: active ? C.primary : C.borderColor,
+                            backgroundColor: active ? C.primary : "transparent",
+                          },
                         ]}
                       >
                         {active && (
-                          <View
-                            style={[
-                              styles.radioInner,
-                              { backgroundColor: C.primary },
-                            ]}
-                          />
+                          <ThemedText style={styles.checkmark}>✓</ThemedText>
                         )}
                       </View>
                     </TouchableOpacity>
@@ -344,21 +389,20 @@ export default function TransactionScreen() {
 
               {/* Type */}
               <ThemedText
-                style={[
-                  styles.filterHeading,
-                  { color: C.muted, marginTop: 12 },
-                ]}
+                style={[styles.filterHeading, { color: C.muted, marginTop: 12 }]}
               >
                 Type
               </ThemedText>
               <View style={styles.filterList}>
                 {TYPE_OPTIONS.map((type) => {
-                  const active = typeFilter === type.value;
+                  const active = tempType.includes(type.value);
                   return (
                     <TouchableOpacity
                       key={type.value}
                       style={styles.filterOptionRow}
-                      onPress={() => handleTypeChange(type.value)}
+                      onPress={() =>
+                        setTempType((prev) => toggleItem(prev, type.value))
+                      }
                     >
                       <ThemedText
                         style={[styles.filterOptionText, { color: C.text }]}
@@ -367,17 +411,15 @@ export default function TransactionScreen() {
                       </ThemedText>
                       <View
                         style={[
-                          styles.radioOuter,
-                          { borderColor: active ? C.primary : C.borderColor },
+                          styles.checkbox,
+                          {
+                            borderColor: active ? C.primary : C.borderColor,
+                            backgroundColor: active ? C.primary : "transparent",
+                          },
                         ]}
                       >
                         {active && (
-                          <View
-                            style={[
-                              styles.radioInner,
-                              { backgroundColor: C.primary },
-                            ]}
-                          />
+                          <ThemedText style={styles.checkmark}>✓</ThemedText>
                         )}
                       </View>
                     </TouchableOpacity>
@@ -388,10 +430,7 @@ export default function TransactionScreen() {
               {/* Date */}
               <View style={styles.dateSection}>
                 <ThemedText
-                  style={[
-                    styles.filterHeading,
-                    { color: C.muted, marginTop: 12 },
-                  ]}
+                  style={[styles.filterHeading, { color: C.muted, marginTop: 12 }]}
                 >
                   Date
                 </ThemedText>
@@ -409,14 +448,13 @@ export default function TransactionScreen() {
                       activeOpacity={0.8}
                     >
                       <ThemedText
-                        style={{ color: startDate ? C.text : C.muted, fontSize: 12 }}
+                        style={{ color: tempStartDate ? C.text : C.muted, fontSize: 12 }}
                       >
-                        {startDate ? formatDisplayDate(startDate) : "Select date"}
+                        {tempStartDate ? formatDisplayDate(tempStartDate) : "Select date"}
                       </ThemedText>
                     </TouchableOpacity>
                   </View>
 
-                  {/* Divider — mirrors web's <span> dash between date pickers */}
                   <View style={styles.dateDivider}>
                     <View
                       style={[
@@ -439,9 +477,9 @@ export default function TransactionScreen() {
                       activeOpacity={0.8}
                     >
                       <ThemedText
-                        style={{ color: endDate ? C.text : C.muted, fontSize: 12 }}
+                        style={{ color: tempEndDate ? C.text : C.muted, fontSize: 12 }}
                       >
-                        {endDate ? formatDisplayDate(endDate) : "Select date"}
+                        {tempEndDate ? formatDisplayDate(tempEndDate) : "Select date"}
                       </ThemedText>
                     </TouchableOpacity>
                   </View>
@@ -449,7 +487,27 @@ export default function TransactionScreen() {
               </View>
             </ScrollView>
 
+            {/* Actions */}
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={[styles.resetButton, { borderColor: C.primary }]}
+                onPress={resetTempFilters}
+              >
+                <ThemedText style={[styles.resetText, { color: C.primary }]}>
+                  Reset
+                </ThemedText>
+              </TouchableOpacity>
 
+              <BraneButton
+                text="OK"
+                onPress={applyFilters}
+                backgroundColor={C.primary}
+                textColor={C.googleBg}
+                height={44}
+                radius={10}
+                width="70%"
+              />
+            </View>
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
@@ -461,7 +519,7 @@ export default function TransactionScreen() {
           activeOpacity={1}
           onPress={() => {
             setShowDatePicker(false);
-            setShowFilterModal(true);
+            openFilterModal();
           }}
         >
           <TouchableOpacity
@@ -475,12 +533,12 @@ export default function TransactionScreen() {
             </ThemedText>
 
             <MyCalendar
-              selectedDate={dateTarget === "start" ? startDate : endDate}
+              selectedDate={dateTarget === "start" ? tempStartDate : tempEndDate}
               minDate={
-                dateTarget === "end" ? startDate || undefined : undefined
+                dateTarget === "end" ? tempStartDate || undefined : undefined
               }
               maxDate={
-                dateTarget === "start" ? endDate || undefined : undefined
+                dateTarget === "start" ? tempEndDate || undefined : undefined
               }
               onSelectDate={handleSelectDate}
             />
@@ -581,7 +639,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     paddingHorizontal: 16,
     paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 40,
     gap: 12,
   },
   modalHandle: {
@@ -616,18 +674,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
   },
-  radioOuter: {
-    width: 16,
-    height: 16,
-    borderRadius: 16,
-    borderWidth: 1,
+  checkbox: {
+    width: 18,
+    height: 18,
+    borderRadius: 4,
+    borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
   },
-  radioInner: {
-    width: 8,
-    height: 8,
-    borderRadius: 8,
+  checkmark: {
+    fontSize: 11,
+    color: "#fff",
+    fontWeight: "700",
+    lineHeight: 14,
   },
   dateSection: {
     gap: 8,
@@ -664,7 +723,25 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     opacity: 0.7,
   },
-
+  modalActions: {
+    marginTop: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  resetButton: {
+    height: 44,
+    borderWidth: 1.5,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  resetText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
   calendarCard: {
     maxHeight: "70%",
     borderTopLeftRadius: 16,
