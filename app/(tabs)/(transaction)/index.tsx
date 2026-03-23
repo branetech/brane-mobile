@@ -46,15 +46,6 @@ const TYPE_OPTIONS: FilterOption[] = [
   { label: "Dividend Withdrawals", value: "Stock Dividend" },
 ];
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Formats a given date string into a human-readable format.
- * If the date string is invalid, it will be returned as is.
- * If the date string is valid, it will be formatted into "MMM dd, yyyy" format.
- * @param {string} dateStr - The date string to be formatted.
- * @returns {string} - The formatted date string.
- */
-/*******  3b5eaf8f-ab4c-4a9f-9dff-017373693652  *******/
 const formatDisplayDate = (dateStr: string) => {
   if (!dateStr) return "";
   try {
