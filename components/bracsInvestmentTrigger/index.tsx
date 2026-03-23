@@ -1,3 +1,4 @@
+import Back from "@/components/back";
 import SallyFirstModalContent from "@/components/modals/SallyFirstModalContent";
 import SallySecondModalContent from "@/components/modals/SallySecondModalContent";
 import { ThemedText } from "@/components/themed-text";
@@ -6,7 +7,6 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import { useRouter } from "expo-router";
-import { Back } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -99,9 +99,9 @@ export default function BracsInvestmentComponent() {
       if (optionId === "sally") {
         setShowFirstModal(true);
       } else if (optionId === "managed") {
-        router.push("/bracs-investment-trigger/managed-portfolio");
+        router.push("/account/bracs-investment-trigger/managed-portfolio");
       } else if (optionId === "diy") {
-        router.push("/bracs-investment-trigger/bracs-allocation");
+        router.push("/account/bracs-investment-trigger/bracs-allocation");
       }
     },
     [router, selectedOption],

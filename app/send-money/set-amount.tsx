@@ -12,11 +12,10 @@ import {
 import { Colors } from "@/constants/colors";
 import { type Scheme } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import BaseRequest from "@/services";
+import BaseRequest, { catchError } from "@/services";
 import { AUTH_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
-import { addBeneficiary } from "@/services/send-money";
+import { addBeneficiary, sendMoney } from "@/services/send-money";
 import { useRequest } from "@/services/useRequest";
-import { formatMoney } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Copy } from "iconsax-react-native";
@@ -72,6 +71,7 @@ export default function SendMoneySetAmountScreen() {
   const [showPinValidator, setShowPinValidator] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedPaymentId, setSelectedPaymentId] = useState("brane_wallet");
+  const [isSending, setIsSending] = useState(false);
 
   // Fetch wallet balance using useRequest hook - auto-refetches on screen focus
   const { data: walletBalance = 0, isLoading: isLoadingBalance } = useRequest(
@@ -80,7 +80,7 @@ export default function SendMoneySetAmountScreen() {
       initialValue: 0,
       revalidateOnFocus: true,
       revalidateOnMount: true,
-    }
+    },
   );
 
   const paymentOptions: PaymentOption[] = [
@@ -140,13 +140,17 @@ export default function SendMoneySetAmountScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         {/* Recipient Card */}
-        <RNView style={[styles.recipientCard, { backgroundColor: '#F8FCFA' }]}>
+        <RNView style={[styles.recipientCard, { backgroundColor: "#F8FCFA" }]}>
           <ThemedText style={[styles.smallLabel, { color: C.text }]}>
             {bankName}
           </ThemedText>
           <RNView style={styles.recipientRow}>
             <RNView>
-              <ThemedText style={[styles.recipientName, { color: C.text, width: 220 }]} numberOfLines={1} ellipsizeMode="tail">
+              <ThemedText
+                style={[styles.recipientName, { color: C.text, width: 220 }]}
+                numberOfLines={1}
+                ellipsizeMode='tail'
+              >
                 {recipientName}
               </ThemedText>
               <ThemedText style={[styles.smallMeta, { color: C.muted }]}>
@@ -155,13 +159,10 @@ export default function SendMoneySetAmountScreen() {
             </RNView>
             {/* Link/copy icon button matching image */}
             <RNView
-              style={[
-                styles.checkIconWrap,
-                { backgroundColor: C.primary },
-              ]}
+              style={[styles.checkIconWrap, { backgroundColor: C.primary }]}
             >
               <ThemedText style={[styles.checkIcon, { color: "#FFFFFF" }]}>
-                <Copy size={20} color={C.inputBackground}/>
+                <Copy size={20} color={C.inputBackground} />
               </ThemedText>
             </RNView>
           </RNView>
@@ -174,7 +175,9 @@ export default function SendMoneySetAmountScreen() {
             { borderWidth: 1, borderColor: C.border },
           ]}
         >
-          <ThemedText style={[styles.fieldHeading, { color: C.text, marginBottom: 0 }]}>
+          <ThemedText
+            style={[styles.fieldHeading, { color: C.text, marginBottom: 0 }]}
+          >
             Add to beneficiaries
           </ThemedText>
           <Switch
@@ -186,54 +189,61 @@ export default function SendMoneySetAmountScreen() {
         </RNView>
 
         {/* Amount section */}
-        <ThemedText style={[styles.fieldHeading, { color: C.muted, marginTop: 16 }]}>
+        <ThemedText
+          style={[styles.fieldHeading, { color: C.muted, marginTop: 16 }]}
+        >
           Amount
         </ThemedText>
 
         {/* Preset amounts grid — no outer border, plain background */}
-       <RNView style={[{gap: 10, borderWidth: 1, borderColor: C.border, padding: 12 }]}>
-           <RNView style={[styles.presetGrid]}>
-          {PRESET_AMOUNTS.map((preset, index) => (
-            <TouchableOpacity
-              key={`${preset}-${index}`}
-              style={[
-                styles.presetBtn,
-                {
-                  backgroundColor: amount === preset ? C.inputBg : C.background,
-                  borderColor: amount === preset ? C.border : "#E5E5E5",
-                },
-              ]}
-              onPress={() => {
-                setAmount(preset);
+        <RNView
+          style={[
+            { gap: 10, borderWidth: 1, borderColor: C.border, padding: 12 },
+          ]}
+        >
+          <RNView style={[styles.presetGrid]}>
+            {PRESET_AMOUNTS.map((preset, index) => (
+              <TouchableOpacity
+                key={`${preset}-${index}`}
+                style={[
+                  styles.presetBtn,
+                  {
+                    backgroundColor:
+                      amount === preset ? C.inputBg : C.background,
+                    borderColor: amount === preset ? C.border : "#E5E5E5",
+                  },
+                ]}
+                onPress={() => {
+                  setAmount(preset);
+                  setAmountError(undefined);
+                }}
+              >
+                <ThemedText style={[styles.presetText, { color: C.text }]}>
+                  ₦ {preset}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
+          </RNView>
+          <RNView style={styles.customAmountWrap}>
+            <FormInput
+              placeholder='Enter custom amount'
+              keyboardType='number-pad'
+              value={amount}
+              onChangeText={(value) => {
+                setAmount(value.replace(/\D/g, ""));
                 setAmountError(undefined);
               }}
-            >
-              <ThemedText style={[styles.presetText, { color: C.text }]}>
-                ₦ {preset}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
+              error={amountError}
+              inputContainerStyle={[
+                styles.customInputContainer,
+                { borderColor: C.border, backgroundColor: "transparent" },
+              ]}
+              inputStyle={styles.inputText}
+            />
+          </RNView>
         </RNView>
-             <RNView style={styles.customAmountWrap}>
-          <FormInput
-            placeholder='Enter custom amount'
-            keyboardType='number-pad'
-            value={amount}
-            onChangeText={(value) => {
-              setAmount(value.replace(/\D/g, ""));
-              setAmountError(undefined);
-            }}
-            error={amountError}
-            inputContainerStyle={[
-              styles.customInputContainer,
-              { borderColor: C.border, backgroundColor: 'transparent' },
-            ]}
-            inputStyle={styles.inputText}
-          />
-        </RNView>
-       </RNView>
         {/* Custom amount input — full width, outside preset grid */}
-        
+
         {/* Remark section */}
         <ThemedText
           style={[styles.fieldHeading, { marginTop: 12, color: C.muted }]}
@@ -241,30 +251,30 @@ export default function SendMoneySetAmountScreen() {
           Remark
         </ThemedText>
         <View style={styles.remarkWrap}>
-  <FormInput
-    placeholder='Add a remark'
-    value={remark}
-    onChangeText={(value) => {
-      setRemark(value);
-      setRemarkError(undefined);
-    }}
-    multiline={true}
-    editable={true}
-    maxLength={150}
-    error={remarkError}
-    inputContainerStyle={[
-      styles.remarkInputContainer,
-      { borderColor: C.border, backgroundColor: C.inputBg },
-    ]}
-    inputStyle={[
-      styles.remarkInputText,
-      { color: C.text, textAlignVertical: "top" },
-    ]}
-  />
-  <ThemedText style={[styles.counter, { color: C.muted }]}>
-    {`${remark.length}/150`}
-  </ThemedText>
-</View>
+          <FormInput
+            placeholder='Add a remark'
+            value={remark}
+            onChangeText={(value) => {
+              setRemark(value);
+              setRemarkError(undefined);
+            }}
+            multiline={true}
+            editable={true}
+            maxLength={150}
+            error={remarkError}
+            inputContainerStyle={[
+              styles.remarkInputContainer,
+              { borderColor: C.border, backgroundColor: C.inputBg },
+            ]}
+            inputStyle={[
+              styles.remarkInputText,
+              { color: C.text, textAlignVertical: "top" },
+            ]}
+          />
+          <ThemedText style={[styles.counter, { color: C.muted }]}>
+            {`${remark.length}/150`}
+          </ThemedText>
+        </View>
       </ScrollView>
 
       {/* Footer CTA — rounded pill button */}
@@ -284,124 +294,137 @@ export default function SendMoneySetAmountScreen() {
       </View>
 
       {/* Confirm Sheet Modal */}
- <Modal
-  visible={showConfirmSheet}
-  transparent
-  animationType='slide'
-  onRequestClose={() => setShowConfirmSheet(false)}
->
-  <TouchableOpacity
-    style={[
-      styles.sheetOverlay,
-      {
-        backgroundColor: "#013D254D",
-      },
-    ]}
-    activeOpacity={1}
-    onPress={() => setShowConfirmSheet(false)}
-  >
-    <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
-      <RNView style={[styles.sheetCard, { backgroundColor: C.background }]}>
-        <RNView style={[styles.grabber, { backgroundColor: C.border }]} />
-        <ThemedText style={[styles.sheetTitle, { color: C.text }]}>
-          Confirm Recipient
-        </ThemedText>
-
-        <RNView style={[styles.noticeBox, { backgroundColor: C.googleBg }]}>
-          <ThemedText style={[styles.noticeText, { color: C.primary }]}>
-            Please review and confirm the receiptient information as succesful
-            transfer can not be refunded
-          </ThemedText>
-        </RNView>
-
-        <RNView style={styles.sheetRows}>
-          {[
-            { label: "Recipient name:", value: recipientName, bordered: true },
-            { label: "Account Name:", value: accountNumber },
-            { label: "Bank:", value: bankName },
+      <Modal
+        visible={showConfirmSheet}
+        transparent
+        animationType='slide'
+        onRequestClose={() => setShowConfirmSheet(false)}
+      >
+        <TouchableOpacity
+          style={[
+            styles.sheetOverlay,
             {
-              label: "Amount:",
-              value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
+              backgroundColor: "#013D254D",
             },
-          ].map((row, i, arr) => (
+          ]}
+          activeOpacity={1}
+          onPress={() => setShowConfirmSheet(false)}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+          >
             <RNView
-              key={row.label}
-              style={[
-                styles.sheetRow,
-                i < arr.length - 1 && {
-                  borderBottomWidth: StyleSheet.hairlineWidth,
-                  borderBottomColor: C.border,
-                },
-              ]}
+              style={[styles.sheetCard, { backgroundColor: C.background }]}
             >
-              <ThemedText style={[styles.sheetLabel, { color: C.muted}]}>
-                {row.label}
+              <RNView style={[styles.grabber, { backgroundColor: C.border }]} />
+              <ThemedText style={[styles.sheetTitle, { color: C.text }]}>
+                Confirm Recipient
               </ThemedText>
-              <ThemedText
-  style={[
-    styles.sheetValue,
-    { color: C.text },
-    row.bordered ? { width: 120 } : { flexShrink: 1 },
-  ]}
-  numberOfLines={1}
-  ellipsizeMode="tail"
->
-  {row.value}
-</ThemedText>
-            </RNView>
-          ))}
-        </RNView>
 
-        <RNView style={styles.sheetButtons}>
-          <BraneButton
-            text='Not This Account'
-            onPress={() => setShowConfirmSheet(false)}
-            backgroundColor={C.googleBg}
-            textColor={C.primary}
-            height={48}
-            radius={24}
-            style={styles.halfBtn}
-            fontSize={14}
-          />
-          <BraneButton
-            text='Confirm'
-            onPress={() => {
-              setShowConfirmSheet(false);
-              setShowSummarySheet(true);
-            }}
-            backgroundColor={C.primary}
-            textColor={C.googleBg}
-            height={48}
-            radius={24}
-            style={styles.halfBtn}
-            fontSize={14}
-          />
-        </RNView>
-      </RNView>
-    </TouchableOpacity>
-  </TouchableOpacity>
-</Modal>
+              <RNView
+                style={[styles.noticeBox, { backgroundColor: C.googleBg }]}
+              >
+                <ThemedText style={[styles.noticeText, { color: C.primary }]}>
+                  Please review and confirm the receiptient information as
+                  succesful transfer can not be refunded
+                </ThemedText>
+              </RNView>
+
+              <RNView style={styles.sheetRows}>
+                {[
+                  {
+                    label: "Recipient name:",
+                    value: recipientName,
+                    bordered: true,
+                  },
+                  { label: "Account Name:", value: accountNumber },
+                  { label: "Bank:", value: bankName },
+                  {
+                    label: "Amount:",
+                    value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
+                  },
+                ].map((row, i, arr) => (
+                  <RNView
+                    key={row.label}
+                    style={[
+                      styles.sheetRow,
+                      i < arr.length - 1 && {
+                        borderBottomWidth: StyleSheet.hairlineWidth,
+                        borderBottomColor: C.border,
+                      },
+                    ]}
+                  >
+                    <ThemedText style={[styles.sheetLabel, { color: C.muted }]}>
+                      {row.label}
+                    </ThemedText>
+                    <ThemedText
+                      style={[
+                        styles.sheetValue,
+                        { color: C.text },
+                        row.bordered ? { width: 120 } : { flexShrink: 1 },
+                      ]}
+                      numberOfLines={1}
+                      ellipsizeMode='tail'
+                    >
+                      {row.value}
+                    </ThemedText>
+                  </RNView>
+                ))}
+              </RNView>
+
+              <RNView style={styles.sheetButtons}>
+                <BraneButton
+                  text='Not This Account'
+                  onPress={() => setShowConfirmSheet(false)}
+                  backgroundColor={C.googleBg}
+                  textColor={C.primary}
+                  height={48}
+                  radius={24}
+                  style={styles.halfBtn}
+                  fontSize={14}
+                />
+                <BraneButton
+                  text='Confirm'
+                  onPress={() => {
+                    setShowConfirmSheet(false);
+                    setShowSummarySheet(true);
+                  }}
+                  backgroundColor={C.primary}
+                  textColor={C.googleBg}
+                  height={48}
+                  radius={24}
+                  style={styles.halfBtn}
+                  fontSize={14}
+                />
+              </RNView>
+            </RNView>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
 
       {/* Summary Sheet Modal - using reusable TransactionSummaryModal */}
       <TransactionSummaryModal
         visible={showSummarySheet}
         onClose={() => setShowSummarySheet(false)}
         amount={Number(amount || 0)}
-        rows={[
-          { label: "Recipient", value: recipientName },
-          { label: "Bank", value: bankName },
-          { label: "Account Number", value: accountNumber },
-          {
-            label: "Amount",
-            value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
-          },
-          { label: "Service Fee", value: "₦ 0.00" },
-          {
-            label: "Total Debit",
-            value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
-            bold: true,
-          },
-        ] as TransactionRow[]}
+        rows={
+          [
+            { label: "Recipient", value: recipientName },
+            { label: "Bank", value: bankName },
+            { label: "Account Number", value: accountNumber },
+            {
+              label: "Amount",
+              value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
+            },
+            { label: "Service Fee", value: "₦ 0.00" },
+            {
+              label: "Total Debit",
+              value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
+              bold: true,
+            },
+          ] as TransactionRow[]
+        }
         // iconEmoji="💳"
         paymentOptions={paymentOptions}
         selectedPaymentId={selectedPaymentId}
@@ -409,7 +432,7 @@ export default function SendMoneySetAmountScreen() {
         walletBalance={walletBalance}
         isLoadingBalance={isLoadingBalance}
         onFundWallet={handleFundWallet}
-        ctaLabel="Pay Now"
+        ctaLabel='Pay Now'
         onConfirm={() => {
           setShowSummarySheet(false);
           setShowPinValidator(true);
@@ -433,8 +456,23 @@ export default function SendMoneySetAmountScreen() {
         }}
         onTransactionPinValidated={async () => {
           setShowPinValidator(false);
-          await handleSaveBeneficiary();
-          setShowSuccessModal(true);
+          setIsSending(true);
+          try {
+            await sendMoney({
+              recipientName,
+              accountNumber,
+              bankCode,
+              amount: Number(amount),
+              remark,
+              paymentMethod: selectedPaymentId,
+            });
+            await handleSaveBeneficiary();
+            setShowSuccessModal(true);
+          } catch (error) {
+            catchError(error);
+          } finally {
+            setIsSending(false);
+          }
         }}
       />
 
@@ -507,7 +545,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 8,
     marginBottom: 10,
-  
   },
   presetBtn: {
     borderWidth: 1,
@@ -523,7 +560,6 @@ const styles = StyleSheet.create({
   customAmountWrap: {
     marginBottom: 16,
     width: "100%",
-    
   },
   customInputContainer: {
     height: 48,
@@ -585,7 +621,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 16,
   },
-  sheetRows: { overflow: "hidden", backgroundColor: '#F8FCFA', borderRadius: 12, padding: 16 },
+  sheetRows: {
+    overflow: "hidden",
+    backgroundColor: "#F8FCFA",
+    borderRadius: 12,
+    padding: 16,
+  },
   sheetRow: {
     flexDirection: "row",
     alignItems: "center",

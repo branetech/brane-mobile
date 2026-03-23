@@ -1,17 +1,16 @@
-import React, { useState, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Slider,
-  ActivityIndicator,
-} from "react-native";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
-import { ArrowLeft, CloseCircle, InfoCircle } from "iconsax-react-native";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
-import { useDispatch } from "react-redux";
+import { ArrowLeft, CloseCircle, InfoCircle } from "iconsax-react-native";
+import React, { useCallback, useState } from "react";
+import {
+  ActivityIndicator,
+  Slider,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface SallySecondModalContentProps {
   onClose: () => void;
@@ -119,7 +118,7 @@ export default function SallySecondModalContent({
         disabled={isSaving}
       >
         {isSaving ? (
-          <ActivityIndicator color='#fff' />
+          <ActivityIndicator color='#fff' size='small' />
         ) : (
           <ThemedText style={styles.buttonText}>Save and Activate</ThemedText>
         )}

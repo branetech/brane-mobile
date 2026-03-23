@@ -91,7 +91,7 @@ export default function BracsBreakdownScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color={C.primary} />
+          <ActivityIndicator color={C.primary} size='small' />
         </View>
       ) : (
         <ScrollView
