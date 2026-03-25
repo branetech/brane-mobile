@@ -79,6 +79,12 @@ export const getBettingImageKey = (value: string) => {
   return "";
 };
 
+export const getTransportImageKey = (value: string) => {
+  const key = normalizeKey(value);
+  if (key.includes("gigm")) return "gigm";
+  return "";
+};
+
 export const getElectricityServiceId = (value: string) => {
   const raw = String(value || "").toLowerCase();
   const key = normalizeKey(value);

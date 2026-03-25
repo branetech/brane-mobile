@@ -26,14 +26,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { getElectricityImageKey } from "./helpers";
+import { getBettingImageKey, getElectricityImageKey, getTransportImageKey } from "./helpers";
 import {
+  BETTING_IMAGES,
   BOOST_PRESETS,
   ELECTRICITY_IMAGES,
   NETWORK_IMAGES,
+  TRANSPORT_IMAGES,
   type CablePlan,
   type DataPlan,
   type SelectOption,
+  type TransportRoute,
 } from "./types";
 
 // ─── ContactPickerModal ────────────────────────────────────────────────────────
@@ -309,6 +312,7 @@ type SummaryModalProps = {
   onFundWallet?: () => void;
   showPaymentMethod?: boolean;
   onConfirm: () => void;
+  extraRows?: TransactionRow[];
 };
 
 function formatMoney(value: number) {
@@ -345,6 +349,7 @@ export function SummaryModal({
   onFundWallet,
   showPaymentMethod = true,
   onConfirm,
+  extraRows = [],
 }: SummaryModalProps) {
   const boostValue = Number(boostAmount || 0);
   const appliedBoost = isAirtime ? boostValue : 0;
@@ -352,6 +357,7 @@ export function SummaryModal({
   const rows: TransactionRow[] = [
     { label: "Provider", value: networkLabel },
     { label: "Sending to", value: phone },
+    ...extraRows,
     {
       label: "Transaction Amount",
       value: `₦ ${formatMoney(amountToPay)}`,
