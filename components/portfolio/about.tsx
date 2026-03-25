@@ -1,53 +1,16 @@
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { STOCKS_SERVICE } from "@/services/routes";
-import { useRequest } from "@/services/useRequest";
 import { StockInterface } from "@/utils/constants";
-import {
-    collection,
-    formatTimestampToHumanReadable,
-    priceFormatter,
-} from "@/utils/helpers";
-import React, { useMemo } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
-import Svg, { Path, Polyline } from "react-native-svg";
+import { priceFormatter } from "@/utils/helpers";
+import React from "react";
+import { Image, StyleSheet, View } from "react-native";
 
-// ── Sparkline chart ───────────────────────────────────────────────────────────
-const CHART_H = 120;
-const CHART_W = Dimensions.get("window").width - 32;
-
-function Sparkline({ values, color }: { values: number[]; color: string }) {
-  if (values.length < 2) return null;
-
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1;
-  const step = CHART_W / (values.length - 1);
-
-  const pts = values
-    .map((v, i) => {
-      const x = i * step;
-      const y = CHART_H - ((v - min) / range) * (CHART_H - 16) - 4;
-      return `${x},${y}`;
-    })
-    .join(" ");
-
-  // filled area path
-  const first = `0,${CHART_H}`;
-  const last = `${CHART_W},${CHART_H}`;
-  const areaPath = `M ${first} L ${pts
-    .split(" ")
-    .map((p) => `L ${p}`)
-    .join(" ")} L ${last} Z`;
-
-  return (
-    <Svg width={CHART_W} height={CHART_H}>
-      <Path d={areaPath} fill={color + "20"} />
-      <Polyline points={pts} fill='none' stroke={color} strokeWidth={2} />
-    </Svg>
-  );
-}
+const getTextImage = (text: string, C: any) => {
+  const bg = String(C.inputBg || "F7F7F8").replace("#", "");
+  const fg = String(C.primary || "013D25").replace("#", "");
+  return `https://dummyimage.com/80x80/${bg}/${fg}&text=${encodeURIComponent(text || "ST")}`;
+};
 
 // ── Stat row ─────────────────────────────────────────────────────────────────
 function StatRow({
@@ -70,15 +33,6 @@ function StatRow({
     </View>
   );
 }
-
-// ── Asset class badge ─────────────────────────────────────────────────────────
-const BADGE_COLORS: Record<string, { bg: string; text: string }> = {
-  stocks: { bg: "#E6FFF5", text: "#013D25" },
-  etfs: { bg: "#EDE9FE", text: "#5B21B6" },
-  gold: { bg: "#FFF9E0", text: "#92400E" },
-  indexes: { bg: "#EFF6FF", text: "#1D4ED8" },
-  "fixed-income": { bg: "#FEE2E2", text: "#B91C1C" },
-};
 
 // ── StockView ─────────────────────────────────────────────────────────────────
 function StockView({ s, C }: { s: StockInterface; C: any }) {
@@ -274,83 +228,71 @@ const About = ({ stock }: { stock: StockInterface }) => {
   const isGold = type === "gold";
   const isIndex = type === "indexes";
   const isFixedIncome = type === "fixed-income";
-  const showChart = !isFixedIncome && !isEtf;
 
-  const { data: historyData } = useRequest(
-    STOCKS_SERVICE.HISTORY(tickerSymbol || ""),
-    { revalidateOnFocus: false },
-  );
-
-  const values = useMemo(() => {
-    const trends = collection(historyData);
-    return trends
-      .map(([_, v]: any) => Number(v))
-      .filter((n: number) => !isNaN(n));
-  }, [historyData]);
-
-  const { currentPrice, ticker, percentage, timeOfCurrentPrice } = stock || {};
+  const { currentPrice, ticker, percentage } = stock || {};
 
   const price = priceFormatter((currentPrice || 0) as number, 2);
   const pct = Number(percentage ?? 0);
-  const isPositive = pct >= 0;
-
-  const chartColor = useMemo(() => {
-    if (type === "gold") return "#D97706";
-    if (type === "indexes") return "#1D4ED8";
-    if (type === "etfs") return "#5B21B6";
-    return isPositive ? C.primary : "#D50000";
-  }, [type, isPositive, C.primary]);
-
-  const badge = BADGE_COLORS[type] || BADGE_COLORS["stocks"];
-  const timeLabel = timeOfCurrentPrice
-    ? formatTimestampToHumanReadable(timeOfCurrentPrice as any)
-    : null;
+  const changeNum = Number(ticker);
+  const hasNumericChange = !Number.isNaN(changeNum);
+  const fallbackChange = (Number(currentPrice || 0) * Math.abs(pct)) / 100 || 0;
+  const changeValue = hasNumericChange ? Math.abs(changeNum) : fallbackChange;
 
   const tickerNum = Number(ticker);
   const tickerIsDown = tickerNum < 0 || String(ticker) === "down";
+  const rawLogo = (stock as any)?.logo || (stock as any)?.image || "";
+  const logoUri =
+    rawLogo && !String(rawLogo).startsWith("/stock")
+      ? String(rawLogo)
+      : getTextImage(String(tickerSymbol || stock?.tickerSymbol || "ST"), C);
 
   return (
     <View style={styles.wrapper}>
       {/* ── Price & meta row ── */}
-      <View style={styles.metaRow}>
-        <View style={styles.priceBlock}>
+      <View style={styles.priceBlock}>
+        <Image
+          source={{ uri: logoUri }}
+          style={[styles.logo, { backgroundColor: C.inputBg }]}
+        />
+        <View style={styles.priceLeft}>
           <ThemedText style={[styles.priceText, { color: C.text }]}>
             {price}
           </ThemedText>
-          <ThemedText
-            style={[
-              styles.pctText,
-              { color: tickerIsDown ? "#D50000" : C.primary },
-            ]}
-          >
-            {isPositive ? "+" : ""}
-            {pct.toFixed(2)}%
-          </ThemedText>
-        </View>
-
-        <View style={styles.rightMeta}>
-          {!!type && (
-            <View style={[styles.badge, { backgroundColor: badge.bg }]}>
-              <ThemedText style={[styles.badgeText, { color: badge.text }]}>
-                {type.toUpperCase()}
-              </ThemedText>
-            </View>
-          )}
-          {!!timeLabel && (
-            <ThemedText style={[styles.timeLabel, { color: C.muted }]}>
-              {timeLabel}
+          <View style={styles.changeRow}>
+            <ThemedText
+              style={[
+                styles.changeText,
+                { color: tickerIsDown ? "#D50000" : C.primary },
+              ]}
+            >
+              {tickerIsDown ? "-" : "+"}
+              {priceFormatter(changeValue, 2)}
             </ThemedText>
-          )}
+            <ThemedText
+              style={[
+                styles.arrowText,
+                { color: tickerIsDown ? "#D50000" : C.primary },
+              ]}
+            >
+              {tickerIsDown ? "▼" : "▲"}
+            </ThemedText>
+            <ThemedText
+              style={[
+                styles.pctText,
+                { color: tickerIsDown ? "#D50000" : C.primary },
+              ]}
+            >
+              {Math.abs(pct).toFixed(2)}%
+            </ThemedText>
+            <ThemedText style={[styles.dotText, { color: C.muted }]}>
+              •
+            </ThemedText>
+            <ThemedText style={[styles.todayText, { color: C.muted }]}>
+              Today
+            </ThemedText>
+          </View>
         </View>
       </View>
-
-      {/* ── Sparkline chart ── */}
-      {/* {showChart && values.length > 1 && (
-        <View style={[styles.chartWrap, { borderColor: C.border }]}>
-          <Sparkline values={values} color={chartColor} />
-        </View>
-      )} */}
-
       {/* ── Description ── */}
       {!!stock?.description && (
         <View style={styles.section}>
@@ -380,47 +322,50 @@ const styles = StyleSheet.create({
     gap: 20,
     paddingBottom: 8,
   },
-  metaRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
+
   priceBlock: {
+    marginTop: 10,
     flexDirection: "row",
-    alignItems: "baseline",
-    gap: 8,
+    alignItems: "center",
+    gap: 12,
+  },
+  priceLeft: {
+    gap: 6,
+  },
+  logo: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
   },
   priceText: {
-    fontSize: 26,
+    fontSize: 20,
+    fontWeight: "700",
+    // lineHeight: 24,
+  },
+  changeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+  },
+  changeText: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  arrowText: {
+    fontSize: 12,
     fontWeight: "700",
   },
   pctText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
   },
-  rightMeta: {
-    alignItems: "flex-end",
-    gap: 4,
+  dotText: {
+    fontSize: 12,
+    fontWeight: "600",
   },
-  badge: {
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-  },
-  timeLabel: {
-    fontSize: 11,
-  },
-  chartWrap: {
-    borderRadius: 12,
-    borderWidth: 1,
-    overflow: "hidden",
-    paddingVertical: 8,
-    alignItems: "center",
+  todayText: {
+    fontSize: 12,
+    fontWeight: "500",
   },
   section: {
     gap: 10,

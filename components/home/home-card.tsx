@@ -270,6 +270,7 @@ export const Learning = () => {
   const isDark = scheme === "dark";
   const C = Colors[isDark ? "dark" : "light"];
   const router = useRouter();
+  const forumRoute = "/(tabs)/(portfolio)/forum" as any;
 
   const learningTopics = [
     {
@@ -278,21 +279,21 @@ export const Learning = () => {
       description:
         "For you to have a seamless experience we require some details.",
       image: require("@/assets/images/learn.png"),
-      action: () => router.push("/learning/brane-basics"),
+      action: () => router.push("/(tabs)/(portfolio)/forum/1" as any),
     },
     {
       id: 2,
       title: "Investment Tips",
       description: "Strategies to grow your investment portfolio effectively.",
       image: require("@/assets/images/learn.png"),
-      action: () => router.push("/learning/investment-tips"),
+      action: () => router.push("/(tabs)/(portfolio)/forum/2" as any),
     },
     {
       id: 3,
       title: "Money Management",
       description: "Smart ways to manage and save your money wisely.",
       image: require("@/assets/images/learn.png"),
-      action: () => router.push("/learning/money-management"),
+      action: () => router.push("/(tabs)/(portfolio)/forum/1" as any),
     },
   ];
 
@@ -300,7 +301,7 @@ export const Learning = () => {
     <View w='100%' gap={16}>
       <View row spaced>
         <ThemedText type='defaultSemiBold'>Learning Forum</ThemedText>
-        <TouchableOpacity onPress={() => router.push("/learning")}>
+        <TouchableOpacity onPress={() => router.push(forumRoute)}>
           <ThemedText
             type='link'
             style={{
@@ -321,7 +322,7 @@ export const Learning = () => {
             title={topic.title}
             description={topic.description}
             // imageSource={topic.image}
-            // onPress={topic.action}
+            onPress={topic.action}
           />
         ))}
       </View>
