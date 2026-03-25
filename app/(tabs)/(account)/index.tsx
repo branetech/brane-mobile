@@ -1,5 +1,6 @@
 import { Account } from "@/components/account";
 import { Avatar } from "@/components/avatar";
+import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -29,9 +30,13 @@ export default function AccountScreen() {
 
   const header = (
     <RNView style={styles.headerWrapper}>
-      <ThemedText type='subtitle' style={styles.pageTitle}>
+      
+     <View row  aligned gap={108}>
+      <Back/>
+       <ThemedText type='subtitle' style={styles.pageTitle}>
         Account
       </ThemedText>
+     </View>
 
       <RNView
         style={[

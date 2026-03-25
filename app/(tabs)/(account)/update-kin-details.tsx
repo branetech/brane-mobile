@@ -2,28 +2,27 @@ import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { PhoneInput } from "@/components/phone-input";
-import { ThemedText } from "@/components/themed-text";
 import { SuccessModal } from "@/components/success-modal";
+import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
+import { formatPhoneNumber } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { ArrowDown2, TickCircle, SearchNormal1 } from "iconsax-react-native";
+import { ArrowDown2, SearchNormal1, TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
   Modal,
   Pressable,
   ScrollView,
-  View as RNView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
-import { formatPhoneNumber } from "@/utils/helpers";
 
 type RelationshipOption = {
   value: string;
@@ -59,6 +58,7 @@ const relationshipOptions: RelationshipOption[] = [
   { value: "NEPHEW", label: "Nephew" },
   { value: "UNCLE", label: "Uncle" },
   { value: "AUNTY", label: "Aunty" },
+  { value: "OTHERS", label: "Others" },
 ];
 
 const schema = yup.object({
@@ -216,7 +216,7 @@ export default function UpdateKinDetailsScreen() {
               contact them if we can&apos;t reach you for an extended period.
             </ThemedText>
 
-            <View gap={16} style={{ marginTop: 18 }}>
+            <View gap={18} style={{ marginTop: 32 }}>
               <FormInput
                 labelText='Next Of Kin First Name'
                 placeholder='Enter first name'
@@ -306,7 +306,7 @@ export default function UpdateKinDetailsScreen() {
       <Modal
         visible={showRelationshipModal}
         transparent
-        animationType='fade'
+        animationType='slide'
         onRequestClose={() => {
           setShowRelationshipModal(false);
           setRelationshipSearch("");
@@ -456,6 +456,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     marginBottom: 8,
+    color: "#89888B",
   },
   selectField: {
     height: 48,
@@ -483,14 +484,15 @@ const styles = StyleSheet.create({
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "flex-end",
   },
   modalCard: {
-    borderRadius: 12,
+    borderRadius: 16,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     padding: 16,
-    maxHeight: "80%",
+    maxHeight: "75%",
   },
   modalTitle: {
     marginBottom: 12,

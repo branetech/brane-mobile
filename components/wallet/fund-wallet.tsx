@@ -1,8 +1,8 @@
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { KycGate } from "@/components/kyc-gate";
 import { BankIcon } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
-import { WalletNotFound } from "@/components/wallet-not-found";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
@@ -10,16 +10,15 @@ import { TRANSACTION_SERVICE } from "@/services/routes";
 import { useRequest } from "@/services/useRequest";
 import { showError, showSuccess } from "@/utils/helpers";
 import * as Clipboard from "expo-clipboard";
-import { useRouter } from "expo-router";
 import { Copy, ExportCurve } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Modal,
-  Share,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    Share,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -71,9 +70,10 @@ export const BankTransferDetails = () => {
 
   if (errorStatus) {
     return (
-      <WalletNotFound
+      <KycGate
+        visible={true}
+        onClose={() => router.back()}
         message={errorStatus}
-        onCompleteKYC={() => router.push("/kyc" as any)}
       />
     );
   }

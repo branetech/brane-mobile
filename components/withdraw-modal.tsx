@@ -7,7 +7,7 @@ import { Colors } from "@/constants/colors";
 import { type Scheme, MODAL_OVERLAY_COLOR } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
-import { TRANSACTION_SERVICE } from "@/services/routes";
+import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
 import {
   hideAppLoader,
   priceFormatter,
@@ -37,9 +37,34 @@ const PRESET_AMOUNTS = [500, 1000, 2000, 5000];
 interface WithdrawModalProps {
   visible: boolean;
   onClose: () => void;
+  title?: string;
+  walletChoiceLabel?: string;
+  dividendChoiceLabel?: string;
+  walletBalanceEndpoint?: string;
+  dividendBalanceEndpoint?: string;
+  walletBalanceTransform?: (res: any) => number;
+  dividendBalanceTransform?: (res: any) => number;
+  walletWithdrawEndpoint?: string;
+  dividendWithdrawEndpoint?: string;
+  loadingMessage?: string;
+  successToastMessage?: string;
 }
 
-export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
+export function WithdrawModal({
+  visible,
+  onClose,
+  title = "Withdraw",
+  walletChoiceLabel = "Withdraw from wallet balance",
+  dividendChoiceLabel = "Withdraw from total dividend",
+  walletBalanceEndpoint = TRANSACTION_SERVICE.BALANCE,
+  dividendBalanceEndpoint = STOCKS_SERVICE.WALLET_BALANCE,
+  walletBalanceTransform,
+  dividendBalanceTransform,
+  walletWithdrawEndpoint = "/transactions-service/wallet/withdraw",
+  dividendWithdrawEndpoint = "/stocks-service/wallet/withdraw-dividend",
+  loadingMessage = "Processing withdrawal...",
+  successToastMessage = "Withdrawal initiated successfully",
+}: WithdrawModalProps) {
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
@@ -60,27 +85,36 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
     setIsLoadingBalance(true);
     try {
       const [walletRes, dividendRes]: any[] = await Promise.all([
-        BaseRequest.get(TRANSACTION_SERVICE.BALANCE),
-        BaseRequest.get("/stocks-service/wallet/balance"),
+        BaseRequest.get(walletBalanceEndpoint),
+        BaseRequest.get(dividendBalanceEndpoint),
       ]);
       setWalletBalance(
-        Number(walletRes?.data?.balance || walletRes?.balance || 0),
+        walletBalanceTransform
+          ? walletBalanceTransform(walletRes)
+          : Number(walletRes?.data?.balance || walletRes?.balance || 0),
       );
       setDividendBalance(
-        Number(
-          dividendRes?.data?.dividendBalance ||
-            dividendRes?.dividendBalance ||
-            dividendRes?.data?.balance ||
-            dividendRes?.balance ||
-            0,
-        ),
+        dividendBalanceTransform
+          ? dividendBalanceTransform(dividendRes)
+          : Number(
+              dividendRes?.data?.dividendBalance ||
+                dividendRes?.dividendBalance ||
+                dividendRes?.data?.balance ||
+                dividendRes?.balance ||
+                0,
+            ),
       );
     } catch (error) {
       catchError(error);
     } finally {
       setIsLoadingBalance(false);
     }
-  }, []);
+  }, [
+    dividendBalanceEndpoint,
+    dividendBalanceTransform,
+    walletBalanceEndpoint,
+    walletBalanceTransform,
+  ]);
 
   const fetchAccounts = useCallback(async () => {
     setIsLoadingAccounts(true);
@@ -127,19 +161,19 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
 
   const handlePinValidated = async () => {
     setShowPin(false);
-    showAppLoader({ message: "Processing withdrawal..." });
+    showAppLoader({ message: loadingMessage });
     try {
       const endpoint =
         withdrawType === "wallet"
-          ? "/transactions-service/wallet/withdraw"
-          : "/stocks-service/wallet/withdraw-dividend";
+          ? walletWithdrawEndpoint
+          : dividendWithdrawEndpoint;
 
       await BaseRequest.post(endpoint, {
         amount: Number(amount),
         bankAccountId: selectedAccount?.id || selectedAccount?._id,
       });
       hideAppLoader();
-      showSuccess("Withdrawal initiated successfully");
+      showSuccess(successToastMessage);
       setStage("success");
     } catch (error) {
       hideAppLoader();
@@ -191,7 +225,7 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
         }}
       >
         <ThemedText style={[styles.choiceTitle, { color: C.text }]}>
-          Withdraw from wallet balance
+          {walletChoiceLabel}
         </ThemedText>
         <ThemedText style={[styles.choiceAmount, { color: C.primary }]}>
           {priceFormatter(walletBalance, 2)}
@@ -209,7 +243,7 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
         }}
       >
         <ThemedText style={[styles.choiceTitle, { color: C.text }]}>
-          Withdraw from total dividend
+          {dividendChoiceLabel}
         </ThemedText>
         <ThemedText style={[styles.choiceAmount, { color: C.primary }]}>
           {priceFormatter(dividendBalance, 2)}
@@ -387,7 +421,7 @@ export function WithdrawModal({ visible, onClose }: WithdrawModalProps) {
           <View style={styles.header}>
             <View style={{ width: 44 }} />
             <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-              {stage === "success" ? "Done" : "Withdraw"}
+              {stage === "success" ? "Done" : title}
             </ThemedText>
             <TouchableOpacity onPress={handleClose} hitSlop={8}>
               <ThemedText style={{ fontSize: 24, color: C.text }}>×</ThemedText>

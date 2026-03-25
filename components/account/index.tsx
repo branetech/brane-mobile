@@ -38,6 +38,7 @@ export const Account = ({ header }: { header?: ReactNode }) => {
       "change-username": "/(account)/change-username",
       preferences: "/(account)/preferences",
       "help-desk": "/(account)/help-desk",
+      "support": "/support",
       "terms-conditions": "/(account)/terms-conditions",
       "privacy-policy": "/(account)/privacy-policy",
     };

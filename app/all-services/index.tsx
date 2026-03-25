@@ -118,7 +118,7 @@ const SECTIONS: Section[] = [
       {
         id: "portfolio",
         name: "My Portfolio",
-        route: "/(tabs)/portfolio",
+        route: "/(tabs)/(portfolio)",
         color: "#FFF8E1",
         initials: "PF",
       },
