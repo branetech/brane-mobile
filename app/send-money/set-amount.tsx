@@ -116,7 +116,7 @@ export default function SendMoneySetAmountScreen() {
       });
       console.log("Beneficiary saved successfully");
     } catch (error) {
-      console.error("Error saving beneficiary:", error);
+      catchError(error);
     }
   };
 
@@ -344,6 +344,7 @@ export default function SendMoneySetAmountScreen() {
                     label: "Amount:",
                     value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
                   },
+                  { label: "Service Charge:", value: "₦ 25.00" },
                 ].map((row, i, arr) => (
                   <RNView
                     key={row.label}
@@ -417,10 +418,10 @@ export default function SendMoneySetAmountScreen() {
               label: "Amount",
               value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
             },
-            { label: "Service Fee", value: "₦ 0.00" },
+            { label: "Service Fee", value: "₦ 25.00" },
             {
               label: "Total Debit",
-              value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
+              value: `₦ ${(Number(amount || 0) + 25).toLocaleString("en-NG")}`,
               bold: true,
             },
           ] as TransactionRow[]
@@ -462,7 +463,7 @@ export default function SendMoneySetAmountScreen() {
               recipientName,
               accountNumber,
               bankCode,
-              amount: Number(amount),
+              amount: Number(amount) + 25,
               remark,
               paymentMethod: selectedPaymentId,
             });

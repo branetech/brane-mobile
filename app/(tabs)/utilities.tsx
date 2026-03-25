@@ -12,6 +12,7 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
+import { showError } from "@/utils/helpers";
 import { useRouter } from "expo-router";
 import { CloseCircle, SearchNormal1 } from "iconsax-react-native";
 import React, { useEffect, useMemo, useState } from "react";
@@ -32,7 +33,6 @@ import {
   normalizeKey,
   normalizeOption,
   toArray,
-  
 } from "../bills-utilities/helpers";
 import {
   CABLE_IMAGES,
@@ -258,6 +258,8 @@ export default function UtiliScreen() {
         if (isMounted) {
           setSearchableResults(deduped);
         }
+      } catch (error) {
+        if (isMounted) showError("Failed to load services. Please try again.");
       } finally {
         if (isMounted) {
           setIsLoadingResults(false);
@@ -338,17 +340,17 @@ export default function UtiliScreen() {
           },
         ]}
       >
-        <SearchNormal1 size={16} color={C.muted} variant="Outline" />
+        <SearchNormal1 size={16} color={C.muted} variant='Outline' />
         <TextInput
           style={[styles.searchInput, { color: C.text }]}
-          placeholder="Search services"
+          placeholder='Search services'
           placeholderTextColor={C.muted}
           value={search}
           onChangeText={setSearch}
         />
         {query ? (
           <TouchableOpacity onPress={() => setSearch("")} hitSlop={8}>
-            <CloseCircle size={16} color={C.muted} variant="Outline" />
+            <CloseCircle size={16} color={C.muted} variant='Outline' />
           </TouchableOpacity>
         ) : null}
       </View>
@@ -368,7 +370,7 @@ export default function UtiliScreen() {
                     <Image
                       source={item.imageSource}
                       style={styles.searchResultImage}
-                      resizeMode="contain"
+                      resizeMode='contain'
                     />
                   ) : (
                     renderIcon(item.categoryId)
