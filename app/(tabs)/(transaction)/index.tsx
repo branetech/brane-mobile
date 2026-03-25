@@ -1,8 +1,8 @@
 import { BraneButton } from "@/components/brane-button";
 import { MyCalendar } from "@/components/calandar";
 import { EmptyState } from "@/components/empty-state";
-import { FormInput } from "@/components/formInput";
 import { GroupedTransactions } from "@/components/home/home-transaction/grouped-transaction";
+import { SearchInput } from "@/components/search-input";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -10,9 +10,16 @@ import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import { toArray } from "@/utils/helpers";
 import { ITransactionDetail } from "@/utils/index";
+import { format, isValid, parseISO } from "date-fns";
 import { useRouter } from "expo-router";
-import { CloseCircle, SearchNormal1, Setting4 } from "iconsax-react-native";
-import React, { useCallback, useEffect, useRef, useMemo, useState } from "react";
+import { CloseCircle, Setting4 } from "iconsax-react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -23,7 +30,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { format, parseISO, isValid } from "date-fns";
 
 type FilterOption = {
   label: string;
@@ -45,7 +51,6 @@ const TYPE_OPTIONS: FilterOption[] = [
   { label: "Wallet Deduction", value: "Wallet Deduction" },
   { label: "Dividend Withdrawals", value: "Stock Dividend" },
 ];
-
 
 const formatDisplayDate = (dateStr: string) => {
   if (!dateStr) return "";
@@ -143,13 +148,13 @@ export default function TransactionScreen() {
       filters.push({
         key: `status:${s}`,
         label: STATUS_OPTIONS.find((i) => i.value === s)?.label || s,
-      })
+      }),
     );
     typeFilters.forEach((t) =>
       filters.push({
         key: `type:${t}`,
         label: TYPE_OPTIONS.find((i) => i.value === t)?.label || t,
-      })
+      }),
     );
     if (startDate)
       filters.push({ key: "startDate", label: formatDisplayDate(startDate) });
@@ -229,16 +234,15 @@ export default function TransactionScreen() {
           Transaction History
         </ThemedText>
         <TouchableOpacity onPress={openFilterModal}>
-          <Setting4 size={20} color={C.text} variant="Outline" />
+          <Setting4 size={20} color={C.text} variant='Outline' />
         </TouchableOpacity>
       </View>
 
       {/* Search */}
       {transactions.length > 0 && (
         <View style={[styles.searchRow, { backgroundColor: C.inputBg }]}>
-          <FormInput
-            leftContent={<SearchNormal1 size={16} color={C.muted} />}
-            placeholder="Search transactions"
+          <SearchInput
+            placeholder='Search transactions'
             value={search}
             onChangeText={setSearch}
             onSubmitEditing={() => fetchTransactions()}
@@ -268,7 +272,7 @@ export default function TransactionScreen() {
                   {filter.label}
                 </ThemedText>
                 <TouchableOpacity onPress={() => removeFilter(filter.key)}>
-                  <CloseCircle size={14} color={C.primary} variant="Bold" />
+                  <CloseCircle size={14} color={C.primary} variant='Bold' />
                 </TouchableOpacity>
               </View>
             ))}
@@ -324,7 +328,7 @@ export default function TransactionScreen() {
       )}
 
       {/* Filter Modal */}
-      <Modal visible={showFilterModal} transparent animationType="slide">
+      <Modal visible={showFilterModal} transparent animationType='slide'>
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
@@ -381,7 +385,10 @@ export default function TransactionScreen() {
 
               {/* Type */}
               <ThemedText
-                style={[styles.filterHeading, { color: C.muted, marginTop: 12 }]}
+                style={[
+                  styles.filterHeading,
+                  { color: C.muted, marginTop: 12 },
+                ]}
               >
                 Type
               </ThemedText>
@@ -422,7 +429,10 @@ export default function TransactionScreen() {
               {/* Date */}
               <View style={styles.dateSection}>
                 <ThemedText
-                  style={[styles.filterHeading, { color: C.muted, marginTop: 12 }]}
+                  style={[
+                    styles.filterHeading,
+                    { color: C.muted, marginTop: 12 },
+                  ]}
                 >
                   Date
                 </ThemedText>
@@ -440,9 +450,14 @@ export default function TransactionScreen() {
                       activeOpacity={0.8}
                     >
                       <ThemedText
-                        style={{ color: tempStartDate ? C.text : C.muted, fontSize: 12 }}
+                        style={{
+                          color: tempStartDate ? C.text : C.muted,
+                          fontSize: 12,
+                        }}
                       >
-                        {tempStartDate ? formatDisplayDate(tempStartDate) : "Select date"}
+                        {tempStartDate
+                          ? formatDisplayDate(tempStartDate)
+                          : "Select date"}
                       </ThemedText>
                     </TouchableOpacity>
                   </View>
@@ -469,9 +484,14 @@ export default function TransactionScreen() {
                       activeOpacity={0.8}
                     >
                       <ThemedText
-                        style={{ color: tempEndDate ? C.text : C.muted, fontSize: 12 }}
+                        style={{
+                          color: tempEndDate ? C.text : C.muted,
+                          fontSize: 12,
+                        }}
                       >
-                        {tempEndDate ? formatDisplayDate(tempEndDate) : "Select date"}
+                        {tempEndDate
+                          ? formatDisplayDate(tempEndDate)
+                          : "Select date"}
                       </ThemedText>
                     </TouchableOpacity>
                   </View>
@@ -491,13 +511,13 @@ export default function TransactionScreen() {
               </TouchableOpacity>
 
               <BraneButton
-                text="OK"
+                text='OK'
                 onPress={applyFilters}
                 backgroundColor={C.primary}
                 textColor={C.googleBg}
                 height={44}
                 radius={10}
-                width="70%"
+                width='70%'
               />
             </View>
           </TouchableOpacity>
@@ -505,7 +525,7 @@ export default function TransactionScreen() {
       </Modal>
 
       {/* Date Picker Modal */}
-      <Modal visible={showDatePicker} transparent animationType="slide">
+      <Modal visible={showDatePicker} transparent animationType='slide'>
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
@@ -525,7 +545,9 @@ export default function TransactionScreen() {
             </ThemedText>
 
             <MyCalendar
-              selectedDate={dateTarget === "start" ? tempStartDate : tempEndDate}
+              selectedDate={
+                dateTarget === "start" ? tempStartDate : tempEndDate
+              }
               minDate={
                 dateTarget === "end" ? tempStartDate || undefined : undefined
               }
