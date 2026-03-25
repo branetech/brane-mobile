@@ -1,6 +1,4 @@
-import {useEffect, useState} from "react";
-import {useBoolean} from "@/utils/hooks";
-import {set} from "date-fns";
+import { useEffect, useState } from "react";
 
 type DependencyList = readonly unknown[];
 declare const UNDEFINED_VOID_ONLY: unique symbol;
@@ -22,21 +20,20 @@ type EffectCallback = () => void | Destructor;
  * @type Hook
  * */
 export const useAfterMount = (effect: any, deps: any = []) => {
-	const [isMounted, setMounted] = useState<boolean>(false)
-	const [_dependencies, setDependencies] = useState<any>()
-	useEffect(() => {
-		setMounted(true);
-		setDependencies(deps)
-	}, []);
-	
-	
-	useEffect(() => {
-		if (isMounted) (effect)();
-	}, [isMounted]);
-	
-	useEffect(() => {
-		if(isMounted){
-			// console.log("DEPS", deps)
-		}
-	}, [deps]);
-}
+  const [isMounted, setMounted] = useState<boolean>(false);
+  const [_dependencies, setDependencies] = useState<any>();
+  useEffect(() => {
+    setMounted(true);
+    setDependencies(deps);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) effect();
+  }, [isMounted]);
+
+  useEffect(() => {
+    if (isMounted) {
+      // deps check
+    }
+  }, [deps]);
+};

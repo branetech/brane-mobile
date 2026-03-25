@@ -4,25 +4,25 @@ import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { logOut, setUser } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
-import { setUser, logOut } from "@/redux/slice/auth-slice";
 import BaseRequest, { baseURL, catchError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
-import { showSuccess, showError } from "@/utils/helpers";
+import { showError, showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import { Camera, Trash, TickCircle } from "iconsax-react-native";
+import { Camera, TickCircle, Trash } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  View as RNView,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
+    ActivityIndicator,
+    Modal,
+    Pressable,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
@@ -85,7 +85,6 @@ export default function AccountDetailsScreen() {
     "Other",
   ];
 
-  console.log('user data', user);
   const fullName =
     [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
     "User";
@@ -139,11 +138,12 @@ export default function AccountDetailsScreen() {
 
       // Re-fetch user data to get the updated image URL from server
       const updatedUser = (await BaseRequest.get(AUTH_SERVICE.PROFILE)) as any;
-      console.log("Updated user after upload:", updatedUser);
 
       // Handle relative image URLs by converting to absolute
       if (updatedUser?.image && !updatedUser.image.startsWith("http")) {
-        const imagePath = updatedUser.image.startsWith("/") ? updatedUser.image : `/${updatedUser.image}`;
+        const imagePath = updatedUser.image.startsWith("/")
+          ? updatedUser.image
+          : `/${updatedUser.image}`;
         updatedUser.image = `${baseURL}${imagePath}`;
       }
 
@@ -163,7 +163,6 @@ export default function AccountDetailsScreen() {
 
       // Re-fetch user data to get the updated profile without image
       const updatedUser = (await BaseRequest.get(AUTH_SERVICE.PROFILE)) as any;
-      console.log("Updated user after removal:", updatedUser);
 
       dispatch(setUser(updatedUser));
       setShowRemoveConfirm(false);
@@ -242,13 +241,18 @@ export default function AccountDetailsScreen() {
         <View style={{ width: 44 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         <Pressable
           style={styles.avatarWrap}
           onPress={() => !isLoading && setShowPhotoMenu(true)}
         >
           <View
-            style={[styles.avatarContainer, { backgroundColor: C.inputBg }] as any}
+            style={
+              [styles.avatarContainer, { backgroundColor: C.inputBg }] as any
+            }
           >
             <Avatar
               name={fullName}
@@ -257,12 +261,23 @@ export default function AccountDetailsScreen() {
               shape='circle'
             />
             {isLoading && (
-              <View style={[styles.loadingOverlay, { backgroundColor: "rgba(0,0,0,0.3)" }] as any}>
+              <View
+                style={
+                  [
+                    styles.loadingOverlay,
+                    { backgroundColor: "rgba(0,0,0,0.3)" },
+                  ] as any
+                }
+              >
                 <ActivityIndicator size='large' color={C.primary} />
               </View>
             )}
             {!isLoading && (
-              <View style={[styles.cameraIcon, { backgroundColor: C.primary }] as any}>
+              <View
+                style={
+                  [styles.cameraIcon, { backgroundColor: C.primary }] as any
+                }
+              >
                 <Camera size={18} color='#FFFFFF' />
               </View>
             )}
@@ -323,10 +338,10 @@ export default function AccountDetailsScreen() {
         </RNView>
 
         <BraneButton
-          text="Delete Account"
+          text='Delete Account'
           onPress={handleDeleteAccountClick}
           backgroundColor={C.error}
-          textColor="#FFFFFF"
+          textColor='#FFFFFF'
           height={48}
           radius={12}
           style={{ marginVertical: 32 }}
@@ -458,7 +473,7 @@ export default function AccountDetailsScreen() {
       <Modal
         visible={showDeleteConfirm}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setShowDeleteConfirm(false)}
       >
         <Pressable
@@ -474,18 +489,19 @@ export default function AccountDetailsScreen() {
             }
           >
             <ThemedText
-              type="defaultSemiBold"
+              type='defaultSemiBold'
               style={[styles.confirmTitle, { color: C.text }]}
             >
               Delete Your Account?
             </ThemedText>
             <ThemedText style={[styles.confirmText, { color: C.muted }]}>
-              We&apos;ll be sad to see you go. This action cannot be undone. All your data will be permanently deleted.
+              We&apos;ll be sad to see you go. This action cannot be undone. All
+              your data will be permanently deleted.
             </ThemedText>
 
             <RNView style={styles.confirmActions}>
               <BraneButton
-                text="Delete Account"
+                text='Delete Account'
                 onPress={() => {
                   setShowDeleteConfirm(false);
                   setShowReasonModal(true);
@@ -496,7 +512,7 @@ export default function AccountDetailsScreen() {
                 radius={8}
               />
               <BraneButton
-                text="Keep Account"
+                text='Keep Account'
                 onPress={() => setShowDeleteConfirm(false)}
                 backgroundColor={C.primary + "20"}
                 textColor={C.primary}
@@ -513,7 +529,7 @@ export default function AccountDetailsScreen() {
       <Modal
         visible={showReasonModal}
         transparent
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setShowReasonModal(false)}
       >
         <SafeAreaView
@@ -537,25 +553,39 @@ export default function AccountDetailsScreen() {
               onPress={() => {}}
             >
               <ThemedText
-                type="defaultSemiBold"
+                type='defaultSemiBold'
                 style={[styles.modalTitle, { color: C.text }]}
               >
                 Why do you want to close your account?
               </ThemedText>
-              <ThemedText
-                style={[styles.modalSubtitle, { color: C.muted }]}
+              <ThemedText style={[styles.modalSubtitle, { color: C.muted }]}>
+                Deleting your account will delete all your associated data such
+                as the datas including content you have shared with others. You
+                cannot undo this action.
+              </ThemedText>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 12,
+                }}
               >
-Deleting your account will delete all your associated data such as the datas including content you have shared with others. You cannot undo this action.</ThemedText>
-              <View style={{ flexDirection: "row", alignItems: "center", marginTop: 12 }}>
-                <ThemedText style={ { color: C.muted, marginTop: 16 } }>
-For more information about how we treat your data, please see our. <TouchableOpacity style={{  marginTop: 16 }} onPress={() => router.push("/(account)/privacy-policy")}>
-                  <ThemedText style={{ color: C.primary, fontSize: 12 }}>
-                    Privacy Policy
-                  </ThemedText>
-                </TouchableOpacity></ThemedText>
-                  
+                <ThemedText style={{ color: C.muted, marginTop: 16 }}>
+                  For more information about how we treat your data, please see
+                  our.{" "}
+                  <TouchableOpacity
+                    style={{ marginTop: 16 }}
+                    onPress={() => router.push("/(account)/privacy-policy")}
+                  >
+                    <ThemedText style={{ color: C.primary, fontSize: 12 }}>
+                      Privacy Policy
+                    </ThemedText>
+                  </TouchableOpacity>
+                </ThemedText>
               </View>
-              <ScrollView style={{ marginTop: 16, marginBottom: 20, maxHeight: 300 }}>
+              <ScrollView
+                style={{ marginTop: 16, marginBottom: 20, maxHeight: 300 }}
+              >
                 {deleteReasons.map((reason) => (
                   <TouchableOpacity
                     key={reason}
@@ -563,7 +593,9 @@ For more information about how we treat your data, please see our. <TouchableOpa
                       styles.reasonOption,
                       {
                         backgroundColor:
-                          selectedReason === reason ? C.primary + "15" : "transparent",
+                          selectedReason === reason
+                            ? C.primary + "15"
+                            : "transparent",
                         borderColor:
                           selectedReason === reason ? C.primary : C.border,
                       },
@@ -575,23 +607,23 @@ For more information about how we treat your data, please see our. <TouchableOpa
                         styles.radioButton,
                         {
                           backgroundColor:
-                            selectedReason === reason ? C.primary : "transparent",
+                            selectedReason === reason
+                              ? C.primary
+                              : "transparent",
                           borderColor: C.border,
                         },
                       ]}
                     >
                       {selectedReason === reason && (
                         <RNView
-                          style={[styles.radioInner, { backgroundColor: C.primary }]}
+                          style={[
+                            styles.radioInner,
+                            { backgroundColor: C.primary },
+                          ]}
                         />
                       )}
                     </RNView>
-                    <ThemedText
-                      style={[
-                        styles.reasonText,
-                        { color: C.text },
-                      ]}
-                    >
+                    <ThemedText style={[styles.reasonText, { color: C.text }]}>
                       {reason}
                     </ThemedText>
                   </TouchableOpacity>
@@ -612,7 +644,7 @@ For more information about how we treat your data, please see our. <TouchableOpa
                         color: C.text,
                       },
                     ]}
-                    placeholder="Enter your feedback..."
+                    placeholder='Enter your feedback...'
                     placeholderTextColor={C.muted}
                     value={reasonFeedback}
                     onChangeText={(text) => {
@@ -630,7 +662,7 @@ For more information about how we treat your data, please see our. <TouchableOpa
               )}
 
               <BraneButton
-                text="Delete Account"
+                text='Delete Account'
                 onPress={handleContinueDelete}
                 loading={deleteIsLoading}
                 disabled={!selectedReason || deleteIsLoading}
@@ -647,7 +679,7 @@ For more information about how we treat your data, please see our. <TouchableOpa
       <Modal
         visible={showOtpModal}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setShowOtpModal(false)}
       >
         <Pressable
@@ -663,7 +695,7 @@ For more information about how we treat your data, please see our. <TouchableOpa
             }
           >
             <ThemedText
-              type="defaultSemiBold"
+              type='defaultSemiBold'
               style={[styles.confirmTitle, { color: C.text }]}
             >
               Verify Your Phone
@@ -681,17 +713,17 @@ For more information about how we treat your data, please see our. <TouchableOpa
                   color: C.text,
                 },
               ]}
-              placeholder="000000"
+              placeholder='000000'
               placeholderTextColor={C.muted}
               value={otp}
               onChangeText={setOtp}
               maxLength={6}
-              keyboardType="number-pad"
+              keyboardType='number-pad'
             />
 
             <RNView style={styles.confirmActions}>
               <BraneButton
-                text="Verify OTP"
+                text='Verify OTP'
                 onPress={handleVerifyOtp}
                 loading={deleteIsLoading}
                 disabled={!otp.trim() || deleteIsLoading}
@@ -709,7 +741,7 @@ For more information about how we treat your data, please see our. <TouchableOpa
       <Modal
         visible={showDeleteSuccess}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => {}}
       >
         <Pressable
@@ -728,8 +760,11 @@ For more information about how we treat your data, please see our. <TouchableOpa
             </RNView>
 
             <ThemedText
-              type="defaultSemiBold"
-              style={[styles.confirmTitle, { color: C.text, textAlign: "center" }]}
+              type='defaultSemiBold'
+              style={[
+                styles.confirmTitle,
+                { color: C.text, textAlign: "center" },
+              ]}
             >
               Account Deleted
             </ThemedText>

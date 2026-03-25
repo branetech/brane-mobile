@@ -10,11 +10,11 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { InfoCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -101,8 +101,6 @@ export default function TransactionDetailScreen() {
     () => getStatusStyles(transaction?.status, C),
     [transaction?.status, C],
   );
-
-  console.log("Transaction Detail:", transaction);
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>

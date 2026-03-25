@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
 
 export default function ZohoChat() {
@@ -12,9 +12,7 @@ export default function ZohoChat() {
           window.$zoho.salesiq = window.$zoho.salesiq || {
             widgetcode: "${process.env.EXPO_PUBLIC_ZOHO_SALESIQ_CODE}",
             values: {},
-            ready: function () {
-              console.log("Zoho ready");
-            }
+            ready: function () {}
           };
         </script>
         <script 

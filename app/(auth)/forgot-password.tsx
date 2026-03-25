@@ -41,7 +41,6 @@ export default function ForgotPasswordScreen() {
         payload,
       );
       const returnedOtp = response?.data?.otp || response?.otp;
-      console.log("OTP response:", response);
       if (returnedOtp) setPlainOTP(String(returnedOtp));
 
       setPage("otp");
@@ -59,10 +58,13 @@ export default function ForgotPasswordScreen() {
       setIsLoading(true);
       setOtp(otpValue);
 
-      const res = await BaseRequest.post("/auth-service/verify-reset-password", {
-        ...formData,
-        otp: otpValue,
-      });
+      const res = await BaseRequest.post(
+        "/auth-service/verify-reset-password",
+        {
+          ...formData,
+          otp: otpValue,
+        },
+      );
       setPage("createPassword");
       showSuccess("OTP verified successfully");
     } catch (error: any) {

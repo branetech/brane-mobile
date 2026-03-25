@@ -1,12 +1,12 @@
 import { LearnCard } from "@/components/home/cards";
 import {
-  AssetGrid,
-  AssetHoldingsCard,
-  BottomNav,
-  CurrencyDropdown,
-  Header,
-  PortfolioCard,
-  SectionHeader,
+    AssetGrid,
+    AssetHoldingsCard,
+    BottomNav,
+    CurrencyDropdown,
+    Header,
+    PortfolioCard,
+    SectionHeader,
 } from "@/components/portfolio";
 import { WithdrawIcn } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
@@ -20,11 +20,11 @@ import { useRouter } from "expo-router";
 import { ArrowRight2 } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  Modal,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -119,7 +119,9 @@ export default function PortfolioScreen() {
             <LearnCard
               key={post.id}
               post={post}
-              onPress={() => router.push("/(tabs)/(portfolio)/forum" as any)}
+              onPress={() =>
+                router.push(`/(tabs)/(portfolio)/forum/${post.id}` as any)
+              }
             />
           ))}
         </>

@@ -6,9 +6,7 @@ import { TRANSACTION_SERVICE } from "@/services/routes";
  */
 export const getBeneficiaries = async () => {
   try {
-    const response = await BaseRequest.get(
-      TRANSACTION_SERVICE.BENEFICIARIES,
-    );
+    const response = await BaseRequest.get(TRANSACTION_SERVICE.BENEFICIARIES);
     return response?.data || [];
   } catch (error) {
     catchError(error);
@@ -26,15 +24,11 @@ export const verifyAccountDetails = async (
   bankCode: string,
 ) => {
   try {
-    const response = await BaseRequest.get(
-      TRANSACTION_SERVICE.VERIFY_ACCOUNT,
-      {
-        params: { accountNumber, bankCode },
-      },
-    );
+    const response = await BaseRequest.get(TRANSACTION_SERVICE.VERIFY_ACCOUNT, {
+      params: { accountNumber, bankCode },
+    });
     return response?.data || null;
   } catch (error) {
-    console.log("Error verifying account details:", error);
     catchError(error);
     return null;
   }
@@ -45,9 +39,7 @@ export const verifyAccountDetails = async (
  */
 export const getBanks = async () => {
   try {
-    const response = await BaseRequest.get(
-      TRANSACTION_SERVICE.BANKS,
-    );
+    const response = await BaseRequest.get(TRANSACTION_SERVICE.BANKS);
     return response?.data || [];
   } catch (error) {
     catchError(error);
@@ -86,9 +78,7 @@ export const sendMoney = async (payload: SendMoneyPayload) => {
  */
 export const getWalletBalance = async () => {
   try {
-    const response = await BaseRequest.get(
-      TRANSACTION_SERVICE.BALANCE,
-    );
+    const response = await BaseRequest.get(TRANSACTION_SERVICE.BALANCE);
     return response?.data || { balance: 0 };
   } catch (error) {
     catchError(error);
@@ -118,4 +108,3 @@ export const addBeneficiary = async (payload: AddBeneficiaryPayload) => {
     throw error;
   }
 };
-

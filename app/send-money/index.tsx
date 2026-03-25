@@ -1,31 +1,30 @@
 import Back from "@/components/back";
-import BaseRequest, { catchError } from "@/services";
 import { BraneButton } from "@/components/brane-button";
+import {
+    BeneficiarySelector,
+    RecipientAccountSelector,
+    type Beneficiary,
+} from "@/components/send-money";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { catchError } from "@/services";
 import {
-  RecipientAccountSelector,
-  BeneficiarySelector,
-  type Beneficiary,
-} from "@/components/send-money";
-import {
-  getBeneficiaries,
-  verifyAccountDetails,
-  getBanks,
+    getBanks,
+    getBeneficiaries,
+    verifyAccountDetails,
 } from "@/services/send-money";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Modal,
-  Pressable,
-  TextInput,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -157,9 +156,7 @@ export default function SendMoneyScreen() {
     setVerifying(true);
     setErrors({});
     try {
-      console.log("Verifying account:", { accountNumber, bankCode });
       const result = await verifyAccountDetails(accountNumber, bankCode);
-      console.log("Verification result:", result);
 
       if (
         result &&

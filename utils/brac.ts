@@ -95,7 +95,6 @@ export const useEarnedBracs = (payload: IBracAllocator) => {
     };
     onLoad();
   }, [payload]);
-  console.log("Bracs:", bracs, "for payload:", payload);
   return bracs;
 };
 
