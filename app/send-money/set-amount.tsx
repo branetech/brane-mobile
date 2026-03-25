@@ -6,8 +6,8 @@ import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import {
-  TransactionSummaryModal,
-  type TransactionRow,
+    TransactionSummaryModal,
+    type TransactionRow,
 } from "@/components/transaction-summary-modal";
 import { Colors } from "@/constants/colors";
 import { type Scheme } from "@/constants/theme";
@@ -21,13 +21,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Copy } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  Dimensions,
-  Modal,
-  View as RNView,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
+    Dimensions,
+    Modal,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -114,7 +114,6 @@ export default function SendMoneySetAmountScreen() {
         bankName,
         accountName: recipientName,
       });
-      console.log("Beneficiary saved successfully");
     } catch (error) {
       catchError(error);
     }
@@ -449,7 +448,6 @@ export default function SendMoneySetAmountScreen() {
             const res = await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
               pin,
             });
-            console.log("PIN validation response:", res);
             return true;
           } catch {
             return false;

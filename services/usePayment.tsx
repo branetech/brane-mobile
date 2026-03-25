@@ -1,6 +1,6 @@
-import { Linking } from "react-native";
 import BaseRequest from "@/services/index";
 import { showError } from "@/utils/helpers";
+import { Linking } from "react-native";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -35,7 +35,7 @@ const MAX_POLL_ATTEMPTS = 18; // ~3 minutes max
 const pollTransactionStatus = (
   reference: string,
   onSuccess: () => void,
-  onFailure?: (reason: string) => void
+  onFailure?: (reason: string) => void,
 ): (() => void) => {
   let attempts = 0;
   let stopped = false;
@@ -51,14 +51,17 @@ const pollTransactionStatus = (
 
     if (attempts > MAX_POLL_ATTEMPTS) {
       stop();
-      onFailure?.("Payment verification timed out. Please check your transaction history.");
+      onFailure?.(
+        "Payment verification timed out. Please check your transaction history.",
+      );
       return;
     }
 
     try {
-      const response = await BaseRequest.get<unknown, VerifyTransactionResponse>(
-        `verify-transaction/${reference}`
-      );
+      const response = await BaseRequest.get<
+        unknown,
+        VerifyTransactionResponse
+      >(`verify-transaction/${reference}`);
 
       const status: TransactionStatus = response?.data;
 
@@ -77,7 +80,9 @@ const pollTransactionStatus = (
       }
     } catch {
       stop();
-      onFailure?.("Could not verify payment status. Please check your transaction history.");
+      onFailure?.(
+        "Could not verify payment status. Please check your transaction history.",
+      );
     }
   };
 
@@ -124,7 +129,7 @@ const openPaymentUrl = async (url: string): Promise<boolean> => {
  * @example
  * const cancelPoll = handlePayment(
  *   { amount: 5000, email: "user@example.com" },
- *   () => console.log("Payment complete!"),
+ *   () => {},
  *   (err) => console.error(err)
  * );
  * // In useEffect: return () => cancelPoll?.();
@@ -132,11 +137,11 @@ const openPaymentUrl = async (url: string): Promise<boolean> => {
 export const handlePayment = (
   params: PaymentParams,
   onSuccess?: () => void,
-  onFailure?: (reason: string) => void
+  onFailure?: (reason: string) => void,
 ): void => {
   BaseRequest.post<unknown, InitializePaymentResponse>(
     "payment/paystack/initialize",
-    params
+    params,
   )
     .then(async (data) => {
       // Already settled — no redirect needed

@@ -14,10 +14,10 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { ShoppingCart } from "iconsax-react-native";
 import React, { useMemo, useState } from "react";
 import {
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    FlatList,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -47,7 +47,6 @@ export default function AssetsScreen() {
     revalidateOnReconnect: false,
     showError: true,
   });
-  console.log("Fetched stocks data:", data);
   const { checkouts } = useAppState();
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
