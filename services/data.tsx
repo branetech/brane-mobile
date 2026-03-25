@@ -364,7 +364,7 @@ export const onTransactionPinCabelValidation = async ({
       },
     );
     showSuccess(message);
-    await onReloadData();
+    if (onReloadData) await onReloadData();
     return setRender("success");
   } catch (error: any) {
     const { message } = parseNetworkError(error);

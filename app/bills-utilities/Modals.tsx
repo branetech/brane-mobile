@@ -26,14 +26,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { getElectricityImageKey } from "./helpers";
+import { getBettingImageKey, getElectricityImageKey, getTransportImageKey } from "./helpers";
 import {
+  BETTING_IMAGES,
   BOOST_PRESETS,
   ELECTRICITY_IMAGES,
   NETWORK_IMAGES,
+  TRANSPORT_IMAGES,
   type CablePlan,
   type DataPlan,
   type SelectOption,
+  type TransportRoute,
 } from "./types";
 
 // ─── ContactPickerModal ────────────────────────────────────────────────────────
@@ -280,6 +283,7 @@ type SummaryModalProps = {
   onFundWallet?: () => void;
   showPaymentMethod?: boolean;
   onConfirm: () => void;
+  extraRows?: TransactionRow[];
 };
 
 function formatMoney(value: number) {
@@ -316,6 +320,7 @@ export function SummaryModal({
   onFundWallet,
   showPaymentMethod = true,
   onConfirm,
+  extraRows = [],
 }: SummaryModalProps) {
   const boostValue = Number(boostAmount || 0);
   const appliedBoost = isAirtime ? boostValue : 0;
@@ -323,6 +328,7 @@ export function SummaryModal({
   const rows: TransactionRow[] = [
     { label: "Provider", value: networkLabel },
     { label: "Sending to", value: phone },
+    ...extraRows,
     {
       label: "Transaction Amount",
       value: `₦ ${formatMoney(amountToPay)}`,
@@ -652,6 +658,10 @@ export function BettingProviderModal({
             showsVerticalScrollIndicator={false}
           >
             {providers.map((item) => {
+              const imageKey = getBettingImageKey(
+                `${item.id} ${item.label} ${item.description || ""}`,
+              );
+              const logo = imageKey ? BETTING_IMAGES[imageKey] : undefined;
               const selected = selectedId === item.id;
               return (
                 <TouchableOpacity
@@ -665,6 +675,13 @@ export function BettingProviderModal({
                     onClose();
                   }}
                 >
+                  {logo ? (
+                    <Image
+                      source={logo}
+                      style={styles.providerModalLogo}
+                      resizeMode='contain'
+                    />
+                  ) : null}
                   <View style={styles.providerModalTextWrap}>
                     <ThemedText style={styles.providerModalTitle}>
                       {item.label}
@@ -926,6 +943,175 @@ export function CablePlanModal({
                     ]}
                   >
                     ₦{plan.amount.toLocaleString("en-NG")}
+                  </ThemedText>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
+
+// ─── TransportProviderModal ────────────────────────────────────────────────────
+
+type TransportProviderModalProps = {
+  visible: boolean;
+  onClose: () => void;
+  providers: SelectOption[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+};
+
+export function TransportProviderModal({
+  visible,
+  onClose,
+  providers,
+  selectedId,
+  onSelect,
+}: TransportProviderModalProps) {
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType='slide'
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalCard}
+          onPress={() => {}}
+        >
+          <View style={styles.modalHeader}>
+            <ThemedText style={styles.modalTitle}>Select Provider</ThemedText>
+            <TouchableOpacity onPress={onClose}>
+              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            style={styles.modalList}
+            showsVerticalScrollIndicator={false}
+          >
+            {providers.map((item) => {
+              const imageKey = getTransportImageKey(
+                `${item.id} ${item.label} ${item.description || ""}`,
+              );
+              const logo = imageKey ? TRANSPORT_IMAGES[imageKey] : undefined;
+              const selected = selectedId === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.providerModalRow,
+                    selected && styles.providerModalRowActive,
+                  ]}
+                  onPress={() => onSelect(item.id)}
+                >
+                  {logo ? (
+                    <Image
+                      source={logo}
+                      style={styles.providerModalLogo}
+                      resizeMode='contain'
+                    />
+                  ) : null}
+                  <View style={styles.providerModalTextWrap}>
+                    <ThemedText style={styles.providerModalTitle}>
+                      {item.label.toUpperCase()}
+                    </ThemedText>
+                    {item.description ? (
+                      <ThemedText style={styles.providerModalSubtitle}>
+                        ({item.description.replace(/-/g, " ").toUpperCase()})
+                      </ThemedText>
+                    ) : null}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
+
+// ─── TransportRouteModal ───────────────────────────────────────────────────────
+
+type TransportRouteModalProps = {
+  visible: boolean;
+  onClose: () => void;
+  routes: TransportRoute[];
+  selectedRouteId: string;
+  onSelect: (id: string) => void;
+};
+
+export function TransportRouteModal({
+  visible,
+  onClose,
+  routes,
+  selectedRouteId,
+  onSelect,
+}: TransportRouteModalProps) {
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType='slide'
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalCard}
+          onPress={() => {}}
+        >
+          <View style={styles.modalHeader}>
+            <ThemedText style={styles.modalTitle}>Select Route</ThemedText>
+            <TouchableOpacity onPress={onClose}>
+              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            style={styles.modalList}
+            showsVerticalScrollIndicator={false}
+          >
+            {routes.map((route) => {
+              const selected = selectedRouteId === route.id;
+              return (
+                <TouchableOpacity
+                  key={route.id}
+                  style={[
+                    styles.modalListRow,
+                    selected && styles.modalListRowActive,
+                  ]}
+                  onPress={() => onSelect(route.id)}
+                >
+                  <ThemedText
+                    style={[
+                      styles.modalListTitle,
+                      selected && styles.modalListTitleActive,
+                    ]}
+                  >
+                    {route.label || `${route.fromStation} → ${route.toStation}`}
+                  </ThemedText>
+                  <ThemedText
+                    style={[
+                      styles.modalListAmount,
+                      selected && styles.modalListAmountActive,
+                    ]}
+                  >
+                    {route.departureTime ? `Departure: ${route.departureTime}  •  ` : ""}₦{route.amount.toLocaleString("en-NG")}
                   </ThemedText>
                 </TouchableOpacity>
               );

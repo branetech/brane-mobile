@@ -87,14 +87,14 @@ const CATEGORIES: Category[] = [
     iconColor: "#1A5A8A",
     fullWidth: false,
   },
-  {
-    id: "transportation",
-    title: "Transportation",
-    service: "transportation",
-    bg: "#E7DCB1",
-    iconColor: "#6B4A22",
-    fullWidth: true,
-  },
+  // {
+  //   id: "transportation",
+  //   title: "Transportation",
+  //   service: "transportation",
+  //   bg: "#E7DCB1",
+  //   iconColor: "#6B4A22",
+  //   fullWidth: true,
+  // },
   {
     id: "tv-bills",
     title: "TV Bills",

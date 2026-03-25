@@ -19,19 +19,15 @@ import {
   PAYMENT_CALLBACK_URL,
   TRANSACTION_SERVICE,
 } from "@/services/routes";
-import { showError } from "@/utils/helpers";
+import { hideAppLoader, showError } from "@/utils/helpers";
 import * as Contacts from "expo-contacts";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ExportCurve, TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Modal,
   ScrollView,
-  Share,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -47,7 +43,8 @@ import {
   DataPlanModal,
   ElectricityProviderModal,
   SummaryModal,
-  TransportPlanModal,
+  TransportProviderModal,
+  TransportRouteModal,
 } from "./Modals";
 import { TransportationForm } from "./TransportationForm";
 import {
@@ -60,11 +57,11 @@ import {
 } from "./helpers";
 import {
   NETWORK_ORDER,
-  TRANSPORT_KEYWORDS,
   type Beneficiary,
   type CablePlan,
   type DataPlan,
   type SelectOption,
+  type TransportRoute,
   type UtilityService,
 } from "./types";
 
@@ -107,9 +104,22 @@ export default function UtilitySelectScreen() {
   const [amount, setAmount] = useState("");
   const [dataPlans, setDataPlans] = useState<DataPlan[]>([]);
   const [selectedDataPlanId, setSelectedDataPlanId] = useState<string>("");
-  const [transportReference, setTransportReference] = useState("");
-  const [transportPlans, setTransportPlans] = useState<DataPlan[]>([]);
-  const [selectedTransportPlanId, setSelectedTransportPlanId] = useState("");
+  const [transportRoutes, setTransportRoutes] = useState<TransportRoute[]>([]);
+  const [selectedTransportRouteId, setSelectedTransportRouteId] = useState("");
+  const [transportVehicleTypes, setTransportVehicleTypes] = useState<string[]>([]);
+  const [selectedVehicleType, setSelectedVehicleType] = useState("");
+  const [vehicleTypeError, setVehicleTypeError] = useState<string | undefined>();
+  const [departureDate, setDepartureDate] = useState("");
+  const [passengerName, setPassengerName] = useState("");
+  const [passengerEmail, setPassengerEmail] = useState("");
+  const [seatNumber, setSeatNumber] = useState("");
+
+  const [transportProviderError, setTransportProviderError] = useState<string | undefined>();
+  const [transportRouteError, setTransportRouteError] = useState<string | undefined>();
+  const [transportDateError, setTransportDateError] = useState<string | undefined>();
+  const [transportNameError, setTransportNameError] = useState<string | undefined>();
+  const [transportEmailError, setTransportEmailError] = useState<string | undefined>();
+  const [transportSeatError, setTransportSeatError] = useState<string | undefined>();
 
   const [addToBeneficiaries, setAddToBeneficiaries] = useState(false);
   const [beneficiaryName, setBeneficiaryName] = useState("");
@@ -133,10 +143,8 @@ export default function UtilitySelectScreen() {
   const [amountError, setAmountError] = useState<string | undefined>();
   const [customerIdError, setCustomerIdError] = useState<string | undefined>();
   const [cardError, setCardError] = useState<string | undefined>();
-  const [referenceError, setReferenceError] = useState<string | undefined>();
 
   const [showPinValidator, setShowPinValidator] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDataPlanModal, setShowDataPlanModal] = useState(false);
   const [dataPlanCategory, setDataPlanCategory] = useState<
@@ -147,7 +155,9 @@ export default function UtilitySelectScreen() {
   const [showBettingProviderModal, setShowBettingProviderModal] =
     useState(false);
   const [showCablePlanModal, setShowCablePlanModal] = useState(false);
-  const [showTransportPlanModal, setShowTransportPlanModal] = useState(false);
+  const [showTransportProviderModal, setShowTransportProviderModal] =
+    useState(false);
+  const [showTransportRouteModal, setShowTransportRouteModal] = useState(false);
   const [showBoostModal, setShowBoostModal] = useState(false);
   const [boostAmount, setBoostAmount] = useState("200");
   const [showSummaryModal, setShowSummaryModal] = useState(false);
@@ -169,9 +179,14 @@ export default function UtilitySelectScreen() {
     [cablePlans, selectedCablePlanId],
   );
 
-  const selectedTransportPlan = useMemo(
-    () => transportPlans.find((p) => p.id === selectedTransportPlanId),
-    [transportPlans, selectedTransportPlanId],
+  const selectedTransportProvider = useMemo(
+    () => transportProviders.find((p) => p.id === transportProvider),
+    [transportProviders, transportProvider],
+  );
+
+  const selectedTransportRoute = useMemo(
+    () => transportRoutes.find((r) => r.id === selectedTransportRouteId),
+    [transportRoutes, selectedTransportRouteId],
   );
 
   const selectedElectricityProvider = useMemo(
@@ -225,9 +240,7 @@ export default function UtilitySelectScreen() {
       ? selectedDataPlan?.amount || 0
       : service === "cable"
         ? selectedCablePlan?.amount || 0
-        : service === "transportation"
-          ? selectedTransportPlan?.amount || 0
-          : Number(amount || 0);
+        : Number(amount || 0);
 
   const bracsRewardAmount = Math.round(amountToPay * 0.15);
 
@@ -259,20 +272,9 @@ export default function UtilitySelectScreen() {
           ? cardNumber
           : service === "electricity"
             ? meterNumber
-            : transportReference;
+            : selectedTransportRoute?.label || "";
 
   const successDescription = `Your ₦${Number(amountToPay || 0).toLocaleString("en-NG")} ${service} purchase on ${transactionTarget || "your account"} was successful. You have received ${bracsRewardAmount} bracs, which has been added to your bracs balance.`;
-
-  const shareReceipt = useCallback(async () => {
-    try {
-      await Share.share({
-        title: "Transaction Receipt",
-        message: `Transaction Successful\n\nService: ${service}\nAmount: ₦${Number(amountToPay || 0).toLocaleString("en-NG")}\nBeneficiary: ${transactionTarget || "N/A"}\nBracs Reward: ${bracsRewardAmount}`,
-      });
-    } catch {
-      showError("Unable to share receipt right now.");
-    }
-  }, [amountToPay, bracsRewardAmount, service, transactionTarget]);
 
   // ── API fetches ───────────────────────────────────────────────────────────────
 
@@ -385,44 +387,85 @@ export default function UtilitySelectScreen() {
     }
   }, []);
 
-  const fetchTransportPlans = useCallback(async (serviceId: string) => {
+  const fetchTransportRoutes = useCallback(async (serviceId: string) => {
     if (!serviceId) {
-      setTransportPlans([]);
-      setSelectedTransportPlanId("");
+      setTransportRoutes([]);
+      setSelectedTransportRouteId("");
+      setTransportVehicleTypes([]);
+      setSelectedVehicleType("");
       return;
     }
     try {
-      const response: any = await BaseRequest.get(
-        MOBILE_SERVICE.TRANSACTION_META(serviceId),
+      const res: any = await BaseRequest.get(
+        MOBILE_SERVICE.TRANSPORT_ROUTES(serviceId),
       );
-      const plans = toArray(response)
-        .map(normalizeDataPlan)
-        .filter((p) => p.amount > 0);
-      if (plans.length > 0) {
-        setTransportPlans(plans);
-        setSelectedTransportPlanId(plans[0].id);
-        setAmount(String(plans[0].amount));
-        return;
+      console.log("[Transport] routes raw:", JSON.stringify(res, null, 2));
+      // Try all common locations for routes in the response
+      const rawRoutes: any[] = (() => {
+        if (Array.isArray(res?.data?.routes)) return res.data.routes;
+        if (Array.isArray(res?.routes)) return res.routes;
+        if (Array.isArray(res?.data)) return res.data;
+        if (Array.isArray(res)) return res;
+        return [];
+      })();
+      const data = res?.data || res;
+      const vehicleTypes: string[] = Array.isArray(data?.supportedVehicleTypes)
+        ? data.supportedVehicleTypes
+        : Array.isArray(res?.supportedVehicleTypes)
+        ? res.supportedVehicleTypes
+        : [];
+      const minPrice = Number(data?.minimumPrice || res?.minimumPrice || 0);
+
+      const routes: TransportRoute[] = rawRoutes
+        .filter((r: any) => (r.status || "active") !== "inactive")
+        .map((r: any) => ({
+          id: r.routeCode || r.routeName || String(r.fromStation) + r.toStation,
+          routeCode: r.routeCode || "",
+          routeName: r.routeName || "",
+          fromStation: r.fromStation || "",
+          toStation: r.toStation || "",
+          amount: Number(r.price || r.amount || 0),
+          departureTime: r.departureTime || r.departure_time || "",
+          duration: r.duration || "",
+          label: r.routeName || `${r.fromStation} → ${r.toStation}`,
+        }));
+
+      console.log("[Transport] parsed routes:", routes.length, "vehicleTypes:", vehicleTypes);
+
+      setTransportRoutes(routes);
+      setTransportVehicleTypes(vehicleTypes);
+      if (vehicleTypes.length > 0) setSelectedVehicleType(vehicleTypes[0]);
+      else setSelectedVehicleType("");
+
+      if (routes.length > 0) {
+        setSelectedTransportRouteId(routes[0].id);
+        setAmount(String(routes[0].amount));
+      } else {
+        setSelectedTransportRouteId("");
+        if (minPrice > 0) setAmount(String(minPrice));
       }
-      setTransportPlans([]);
-      setSelectedTransportPlanId("");
-    } catch {
-      setTransportPlans([]);
-      setSelectedTransportPlanId("");
+    } catch (e) {
+      console.log("[Transport] fetchTransportRoutes error:", e);
+      setTransportRoutes([]);
+      setSelectedTransportRouteId("");
+      setTransportVehicleTypes([]);
+      setSelectedVehicleType("");
     }
   }, []);
 
   const fetchServiceMetadata = useCallback(async () => {
     setIsFetchingMeta(true);
     try {
-      const [bettingRes, cableRes, electricityRes, vtPassServiceRes] =
+      const [bettingRes, cableRes, electricityRes, transportRes] =
         await Promise.all([
           BaseRequest.get(MOBILE_SERVICE.BETTING_SERVICE).catch(() => null),
           BaseRequest.get(MOBILE_SERVICE.CABLE_SERVICE).catch(() => null),
           BaseRequest.get(MOBILE_SERVICE.ELECTRICITY_GET_BILLER).catch(
             () => null,
           ),
-          BaseRequest.get(MOBILE_SERVICE.VT_PASS_SERVICE).catch(() => null),
+          BaseRequest.get(MOBILE_SERVICE.TRANSPORT_SERVICE_IDS).catch(
+            () => null,
+          ),
         ]);
 
       const remoteBetting = toArray(bettingRes).map(normalizeOption);
@@ -430,14 +473,25 @@ export default function UtilitySelectScreen() {
       const remoteElectricity = normalizeElectricityProviders(
         electricityRes?.data || electricityRes,
       );
-      const vtPassServices = toArray(vtPassServiceRes).map(normalizeOption);
-      const remoteTransport = vtPassServices.filter((item) =>
-        TRANSPORT_KEYWORDS.some((kw) =>
-          `${item.id} ${item.label} ${item.description || ""}`
-            .toLowerCase()
-            .includes(kw),
-        ),
-      );
+      // Try all common shapes for the transport service-ids response
+      const transportRaw = (() => {
+        const t = transportRes as any;
+        if (Array.isArray(t)) return t as any[];
+        if (Array.isArray(t?.data)) return t.data as any[];
+        if (Array.isArray(t?.data?.serviceIds)) return t.data.serviceIds as any[];
+        if (Array.isArray(t?.data?.services)) return t.data.services as any[];
+        if (Array.isArray(t?.serviceIds)) return t.serviceIds as any[];
+        if (Array.isArray(t?.services)) return t.services as any[];
+        // fallback: find any top-level array value in data object
+        if (t?.data && typeof t.data === "object") {
+          const found = Object.values(t.data).find((v) => Array.isArray(v));
+          if (found) return found as any[];
+        }
+        return toArray(t);
+      })();
+      const remoteTransport: SelectOption[] = transportRaw.map(normalizeOption);
+      console.log("[Transport] raw response:", JSON.stringify(transportRes, null, 2));
+      console.log("[Transport] providers count:", remoteTransport.length, remoteTransport);
 
       setBettingProviders(remoteBetting);
       setCableProviders(remoteCable);
@@ -464,13 +518,13 @@ export default function UtilitySelectScreen() {
 
       await Promise.all([
         fetchCablePlans(firstCable),
-        fetchTransportPlans(firstTransport),
+        fetchTransportRoutes(firstTransport),
         fetchPaymentOptions(),
       ]);
     } finally {
       setIsFetchingMeta(false);
     }
-  }, [fetchCablePlans, fetchPaymentOptions, fetchTransportPlans]);
+  }, [fetchCablePlans, fetchPaymentOptions, fetchTransportRoutes]);
 
   const fetchConnectivityProviders = useCallback(
     async (category: "airtime" | "data") => {
@@ -513,8 +567,8 @@ export default function UtilitySelectScreen() {
 
   useEffect(() => {
     if (!transportProvider) return;
-    fetchTransportPlans(transportProvider);
-  }, [fetchTransportPlans, transportProvider]);
+    fetchTransportRoutes(transportProvider);
+  }, [fetchTransportRoutes, transportProvider]);
 
   useEffect(() => {
     if (service === "airtime" || service === "data") {
@@ -532,7 +586,6 @@ export default function UtilitySelectScreen() {
     setPhoneError(undefined);
     setCustomerIdError(undefined);
     setCardError(undefined);
-    setReferenceError(undefined);
     setElectricityAccountName("");
     setBeneficiarySearch("");
   };
@@ -567,7 +620,6 @@ export default function UtilitySelectScreen() {
     setAmountError(undefined);
     setCustomerIdError(undefined);
     setCardError(undefined);
-    setReferenceError(undefined);
 
     if (service === "airtime" || service === "data") {
       if (!network) {
@@ -635,18 +687,40 @@ export default function UtilitySelectScreen() {
     }
 
     if (service === "transportation") {
+      let valid = true;
       if (!transportProvider) {
-        setReferenceError("No transportation provider available right now");
-        return false;
+        setTransportProviderError("Select a transport provider");
+        valid = false;
       }
-      if (transportReference.trim().length < 6) {
-        setReferenceError("This field is required");
-        return false;
+      if (!selectedTransportRoute) {
+        setTransportRouteError("Select a route");
+        valid = false;
       }
-      if (!selectedTransportPlan) {
-        setAmountError("Select a transportation plan");
-        return false;
+      if (transportVehicleTypes.length > 0 && !selectedVehicleType) {
+        setVehicleTypeError("Select a vehicle type");
+        valid = false;
       }
+      if (!departureDate.trim()) {
+        setTransportDateError("Select a departure date");
+        valid = false;
+      }
+      if (!passengerName.trim()) {
+        setTransportNameError("Enter passenger name");
+        valid = false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(passengerEmail)) {
+        setTransportEmailError("Enter a valid email address");
+        valid = false;
+      }
+      if (!seatNumber.trim()) {
+        setTransportSeatError("Enter seat number");
+        valid = false;
+      }
+      if (Number(amount) <= 0) {
+        setAmountError("Enter a valid amount");
+        valid = false;
+      }
+      if (!valid) return false;
     }
 
     return true;
@@ -655,12 +729,14 @@ export default function UtilitySelectScreen() {
   const startPayment = async () => {
     if (!validateForm()) return;
     setShowPinValidator(false);
-    let wasSuccessful = false;
-    const onRender = (value: string) => {
-      if (value === "success") {
-        wasSuccessful = true;
-        setTimeout(() => setShowSuccess(true), 300);
-      }
+
+    const noopRender = (_: string) => {};
+    const goToSuccess = () => {
+      hideAppLoader();
+      router.push({
+        pathname: "/bills-utilities/success" as any,
+        params: { title: "Transaction Successful", message: successDescription },
+      });
     };
 
     try {
@@ -681,14 +757,10 @@ export default function UtilitySelectScreen() {
           user: auth?.user,
           PAYMENT_CALLBACK_URL,
           router,
-          setRender: onRender,
+          setRender: noopRender,
           setIsLoading: setIsSubmitting,
         });
-        // If function completes without error and onRender wasn't called, mark as successful
-        if (!wasSuccessful) {
-          wasSuccessful = true;
-          setShowSuccess(true);
-        }
+        goToSuccess();
       }
 
       if (service === "betting") {
@@ -698,15 +770,12 @@ export default function UtilitySelectScreen() {
           user: auth?.user,
           betType: "wallet_funding",
           amount: String(amountToPay),
-          setRender: onRender,
+          setRender: noopRender,
           setIsLoading: setIsSubmitting,
           variationCode: "",
           router,
         });
-        if (!wasSuccessful) {
-          wasSuccessful = true;
-          setShowSuccess(true);
-        }
+        goToSuccess();
       }
 
       if (service === "cable") {
@@ -715,17 +784,14 @@ export default function UtilitySelectScreen() {
           billersCode: cardNumber,
           user: auth?.user,
           amount: String(amountToPay),
-          setRender: onRender,
+          setRender: noopRender,
           setIsLoading: setIsSubmitting,
           variationCode: selectedCablePlan?.variationCode || "",
           quantity: 1,
           subscription_type: selectedCablePlan?.subscriptionType || "change",
           router,
         });
-        if (!wasSuccessful) {
-          wasSuccessful = true;
-          setShowSuccess(true);
-        }
+        goToSuccess();
       }
 
       if (service === "electricity" && selectedElectricityProvider) {
@@ -736,32 +802,29 @@ export default function UtilitySelectScreen() {
           billersCode: Number(meterNumber),
           user: auth?.user,
           amount: String(amountToPay),
-          setRender: onRender,
+          setRender: noopRender,
           setIsLoading: setIsSubmitting,
           variationCode: electricityProduct,
           name: electricityAccountName,
           router,
         });
-        if (!wasSuccessful) {
-          wasSuccessful = true;
-          setShowSuccess(true);
-        }
+        goToSuccess();
       }
 
       if (service === "transportation") {
-        const result: any = await BaseRequest.post(MOBILE_SERVICE.VT_PASS_BUY, {
-          serviceID: transportProvider,
+        await BaseRequest.post(MOBILE_SERVICE.TRANSPORT_BOOK, {
           serviceId: transportProvider,
-          billersCode: transportReference,
-          variation_code: selectedTransportPlan?.variationCode,
-          variationCode: selectedTransportPlan?.variationCode,
           amount: String(amountToPay),
           phone: auth?.user?.phone,
+          departureDate,
+          fromStation: selectedTransportRoute?.fromStation,
+          toStation: selectedTransportRoute?.toStation,
+          passengerName,
+          passengerEmail,
+          seatNumber,
+          vehicleType: selectedVehicleType,
         });
-        if (result?.message) {
-          wasSuccessful = true;
-          setShowSuccess(true);
-        }
+        goToSuccess();
       }
     } catch {
       // handled by service helpers via toast
@@ -884,15 +947,42 @@ export default function UtilitySelectScreen() {
             {service === "transportation" && (
               <TransportationForm
                 transportProviders={transportProviders}
-                transportProvider={transportProvider}
-                setTransportProvider={setTransportProvider}
-                transportReference={transportReference}
-                setTransportReference={setTransportReference}
-                referenceError={referenceError}
-                setReferenceError={setReferenceError}
-                transportPlans={transportPlans}
-                selectedTransportPlan={selectedTransportPlan}
-                onOpenTransportPlanModal={() => setShowTransportPlanModal(true)}
+                selectedTransportProvider={selectedTransportProvider}
+                transportRoutes={transportRoutes}
+                selectedRoute={selectedTransportRoute}
+                departureDate={departureDate}
+                setDepartureDate={setDepartureDate}
+                passengerName={passengerName}
+                setPassengerName={setPassengerName}
+                passengerEmail={passengerEmail}
+                setPassengerEmail={setPassengerEmail}
+                seatNumber={seatNumber}
+                setSeatNumber={setSeatNumber}
+                amount={amount}
+                setAmount={setAmount}
+                providerError={transportProviderError}
+                routeError={transportRouteError}
+                dateError={transportDateError}
+                nameError={transportNameError}
+                emailError={transportEmailError}
+                seatError={transportSeatError}
+                amountError={amountError}
+                clearError={(field) => {
+                  if (field === "provider") setTransportProviderError(undefined);
+                  else if (field === "route") setTransportRouteError(undefined);
+                  else if (field === "date") setTransportDateError(undefined);
+                  else if (field === "name") setTransportNameError(undefined);
+                  else if (field === "email") setTransportEmailError(undefined);
+                  else if (field === "seat") setTransportSeatError(undefined);
+                  else if (field === "amount") setAmountError(undefined);
+                  else if (field === "vehicleType") setVehicleTypeError(undefined);
+                }}
+                onOpenProviderModal={() => setShowTransportProviderModal(true)}
+                onOpenRouteModal={() => setShowTransportRouteModal(true)}
+                vehicleTypes={transportVehicleTypes}
+                selectedVehicleType={selectedVehicleType}
+                setSelectedVehicleType={(v) => { setSelectedVehicleType(v); setVehicleTypeError(undefined); }}
+                vehicleTypeError={vehicleTypeError}
               />
             )}
           </ScrollView>
@@ -923,8 +1013,6 @@ export default function UtilitySelectScreen() {
         </React.Fragment>
       ) : null}
 
-      {/* ── Modals ─────────────────────────────────────────────────────────── */}
-
       <SummaryModal
         visible={showSummaryModal}
         onClose={() => setShowSummaryModal(false)}
@@ -942,6 +1030,18 @@ export default function UtilitySelectScreen() {
         ctaLabel={ctaLabel}
         isSubmitting={isSubmitting}
         showPaymentMethod
+        extraRows={
+          service === "transportation"
+            ? [
+                { label: "Route", value: selectedTransportRoute?.label || "" },
+                { label: "Departure Time", value: selectedTransportRoute?.departureTime || "" },
+                { label: "Duration", value: selectedTransportRoute?.duration || "" },
+                { label: "Vehicle Type", value: selectedVehicleType ? selectedVehicleType.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "" },
+                { label: "Passenger", value: passengerName },
+                { label: "Date", value: departureDate },
+              ].filter((r) => r.value)
+            : []
+        }
         onFundWallet={() => {
           setShowSummaryModal(false);
           router.push("/add-funds" as any);
@@ -1029,34 +1129,29 @@ export default function UtilitySelectScreen() {
         }}
       />
 
-      <TransportPlanModal
-        visible={showTransportPlanModal}
-        onClose={() => setShowTransportPlanModal(false)}
-        transportPlans={transportPlans}
-        selectedTransportPlanId={selectedTransportPlanId}
-        onSelect={(planId, amount) => {
-          setSelectedTransportPlanId(planId);
-          setAmount(String(amount));
-          setShowTransportPlanModal(false);
+      <TransportProviderModal
+        visible={showTransportProviderModal}
+        onClose={() => setShowTransportProviderModal(false)}
+        providers={transportProviders}
+        selectedId={transportProvider}
+        onSelect={(id) => {
+          setTransportProvider(id);
+          setShowTransportProviderModal(false);
         }}
       />
 
-      {/* <TransactionPinValidator
-        visible={showPinValidator}
-        onClose={() => setShowPinValidator(false)}
-        onResetPin={() => router.push("/account/reset-transaction-pin" as any)}
-        onValidatePin={async (pin) => {
-          try {
-            const res = await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, { pin });
-            console.log("PIN validation response:", res);
-            return true;
-          } catch {
-            return false;
-          }
+      <TransportRouteModal
+        visible={showTransportRouteModal}
+        onClose={() => setShowTransportRouteModal(false)}
+        routes={transportRoutes}
+        selectedRouteId={selectedTransportRouteId}
+        onSelect={(id) => {
+          setSelectedTransportRouteId(id);
+          const route = transportRoutes.find((r) => r.id === id);
+          if (route?.amount) setAmount(String(route.amount));
+          setShowTransportRouteModal(false);
         }}
-        onTransactionPinValidated={startPayment}
-
-      /> */}
+      />
 
       <TransactionPinValidator
         visible={showPinValidator}
@@ -1078,72 +1173,6 @@ export default function UtilitySelectScreen() {
         }}
         onTransactionPinValidated={startPayment}
       />
-
-      <Modal
-        visible={showSuccess}
-        animationType='slide'
-        transparent={false}
-        onRequestClose={() => setShowSuccess(false)}
-      >
-        <SafeAreaView
-          style={[styles.successScreen, { backgroundColor: C.background }]}
-        >
-          <View style={styles.successContent}>
-            <View
-              style={[
-                styles.successIconWrap,
-                { backgroundColor: C.googleBg, borderColor: C.fingerBorder },
-              ]}
-            >
-              <TickCircle size={46} color={C.primary} variant='Bold' />
-            </View>
-
-            <ThemedText style={styles.successTitle}>
-              Transaction Successful
-            </ThemedText>
-            <ThemedText style={[styles.successDescription, { color: C.muted }]}>
-              {successDescription}
-            </ThemedText>
-
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={[styles.shareReceiptBtn, { backgroundColor: C.inputBg }]}
-              onPress={shareReceipt}
-            >
-              <ThemedText
-                style={[styles.shareReceiptText, { color: C.primary }]}
-              >
-                Share Receipt
-              </ThemedText>
-              <ExportCurve size={18} color={C.primary} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.successFooter}>
-            <BraneButton
-              text='Buy Again'
-              onPress={() => setShowSuccess(false)}
-              backgroundColor={C.primary}
-              textColor={C.googleBg}
-              height={56}
-              radius={32}
-              style={styles.successActionBtn}
-            />
-            <BraneButton
-              text='Dismiss'
-              onPress={() => {
-                setShowSuccess(false);
-                router.back();
-              }}
-              backgroundColor={C.googleBg}
-              textColor={C.primary}
-              height={56}
-              radius={32}
-              style={styles.successActionBtn}
-            />
-          </View>
-        </SafeAreaView>
-      </Modal>
     </SafeAreaView>
   );
 }
@@ -1218,62 +1247,5 @@ const createStyles = (C: (typeof Colors)["light"]) =>
       paddingHorizontal: 20,
       paddingTop: 8,
       paddingBottom: 16,
-    },
-    successScreen: {
-      flex: 1,
-      justifyContent: "space-between",
-      paddingHorizontal: 20,
-      paddingTop: 32,
-      paddingBottom: 16,
-    },
-    successContent: {
-      alignItems: "center",
-      marginTop: 36,
-      paddingHorizontal: 8,
-    },
-    successIconWrap: {
-      width: 72,
-      height: 72,
-      borderRadius: 36,
-      alignItems: "center",
-      justifyContent: "center",
-      borderWidth: 1,
-      marginBottom: 20,
-    },
-    successTitle: {
-      fontSize: 22,
-      fontWeight: "700",
-      textAlign: "center",
-      color: C.text,
-      marginBottom: 12,
-    },
-    successDescription: {
-      fontSize: 14,
-      lineHeight: 22,
-      textAlign: "center",
-      maxWidth: 420,
-      marginBottom: 20,
-    },
-    shareReceiptBtn: {
-      minHeight: 46,
-      borderRadius: 24,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 8,
-      paddingHorizontal: 22,
-      marginTop: 6,
-    },
-    shareReceiptText: {
-      fontSize: 16,
-      fontWeight: "600",
-    },
-    successFooter: {
-      flexDirection: "row",
-      gap: 14,
-      paddingBottom: 4,
-    },
-    successActionBtn: {
-      flex: 1,
     },
   });

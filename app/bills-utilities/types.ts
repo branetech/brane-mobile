@@ -34,6 +34,18 @@ export type CablePlan = {
   subscriptionType: string;
 };
 
+export type TransportRoute = {
+  id: string;
+  routeCode: string;
+  routeName: string;
+  fromStation: string;
+  toStation: string;
+  amount: number;
+  departureTime: string;
+  duration: string;
+  label: string;
+};
+
 export const AMOUNT_PRESETS = [
   "500",
   "1000",
@@ -121,4 +133,8 @@ export const BETTING_IMAGES: Record<string, any> = {
   merrybet: require("@/assets/images/betting/merrybet.png"),
   nairabet: require("@/assets/images/betting/nairabet.png"),
   sportybet: require("@/assets/images/betting/sportybet.png"),
+};
+
+export const TRANSPORT_IMAGES: Record<string, any> = {
+  gigm: require("@/assets/images/network/gigm.png"),
 };

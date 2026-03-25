@@ -96,6 +96,10 @@ export const MOBILE_SERVICE = {
   VT_PASS_META: "/mobile-connectivity-service/vtpass/metadata",
   VT_PASS_SERVICE: "/mobile-connectivity-service/vtpass/service-ids",
   VT_PASS_BUY: "/mobile-connectivity-service/vtpass/buy",
+  TRANSPORT_SERVICE_IDS: "/mobile-connectivity-service/transportation/service-ids",
+  TRANSPORT_ROUTES: (serviceId: string) =>
+    `/mobile-connectivity-service/transportation/routes/${serviceId}`,
+  TRANSPORT_BOOK: "/mobile-connectivity-service/transportation/book",
 };
 
 export const PASSWORD_RESET_ROUTE = "/auth-service/inapp-password-reset";
