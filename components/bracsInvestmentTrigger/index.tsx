@@ -126,12 +126,7 @@ export default function BracsInvestmentComponent() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: C.background }]}>
       <View style={[styles.header, { backgroundColor: C.primary }]}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Back size={24} color='#fff' />
-        </TouchableOpacity>
+        <Back onPress={() => router.back()} />
         <ThemedText style={styles.headerTitle}>
           Bracs Investment Trigger
         </ThemedText>

@@ -43,6 +43,7 @@ import {
 
 type ContactPickerProps = {
   visible: boolean;
+  position?: ModalPosition;
   contactSearch: string;
   setContactSearch: (v: string) => void;
   filteredContacts: { name: string; phone: string }[];
@@ -50,8 +51,61 @@ type ContactPickerProps = {
   onSelect: (phone: string) => void;
 };
 
+type ModalPosition = "top" | "center" | "bottom";
+
+type ModalShellProps = {
+  visible: boolean;
+  onClose: () => void;
+  animationType?: "none" | "slide" | "fade";
+  position?: ModalPosition;
+  cardStyle?: any;
+  overlayStyle?: any;
+  children: React.ReactNode;
+};
+
+function ModalShell({
+  visible,
+  onClose,
+  animationType = "slide",
+  position = "bottom",
+  cardStyle,
+  overlayStyle,
+  children,
+}: ModalShellProps) {
+  const positionStyle =
+    position === "top"
+      ? styles.modalOverlayTop
+      : position === "center"
+        ? styles.modalOverlayCenter
+        : styles.modalOverlayBottom;
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType={animationType}
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity
+        style={[styles.modalOverlay, positionStyle, overlayStyle]}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={[styles.modalCard, cardStyle]}
+          onPress={() => {}}
+        >
+          {children}
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
+
 export function ContactPickerModal({
   visible,
+  position,
   contactSearch,
   setContactSearch,
   filteredContacts,
@@ -62,102 +116,87 @@ export function ContactPickerModal({
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
   return (
-    <Modal
+    <ModalShell
       visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onClose}
+      onClose={onClose}
+      position={position}
+      cardStyle={{ maxHeight: "80%", backgroundColor: C.background }}
     >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={[
-            styles.modalCard,
-            { maxHeight: "80%", backgroundColor: C.background },
-          ]}
-          onPress={() => {}}
-        >
-          <View style={styles.modalHeader}>
-            <ThemedText style={[styles.modalTitle, { color: C.text }]}>
-              Select Contact
-            </ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color={C.muted} variant='Outline' />
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={[
-              styles.contactSearchRow,
-              { backgroundColor: C.inputBg, borderColor: C.border },
-            ]}
-          >
-            <SearchNormal1 size={16} color={C.muted} variant='Outline' />
-            <TextInput
-              style={[styles.searchInput, { color: C.text }]}
-              placeholder='Search contacts'
-              placeholderTextColor={C.muted}
-              value={contactSearch}
-              onChangeText={setContactSearch}
-            />
-          </View>
-
-          <ScrollView
-            style={styles.modalList}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps='handled'
-          >
-            {filteredContacts.map((c, idx) => (
-              <TouchableOpacity
-                key={`${c.phone}-${idx}`}
-                style={[styles.contactRow, { borderBottomColor: C.border }]}
-                onPress={() => {
-                  const digits = c.phone.replace(/\D/g, "");
-                  const normalized = digits.startsWith("0")
-                    ? digits.slice(1)
-                    : digits.startsWith("234")
-                      ? digits.slice(3)
-                      : digits;
-                  onSelect(normalized);
-                }}
-              >
-                <View
-                  style={[
-                    styles.contactAvatar,
-                    { backgroundColor: C.primary + "20" },
-                  ]}
-                >
-                  <ThemedText
-                    style={[styles.contactAvatarText, { color: C.primary }]}
-                  >
-                    {(c.name[0] || "?").toUpperCase()}
-                  </ThemedText>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <ThemedText style={[styles.contactName, { color: C.text }]}>
-                    {c.name}
-                  </ThemedText>
-                  <ThemedText style={[styles.contactPhone, { color: C.muted }]}>
-                    {c.phone}
-                  </ThemedText>
-                </View>
-              </TouchableOpacity>
-            ))}
-            {filteredContacts.length === 0 ? (
-              <ThemedText
-                style={[styles.emptyText, { padding: 16, color: C.muted }]}
-              >
-                No contacts found
-              </ThemedText>
-            ) : null}
-          </ScrollView>
+      <View style={styles.modalHeader}>
+        <ThemedText style={[styles.modalTitle, { color: C.text }]}>
+          Select Contact
+        </ThemedText>
+        <TouchableOpacity onPress={onClose}>
+          <CloseCircle size={18} color={C.muted} variant='Outline' />
         </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+      </View>
+
+      <View
+        style={[
+          styles.contactSearchRow,
+          { backgroundColor: C.inputBg, borderColor: C.border },
+        ]}
+      >
+        <SearchNormal1 size={16} color={C.muted} variant='Outline' />
+        <TextInput
+          style={[styles.searchInput, { color: C.text }]}
+          placeholder='Search contacts'
+          placeholderTextColor={C.muted}
+          value={contactSearch}
+          onChangeText={setContactSearch}
+        />
+      </View>
+
+      <ScrollView
+        style={styles.modalList}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps='handled'
+      >
+        {filteredContacts.map((c, idx) => (
+          <TouchableOpacity
+            key={`${c.phone}-${idx}`}
+            style={[styles.contactRow, { borderBottomColor: C.border }]}
+            onPress={() => {
+              const digits = c.phone.replace(/\D/g, "");
+              const normalized = digits.startsWith("0")
+                ? digits.slice(1)
+                : digits.startsWith("234")
+                  ? digits.slice(3)
+                  : digits;
+              onSelect(normalized);
+            }}
+          >
+            <View
+              style={[
+                styles.contactAvatar,
+                { backgroundColor: C.primary + "20" },
+              ]}
+            >
+              <ThemedText
+                style={[styles.contactAvatarText, { color: C.primary }]}
+              >
+                {(c.name[0] || "?").toUpperCase()}
+              </ThemedText>
+            </View>
+            <View style={{ flex: 1 }}>
+              <ThemedText style={[styles.contactName, { color: C.text }]}>
+                {c.name}
+              </ThemedText>
+              <ThemedText style={[styles.contactPhone, { color: C.muted }]}>
+                {c.phone}
+              </ThemedText>
+            </View>
+          </TouchableOpacity>
+        ))}
+        {filteredContacts.length === 0 ? (
+          <ThemedText
+            style={[styles.emptyText, { padding: 16, color: C.muted }]}
+          >
+            No contacts found
+          </ThemedText>
+        ) : null}
+      </ScrollView>
+    </ModalShell>
   );
 }
 
@@ -165,6 +204,7 @@ export function ContactPickerModal({
 
 type BoostModalProps = {
   visible: boolean;
+  position?: ModalPosition;
   boostAmount: string;
   setBoostAmount: (v: string) => void;
   onSkip: () => void;
@@ -173,6 +213,7 @@ type BoostModalProps = {
 
 export function BoostModal({
   visible,
+  position,
   boostAmount,
   setBoostAmount,
   onSkip,
@@ -182,82 +223,70 @@ export function BoostModal({
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
   return (
-    <Modal
+    <ModalShell
       visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onSkip}
+      onClose={onSkip}
+      position={position}
+      cardStyle={[styles.boostModalCard, { backgroundColor: C.background }]}
     >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onSkip}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={[styles.boostModalCard, { backgroundColor: C.background }]}
-          onPress={() => {}}
-        >
-          <ThemedText style={[styles.boostModalTitle, { color: C.text }]}>
-            Boost Bracs Balance
-          </ThemedText>
-          <ThemedText style={[styles.boostModalDesc, { color: C.muted }]}>
-            You can boost your investment wallet by adding a tip to this
-            transaction, which would be added to your bracs balance.
-          </ThemedText>
-          <ThemedText style={[styles.boostSelectLabel, { color: C.muted }]}>
-            Select amount to add
-          </ThemedText>
-          <View style={styles.boostPresetsRow}>
-            {BOOST_PRESETS.map((preset) => (
-              <TouchableOpacity
-                key={preset}
-                style={[
-                  styles.boostPresetChip,
-                  { backgroundColor: C.inputBg, borderColor: C.border },
-                  boostAmount === preset && {
-                    borderColor: C.primary,
-                    borderWidth: 2,
-                    backgroundColor: C.background,
-                  },
-                ]}
-                onPress={() => setBoostAmount(preset)}
-              >
-                <ThemedText
-                  style={[
-                    styles.boostPresetChipText,
-                    { color: C.text },
-                    boostAmount === preset && { color: C.primary },
-                  ]}
-                >
-                  ₦{Number(preset).toLocaleString()}
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.boostActions}>
-            <BraneButton
-              text='Ignore'
-              onPress={onSkip}
-              backgroundColor={C.inputBg}
-              textColor={C.primary}
-              height={50}
-              radius={32}
-              style={{ flex: 1 }}
-            />
-            <BraneButton
-              text='Boost It!'
-              onPress={onAdd}
-              backgroundColor={C.primary}
-              textColor={C.googleBg}
-              height={50}
-              radius={32}
-              style={{ flex: 1 }}
-            />
-          </View>
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+      <ThemedText style={[styles.boostModalTitle, { color: C.text }]}>
+        Boost Bracs Balance
+      </ThemedText>
+      <ThemedText style={[styles.boostModalDesc, { color: C.muted }]}>
+        You can boost your investment wallet by adding a tip to this
+        transaction, which would be added to your bracs balance.
+      </ThemedText>
+      <ThemedText style={[styles.boostSelectLabel, { color: C.muted }]}>
+        Select amount to add
+      </ThemedText>
+      <View style={styles.boostPresetsRow}>
+        {BOOST_PRESETS.map((preset) => (
+          <TouchableOpacity
+            key={preset}
+            style={[
+              styles.boostPresetChip,
+              { backgroundColor: C.inputBg, borderColor: C.border },
+              boostAmount === preset && {
+                borderColor: C.primary,
+                borderWidth: 2,
+                backgroundColor: C.background,
+              },
+            ]}
+            onPress={() => setBoostAmount(preset)}
+          >
+            <ThemedText
+              style={[
+                styles.boostPresetChipText,
+                { color: C.text },
+                boostAmount === preset && { color: C.primary },
+              ]}
+            >
+              ₦{Number(preset).toLocaleString()}
+            </ThemedText>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <View style={styles.boostActions}>
+        <BraneButton
+          text='Ignore'
+          onPress={onSkip}
+          backgroundColor={C.inputBg}
+          textColor={C.primary}
+          height={50}
+          radius={32}
+          style={{ flex: 1 }}
+        />
+        <BraneButton
+          text='Boost It!'
+          onPress={onAdd}
+          backgroundColor={C.primary}
+          textColor={C.googleBg}
+          height={50}
+          radius={32}
+          style={{ flex: 1 }}
+        />
+      </View>
+    </ModalShell>
   );
 }
 
@@ -388,54 +417,49 @@ export function SummaryModal({
 
 type BracsTooltipProps = {
   visible: boolean;
+  position?: ModalPosition;
   onClose: () => void;
 };
 
-export function BracsTooltipModal({ visible, onClose }: BracsTooltipProps) {
+export function BracsTooltipModal({
+  visible,
+  onClose,
+  position = "center",
+}: BracsTooltipProps) {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
   return (
-    <Modal
+    <ModalShell
       visible={visible}
-      transparent
+      onClose={onClose}
       animationType='fade'
-      onRequestClose={onClose}
+      position={position}
+      overlayStyle={{ backgroundColor: "#013D254D" }}
+      cardStyle={[styles.bracsTooltipCard, { backgroundColor: C.background }]}
     >
-      <TouchableOpacity
-        style={[styles.tooltipOverlay, { backgroundColor: "#013D254D" }]}
-        activeOpacity={1}
+      <ThemedText style={[styles.bracsTooltipTitle, { color: C.text }]}>
+        Rebate+ Added Funds
+      </ThemedText>
+      <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
+        Bracs reward is the bonus you get from every transaction and can be used
+        for investment.
+      </ThemedText>
+      <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
+        Cash boost are additional tips added to boost your portfolio balance
+        (200 on 15 transactions a month = extra 3000 in your investment
+        portfolio).
+      </ThemedText>
+      <BraneButton
+        text='Okay'
         onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={[styles.bracsTooltipCard, { backgroundColor: C.background }]}
-          onPress={() => {}}
-        >
-          <ThemedText style={[styles.bracsTooltipTitle, { color: C.text }]}>
-            Rebate+ Added Funds
-          </ThemedText>
-          <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
-            Bracs reward is the bonus you get from every transaction and can be
-            used for investment.
-          </ThemedText>
-          <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
-            Cash boost are additional tips added to boost your portfolio balance
-            (200 on 15 transactions a month = extra 3000 in your investment
-            portfolio).
-          </ThemedText>
-          <BraneButton
-            text='Okay'
-            onPress={onClose}
-            backgroundColor={C.primary}
-            textColor={C.googleBg}
-            height={46}
-            radius={10}
-            style={{ marginTop: 4 }}
-          />
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+        backgroundColor={C.primary}
+        textColor={C.googleBg}
+        height={46}
+        radius={10}
+        style={{ marginTop: 4 }}
+      />
+    </ModalShell>
   );
 }
 
@@ -443,6 +467,7 @@ export function BracsTooltipModal({ visible, onClose }: BracsTooltipProps) {
 
 type DataPlanModalProps = {
   visible: boolean;
+  position?: ModalPosition;
   onClose: () => void;
   dataPlans: DataPlan[];
   selectedDataPlanId: string;
@@ -503,6 +528,7 @@ function getBadge(label: string): string {
 
 export function DataPlanModal({
   visible,
+  position,
   onClose,
   dataPlans,
   selectedDataPlanId,
@@ -511,102 +537,87 @@ export function DataPlanModal({
   onSelect,
 }: DataPlanModalProps) {
   return (
-    <Modal
+    <ModalShell
       visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onClose}
+      onClose={onClose}
+      position={position}
+      cardStyle={{ maxHeight: "80%" }}
     >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={[styles.modalCard, { maxHeight: "80%" }]}
-          onPress={() => {}}
-        >
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>Select Plan</ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.planCategoryScroll}
-            contentContainerStyle={styles.planCategoryRow}
-          >
-            {DATA_PLAN_TABS.map((tab) => (
-              <TouchableOpacity
-                key={tab.key}
-                style={[
-                  styles.planCategoryTab,
-                  dataPlanCategory === tab.key && styles.planCategoryTabActive,
-                ]}
-                onPress={() => setDataPlanCategory(tab.key)}
-              >
-                <ThemedText
-                  style={[
-                    styles.planCategoryTabText,
-                    dataPlanCategory === tab.key &&
-                      styles.planCategoryTabTextActive,
-                  ]}
-                >
-                  {tab.label}
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          <ScrollView
-            style={styles.modalList}
-            showsVerticalScrollIndicator={false}
-          >
-            {filterPlans(dataPlans, dataPlanCategory).map((plan) => {
-              const selected = selectedDataPlanId === plan.id;
-              return (
-                <TouchableOpacity
-                  key={plan.id}
-                  style={styles.planRadioRow}
-                  onPress={() => onSelect(plan.id)}
-                >
-                  <View style={styles.planBadge}>
-                    <ThemedText style={styles.planBadgeText}>
-                      {getBadge(plan.label)}
-                    </ThemedText>
-                  </View>
-                  <View style={styles.planRadioInfo}>
-                    <ThemedText style={styles.planRadioLabel}>
-                      {plan.label}
-                    </ThemedText>
-                    <ThemedText style={styles.planRadioAmount}>
-                      ₦{plan.amount.toLocaleString("en-NG")}
-                    </ThemedText>
-                  </View>
-                  <View
-                    style={[
-                      styles.radioCircle,
-                      selected && styles.radioCircleSelected,
-                    ]}
-                  >
-                    {selected && <View style={styles.radioCircleInner} />}
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-            {dataPlans.length === 0 ? (
-              <ThemedText style={[styles.emptyText, { padding: 16 }]}>
-                No data plans available for this provider.
-              </ThemedText>
-            ) : null}
-          </ScrollView>
+      <View style={styles.modalHeader}>
+        <ThemedText style={styles.modalTitle}>Select Plan</ThemedText>
+        <TouchableOpacity onPress={onClose}>
+          <CloseCircle size={18} color='#6E6E75' variant='Outline' />
         </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.planCategoryScroll}
+        contentContainerStyle={styles.planCategoryRow}
+      >
+        {DATA_PLAN_TABS.map((tab) => (
+          <TouchableOpacity
+            key={tab.key}
+            style={[
+              styles.planCategoryTab,
+              dataPlanCategory === tab.key && styles.planCategoryTabActive,
+            ]}
+            onPress={() => setDataPlanCategory(tab.key)}
+          >
+            <ThemedText
+              style={[
+                styles.planCategoryTabText,
+                dataPlanCategory === tab.key &&
+                  styles.planCategoryTabTextActive,
+              ]}
+            >
+              {tab.label}
+            </ThemedText>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <ScrollView style={styles.modalList} showsVerticalScrollIndicator={false}>
+        {filterPlans(dataPlans, dataPlanCategory).map((plan) => {
+          const selected = selectedDataPlanId === plan.id;
+          return (
+            <TouchableOpacity
+              key={plan.id}
+              style={styles.planRadioRow}
+              onPress={() => onSelect(plan.id)}
+            >
+              <View style={styles.planBadge}>
+                <ThemedText style={styles.planBadgeText}>
+                  {getBadge(plan.label)}
+                </ThemedText>
+              </View>
+              <View style={styles.planRadioInfo}>
+                <ThemedText style={styles.planRadioLabel}>
+                  {plan.label}
+                </ThemedText>
+                <ThemedText style={styles.planRadioAmount}>
+                  ₦{plan.amount.toLocaleString("en-NG")}
+                </ThemedText>
+              </View>
+              <View
+                style={[
+                  styles.radioCircle,
+                  selected && styles.radioCircleSelected,
+                ]}
+              >
+                {selected && <View style={styles.radioCircleInner} />}
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+        {dataPlans.length === 0 ? (
+          <ThemedText style={[styles.emptyText, { padding: 16 }]}>
+            No data plans available for this provider.
+          </ThemedText>
+        ) : null}
+      </ScrollView>
+    </ModalShell>
   );
 }
 
@@ -614,6 +625,7 @@ export function DataPlanModal({
 
 type BettingProviderModalProps = {
   visible: boolean;
+  position?: ModalPosition;
   onClose: () => void;
   providers: SelectOption[];
   selectedId: string;
@@ -622,78 +634,48 @@ type BettingProviderModalProps = {
 
 export function BettingProviderModal({
   visible,
+  position,
   onClose,
   providers,
   selectedId,
   onSelect,
 }: BettingProviderModalProps) {
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.modalCard}
-          onPress={() => {}}
-        >
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>
-              Select Betting Provider
-            </ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            style={styles.modalList}
-            showsVerticalScrollIndicator={false}
-          >
-            {providers.map((item) => {
-              const imageKey = getBettingImageKey(
-                `${item.id} ${item.label} ${item.description || ""}`,
-              );
-              const logo = imageKey ? BETTING_IMAGES[imageKey] : undefined;
-              const selected = selectedId === item.id;
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  style={[
-                    styles.providerModalRow,
-                    selected && styles.providerModalRowActive,
-                  ]}
-                  onPress={() => {
-                    onSelect(item.id);
-                    onClose();
-                  }}
-                >
-                  {logo ? (
-                    <Image
-                      source={logo}
-                      style={styles.providerModalLogo}
-                      resizeMode='contain'
-                    />
-                  ) : null}
-                  <View style={styles.providerModalTextWrap}>
-                    <ThemedText style={styles.providerModalTitle}>
-                      {item.label}
-                    </ThemedText>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+    <ModalShell visible={visible} onClose={onClose} position={position}>
+      <View style={styles.modalHeader}>
+        <ThemedText style={styles.modalTitle}>
+          Select Betting Provider
+        </ThemedText>
+        <TouchableOpacity onPress={onClose}>
+          <CloseCircle size={18} color='#6E6E75' variant='Outline' />
         </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+      </View>
+
+      <ScrollView style={styles.modalList} showsVerticalScrollIndicator={false}>
+        {providers.map((item) => {
+          const selected = selectedId === item.id;
+          return (
+            <TouchableOpacity
+              key={item.id}
+              style={[
+                styles.providerModalRow,
+                selected && styles.providerModalRowActive,
+              ]}
+              onPress={() => {
+                onSelect(item.id);
+                onClose();
+              }}
+            >
+              <View style={styles.providerModalTextWrap}>
+                <ThemedText style={styles.providerModalTitle}>
+                  {item.label}
+                </ThemedText>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </ModalShell>
   );
 }
 
@@ -701,6 +683,7 @@ export function BettingProviderModal({
 
 type ElectricityProviderModalProps = {
   visible: boolean;
+  position?: ModalPosition;
   onClose: () => void;
   providers: SelectOption[];
   selectedId: string;
@@ -709,80 +692,57 @@ type ElectricityProviderModalProps = {
 
 export function ElectricityProviderModal({
   visible,
+  position,
   onClose,
   providers,
   selectedId,
   onSelect,
 }: ElectricityProviderModalProps) {
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.modalCard}
-          onPress={() => {}}
-        >
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>Select Provider</ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            style={styles.modalList}
-            showsVerticalScrollIndicator={false}
-          >
-            {providers.map((item) => {
-              const imageKey = getElectricityImageKey(
-                `${item.id} ${item.label} ${item.description || ""}`,
-              );
-              const logo = imageKey ? ELECTRICITY_IMAGES[imageKey] : undefined;
-              const selected = selectedId === item.id;
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  style={[
-                    styles.providerModalRow,
-                    selected && styles.providerModalRowActive,
-                  ]}
-                  onPress={() => onSelect(item.id)}
-                >
-                  {logo ? (
-                    <Image
-                      source={logo}
-                      style={styles.providerModalLogo}
-                      resizeMode='contain'
-                    />
-                  ) : null}
-                  <View style={styles.providerModalTextWrap}>
-                    <ThemedText style={styles.providerModalTitle}>
-                      {item.label.toUpperCase()}
-                    </ThemedText>
-                    <ThemedText style={styles.providerModalSubtitle}>
-                      (
-                      {(item.description || "")
-                        .replace(/-/g, " ")
-                        .toUpperCase()}
-                      )
-                    </ThemedText>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+    <ModalShell visible={visible} onClose={onClose} position={position}>
+      <View style={styles.modalHeader}>
+        <ThemedText style={styles.modalTitle}>Select Provider</ThemedText>
+        <TouchableOpacity onPress={onClose}>
+          <CloseCircle size={18} color='#6E6E75' variant='Outline' />
         </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+      </View>
+
+      <ScrollView style={styles.modalList} showsVerticalScrollIndicator={false}>
+        {providers.map((item) => {
+          const imageKey = getElectricityImageKey(
+            `${item.id} ${item.label} ${item.description || ""}`,
+          );
+          const logo = imageKey ? ELECTRICITY_IMAGES[imageKey] : undefined;
+          const selected = selectedId === item.id;
+          return (
+            <TouchableOpacity
+              key={item.id}
+              style={[
+                styles.providerModalRow,
+                selected && styles.providerModalRowActive,
+              ]}
+              onPress={() => onSelect(item.id)}
+            >
+              {logo ? (
+                <Image
+                  source={logo}
+                  style={styles.providerModalLogo}
+                  resizeMode='contain'
+                />
+              ) : null}
+              <View style={styles.providerModalTextWrap}>
+                <ThemedText style={styles.providerModalTitle}>
+                  {item.label.toUpperCase()}
+                </ThemedText>
+                <ThemedText style={styles.providerModalSubtitle}>
+                  ({(item.description || "").replace(/-/g, " ").toUpperCase()})
+                </ThemedText>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </ModalShell>
   );
 }
 
@@ -790,6 +750,7 @@ export function ElectricityProviderModal({
 
 type TransportPlanModalProps = {
   visible: boolean;
+  position?: ModalPosition;
   onClose: () => void;
   transportPlans: DataPlan[];
   selectedTransportPlanId: string;
@@ -798,75 +759,54 @@ type TransportPlanModalProps = {
 
 export function TransportPlanModal({
   visible,
+  position,
   onClose,
   transportPlans,
   selectedTransportPlanId,
   onSelect,
 }: TransportPlanModalProps) {
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.modalCard}
-          onPress={() => {}}
-        >
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>
-              Select Transport Plan
-            </ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            style={styles.modalList}
-            showsVerticalScrollIndicator={false}
-          >
-            {transportPlans.map((plan) => {
-              const selected = selectedTransportPlanId === plan.id;
-              return (
-                <TouchableOpacity
-                  key={plan.id}
-                  style={[
-                    styles.modalListRow,
-                    selected && styles.modalListRowActive,
-                  ]}
-                  onPress={() => onSelect(plan.id, plan.amount)}
-                >
-                  <ThemedText
-                    style={[
-                      styles.modalListTitle,
-                      selected && styles.modalListTitleActive,
-                    ]}
-                  >
-                    {plan.label}
-                  </ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.modalListAmount,
-                      selected && styles.modalListAmountActive,
-                    ]}
-                  >
-                    ₦{plan.amount.toLocaleString("en-NG")}
-                  </ThemedText>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+    <ModalShell visible={visible} onClose={onClose} position={position}>
+      <View style={styles.modalHeader}>
+        <ThemedText style={styles.modalTitle}>Select Transport Plan</ThemedText>
+        <TouchableOpacity onPress={onClose}>
+          <CloseCircle size={18} color='#6E6E75' variant='Outline' />
         </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+      </View>
+
+      <ScrollView style={styles.modalList} showsVerticalScrollIndicator={false}>
+        {transportPlans.map((plan) => {
+          const selected = selectedTransportPlanId === plan.id;
+          return (
+            <TouchableOpacity
+              key={plan.id}
+              style={[
+                styles.modalListRow,
+                selected && styles.modalListRowActive,
+              ]}
+              onPress={() => onSelect(plan.id, plan.amount)}
+            >
+              <ThemedText
+                style={[
+                  styles.modalListTitle,
+                  selected && styles.modalListTitleActive,
+                ]}
+              >
+                {plan.label}
+              </ThemedText>
+              <ThemedText
+                style={[
+                  styles.modalListAmount,
+                  selected && styles.modalListAmountActive,
+                ]}
+              >
+                ₦{plan.amount.toLocaleString("en-NG")}
+              </ThemedText>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </ModalShell>
   );
 }
 
@@ -874,6 +814,7 @@ export function TransportPlanModal({
 
 type CablePlanModalProps = {
   visible: boolean;
+  position?: ModalPosition;
   onClose: () => void;
   cablePlans: CablePlan[];
   selectedCablePlanId: string;
@@ -882,253 +823,74 @@ type CablePlanModalProps = {
 
 export function CablePlanModal({
   visible,
+  position,
   onClose,
   cablePlans,
   selectedCablePlanId,
   onSelect,
 }: CablePlanModalProps) {
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.modalCard}
-          onPress={() => {}}
-        >
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>
-              Select Subscription Plan
-            </ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            style={styles.modalList}
-            showsVerticalScrollIndicator={false}
-          >
-            {cablePlans.map((plan) => {
-              const selected = selectedCablePlanId === plan.id;
-              return (
-                <TouchableOpacity
-                  key={plan.id}
-                  style={[
-                    styles.modalListRow,
-                    selected && styles.modalListRowActive,
-                  ]}
-                  onPress={() => onSelect(plan.id)}
-                >
-                  <ThemedText
-                    style={[
-                      styles.modalListTitle,
-                      selected && styles.modalListTitleActive,
-                    ]}
-                  >
-                    {plan.label}
-                  </ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.modalListAmount,
-                      selected && styles.modalListAmountActive,
-                    ]}
-                  >
-                    ₦{plan.amount.toLocaleString("en-NG")}
-                  </ThemedText>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+    <ModalShell visible={visible} onClose={onClose} position={position}>
+      <View style={styles.modalHeader}>
+        <ThemedText style={styles.modalTitle}>
+          Select Subscription Plan
+        </ThemedText>
+        <TouchableOpacity onPress={onClose}>
+          <CloseCircle size={18} color='#6E6E75' variant='Outline' />
         </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+      </View>
+
+      <ScrollView style={styles.modalList} showsVerticalScrollIndicator={false}>
+        {cablePlans.map((plan) => {
+          const selected = selectedCablePlanId === plan.id;
+          return (
+            <TouchableOpacity
+              key={plan.id}
+              style={[
+                styles.modalListRow,
+                selected && styles.modalListRowActive,
+              ]}
+              onPress={() => onSelect(plan.id)}
+            >
+              <ThemedText
+                style={[
+                  styles.modalListTitle,
+                  selected && styles.modalListTitleActive,
+                ]}
+              >
+                {plan.label}
+              </ThemedText>
+              <ThemedText
+                style={[
+                  styles.modalListAmount,
+                  selected && styles.modalListAmountActive,
+                ]}
+              >
+                ₦{plan.amount.toLocaleString("en-NG")}
+              </ThemedText>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </ModalShell>
   );
 }
-
-// ─── TransportProviderModal ────────────────────────────────────────────────────
-
-type TransportProviderModalProps = {
-  visible: boolean;
-  onClose: () => void;
-  providers: SelectOption[];
-  selectedId: string;
-  onSelect: (id: string) => void;
-};
-
-export function TransportProviderModal({
-  visible,
-  onClose,
-  providers,
-  selectedId,
-  onSelect,
-}: TransportProviderModalProps) {
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.modalCard}
-          onPress={() => {}}
-        >
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>Select Provider</ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            style={styles.modalList}
-            showsVerticalScrollIndicator={false}
-          >
-            {providers.map((item) => {
-              const imageKey = getTransportImageKey(
-                `${item.id} ${item.label} ${item.description || ""}`,
-              );
-              const logo = imageKey ? TRANSPORT_IMAGES[imageKey] : undefined;
-              const selected = selectedId === item.id;
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  style={[
-                    styles.providerModalRow,
-                    selected && styles.providerModalRowActive,
-                  ]}
-                  onPress={() => onSelect(item.id)}
-                >
-                  {logo ? (
-                    <Image
-                      source={logo}
-                      style={styles.providerModalLogo}
-                      resizeMode='contain'
-                    />
-                  ) : null}
-                  <View style={styles.providerModalTextWrap}>
-                    <ThemedText style={styles.providerModalTitle}>
-                      {item.label.toUpperCase()}
-                    </ThemedText>
-                    {item.description ? (
-                      <ThemedText style={styles.providerModalSubtitle}>
-                        ({item.description.replace(/-/g, " ").toUpperCase()})
-                      </ThemedText>
-                    ) : null}
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
-  );
-}
-
-// ─── TransportRouteModal ───────────────────────────────────────────────────────
-
-type TransportRouteModalProps = {
-  visible: boolean;
-  onClose: () => void;
-  routes: TransportRoute[];
-  selectedRouteId: string;
-  onSelect: (id: string) => void;
-};
-
-export function TransportRouteModal({
-  visible,
-  onClose,
-  routes,
-  selectedRouteId,
-  onSelect,
-}: TransportRouteModalProps) {
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType='slide'
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.modalCard}
-          onPress={() => {}}
-        >
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>Select Route</ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={18} color='#6E6E75' variant='Outline' />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            style={styles.modalList}
-            showsVerticalScrollIndicator={false}
-          >
-            {routes.map((route) => {
-              const selected = selectedRouteId === route.id;
-              return (
-                <TouchableOpacity
-                  key={route.id}
-                  style={[
-                    styles.modalListRow,
-                    selected && styles.modalListRowActive,
-                  ]}
-                  onPress={() => onSelect(route.id)}
-                >
-                  <ThemedText
-                    style={[
-                      styles.modalListTitle,
-                      selected && styles.modalListTitleActive,
-                    ]}
-                  >
-                    {route.label || `${route.fromStation} → ${route.toStation}`}
-                  </ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.modalListAmount,
-                      selected && styles.modalListAmountActive,
-                    ]}
-                  >
-                    {route.departureTime ? `Departure: ${route.departureTime}  •  ` : ""}₦{route.amount.toLocaleString("en-NG")}
-                  </ThemedText>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
-  );
-}
-
-// ─── Shared styles ─────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: "#013D254D",
+  },
+  modalOverlayTop: {
+    justifyContent: "flex-start",
+    paddingTop: 24,
+  },
+  modalOverlayCenter: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  modalOverlayBottom: {
     justifyContent: "flex-end",
   },
   modalCard: {

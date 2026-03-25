@@ -50,7 +50,7 @@ export default function KycScreen() {
           title='Next of kin details'
           icon={<UserTag size={20} color={C.primary} />}
           isVerified={!!user?.hasNextOfKin}
-          onPress={() => router.push("/kyc/kin-details")}
+          onPress={() => router.push("/(tabs)/(account)/update-kin-details")}
         />
       </View>
     </SafeAreaView>

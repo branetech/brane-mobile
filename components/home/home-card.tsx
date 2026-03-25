@@ -8,12 +8,12 @@ import { priceFormatter } from "@/utils/helpers";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import {
-    ChartSquare,
-    Eye,
-    EyeSlash,
-    Mobile,
-    Money,
-    WifiSquare,
+  ChartSquare,
+  Eye,
+  EyeSlash,
+  Mobile,
+  Money,
+  WifiSquare,
 } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
@@ -28,7 +28,7 @@ export const HomeCard = () => {
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
   const C = Colors[isDark ? "dark" : "light"];
-  const { onToggleBalance, showBalance } = usePreference();
+  const { onToggleBalance, showBalance } = usePreference(false);
 
   const { data, isLoading } = useRequest(TRANSACTION_SERVICE.BALANCE, {
     initialValue: 0,
@@ -38,11 +38,11 @@ export const HomeCard = () => {
   });
 
   return (
-    <View w="100%" mt={8}>
+    <View w='100%' mt={8}>
       <CardStyle>
-        <View spaced flex={1} h="100%">
-          <View gap={8} w="100%" aligned>
-            <View justified w="100%" row aligned gap={6}>
+        <View spaced flex={1} h='100%'>
+          <View gap={8} w='100%' aligned>
+            <View justified w='100%' row aligned gap={6}>
               <ThemedText style={{ color: "#fff" }}>Total Balance</ThemedText>
               <TouchableOpacity onPress={onToggleBalance}>
                 {showBalance ? (
@@ -54,17 +54,17 @@ export const HomeCard = () => {
             </View>
             <View row aligned>
               {isLoading ? (
-                <ActivityIndicator size="small" color={"#fff"} />
+                <ActivityIndicator size='small' color={"#fff"} />
               ) : (
-                <ThemedText type="title" style={{ color: "#fff" }}>
+                <ThemedText type='title' style={{ color: "#fff" }}>
                   {showBalance ? priceFormatter(data) : "••••••"}
                 </ThemedText>
               )}
             </View>
           </View>
-          <View gap={8} w="100%" aligned spaced row>
+          <View gap={8} w='100%' aligned spaced row>
             <BraneButton
-              text="Add Funds"
+              text='Add Funds'
               onPress={() => {
                 router.push("/add-funds");
               }}
@@ -74,7 +74,7 @@ export const HomeCard = () => {
               radius={32}
             />
             <BraneButton
-              text="My Wallet"
+              text='My Wallet'
               onPress={() => router.push("/wallet")}
               backgroundColor={"#D2F1E41A"}
               textColor={"#fff"}
@@ -129,12 +129,12 @@ export const Quick = () => {
   const wealthColors = getServiceColors("wealth");
 
   return (
-    <View w="100%" mt={24} gap={20}>
-      <ThemedText type="defaultSemiBold">Quick Actions</ThemedText>
+    <View w='100%' mt={24} gap={20}>
+      <ThemedText type='defaultSemiBold'>Quick Actions</ThemedText>
       <View row gap={8}>
         <ServicesCard
-          variant="full"
-          title="Airtime & Data"
+          variant='full'
+          title='Airtime & Data'
           icon={<Mobile size={16} color={airtimeColors.icon} />}
           bg={airtimeColors.bg}
           height={88}
@@ -147,8 +147,8 @@ export const Quick = () => {
           iconBg={airtimeColors.iconBg}
         />
         <ServicesCard
-          variant="full"
-          title="Send Money"
+          variant='full'
+          title='Send Money'
           icon={<Money size={16} color={sendColors.icon} />}
           bg={sendColors.bg}
           height={88}
@@ -156,8 +156,8 @@ export const Quick = () => {
           iconBg={sendColors.iconBg}
         />
         <ServicesCard
-          variant="full"
-          title="Bills & Services"
+          variant='full'
+          title='Bills & Services'
           icon={<WifiSquare size={16} color={billsColors.icon} />}
           bg={billsColors.bg}
           height={88}
@@ -165,12 +165,12 @@ export const Quick = () => {
           iconBg={billsColors.iconBg}
         />
         <ServicesCard
-          variant="full"
-          title="Wealth Investment"
+          variant='full'
+          title='Wealth Investment'
           icon={<ChartSquare size={16} color={wealthColors.icon} />}
           bg={wealthColors.bg}
           height={88}
-          onPress={() => router.push("/stock")}
+          onPress={() => router.push("/(tabs)/(portfolio)")}
           iconBg={wealthColors.iconBg}
         />
       </View>
@@ -214,12 +214,12 @@ export const Transactions = () => {
   };
 
   return (
-    <View w="100%" mt={24} gap={20} minH={260}>
+    <View w='100%' mt={24} gap={20} minH={260}>
       <View row spaced>
-        <ThemedText type="defaultSemiBold">Recent Transaction</ThemedText>
+        <ThemedText type='defaultSemiBold'>Recent Transaction</ThemedText>
         <TouchableOpacity onPress={() => router.push("/(tabs)/transactions")}>
           <ThemedText
-            type="link"
+            type='link'
             style={{
               fontWeight: "800",
               fontSize: 14,
@@ -240,7 +240,7 @@ export const Transactions = () => {
             minHeight: 150,
           }}
         >
-          <ActivityIndicator size="small" color={C.primary} />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : transactions.length > 0 ? (
         <View gap={12}>
@@ -297,12 +297,12 @@ export const Learning = () => {
   ];
 
   return (
-    <View w="100%" gap={16}>
+    <View w='100%' gap={16}>
       <View row spaced>
-        <ThemedText type="defaultSemiBold">Learning Forum</ThemedText>
+        <ThemedText type='defaultSemiBold'>Learning Forum</ThemedText>
         <TouchableOpacity onPress={() => router.push("/learning")}>
           <ThemedText
-            type="link"
+            type='link'
             style={{
               fontWeight: "800",
               fontSize: 14,
@@ -320,8 +320,8 @@ export const Learning = () => {
             key={topic.id}
             title={topic.title}
             description={topic.description}
-            imageSource={topic.image}
-            onPress={topic.action}
+            // imageSource={topic.image}
+            // onPress={topic.action}
           />
         ))}
       </View>

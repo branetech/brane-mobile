@@ -4,15 +4,15 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { FormikHandlers, FormikState } from "formik";
 import React, { forwardRef } from "react";
 import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputProps,
-  TextStyle,
-  TouchableOpacity,
-  View,
-  ViewStyle,
+    StyleProp,
+    StyleSheet,
+    Text,
+    TextInput,
+    TextInputProps,
+    TextStyle,
+    TouchableOpacity,
+    View,
+    ViewStyle,
 } from "react-native";
 
 /* ===================== TYPES ===================== */
@@ -97,13 +97,7 @@ export const FormInput = forwardRef<TextInput, FormInputProp>(
       <View style={[styles.inputWrapper, containerStyle]}>
         {/* Label */}
         {labelText && (
-          <ThemedText
-            style={[
-              styles.label,
-              // { color: theme.text },
-              labelStyle,
-            ]}
-          >
+          <ThemedText style={[styles.label, { color: theme.text }, labelStyle]}>
             {labelText}
           </ThemedText>
         )}
@@ -193,7 +187,7 @@ export const mapFormikProps = (
 /* ===================== STYLES ===================== */
 
 const styles = StyleSheet.create({
-  inputWrapper: {},
+  inputWrapper: { width: "100%" },
 
   label: {
     fontSize: 12,
@@ -208,6 +202,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     height: 48,
     paddingHorizontal: 12,
+    width: "100%",
   },
 
   textInput: {
@@ -227,14 +222,18 @@ const styles = StyleSheet.create({
   leftContent: {
     position: "absolute",
     left: 10,
-    top: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
     zIndex: 1,
   },
 
   rightContent: {
     position: "absolute",
     right: 10,
-    top: 24,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
     zIndex: 1,
   },
 

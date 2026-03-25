@@ -1,7 +1,6 @@
 "use client";
 import React, { useMemo } from "react";
 import {
-  SafeAreaView,
   ScrollView,
   View,
   StyleSheet,
@@ -12,6 +11,7 @@ import {
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import BackButton from "@/components/back";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const PrivacyPolicy = () => {
   const scheme = useColorScheme() ?? "light";
@@ -41,7 +41,8 @@ const PrivacyPolicy = () => {
           paddingBottom: 32,
         },
         headerContainer: {
-          marginBottom: 24,
+          marginBottom: 20,
+          paddingLeft: 16,
         },
         companyTitle: {
           fontSize: 18,

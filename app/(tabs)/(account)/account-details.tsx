@@ -329,7 +329,7 @@ export default function AccountDetailsScreen() {
           textColor="#FFFFFF"
           height={48}
           radius={12}
-          style={{ marginTop: 32 }}
+          style={{ marginVertical: 32 }}
         />
       </ScrollView>
 
@@ -548,12 +548,12 @@ export default function AccountDetailsScreen() {
 Deleting your account will delete all your associated data such as the datas including content you have shared with others. You cannot undo this action.</ThemedText>
               <View style={{ flexDirection: "row", alignItems: "center", marginTop: 12 }}>
                 <ThemedText style={ { color: C.muted, marginTop: 16 } }>
-For more information about how we treat your data, please see our.</ThemedText>
-                  <TouchableOpacity>
-                  <ThemedText style={{ color: C.primary }}>
+For more information about how we treat your data, please see our. <TouchableOpacity style={{  marginTop: 16 }} onPress={() => router.push("/(account)/privacy-policy")}>
+                  <ThemedText style={{ color: C.primary, fontSize: 12 }}>
                     Privacy Policy
                   </ThemedText>
-                </TouchableOpacity>
+                </TouchableOpacity></ThemedText>
+                  
               </View>
               <ScrollView style={{ marginTop: 16, marginBottom: 20, maxHeight: 300 }}>
                 {deleteReasons.map((reason) => (
