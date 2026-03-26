@@ -258,7 +258,7 @@ export default function MyHoldingsScreen() {
         >
           {/* Decorative background shapes */}
           <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
-            {[0, 32, 64].map((offsetX) => (
+            {[0, 44, 88].map((offsetX) => (
               <View
                 key={offsetX}
                 style={{
@@ -268,7 +268,7 @@ export default function MyHoldingsScreen() {
                   opacity: 0.12,
                 }}
               >
-                <Svg width={70} height={30} viewBox="0 0 87 129">
+                <Svg width={110} height={30} viewBox="0 0 87 129">
                   <Path
                     d="M64.2362 0C63.6737 0 63.1594 0.317997 62.9081 0.821294L0.158244 126.493C-0.334553 127.48 0.383172 128.641 1.48631 128.641H21.9187C22.4812 128.641 22.9954 128.323 23.2467 127.819L85.9966 2.14755C86.4894 1.16061 85.7717 0 84.6686 0H64.2362Z"
                     fill="#013D25"
