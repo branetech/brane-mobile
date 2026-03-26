@@ -1,6 +1,6 @@
-import About from "@/components/portfolio/about";
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import About from "@/components/portfolio/about";
 import Financials from "@/components/portfolio/finacials";
 import { ThemedTabNavigator, useTabNavigator } from "@/components/tabs";
 import { ThemedText } from "@/components/themed-text";
@@ -11,7 +11,7 @@ import { useAppState } from "@/redux/store";
 import { STOCKS_SERVICE } from "@/services/routes";
 import { useRequest } from "@/services/useRequest";
 import { StockInterface } from "@/utils/constants";
-import { View as RView  } from "@idimma/rn-widget";
+import { View as RView } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ShoppingCart } from "iconsax-react-native";
 import React from "react";
@@ -67,12 +67,12 @@ export default function CompanyDetailScreen() {
       <View style={[styles.header, { borderBottomColor: C.border }]}>
         <Back onPress={() => router.back()} />
         <RView>
-            <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-                {s.tickerSymbol || tickerSymbol}
-            </ThemedText>
-            <ThemedText style={[{ color: C.muted, fontSize: 12 }]}>
-                {s.companyName || tickerSymbol}
-            </ThemedText>
+          <ThemedText style={[styles.headerTitle, { color: C.text }]}>
+            {s.tickerSymbol || tickerSymbol}
+          </ThemedText>
+          <ThemedText style={[{ color: C.muted, fontSize: 12 }]}>
+            {s.companyName || tickerSymbol}
+          </ThemedText>
         </RView>
         <TouchableOpacity
           onPress={() => router.push("/(tabs)/(portfolio)/checkout" as any)}
@@ -88,7 +88,7 @@ export default function CompanyDetailScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size='large' color={C.primary} />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : (
         <>
@@ -100,11 +100,15 @@ export default function CompanyDetailScreen() {
               tabs={TAB_CONFIG}
               activeTabKey={activeTab}
               onTabChange={onTabChange}
-              tabRowStyle={{ marginHorizontal: 16, justifyContent: "center", gap: 80 }}
+              tabRowStyle={{
+                marginHorizontal: 16,
+                justifyContent: "center",
+                gap: 80,
+              }}
             >
               <View style={styles.contentWrap}>
                 {activeTab === "about" && <About stock={s} />}
-                {activeTab === "financials" && <Financials />}
+                {activeTab === "financials" && <Financials data={s} />}
               </View>
             </ThemedTabNavigator>
 

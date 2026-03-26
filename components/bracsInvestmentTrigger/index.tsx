@@ -9,12 +9,12 @@ import { TRANSACTION_SERVICE } from "@/services/routes";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -118,7 +118,7 @@ export default function BracsInvestmentComponent() {
       <SafeAreaView
         style={[styles.container, { backgroundColor: C.background }]}
       >
-        <ActivityIndicator color={C.primary} size='large' />
+        <ActivityIndicator color={C.primary} size='small' />
       </SafeAreaView>
     );
   }

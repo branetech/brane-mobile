@@ -63,7 +63,7 @@ export const BankTransferDetails = () => {
   if (isLoading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size='large' color={C.primary} />
+        <ActivityIndicator size='small' color={C.primary} />
       </View>
     );
   }

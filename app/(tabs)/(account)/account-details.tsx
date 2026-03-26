@@ -269,7 +269,7 @@ export default function AccountDetailsScreen() {
                   ] as any
                 }
               >
-                <ActivityIndicator size='large' color={C.primary} />
+                <ActivityIndicator size='small' color={C.primary} />
               </View>
             )}
             {!isLoading && (
