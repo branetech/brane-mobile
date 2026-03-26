@@ -746,6 +746,145 @@ export function ElectricityProviderModal({
   );
 }
 
+// ─── TransportProviderModal ───────────────────────────────────────────────────
+
+type TransportProviderModalProps = {
+  visible: boolean;
+  position?: ModalPosition;
+  onClose: () => void;
+  providers: SelectOption[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+};
+
+export function TransportProviderModal({
+  visible,
+  position,
+  onClose,
+  providers,
+  selectedId,
+  onSelect,
+}: TransportProviderModalProps) {
+  return (
+    <ModalShell visible={visible} onClose={onClose} position={position}>
+      <View style={styles.modalHeader}>
+        <ThemedText style={styles.modalTitle}>Select Provider</ThemedText>
+        <TouchableOpacity onPress={onClose}>
+          <CloseCircle size={18} color='#6E6E75' variant='Outline' />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView style={styles.modalList} showsVerticalScrollIndicator={false}>
+        {providers.map((item) => {
+          const imageKey = getTransportImageKey(item.id);
+          const logo = imageKey ? TRANSPORT_IMAGES[imageKey] : undefined;
+          const selected = selectedId === item.id;
+          return (
+            <TouchableOpacity
+              key={item.id}
+              style={[
+                styles.providerModalRow,
+                selected && styles.providerModalRowActive,
+              ]}
+              onPress={() => onSelect(item.id)}
+            >
+              {logo ? (
+                <Image
+                  source={logo}
+                  style={styles.providerModalLogo}
+                  resizeMode='contain'
+                />
+              ) : null}
+              <View style={styles.providerModalTextWrap}>
+                <ThemedText style={styles.providerModalTitle}>
+                  {item.label}
+                </ThemedText>
+                {item.description ? (
+                  <ThemedText style={styles.providerModalSubtitle}>
+                    {item.description}
+                  </ThemedText>
+                ) : null}
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </ModalShell>
+  );
+}
+
+// ─── TransportRouteModal ──────────────────────────────────────────────────────
+
+type TransportRouteModalProps = {
+  visible: boolean;
+  position?: ModalPosition;
+  onClose: () => void;
+  routes: TransportRoute[];
+  selectedRouteId: string;
+  onSelect: (id: string) => void;
+};
+
+export function TransportRouteModal({
+  visible,
+  position,
+  onClose,
+  routes,
+  selectedRouteId,
+  onSelect,
+}: TransportRouteModalProps) {
+  return (
+    <ModalShell visible={visible} onClose={onClose} position={position}>
+      <View style={styles.modalHeader}>
+        <ThemedText style={styles.modalTitle}>Select Route</ThemedText>
+        <TouchableOpacity onPress={onClose}>
+          <CloseCircle size={18} color='#6E6E75' variant='Outline' />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView style={styles.modalList} showsVerticalScrollIndicator={false}>
+        {routes.map((route) => {
+          const selected = selectedRouteId === route.id;
+          return (
+            <TouchableOpacity
+              key={route.id}
+              style={[
+                styles.modalListRow,
+                selected && styles.modalListRowActive,
+              ]}
+              onPress={() => onSelect(route.id)}
+            >
+              <View style={{ flex: 1 }}>
+                <ThemedText
+                  style={[
+                    styles.modalListTitle,
+                    selected && styles.modalListTitleActive,
+                  ]}
+                >
+                  {route.label || `${route.fromStation} → ${route.toStation}`}
+                </ThemedText>
+                {route.departureTime ? (
+                  <ThemedText style={styles.providerModalSubtitle}>
+                    {route.departureTime}
+                    {route.duration ? ` · ${route.duration}` : ""}
+                  </ThemedText>
+                ) : null}
+              </View>
+              <ThemedText
+                style={[
+                  styles.modalListAmount,
+                  selected && styles.modalListAmountActive,
+                ]}
+              >
+                ₦{route.amount.toLocaleString("en-NG")}
+              </ThemedText>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </ModalShell>
+  );
+}
+
 // ─── TransportPlanModal ────────────────────────────────────────────────────────
 
 type TransportPlanModalProps = {
