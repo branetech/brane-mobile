@@ -67,8 +67,6 @@ const QuantitySelectorWithLabel: React.FC<{
   const estimatedCost =
     inputValue === "" ? 0 : (Number(inputValue) || 0) * currentPrice;
 
-    console.log("Estimated Cost:", estimatedCost, "for quantity:", inputValue, "at price:", currentPrice);
-
   return (
     <View style={styles.qtyInputRow}>
       <TextInput
@@ -349,7 +347,7 @@ const StockBreakdownDetails: React.FC<StockBreakdownDetailsProps> = ({
   const price = priceFormatter((stockPrice || 0) as number, 2);
 
   if (isLoading) return <StockPurchaseCardSkeleton />;
-  console.log('hello',stockPrice);
+
   return (
     <ScrollView
       style={styles.card}
