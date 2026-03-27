@@ -1,6 +1,7 @@
 import { StockInfoLineTwo } from "@/components";
 import { BraneButton } from "@/components/brane-button";
 import { Header } from "@/components/header";
+import { KycGate } from "@/components/kyc-gate";
 import {
   PaymentMethodSelector,
   PaymentOption,
@@ -42,7 +43,8 @@ const Checkout = () => {
   const [render, setRender] = useReduxState("", "checkoutRender");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [message, setErrorMessage] = useState("");
-  const { checkouts } = useAppState();
+  const { checkouts, user } = useAppState();
+  const [showKycModal, setShowKycModal] = useState(false);
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
@@ -152,7 +154,14 @@ const Checkout = () => {
     }
   };
 
-  // ── Render states ──────────────────────────────────────────
+  // KYC check before PIN validation
+  const handleConfirmPayment = () => {
+    if (!user?.kycDone) {
+      setShowKycModal(true);
+      return;
+    }
+    setRender("validate-pin");
+  };
 
   if (render === "failed") {
     return (
@@ -277,7 +286,7 @@ const Checkout = () => {
         <View style={styles.actionsRow}>
           <BraneButton
             text='Confirm Payment'
-            onPress={() => setRender("validate-pin")}
+            onPress={handleConfirmPayment}
             disabled={isDisabled}
             backgroundColor={C.primary}
             textColor='#D2F1E4'
@@ -285,6 +294,14 @@ const Checkout = () => {
             radius={12}
           />
         </View>
+        <KycGate
+          visible={showKycModal}
+          onClose={() => setShowKycModal(false)}
+          onCompleteKYC={() => {
+            setShowKycModal(false);
+            router.push("/kyc" as any);
+          }}
+        />
       </ScrollView>
     </View>
   );
