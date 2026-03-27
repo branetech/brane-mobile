@@ -1,12 +1,12 @@
 import { LearnCard } from "@/components/home/cards";
 import {
-    AssetGrid,
-    AssetHoldingsCard,
-    BottomNav,
-    CurrencyDropdown,
-    Header,
-    PortfolioCard,
-    SectionHeader,
+  AssetGrid,
+  AssetHoldingsCard,
+  BottomNav,
+  CurrencyDropdown,
+  Header,
+  PortfolioCard,
+  SectionHeader,
 } from "@/components/portfolio";
 import { WithdrawIcn } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
@@ -20,11 +20,11 @@ import { useRouter } from "expo-router";
 import { ArrowRight2 } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-    Modal,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -35,7 +35,7 @@ export default function PortfolioScreen() {
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
-  const { data } = useRequest(STOCKS_SERVICE.USER_STOCKS, {
+  useRequest(STOCKS_SERVICE.USER_STOCKS, {
     initialValue: [],
     params: { currentPage: 1, perPage: 400 },
     revalidateIfStale: false,
@@ -79,7 +79,7 @@ export default function PortfolioScreen() {
         />
 
         {/* ── My Holdings button — always visible ── */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.myHoldingsBtn, { backgroundColor: C.inputBg, borderColor: C.border }]}
           onPress={() => router.push("/stock/portfolio/my-holdings" as any)}
           activeOpacity={0.8}
@@ -88,36 +88,38 @@ export default function PortfolioScreen() {
             My Holdings
           </ThemedText>
           <ArrowRight2 size={18} color={C.primary} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* ── Asset Holdings (only when invested) ── */}
-        {data.length > 0 && (
-          <>
-            <SectionHeader
-              title='Asset Holdings'
-              actionLabel='All Holdings'
-              onAction={() => router.push("/stock/portfolio/my-holdings" as any)}
+        {/* {data.length > 0 && ( */}
+        <>
+          <SectionHeader
+            title='Asset Holdings'
+            actionLabel='All Holdings'
+            onAction={() =>
+              router.push("/(tabs)/(portfolio)/my-holdings" as any)
+            }
+          />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.holdingsScroll}
+          >
+            <AssetHoldingsCard
+              title='Stocks'
+              amount='₦3220.00'
+              returnLabel='45.05%'
+              isPositive
             />
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.holdingsScroll}
-            >
-              <AssetHoldingsCard
-                title='Stocks'
-                amount='₦3220.00'
-                returnLabel='45.05%'
-                isPositive
-              />
-              <AssetHoldingsCard
-                title='ETFs'
-                amount='₦3220.00'
-                returnLabel='2% return'
-                isPositive
-              />
-            </ScrollView>
-          </>
-        )}
+            <AssetHoldingsCard
+              title='ETFs'
+              amount='₦3220.00'
+              returnLabel='2% return'
+              isPositive
+            />
+          </ScrollView>
+        </>
+        {/* )} */}
 
         {/* ── Explore Assets ── */}
         <SectionHeader title='Explore Assets' />

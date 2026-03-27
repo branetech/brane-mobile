@@ -1,23 +1,22 @@
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { STOCKS_SERVICE } from "@/services/routes";
-import { textToImage, useRequest } from "@/services/useRequest";
+import { textToImage } from "@/services/useRequest";
 import { FORUM_POSTS, ITransactionDetail } from "@/utils";
 import { formatNumberToDecimal, priceFormatter } from "@/utils/helpers";
 import { Image, View } from "@idimma/rn-widget";
 import {
-    ArrowDown3,
-    ArrowRight2,
-    ArrowUp3,
-    ShoppingCart,
+  ArrowDown3,
+  ArrowRight2,
+  ArrowUp3,
+  ShoppingCart,
 } from "iconsax-react-native";
 import React from "react";
 import {
-    ImageBackground,
-    View as RNV,
-    StyleSheet,
-    TouchableOpacity,
+  ImageBackground,
+  View as RNV,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { IconRender } from "../icon-render";
 
@@ -326,6 +325,8 @@ interface CardProps {
   minWidth?: string;
   hidePriceInfo?: boolean;
   variant?: "stacked" | "list";
+  showCartIcon?: boolean;
+  breakdown?: any; // pass breakdown data from parent
 }
 
 export const StockItemCard: React.FC<CardProps> = (asset) => {
@@ -342,16 +343,11 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
     logo,
     percentage,
     variant = "stacked",
+    showCartIcon = true,
+    // breakdown, // now passed as prop
   } = asset;
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-
-  const { data: breakdown } = useRequest(
-    STOCKS_SERVICE.BREAKDOWN(String(tickerSymbol || "")),
-    {
-      initialValue: { purchasableQuantity: 0, remainingBracs: 0 },
-    },
-  );
   const getCardBgColor = () => {
     const key =
       `${tickerSymbol || ""} ${stockName || ""} ${logo || ""}`.toLowerCase();
@@ -382,7 +378,7 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
       ? "#008753"
       : "#008753";
 
-  const bracs = breakdown?.bracsBalance;
+  // const bracs = breakdown?.bracsBalance; // not used
   const cardWidth =
     typeof minWidth === "string" && minWidth.endsWith("px")
       ? Number(minWidth.replace("px", ""))
@@ -418,7 +414,11 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
               </ThemedText>
               <ThemedText
                 numberOfLines={1}
-                style={[styles.stockListSubtitle, { color: C.muted }]}
+                style={[
+                  styles.stockListSubtitle,
+                  { color: C.muted, width: "70%" },
+                ]}
+                ellipsizeMode='tail'
               >
                 {companyName}
               </ThemedText>
@@ -429,29 +429,33 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
             <ThemedText style={[styles.stockListPrice, { color: C.text }]}>
               {`${priceFormatter(currentPrice, 0)}`}
             </ThemedText>
-              <View row align='center' gap={4}>
-                <Ticker ticker={ticker} />
-            <ThemedText style={{ color: priceChangeColor, fontSize: 10 }}>
-              {`${formatNumberToDecimal(percentage ?? 0)}%`}
-            </ThemedText>
-              </View>
+            <View row align='center' gap={4}>
+              <Ticker ticker={ticker} />
+              <ThemedText style={{ color: priceChangeColor, fontSize: 10 }}>
+                {`${formatNumberToDecimal(percentage ?? 0)}%`}
+              </ThemedText>
+            </View>
           </RNV>
 
-          <RNV
-            style={[styles.stockListDivider, { backgroundColor: C.border }]}
-          />
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={onAddToCart}
-            style={styles.stockCartButton}
-          >
-            <ShoppingCart
-              size={22}
-              color={C.primary}
-              variant={isInCart ? "Bold" : "Linear"}
+          {showCartIcon && (
+            <RNV
+              style={[styles.stockListDivider, { backgroundColor: C.border }]}
             />
-          </TouchableOpacity>
+          )}
+
+          {showCartIcon && (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={onAddToCart}
+              style={styles.stockCartButton}
+            >
+              <ShoppingCart
+                size={22}
+                color={C.primary}
+                variant={isInCart ? "Bold" : "Linear"}
+              />
+            </TouchableOpacity>
+          )}
         </RNV>
       </TouchableOpacity>
     );
@@ -757,7 +761,7 @@ const styles = StyleSheet.create({
   },
   stockListRight: {
     alignItems: "flex-end",
-    marginLeft: 12,
+    // marginLeft: 12,
   },
   stockListPrice: {
     fontSize: 14,
