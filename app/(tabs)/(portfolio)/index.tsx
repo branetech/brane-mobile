@@ -78,10 +78,26 @@ export default function PortfolioScreen() {
           onPressWithdraw={() => setShowWithdrawModal(true)}
         />
 
+        {/* ── My Holdings button — always visible ── */}
+        <TouchableOpacity
+          style={[styles.myHoldingsBtn, { backgroundColor: C.inputBg, borderColor: C.border }]}
+          onPress={() => router.push("/stock/portfolio/my-holdings" as any)}
+          activeOpacity={0.8}
+        >
+          <ThemedText style={[styles.myHoldingsLabel, { color: C.text }]}>
+            My Holdings
+          </ThemedText>
+          <ArrowRight2 size={18} color={C.primary} />
+        </TouchableOpacity>
+
         {/* ── Asset Holdings (only when invested) ── */}
         {data.length > 0 && (
           <>
-            <SectionHeader title='Asset Holdings' actionLabel='All Holdings' />
+            <SectionHeader
+              title='Asset Holdings'
+              actionLabel='All Holdings'
+              onAction={() => router.push("/stock/portfolio/my-holdings" as any)}
+            />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -192,6 +208,20 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingBottom: 16 },
   holdingsScroll: { marginBottom: 20 },
+  myHoldingsBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 20,
+  },
+  myHoldingsLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: "flex-end",

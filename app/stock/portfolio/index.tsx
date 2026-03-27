@@ -283,7 +283,7 @@ export default function PortfolioScreen() {
             </ThemedText>
             <TouchableOpacity
               style={s.seeAllBtn}
-              onPress={() => router.push("/stock/portfolio/my-stocks")}
+              onPress={() => router.push("/stock/portfolio/my-holdings" as any)}
             >
               <ThemedText style={[s.seeAllLabel, { color: C.primary }]}>
                 All Holdings
