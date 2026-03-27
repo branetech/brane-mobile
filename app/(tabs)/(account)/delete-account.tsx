@@ -109,10 +109,7 @@ export default function DeleteAccountScreen() {
                     >
                       {isSelected && (
                         <View
-                          style={[
-                            styles.radioInner,
-                            { backgroundColor: C.primary },
-                          ]}
+                          style={{ ...styles.radioInner, backgroundColor: C.primary }}
                         />
                       )}
                     </View>
