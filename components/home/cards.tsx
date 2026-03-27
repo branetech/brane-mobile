@@ -7,17 +7,17 @@ import { FORUM_POSTS, ITransactionDetail } from "@/utils";
 import { formatNumberToDecimal, priceFormatter } from "@/utils/helpers";
 import { Image, View } from "@idimma/rn-widget";
 import {
-  ArrowDown3,
-  ArrowRight2,
-  ArrowUp3,
-  ShoppingCart,
+    ArrowDown3,
+    ArrowRight2,
+    ArrowUp3,
+    ShoppingCart,
 } from "iconsax-react-native";
 import React from "react";
 import {
-  ImageBackground,
-  View as RNV,
-  StyleSheet,
-  TouchableOpacity,
+    ImageBackground,
+    View as RNV,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { IconRender } from "../icon-render";
 
@@ -321,6 +321,7 @@ interface CardProps {
   icon?: React.ReactNode;
   onClick?: () => void;
   onAddToCart?: () => void;
+  isInCart?: boolean;
   width?: string;
   minWidth?: string;
   hidePriceInfo?: boolean;
@@ -337,7 +338,9 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
     tickerSymbol,
     onClick,
     onAddToCart,
+    isInCart,
     logo,
+    percentage,
     variant = "stacked",
   } = asset;
   const scheme = useColorScheme();
@@ -424,11 +427,14 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
 
           <RNV style={styles.stockListRight}>
             <ThemedText style={[styles.stockListPrice, { color: C.text }]}>
-              {`${priceFormatter(currentPrice, 0)}/unit`}
+              {`${priceFormatter(currentPrice, 0)}`}
             </ThemedText>
-            <ThemedText style={[styles.stockListBracs, { color: C.muted }]}>
-              {`${formatNumberToDecimal(bracs)}bracs`}
+              <View row align='center' gap={4}>
+                <Ticker ticker={ticker} />
+            <ThemedText style={{ color: priceChangeColor, fontSize: 10 }}>
+              {`${formatNumberToDecimal(percentage ?? 0)}%`}
             </ThemedText>
+              </View>
           </RNV>
 
           <RNV
@@ -440,7 +446,11 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
             onPress={onAddToCart}
             style={styles.stockCartButton}
           >
-            <ShoppingCart size={22} color={C.primary} />
+            <ShoppingCart
+              size={22}
+              color={C.primary}
+              variant={isInCart ? "Bold" : "Linear"}
+            />
           </TouchableOpacity>
         </RNV>
       </TouchableOpacity>

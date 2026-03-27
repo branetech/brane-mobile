@@ -1,5 +1,5 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -91,13 +91,7 @@ export default function BracsBreakdownIndexScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-          BRACS Breakdown
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='BRACS Breakdown' />
 
       {isLoading ? (
         <View style={styles.loaderWrap}>

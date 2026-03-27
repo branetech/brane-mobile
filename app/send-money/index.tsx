@@ -1,5 +1,5 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
 import {
     BeneficiarySelector,
     RecipientAccountSelector,
@@ -225,17 +225,12 @@ export default function SendMoneyScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.screen}
       >
-        <View style={styles.header}>
-          <Back
-            onPress={() =>
-              step === "account" ? router.back() : setStep("account")
-            }
-          />
-          <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-            Send Money
-          </ThemedText>
-          <View style={{ width: 44 }} />
-        </View>
+        <Header
+          title='Send Money'
+          handleBackPress={(router) =>
+            step === "account" ? router.back() : setStep("account")
+          }
+        />
 
         <ScrollView
           showsVerticalScrollIndicator={false}

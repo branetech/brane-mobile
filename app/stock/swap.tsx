@@ -1,6 +1,6 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
@@ -304,19 +304,14 @@ export default function BracsSwapScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back
-          onPress={() => {
-            if (stage === "preview") setStage("form");
-            else if (stage === "pin") setStage("preview");
-            else router.back();
-          }}
-        />
-        <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-          {stage === "success" ? "Done" : "Swap BRACS"}
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header
+        title={stage === "success" ? "Done" : "Swap BRACS"}
+        handleBackPress={(router) => {
+          if (stage === "preview") setStage("form");
+          else if (stage === "pin") setStage("preview");
+          else router.back();
+        }}
+      />
 
       {stage === "form" && renderForm()}
       {stage === "preview" && renderPreview()}

@@ -1,23 +1,24 @@
-import Back from "@/components/back";
-import { KycGate } from "@/components/kyc-gate";
+import { StockInfoLineTwo } from "@/components";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
 import {
   PaymentMethodSelector,
-  type PaymentOption,
+  PaymentOption,
 } from "@/components/payment-method-selector";
+import StockBreakdownDetails from "@/components/portfolio/asset-card";
+import { SuccessPage } from "@/components/success-page";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import {
-  onClearCheckouts,
-  onRemoveFromCheckouts,
-} from "@/redux/slice/auth-slice";
+import { onClearCheckouts } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
 import { useReduxState } from "@/redux/useReduxState";
 import BaseRequest, { parseNetworkError } from "@/services";
-import { AUTH_SERVICE, STOCKS_SERVICE } from "@/services/routes";
+import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
+import { useRequest } from "@/services/useRequest";
 import {
+  collection,
   hideAppLoader,
   onShowInsufficientFunds,
   pluralize,
@@ -27,446 +28,342 @@ import {
   showSuccess,
 } from "@/utils/helpers";
 import { useRouter } from "expo-router";
-import { Add, CloseCircle } from "iconsax-react-native";
-import React, { useMemo, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { CloseCircle } from "iconsax-react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { BackHandler, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 
 type Scheme = "light" | "dark";
 
-type CheckoutStage = "" | "validate-pin" | "success" | "failed";
-
-type CheckoutItem = {
-  tickerSymbol: string;
-  quantity: number;
-  assetClass?: string;
-  netPayable?: number;
-  totalCharge?: number;
-  companyName?: string;
-};
-
-export default function CheckoutScreen() {
+const Checkout = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const [render, setRender] = useReduxState("", "checkoutRender");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [message, setErrorMessage] = useState("");
+  const { checkouts } = useAppState();
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
 
-  const [render, setRender] = useReduxState<CheckoutStage>(
-    "",
-    "checkoutRender",
-  );
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [message, setErrorMessage] = useState("");
-
-  const { checkouts, wallet, user } = useAppState("auth") || {};
-
-  const isKycCompleted =
-    user?.hasName && user?.identityKyc && user?.hasNextOfKin;
-  const [showKycModal, setShowKycModal] = useState<boolean>(!isKycCompleted);
-  const checkoutItems: CheckoutItem[] = useMemo(
-    () => (Array.isArray(checkouts) ? checkouts : []),
-    [checkouts],
+  // Fetch balances
+  const { data: walletBalance = 0, isLoading: isLoadingWallet } = useRequest(
+    TRANSACTION_SERVICE.BALANCE,
+    { initialValue: 0, revalidateOnFocus: true, revalidateOnMount: true },
   );
 
-  const totalCharge = useMemo(
-    () =>
-      checkoutItems.reduce(
-        (acc, curr) => acc + (Number(curr.totalCharge) || 0),
-        0,
-      ),
-    [checkoutItems],
-  );
+  const [bracsBalance, setBracsBalance] = useState(0);
+  const [isLoadingBracs, setIsLoadingBracs] = useState(true);
 
-  const netToBePaid = useMemo(
-    () =>
-      checkoutItems.reduce(
-        (acc, curr) => acc + (Number(curr.netPayable) || 0),
-        0,
-      ),
-    [checkoutItems],
-  );
+  const fetchBracsBalance = useCallback(async () => {
+    setIsLoadingBracs(true);
+    try {
+      const res: any = await BaseRequest.get(STOCKS_SERVICE.BRAC_BALANCE);
+      setBracsBalance(
+        Number(
+          res?.data?.balance || res?.balance || res?.data?.bracsBalance || 0,
+        ),
+      );
+    } catch {
+      setBracsBalance(0);
+    } finally {
+      setIsLoadingBracs(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBracsBalance();
+  }, [fetchBracsBalance]);
 
   const paymentOptions: PaymentOption[] = useMemo(
     () => [
-      { id: "wallet", label: "Brane Wallet", icon: "W" },
-      { id: "bracs", label: "Bracs", icon: "B" },
+      {
+        id: "bracs",
+        label: isLoadingBracs
+          ? "Bracs Balance \u2013 \u2014"
+          : `Bracs Balance \u2013 ${priceFormatter(bracsBalance, 2)}`,
+        icon: "B",
+      },
+      {
+        id: "brane_wallet",
+        label: isLoadingWallet
+          ? "Add From Wallet \u2013 \u2014"
+          : `Add From Wallet \u2013 ${priceFormatter(walletBalance, 2)}`,
+        icon: "B",
+      },
     ],
-    [],
+    [bracsBalance, walletBalance, isLoadingBracs, isLoadingWallet],
   );
 
-  const walletBalance = Number(
-    wallet?.balance ?? wallet?.availableBalance ?? 0,
+  const totalCharge = checkouts.reduce(
+    (acc: any, curr: any) => acc + (curr.totalCharge || 0),
+    0,
   );
-  const isDisabled = checkoutItems.length === 0 || paymentMethod === "";
+  const netToBePaid = checkouts.reduce(
+    (acc: any, curr: any) => acc + (curr.netPayable || 0),
+    0,
+  );
+
+  // Handle Android back button — mirrors the web popstate listener
+  useEffect(() => {
+    const onBackPress = () => {
+      if (render !== "") {
+        setRender("");
+        return true; // prevent default back
+      }
+      return false;
+    };
+    const sub = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    return () => sub.remove();
+  }, [render, setRender]);
+
+  const isDisabled = checkouts.length === 0 || paymentMethod === "";
 
   const onSubmit = async () => {
     try {
       showAppLoader({
         message: "Processing Transaction",
-        style: { backgroundColor: "rgba(1, 61, 37, 0.60)" },
+        style: { backgroundColor: "rgba(1, 61, 37, .60)" },
         textStyle: { color: "#FFFFFF" },
         spinnerColor: "#FFFFFF",
       });
 
-      const response: any = await BaseRequest.post(STOCKS_SERVICE.BUY, {
-        data: checkoutItems,
+      const { message }: any = await BaseRequest.post(STOCKS_SERVICE.BUY, {
+        data: checkouts,
         netToBePaid,
         totalCharge,
         purchaseMode: paymentMethod.toUpperCase(),
       });
 
       dispatch(onClearCheckouts());
-      showSuccess(response?.message || "Transaction submitted successfully");
+      showSuccess(message);
       setRender("success");
     } catch (err) {
-      const { message: parsedMessage } = parseNetworkError(err);
-      const nextMessage =
-        parsedMessage || "Something went wrong. Please try again.";
-
-      if (nextMessage === "Insufficient wallet balance") {
+      const { message: errMessage } = parseNetworkError(err);
+      if (errMessage === "Insufficient wallet balance") {
         onShowInsufficientFunds();
       }
-
-      setErrorMessage(nextMessage);
+      setErrorMessage(errMessage);
       setRender("failed");
-      showError(nextMessage);
+      showError(errMessage || "Something went wrong. Please try again.");
     } finally {
       hideAppLoader();
     }
   };
 
+  // ── Render states ──────────────────────────────────────────
+
   if (render === "failed") {
     return (
-      <SafeAreaView
-        style={[styles.centeredScreen, { backgroundColor: C.background }]}
-      >
-        <View
-          style={[
-            styles.statusCard,
-            { backgroundColor: C.inputBackground, borderColor: C.border },
-          ]}
-        >
-          <ThemedText type='title' style={{ color: C.text }}>
+      <SafeAreaView style={[styles.root, { backgroundColor: C.background }]}>
+        <View style={styles.errorContent}>
+          <CloseCircle size={80} color={C.error || "#CB010B"} variant='Bold' />
+          <ThemedText style={[styles.errorTitle, { color: C.text }]}>
             Transaction Failed
           </ThemedText>
-          <ThemedText style={[styles.statusText, { color: C.muted }]}>
+          <ThemedText style={[styles.errorText, { color: C.muted }]}>
             {message ||
-              "Something went wrong while processing your transaction."}
+              "Something went wrong while processing your transaction. Please try again."}
           </ThemedText>
-          <BraneButton
-            text='Dismiss'
-            onPress={() => {
-              setRender("");
-              setErrorMessage("");
-            }}
-            backgroundColor={C.primary}
-            textColor='#D2F1E4'
-            height={52}
-            radius={12}
-          />
+          <View style={styles.errorBtnWrap}>
+            <BraneButton
+              text='Dismiss'
+              onPress={() => {
+                setRender("");
+                setErrorMessage("");
+              }}
+              backgroundColor={C.primary}
+              textColor='#D2F1E4'
+              height={52}
+              radius={12}
+            />
+          </View>
         </View>
       </SafeAreaView>
     );
   }
 
-  if (render === "success") {
-    return (
-      <SafeAreaView
-        style={[styles.centeredScreen, { backgroundColor: C.background }]}
-      >
-        <View
-          style={[
-            styles.statusCard,
-            { backgroundColor: C.inputBackground, borderColor: C.border },
-          ]}
-        >
-          <ThemedText type='title' style={{ color: C.text }}>
-            Stock Purchase Processing
-          </ThemedText>
-          <ThemedText style={[styles.statusText, { color: C.muted }]}>
-            Your order has been successfully submitted. See status updates on
-            the stock dashboard.
-          </ThemedText>
-          <BraneButton
-            text='Done'
-            onPress={() => {
-              setRender("");
-              router.push("/(tabs)/(portfolio)" as any);
-            }}
-            backgroundColor={C.primary}
-            textColor='#D2F1E4'
-            height={52}
-            radius={12}
-          />
-        </View>
-      </SafeAreaView>
-    );
-  }
+  // ── Main checkout screen ───────────────────────────────────
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: C.background }}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+    <View style={[styles.root, { backgroundColor: C.background }]}>
+      <TransactionPinValidator
+        visible={render === "validate-pin"}
+        onClose={() => setRender("")}
+        onTransactionPinValidated={onSubmit}
+      />
+      <SuccessPage
+        visible={render === "success"}
+        title='Stock Purchase Processing'
+        text='Your order has been successfully submitted. See status update on the stock dashboard screen.'
+        btnText='Dismiss'
+        onBtnClick={() => {
+          setRender("");
+          router.push("/portfolio" as any);
+        }}
+      />
+      <Header title='Asset Checkout' bgColor={C.background} />
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.headerRow}>
-          <Back onPress={() => router.back()} />
-          <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-            Asset Checkout
-          </ThemedText>
-          <View style={{ width: 44 }} />
+        {/* Horizontally scrollable checkout cards */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.cardsRow}
+        >
+          {collection(checkouts).map(
+            ({
+              tickerSymbol,
+              quantity,
+              brokerName,
+              tenure,
+              amount,
+              name,
+            }: any) => (
+              <StockBreakdownDetails
+                key={tickerSymbol}
+                quantity={quantity}
+                brokerName={brokerName}
+                tickerSymbol={tickerSymbol}
+                hasMore={checkouts?.length > 1}
+                tenure={tenure}
+                amount={amount}
+                name={name}
+              />
+            ),
+          )}
+        </ScrollView>
+
+        {/* Totals card */}
+        <View style={styles.totalsCard}>
+          <StockInfoLineTwo
+            title='Net Total Charges'
+            className={C.muted}
+            value={priceFormatter(totalCharge, 2)}
+          />
+          <View style={styles.divider} />
+          <StockInfoLineTwo
+            title={
+              <Text style={styles.netPaidLabel}>
+                Net to be Paid on {pluralize(checkouts.length, "Asset")}
+              </Text>
+            }
+            className={C.muted}
+            value={priceFormatter(netToBePaid, 2)}
+          />
         </View>
 
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View
-            style={[
-              styles.sectionCard,
-              { backgroundColor: C.inputBackground, borderColor: C.border },
-            ]}
-          >
-            <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
-              Selected Assets
-            </ThemedText>
-
-            {checkoutItems.length === 0 ? (
-              <ThemedText style={[styles.emptyText, { color: C.muted }]}>
-                No assets in checkout.
-              </ThemedText>
-            ) : (
-              checkoutItems.map((item) => (
-                <View
-                  key={item.tickerSymbol}
-                  style={[styles.assetRow, { borderBottomColor: C.border }]}
-                >
-                  <View style={{ flex: 1 }}>
-                    <ThemedText
-                      type='defaultSemiBold'
-                      style={{ color: C.text }}
-                    >
-                      {item.tickerSymbol?.toUpperCase() ||
-                        item.companyName ||
-                        "Asset"}
-                    </ThemedText>
-                    <ThemedText style={[styles.assetMeta, { color: C.muted }]}>
-                      Qty: {item.quantity || 0} | {item.assetClass || "stocks"}
-                    </ThemedText>
-                    <ThemedText style={[styles.assetValue, { color: C.text }]}>
-                      {priceFormatter(Number(item.netPayable || 0), 2)}
-                    </ThemedText>
-                  </View>
-
-                  <TouchableOpacity
-                    onPress={() =>
-                      dispatch(onRemoveFromCheckouts(item.tickerSymbol))
-                    }
-                    activeOpacity={0.7}
-                    style={{ paddingLeft: 12, paddingVertical: 6 }}
-                  >
-                    <CloseCircle size={20} color={C.error} variant='Bold' />
-                  </TouchableOpacity>
-                </View>
-              ))
-            )}
-          </View>
-
-          <View
-            style={[
-              styles.sectionCard,
-              { backgroundColor: C.inputBackground, borderColor: C.border },
-            ]}
-          >
-            <ThemedText style={[styles.sectionTitle, { color: C.text }]}>
-              Summary
-            </ThemedText>
-
-            <View style={styles.summaryRow}>
-              <ThemedText style={[styles.summaryLabel, { color: C.muted }]}>
-                Net Total Charges
-              </ThemedText>
-              <ThemedText style={[styles.summaryValue, { color: C.text }]}>
-                {priceFormatter(totalCharge, 2)}
-              </ThemedText>
-            </View>
-
-            <View style={[styles.divider, { backgroundColor: C.border }]} />
-
-            <View style={styles.summaryRow}>
-              <ThemedText type='defaultSemiBold' style={{ color: C.primary }}>
-                Net to be Paid on {pluralize(checkoutItems.length, "Asset")}
-              </ThemedText>
-              <ThemedText type='defaultSemiBold' style={{ color: C.text }}>
-                {priceFormatter(netToBePaid, 2)}
-              </ThemedText>
-            </View>
-          </View>
-
+        {/* Payment method */}
+        <View style={styles.paymentSection}>
           <PaymentMethodSelector
             options={paymentOptions}
             selectedId={paymentMethod}
             onSelect={setPaymentMethod}
-            amount={netToBePaid}
             walletBalance={walletBalance}
+            bracsBalance={bracsBalance}
+            amount={netToBePaid}
             onFundWallet={() => router.push("/add-funds" as any)}
+            isLoadingBalance={isLoadingWallet}
+            isLoadingBracsBalance={isLoadingBracs}
           />
-        </ScrollView>
+        </View>
 
-        <View
-          style={[
-            styles.footer,
-            { borderTopColor: C.border, backgroundColor: C.background },
-          ]}
-        >
+        {/* Action button */}
+        <View style={styles.actionsRow}>
           <BraneButton
-            text='Add'
-            onPress={() => router.back()}
-            backgroundColor={C.background}
-            textColor={C.primary}
-            rightIcon={<Add size={16} color={C.primary} />}
-            height={52}
-            radius={12}
-            style={{ borderWidth: 1, borderColor: "#D3EBE1", flex: 0.35 }}
-          />
-
-          <BraneButton
-            text='Checkout'
+            text='Confirm Payment'
             onPress={() => setRender("validate-pin")}
             disabled={isDisabled}
             backgroundColor={C.primary}
             textColor='#D2F1E4'
-            height={52}
+            height={48}
             radius={12}
-            style={{ flex: 0.65 }}
           />
         </View>
-
-        <TransactionPinValidator
-          visible={render === "validate-pin"}
-          onClose={() => setRender("")}
-          onTransactionPinValidated={onSubmit}
-          onResetPin={() =>
-            router.push("/account/reset-transaction-pin" as any)
-          }
-          onValidatePin={async (pin) => {
-            try {
-              await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, { pin });
-              return true;
-            } catch {
-              return false;
-            }
-          }}
-        />
-      </KeyboardAvoidingView>
-
-      <KycGate
-        visible={showKycModal}
-        onClose={() => {
-          setShowKycModal(false);
-          router.back();
-        }}
-        message='Please complete your KYC to proceed to checkout.'
-      />
-    </SafeAreaView>
+      </ScrollView>
+    </View>
   );
-}
+};
 
+export default Checkout;
+
+// ─────────────────────────────────────────────
+// Styles
+// ─────────────────────────────────────────────
 const styles = StyleSheet.create({
-  centeredScreen: {
+  root: {
     flex: 1,
-    paddingHorizontal: 16,
-    justifyContent: "center",
+    backgroundColor: "#fff",
   },
-  statusCard: {
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 20,
-    gap: 16,
-  },
-  statusText: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: "700",
+  scrollView: {
+    flex: 1,
+    backgroundColor: "#F7F7F8",
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
-    gap: 14,
-  },
-  sectionCard: {
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 14,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: "700",
-    marginBottom: 10,
-  },
-  emptyText: {
-    fontSize: 13,
-  },
-  assetRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-  },
-  assetMeta: {
-    fontSize: 12,
-    marginTop: 2,
-  },
-  assetValue: {
-    fontSize: 13,
-    fontWeight: "700",
-    marginTop: 4,
-  },
-  summaryRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    paddingTop: 20,
+    paddingBottom: 40,
     gap: 12,
   },
-  summaryLabel: {
-    fontSize: 12,
+
+  // Checkout cards horizontal scroll
+  cardsRow: {
+    paddingHorizontal: 16,
+    gap: 16,
   },
-  summaryValue: {
-    fontSize: 13,
-    fontWeight: "700",
+
+  // Totals
+  totalsCard: {
+    marginHorizontal: 16,
+    padding: 16,
+    backgroundColor: "#fff",
+    borderRadius: 12,
   },
   divider: {
     height: 1,
-    marginVertical: 10,
+    backgroundColor: "#F7F7F8",
+    marginVertical: 12,
   },
-  footer: {
-    flexDirection: "row",
+  netPaidLabel: {
+    color: "#0B0014",
+    fontSize: 12,
+  },
+
+  // Payment method
+  paymentSection: {
+    marginHorizontal: 16,
+  },
+
+  // Buttons
+  actionsRow: {
+    marginHorizontal: 16,
+    marginTop: 18,
+    marginBottom: 50,
+  },
+
+  // Error view
+  errorContent: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 20,
-    borderTopWidth: 1,
+    padding: 24,
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginTop: 16,
+  },
+  errorText: {
+    fontSize: 14,
+    textAlign: "center",
+    marginTop: 8,
+  },
+  errorBtnWrap: {
+    width: "100%",
+    marginTop: 32,
   },
 });

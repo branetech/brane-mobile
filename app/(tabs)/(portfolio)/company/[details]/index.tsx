@@ -70,9 +70,11 @@ export default function CompanyDetailScreen() {
           <ThemedText style={[styles.headerTitle, { color: C.text }]}>
             {s.tickerSymbol || tickerSymbol}
           </ThemedText>
-          <ThemedText style={[{ color: C.muted, fontSize: 12 }]}>
+         <View style={{flex: 1, alignItems: 'center'}}>
+           <ThemedText style={[{ color: C.muted, fontSize: 11, textAlign: "center", width: '70%' }]} numberOfLines={1} ellipsizeMode='tail'>
             {s.companyName || tickerSymbol}
           </ThemedText>
+         </View>
         </RView>
         <TouchableOpacity
           onPress={() => router.push("/(tabs)/(portfolio)/checkout" as any)}
@@ -96,7 +98,10 @@ export default function CompanyDetailScreen() {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            <ThemedTabNavigator
+
+            <About stock={s} />
+
+            {/* <ThemedTabNavigator
               tabs={TAB_CONFIG}
               activeTabKey={activeTab}
               onTabChange={onTabChange}
@@ -110,7 +115,7 @@ export default function CompanyDetailScreen() {
                 {activeTab === "about" && <About stock={s} />}
                 {activeTab === "financials" && <Financials data={s} />}
               </View>
-            </ThemedTabNavigator>
+            </ThemedTabNavigator> */}
 
             <View style={styles.bottomSpacer} />
           </ScrollView>

@@ -1,5 +1,5 @@
-import Back from "@/components/back";
 import { EmptyState } from "@/components/empty-state";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -7,12 +7,12 @@ import BaseRequest, { catchError } from "@/services";
 import { View } from "@idimma/rn-widget";
 import { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -91,13 +91,7 @@ export default function LeaderboardScreen() {
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header} row aligned>
-        <Back />
-        <ThemedText type='subtitle' style={styles.headerTitle}>
-          Leaderboard
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Leaderboard' />
 
       {/* Period pills */}
       <View style={styles.pillsRow} row>

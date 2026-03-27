@@ -1,5 +1,5 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
 import { type PaymentOption } from "@/components/payment-method-selector";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
@@ -849,13 +849,7 @@ export default function UtilitySelectScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={styles.headerTitle}>
-          {isAirtimeOrData ? "Airtime & Data" : "Bills & Utility"}
-        </ThemedText>
-        <View style={styles.headerSpacer} />
-      </View>
+      <Header title={isAirtimeOrData ? "Airtime & Data" : "Bills & Utility"} />
 
       {isFetchingMeta ? (
         <View style={styles.fullPageLoader}>

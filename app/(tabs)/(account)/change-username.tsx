@@ -1,6 +1,6 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
+import { Header } from "@/components/header";
 import { OTPInput } from "@/components/otp-input";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -13,13 +13,13 @@ import { useRouter } from "expo-router";
 import { TickCircle } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  View as RNView,
-  ScrollView,
-  StyleSheet,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    Pressable,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -78,11 +78,7 @@ export default function ChangeUsernameScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.screen}
       >
-        <View style={styles.header} row aligned>
-          <Back onPress={() => router.back()} />
-          <ThemedText type='subtitle'>Change Username</ThemedText>
-          <View style={{ width: 44 }} />
-        </View>
+        <Header title='Change Username' />
 
         <ScrollView contentContainerStyle={styles.content}>
           {stage === 1 ? (

@@ -179,7 +179,7 @@ const Financials = ({ data }: any) => {
           History
         </Text>
         <View style={{marginTop: 100}}>
-                  <EmptyTransaction show={!transaction.length} textColor={C.muted} />
+            <EmptyTransaction show={!transaction.length} textColor={C.muted} />
 
         </View>
         <View style={styles.dividerList}>

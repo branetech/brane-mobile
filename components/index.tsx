@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 8,
+    
   },
   stockInfoLineTwoTitle: {
     color: "#85808A",
