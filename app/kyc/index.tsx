@@ -19,7 +19,7 @@ export default function KycScreen() {
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
-        <Back onPress={() => router.push("/(tabs)/(account)")} />
+        <Back onPress={() => router.back()} />
         <ThemedText type='subtitle'>KYC Requirements</ThemedText>
         <Pressable style={{ width: 24 }} />
       </View>
