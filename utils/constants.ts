@@ -280,5 +280,17 @@ export const options = [
   },
 ];
 
-export const details =
-  "MTN Group Limited is a South African multinational corporation and mobile telecommunications provider. Its head office is in Johannesburg. As of December 2022 MTN recorded 289.1 million subscribers. MTN is among the largest mobile network operators in the world, and the largest in Africa.";
+
+
+
+export const details = `Your Bracs, professionally managed for growth.
+
+Managed Portfolio & Wealth Investment gives you peace of mind by putting your portfolio in the hands of expert investment partners. Instead of worrying about how to allocate or grow your assets, you can rely on a seamless system that manages everything for you securely, transparently, and with your financial goals in mind.
+
+What You Get
+• Effortless Management: Your portfolio is handled automatically, so you don't have to lift a finger.
+• Expert Oversight: Professional investment partners ensure your assets are optimized for growth.
+• Tailored to You: Strategies designed to match your needs and risk preferences.
+• Clear & Secure: Transparent reporting and trusted processes keep you in control.
+
+With Managed Portfolio & Wealth Investment, you don't just save you grow. It's the smarter way to build wealth while staying focused on what matters most in your life.`;
