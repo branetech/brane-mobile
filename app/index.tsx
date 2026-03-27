@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
-import { ActivityIndicator } from "react-native";
 import { useAppState } from "@/redux/store";
 import expoSecureStorage from "@/utils/secureStore";
 import { View } from "@idimma/rn-widget";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
 
 export default function Index() {
   const router = useRouter();
@@ -21,8 +21,11 @@ export default function Index() {
           return;
         }
 
-        const hasSeenFirstSplash = await expoSecureStorage.getItem("hasSeenFirstSplash");
-        const hasCompletedOnboarding = await expoSecureStorage.getItem("hasCompletedOnboarding");
+        const hasSeenFirstSplash =
+          await expoSecureStorage.getItem("hasSeenFirstSplash");
+        const hasCompletedOnboarding = await expoSecureStorage.getItem(
+          "hasCompletedOnboarding",
+        );
         const hasRegistered = await expoSecureStorage.getItem("hasRegistered");
 
         if (hasRegistered) {
@@ -49,7 +52,7 @@ export default function Index() {
   if (isLoading || isChecking) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='small' />
       </View>
     );
   }

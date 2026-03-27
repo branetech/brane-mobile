@@ -1,6 +1,6 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput, mapFormikProps } from "@/components/formInput";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -79,13 +79,7 @@ export default function AddCardScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-          Add New Card
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Add New Card' />
 
       <ScrollView
         showsVerticalScrollIndicator={false}

@@ -121,7 +121,7 @@ export default function BiometricSettingsScreen() {
           alignItems: "center",
         }}
       >
-        <ActivityIndicator size='large' color={C.primary} />
+        <ActivityIndicator size='small' color={C.primary} />
       </SafeAreaView>
     );
   }

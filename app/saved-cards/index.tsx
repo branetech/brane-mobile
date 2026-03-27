@@ -1,6 +1,6 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { EmptyState } from "@/components/empty-state";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -166,13 +166,7 @@ export default function SavedCardsScreen() {
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: C.background }]}>
-      <View style={styles.header} row aligned spaced>
-        <Back />
-        <ThemedText type='defaultSemiBold' style={styles.headerTitle}>
-          Saved Cards
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Saved Cards' />
 
       {isLoading ? (
         <View style={styles.loaderWrap}>

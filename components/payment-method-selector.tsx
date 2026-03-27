@@ -5,10 +5,10 @@ import { formatMoney } from "@/utils/helpers";
 import { Add } from "iconsax-react-native";
 import React, { memo, useMemo } from "react";
 import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
@@ -27,9 +27,11 @@ type Props = {
   onSelect: (id: string) => void;
   onSeeAll?: () => void;
   walletBalance?: number;
+  bracsBalance?: number;
   amount?: number;
   onFundWallet?: () => void;
   isLoadingBalance?: boolean;
+  isLoadingBracsBalance?: boolean;
 };
 
 function WalletIcon() {
@@ -75,9 +77,11 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
   onSelect,
   onSeeAll,
   walletBalance,
+  bracsBalance,
   amount = 0,
   onFundWallet,
   isLoadingBalance = false,
+  isLoadingBracsBalance = false,
 }: Props) {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
@@ -141,7 +145,15 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
       <View style={styles.card}>
         {normalizedOptions.map((option, index) => {
           const isWalletOption = option.id === "brane_wallet";
-          const isDisabled = isWalletOption && isInsufficientBalance;
+          const isBracsOption = option.id === "bracs";
+          const isPaymentOption = isWalletOption || isBracsOption;
+          const isBracsEmpty =
+            isBracsOption &&
+            !isLoadingBracsBalance &&
+            typeof bracsBalance === "number" &&
+            bracsBalance <= 0;
+          const isDisabled =
+            (isWalletOption && isInsufficientBalance) || isBracsEmpty;
           const isSelected = !isDisabled && selectedId === option.id;
           const optionLabel = isWalletOption ? displayLabel : option.label;
 
@@ -166,7 +178,7 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
                       : styles.iconWrapActive,
                   ]}
                 >
-                  {isWalletOption ? (
+                  {isPaymentOption ? (
                     <WalletIcon />
                   ) : (
                     <ThemedText style={styles.iconText}>
@@ -194,6 +206,9 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
                     {isWalletOption && isLoadingBalance && (
                       <ActivityIndicator size='small' color={C.primary} />
                     )}
+                    {isBracsOption && isLoadingBracsBalance && (
+                      <ActivityIndicator size='small' color={C.primary} />
+                    )}
                   </View>
                   {isWalletOption &&
                     isInsufficientBalance &&
@@ -204,6 +219,13 @@ export const PaymentMethodSelector = memo(function PaymentMethodSelector({
                         Insufficient balance
                       </ThemedText>
                     )}
+                  {isBracsEmpty && !isLoadingBracsBalance && (
+                    <ThemedText
+                      style={[styles.insufficientText, { color: C.muted }]}
+                    >
+                      No BRACS balance
+                    </ThemedText>
+                  )}
                 </View>
               </View>
 

@@ -1,14 +1,14 @@
-import Back from "@/components/back";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import {
-  ArrowRight2,
-  Devices,
-  Electricity,
-  I3Dcube,
+    ArrowRight2,
+    Devices,
+    Electricity,
+    I3Dcube,
 } from "iconsax-react-native";
 import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -53,13 +53,7 @@ export default function PayBillsScreen() {
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header} row aligned>
-        <Back />
-        <ThemedText type='subtitle' style={styles.headerTitle}>
-          Pay Bills
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Pay Bills' />
 
       <FlatList
         data={BILL_CATEGORIES(C)}

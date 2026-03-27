@@ -1,4 +1,4 @@
-import Back from "@/components/back";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -198,13 +198,7 @@ export default function AllServicesScreen() {
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header} row aligned>
-        <Back onPress={() => router.back()} />
-        <ThemedText type='subtitle' style={styles.headerTitle}>
-          All Services
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='All Services' />
 
       {/* Search */}
       <View

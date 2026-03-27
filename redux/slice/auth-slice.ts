@@ -158,8 +158,8 @@ const { reducer, actions } = createSlice({
       state.refreshToken = action.payload;
     },
     logOut: (state) => {
-      // Reset to initial state
-      return initialState;
+      // Reset to initial state but preserve cart
+      return { ...initialState, checkouts: state.checkouts };
     },
     setLoader: (state, action) => {
       state.isLoading = action.payload;

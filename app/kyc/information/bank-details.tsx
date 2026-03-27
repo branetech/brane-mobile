@@ -1,4 +1,4 @@
-import Back from "@/components/back";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -28,11 +28,7 @@ export default function KycBankDetailsScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header} row aligned>
-        <Back onPress={() => router.back()} />
-        <ThemedText type='subtitle'>Bank Verification</ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Bank Verification' />
 
       <View style={styles.content}>
         <View

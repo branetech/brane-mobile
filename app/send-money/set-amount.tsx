@@ -1,13 +1,13 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
+import { Header } from "@/components/header";
 import { type PaymentOption } from "@/components/payment-method-selector";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import {
-  TransactionSummaryModal,
-  type TransactionRow,
+    TransactionSummaryModal,
+    type TransactionRow,
 } from "@/components/transaction-summary-modal";
 import { Colors } from "@/constants/colors";
 import { type Scheme } from "@/constants/theme";
@@ -21,13 +21,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Copy } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  Dimensions,
-  Modal,
-  View as RNView,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
+    Dimensions,
+    Modal,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -114,9 +114,8 @@ export default function SendMoneySetAmountScreen() {
         bankName,
         accountName: recipientName,
       });
-      console.log("Beneficiary saved successfully");
     } catch (error) {
-      console.error("Error saving beneficiary:", error);
+      catchError(error);
     }
   };
 
@@ -127,13 +126,7 @@ export default function SendMoneySetAmountScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-          Send Money
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Send Money' />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -344,6 +337,7 @@ export default function SendMoneySetAmountScreen() {
                     label: "Amount:",
                     value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
                   },
+                  { label: "Service Charge:", value: "₦ 25.00" },
                 ].map((row, i, arr) => (
                   <RNView
                     key={row.label}
@@ -417,10 +411,10 @@ export default function SendMoneySetAmountScreen() {
               label: "Amount",
               value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
             },
-            { label: "Service Fee", value: "₦ 0.00" },
+            { label: "Service Fee", value: "₦ 25.00" },
             {
               label: "Total Debit",
-              value: `₦ ${Number(amount || 0).toLocaleString("en-NG")}`,
+              value: `₦ ${(Number(amount || 0) + 25).toLocaleString("en-NG")}`,
               bold: true,
             },
           ] as TransactionRow[]
@@ -448,7 +442,6 @@ export default function SendMoneySetAmountScreen() {
             const res = await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
               pin,
             });
-            console.log("PIN validation response:", res);
             return true;
           } catch {
             return false;
@@ -462,7 +455,7 @@ export default function SendMoneySetAmountScreen() {
               recipientName,
               accountNumber,
               bankCode,
-              amount: Number(amount),
+              amount: Number(amount) + 25,
               remark,
               paymentMethod: selectedPaymentId,
             });

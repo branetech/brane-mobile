@@ -1,26 +1,30 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
+import {
+    BeneficiarySelector,
+    RecipientAccountSelector,
+    type Beneficiary,
+} from "@/components/send-money";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { catchError } from "@/services";
 import {
-  RecipientAccountSelector,
-  BeneficiarySelector,
-  type Beneficiary,
-} from "@/components/send-money";
-import { getBeneficiaries, verifyAccountDetails, getBanks } from "@/services/send-money";
+    getBanks,
+    getBeneficiaries,
+    verifyAccountDetails,
+} from "@/services/send-money";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Modal,
-  Pressable,
-  TextInput,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -42,9 +46,7 @@ export default function SendMoneyScreen() {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
-  const [step, setStep] = useState<"account" | "confirm">(
-    "account"
-  );
+  const [step, setStep] = useState<"account" | "confirm">("account");
 
   // Form State
   const [accountNumber, setAccountNumber] = useState("");
@@ -56,15 +58,14 @@ export default function SendMoneyScreen() {
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [recipientName, setRecipientName] = useState("");
   const [verified, setVerified] = useState(false);
-  const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
+  const [selectedBeneficiary, setSelectedBeneficiary] =
+    useState<Beneficiary | null>(null);
 
   // UI State
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
-  const [banks, setBanks] = useState<
-    Array<{ code: string; name: string }>
-  >([]);
+  const [banks, setBanks] = useState<Array<{ code: string; name: string }>>([]);
   const [addToBeneficiaries, setAddToBeneficiaries] = useState(false);
   const [bankSearch, setBankSearch] = useState("");
 
@@ -93,15 +94,16 @@ export default function SendMoneyScreen() {
       setBeneficiaries(benefData || []);
       setBanks(bankData || []);
     } catch (error) {
-      console.error("Error loading data:", error);
+      catchError(error);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const filteredBanks = banks.filter((bank) =>
-    bank.name.toLowerCase().includes(bankSearch.toLowerCase()) ||
-    bank.code.toLowerCase().includes(bankSearch.toLowerCase())
+  const filteredBanks = banks.filter(
+    (bank) =>
+      bank.name.toLowerCase().includes(bankSearch.toLowerCase()) ||
+      bank.code.toLowerCase().includes(bankSearch.toLowerCase()),
   );
 
   const validateForm = (): boolean => {
@@ -154,12 +156,15 @@ export default function SendMoneyScreen() {
     setVerifying(true);
     setErrors({});
     try {
-      console.log("Verifying account:", { accountNumber, bankCode });
       const result = await verifyAccountDetails(accountNumber, bankCode);
-      console.log("Verification result:", result);
 
-      if (result && (result.account_name || result.accountName || result.name)) {
-        setRecipientName(result.account_name || result.accountName || result.name || "");
+      if (
+        result &&
+        (result.account_name || result.accountName || result.name)
+      ) {
+        setRecipientName(
+          result.account_name || result.accountName || result.name || "",
+        );
         setVerified(true);
       } else if (result) {
         // Result exists but no name - still consider it verified
@@ -172,10 +177,10 @@ export default function SendMoneyScreen() {
         }));
       }
     } catch (error) {
-      console.error("Verification error:", error);
       setErrors((prev) => ({
         ...prev,
-        accountNumber: "Verification failed. Please check details and try again.",
+        accountNumber:
+          "Verification failed. Please check details and try again.",
       }));
     } finally {
       setVerifying(false);
@@ -183,7 +188,9 @@ export default function SendMoneyScreen() {
   };
 
   const handleBeneficiarySelect = (beneficiary: Beneficiary) => {
-    setAccountNumber(beneficiary.accountNumber || beneficiary.account_number || "");
+    setAccountNumber(
+      beneficiary.accountNumber || beneficiary.account_number || "",
+    );
     setBankCode(beneficiary.bankCode || beneficiary.bank_code || "");
     setBankName(beneficiary.bankName || beneficiary.bank_name || "");
     setRecipientName(beneficiary.name || "");
@@ -191,26 +198,26 @@ export default function SendMoneyScreen() {
     setSelectedBeneficiary(beneficiary);
     // Don't auto-navigate, let user click button to proceed
   };
-const handleProceed = () => {
-  if (step === "account") {
-    if (!verified) {
-      handleVerifyAccount();
-    } else {
-      // Verified — go straight to set-amount, skip confirm step
-      if (!validateForm()) return;
-      router.push({
-        pathname: "/send-money/set-amount",
-        params: {
-          accountNumber,
-          bankCode,
-          bankName,
-          recipientName,
-          addToBeneficiaries: addToBeneficiaries ? "true" : "false",
-        },
-      });
+  const handleProceed = () => {
+    if (step === "account") {
+      if (!verified) {
+        handleVerifyAccount();
+      } else {
+        // Verified — go straight to set-amount, skip confirm step
+        if (!validateForm()) return;
+        router.push({
+          pathname: "/send-money/set-amount",
+          params: {
+            accountNumber,
+            bankCode,
+            bankName,
+            recipientName,
+            addToBeneficiaries: addToBeneficiaries ? "true" : "false",
+          },
+        });
+      }
     }
-  }
-};
+  };
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
@@ -218,15 +225,12 @@ const handleProceed = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.screen}
       >
-        <View style={styles.header}>
-          <Back onPress={() => (step === "account" ? router.back() : setStep("account"))} />
-          <ThemedText
-            style={[styles.headerTitle, { color: C.text }]}
-          >
-            Send Money
-          </ThemedText>
-          <View style={{ width: 44 }} />
-        </View>
+        <Header
+          title='Send Money'
+          handleBackPress={(router) =>
+            step === "account" ? router.back() : setStep("account")
+          }
+        />
 
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -235,7 +239,6 @@ const handleProceed = () => {
           {/* Step 1: Account Details + Beneficiary Selection */}
           {step === "account" && (
             <>
-
               <RecipientAccountSelector
                 accountNumber={accountNumber}
                 bankName={bankName}
@@ -248,7 +251,6 @@ const handleProceed = () => {
                 verified={verified}
                 recipientName={recipientName}
               />
-
 
               <View style={styles.buttonContainer}>
                 <BraneButton
@@ -294,18 +296,18 @@ const handleProceed = () => {
             </>
           )} */}
         </ScrollView>
-
-     
       </KeyboardAvoidingView>
 
       {/* Bank Selection Modal */}
-      <Modal visible={showBankModal} animationType="slide" transparent>
-        <SafeAreaView style={[styles.modalScreen, { backgroundColor: C.background }]}>
+      <Modal visible={showBankModal} animationType='slide' transparent>
+        <SafeAreaView
+          style={[styles.modalScreen, { backgroundColor: C.background }]}
+        >
           <View style={styles.modalHeader}>
             <Pressable onPress={() => setShowBankModal(false)}>
               <ThemedText style={[{ color: C.primary }]}>Close</ThemedText>
             </Pressable>
-            <ThemedText type="subtitle" style={[{ color: C.text }]}>
+            <ThemedText type='subtitle' style={[{ color: C.text }]}>
               Select Bank
             </ThemedText>
             <View style={{ width: 44 }} />
@@ -313,13 +315,17 @@ const handleProceed = () => {
 
           <View style={styles.searchInputContainer}>
             <TextInput
-              placeholder="Search banks..."
+              placeholder='Search banks...'
               placeholderTextColor={C.muted}
               value={bankSearch}
               onChangeText={setBankSearch}
               style={[
                 styles.searchInput,
-                { backgroundColor: C.inputBg, borderColor: C.border, color: C.text },
+                {
+                  backgroundColor: C.inputBg,
+                  borderColor: C.border,
+                  color: C.text,
+                },
               ]}
             />
           </View>
@@ -343,9 +349,7 @@ const handleProceed = () => {
                   },
                 ]}
               >
-                <ThemedText style={[{ color: C.text }]}>
-                  {bank.name}
-                </ThemedText>
+                <ThemedText style={[{ color: C.text }]}>{bank.name}</ThemedText>
               </Pressable>
             ))}
           </ScrollView>

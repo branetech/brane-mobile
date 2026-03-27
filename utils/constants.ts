@@ -1,4 +1,3 @@
-import { useRequest } from "@/services/useRequest"
 
 export const images = [
   {
@@ -60,7 +59,7 @@ export interface StockInterface {
   percentage?: number;
   history?: any[];
   currentPrice?: any;
-  isTopPick?:boolean;
+  isTopPick?: boolean;
   stockSourceId?: string;
   custodian?: string;
   isin?: string;
@@ -71,6 +70,26 @@ export interface StockInterface {
   fundSponsor?: string;
   tenures?: string;
   annualReturn?: string;
+
+  // Added for holdings-about.tsx compatibility
+  currentValue?: number;
+  portfolioValue?: number;
+  investedValue?: number;
+  costBasis?: number;
+  averagePrice?: number;
+  avgPrice?: number;
+  quantity?: number;
+  units?: number;
+  unrealizedPnl?: number;
+  pnl?: number;
+  startDate?: string;
+  transactionCount?: number;
+  growthToday?: number;
+  growthThisMonth?: number;
+  dividends?: number;
+  withdrawal?: number;
+  sallyTitle?: string;
+  sallyBody?: string;
 }
 
 export interface LockedFundsData {
@@ -236,7 +255,6 @@ export const Beneficiary = [
   // },
 ];
 
-
 export const options = [
   {
     title: "AI Investment Assistant (Sally)",
@@ -256,13 +274,13 @@ export const options = [
   {
     title: "Do It Yourself (DIY)",
     isSwitch: true,
-    description:
-      "Manually set up your bracs allocation and <br /> investment.",
+    description: "Manually set up your bracs allocation and <br /> investment.",
     value: "diy",
     url: "/account/bracs-investment-trigger/bracs-allocation",
   },
 ];
 
+<<<<<<< HEAD
 
 
 
@@ -277,3 +295,7 @@ What You Get
 • Clear & Secure: Transparent reporting and trusted processes keep you in control.
 
 With Managed Portfolio & Wealth Investment, you don't just save you grow. It's the smarter way to build wealth while staying focused on what matters most in your life.`;
+=======
+export const details =
+  "MTN Group Limited is a South African multinational corporation and mobile telecommunications provider. Its head office is in Johannesburg. As of December 2022 MTN recorded 289.1 million subscribers. MTN is among the largest mobile network operators in the world, and the largest in Africa.";
+>>>>>>> 8f27faacc75156be260356a7c6343cd5c774a347

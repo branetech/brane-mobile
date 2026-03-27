@@ -1,4 +1,6 @@
+// Show error toast
 // utils/helpers.ts
+import { Colors } from "@/constants/colors";
 import {
   onShowInsFunds,
   setLoader,
@@ -8,10 +10,11 @@ import { dispatch } from "@/redux/store";
 import { ITransactionDetail } from "@/utils/index";
 import universities from "@/utils/universities.json";
 import { format } from "date-fns";
-import React from "react";
+import { TextStyle, ViewStyle } from "react-native";
 import { toast } from "sonner-native";
 import { getEarnedBracs } from "./brac";
-import { TextStyle, ViewStyle } from "react-native";
+export const showError = (description: string, message: string = "Error") =>
+  showMessage(message, description, "error");
 
 export const getSchoolInitials = (name: string): string => {
   const school =
@@ -73,22 +76,34 @@ export const showInfo = (
 export const showWarning = (description: string, message: string = "Warning") =>
   showMessage(message, description, "warning");
 
-export const showError = (description: string, message: string = "Error") =>
-  showMessage(message, description, "error");
-
 type NotificationType = "success" | "info" | "warning" | "error";
 
-export const showMessage = (
-  _: string,
+export function showMessage(
+  message: string,
   description: string,
   type: NotificationType,
-) => {
+) {
+  // Dynamically get theme
+  const scheme =
+    (typeof window !== "undefined" && window.__BRANE_SCHEME__) ||
+    (require("@/hooks/use-color-scheme").useColorScheme?.() ?? "light");
+  const C = Colors[scheme === "dark" ? "dark" : "light"];
+  let bg = C.background;
+  let color = C.text;
+  if (type === "success") {
+    bg = C.primary;
+    color = "#fff";
+  } else if (type === "error") {
+    bg = C.error;
+    color = "#fff";
+  }
   // @ts-ignore
   toast[type](description, {
     duration: 3000,
-    // You can customize these based on sonner-native options
+    style: { backgroundColor: bg, borderRadius: 12 },
+    textStyle: { color },
   });
-};
+}
 
 export interface ILoaderConfig {
   message: string;
@@ -351,11 +366,15 @@ export const formatDateWithSuffix = (dateStr: string): string => {
 };
 
 export function formatNumberToDecimal(value: number): string {
-  return value?.toFixed(2);
+  const num = Number(value);
+  if (isNaN(num)) return "0.00";
+  return num.toFixed(2);
 }
 
 export function formatPercentageToDecimal(value: number): string {
-  return value?.toFixed(2) + "%";
+  const num = Number(value);
+  if (isNaN(num)) return "0.00%";
+  return num.toFixed(2) + "%";
 }
 
 export function calculateBracsPercentage(part: number, total: number): number {
@@ -403,7 +422,7 @@ export const convertKeysCase = (o: unknown, type?: caseType): object => {
     });
     return value;
   } else if (isArray(o)) {
-    const value = o as Array<unknown>;
+    const value = o as unknown[];
     return value.map((i) => convertKeysCase(i as object, type));
   }
 

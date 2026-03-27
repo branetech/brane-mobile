@@ -1,5 +1,5 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
 import { type PaymentOption } from "@/components/payment-method-selector";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
@@ -8,27 +8,27 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import BaseRequest, { parseNetworkError } from "@/services";
 import {
-  onTransactionPinBettingValidation,
-  onTransactionPinCabelValidation,
-  onTransactionPinElectricityValidation,
-  onTransactionPinValidated,
+    onTransactionPinBettingValidation,
+    onTransactionPinCabelValidation,
+    onTransactionPinElectricityValidation,
+    onTransactionPinValidated,
 } from "@/services/data";
 import {
-  AUTH_SERVICE,
-  MOBILE_SERVICE,
-  PAYMENT_CALLBACK_URL,
-  TRANSACTION_SERVICE,
+    AUTH_SERVICE,
+    MOBILE_SERVICE,
+    PAYMENT_CALLBACK_URL,
+    TRANSACTION_SERVICE,
 } from "@/services/routes";
 import { hideAppLoader, showError } from "@/utils/helpers";
 import * as Contacts from "expo-contacts";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  View,
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AirtimeDataForm } from "./AirtimeDataForm";
@@ -36,33 +36,33 @@ import { BettingForm } from "./BettingForm";
 import { CableForm } from "./CableForm";
 import { ElectricityForm } from "./ElectricityForm";
 import {
-  BettingProviderModal,
-  BoostModal,
-  CablePlanModal,
-  ContactPickerModal,
-  DataPlanModal,
-  ElectricityProviderModal,
-  SummaryModal,
-  TransportProviderModal,
-  TransportRouteModal,
+    BettingProviderModal,
+    BoostModal,
+    CablePlanModal,
+    ContactPickerModal,
+    DataPlanModal,
+    ElectricityProviderModal,
+    SummaryModal,
+    TransportProviderModal,
+    TransportRouteModal,
 } from "./Modals";
 import { TransportationForm } from "./TransportationForm";
 import {
-  getNetworkImageKey,
-  normalizeCablePlan,
-  normalizeDataPlan,
-  normalizeElectricityProviders,
-  normalizeOption,
-  toArray,
+    getNetworkImageKey,
+    normalizeCablePlan,
+    normalizeDataPlan,
+    normalizeElectricityProviders,
+    normalizeOption,
+    toArray,
 } from "./helpers";
 import {
-  NETWORK_ORDER,
-  type Beneficiary,
-  type CablePlan,
-  type DataPlan,
-  type SelectOption,
-  type TransportRoute,
-  type UtilityService,
+    NETWORK_ORDER,
+    type Beneficiary,
+    type CablePlan,
+    type DataPlan,
+    type SelectOption,
+    type TransportRoute,
+    type UtilityService,
 } from "./types";
 
 export default function UtilitySelectScreen() {
@@ -106,20 +106,36 @@ export default function UtilitySelectScreen() {
   const [selectedDataPlanId, setSelectedDataPlanId] = useState<string>("");
   const [transportRoutes, setTransportRoutes] = useState<TransportRoute[]>([]);
   const [selectedTransportRouteId, setSelectedTransportRouteId] = useState("");
-  const [transportVehicleTypes, setTransportVehicleTypes] = useState<string[]>([]);
+  const [transportVehicleTypes, setTransportVehicleTypes] = useState<string[]>(
+    [],
+  );
   const [selectedVehicleType, setSelectedVehicleType] = useState("");
-  const [vehicleTypeError, setVehicleTypeError] = useState<string | undefined>();
+  const [vehicleTypeError, setVehicleTypeError] = useState<
+    string | undefined
+  >();
   const [departureDate, setDepartureDate] = useState("");
   const [passengerName, setPassengerName] = useState("");
   const [passengerEmail, setPassengerEmail] = useState("");
   const [seatNumber, setSeatNumber] = useState("");
 
-  const [transportProviderError, setTransportProviderError] = useState<string | undefined>();
-  const [transportRouteError, setTransportRouteError] = useState<string | undefined>();
-  const [transportDateError, setTransportDateError] = useState<string | undefined>();
-  const [transportNameError, setTransportNameError] = useState<string | undefined>();
-  const [transportEmailError, setTransportEmailError] = useState<string | undefined>();
-  const [transportSeatError, setTransportSeatError] = useState<string | undefined>();
+  const [transportProviderError, setTransportProviderError] = useState<
+    string | undefined
+  >();
+  const [transportRouteError, setTransportRouteError] = useState<
+    string | undefined
+  >();
+  const [transportDateError, setTransportDateError] = useState<
+    string | undefined
+  >();
+  const [transportNameError, setTransportNameError] = useState<
+    string | undefined
+  >();
+  const [transportEmailError, setTransportEmailError] = useState<
+    string | undefined
+  >();
+  const [transportSeatError, setTransportSeatError] = useState<
+    string | undefined
+  >();
 
   const [addToBeneficiaries, setAddToBeneficiaries] = useState(false);
   const [beneficiaryName, setBeneficiaryName] = useState("");
@@ -399,7 +415,6 @@ export default function UtilitySelectScreen() {
       const res: any = await BaseRequest.get(
         MOBILE_SERVICE.TRANSPORT_ROUTES(serviceId),
       );
-      console.log("[Transport] routes raw:", JSON.stringify(res, null, 2));
       // Try all common locations for routes in the response
       const rawRoutes: any[] = (() => {
         if (Array.isArray(res?.data?.routes)) return res.data.routes;
@@ -412,8 +427,8 @@ export default function UtilitySelectScreen() {
       const vehicleTypes: string[] = Array.isArray(data?.supportedVehicleTypes)
         ? data.supportedVehicleTypes
         : Array.isArray(res?.supportedVehicleTypes)
-        ? res.supportedVehicleTypes
-        : [];
+          ? res.supportedVehicleTypes
+          : [];
       const minPrice = Number(data?.minimumPrice || res?.minimumPrice || 0);
 
       const routes: TransportRoute[] = rawRoutes
@@ -430,8 +445,6 @@ export default function UtilitySelectScreen() {
           label: r.routeName || `${r.fromStation} → ${r.toStation}`,
         }));
 
-      console.log("[Transport] parsed routes:", routes.length, "vehicleTypes:", vehicleTypes);
-
       setTransportRoutes(routes);
       setTransportVehicleTypes(vehicleTypes);
       if (vehicleTypes.length > 0) setSelectedVehicleType(vehicleTypes[0]);
@@ -445,7 +458,6 @@ export default function UtilitySelectScreen() {
         if (minPrice > 0) setAmount(String(minPrice));
       }
     } catch (e) {
-      console.log("[Transport] fetchTransportRoutes error:", e);
       setTransportRoutes([]);
       setSelectedTransportRouteId("");
       setTransportVehicleTypes([]);
@@ -478,7 +490,8 @@ export default function UtilitySelectScreen() {
         const t = transportRes as any;
         if (Array.isArray(t)) return t as any[];
         if (Array.isArray(t?.data)) return t.data as any[];
-        if (Array.isArray(t?.data?.serviceIds)) return t.data.serviceIds as any[];
+        if (Array.isArray(t?.data?.serviceIds))
+          return t.data.serviceIds as any[];
         if (Array.isArray(t?.data?.services)) return t.data.services as any[];
         if (Array.isArray(t?.serviceIds)) return t.serviceIds as any[];
         if (Array.isArray(t?.services)) return t.services as any[];
@@ -490,8 +503,6 @@ export default function UtilitySelectScreen() {
         return toArray(t);
       })();
       const remoteTransport: SelectOption[] = transportRaw.map(normalizeOption);
-      console.log("[Transport] raw response:", JSON.stringify(transportRes, null, 2));
-      console.log("[Transport] providers count:", remoteTransport.length, remoteTransport);
 
       setBettingProviders(remoteBetting);
       setCableProviders(remoteCable);
@@ -735,7 +746,10 @@ export default function UtilitySelectScreen() {
       hideAppLoader();
       router.push({
         pathname: "/bills-utilities/success" as any,
-        params: { title: "Transaction Successful", message: successDescription },
+        params: {
+          title: "Transaction Successful",
+          message: successDescription,
+        },
       });
     };
 
@@ -835,13 +849,7 @@ export default function UtilitySelectScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={styles.headerTitle}>
-          {isAirtimeOrData ? "Airtime & Data" : "Bills & Utility"}
-        </ThemedText>
-        <View style={styles.headerSpacer} />
-      </View>
+      <Header title={isAirtimeOrData ? "Airtime & Data" : "Bills & Utility"} />
 
       {isFetchingMeta ? (
         <View style={styles.fullPageLoader}>
@@ -968,20 +976,25 @@ export default function UtilitySelectScreen() {
                 seatError={transportSeatError}
                 amountError={amountError}
                 clearError={(field) => {
-                  if (field === "provider") setTransportProviderError(undefined);
+                  if (field === "provider")
+                    setTransportProviderError(undefined);
                   else if (field === "route") setTransportRouteError(undefined);
                   else if (field === "date") setTransportDateError(undefined);
                   else if (field === "name") setTransportNameError(undefined);
                   else if (field === "email") setTransportEmailError(undefined);
                   else if (field === "seat") setTransportSeatError(undefined);
                   else if (field === "amount") setAmountError(undefined);
-                  else if (field === "vehicleType") setVehicleTypeError(undefined);
+                  else if (field === "vehicleType")
+                    setVehicleTypeError(undefined);
                 }}
                 onOpenProviderModal={() => setShowTransportProviderModal(true)}
                 onOpenRouteModal={() => setShowTransportRouteModal(true)}
                 vehicleTypes={transportVehicleTypes}
                 selectedVehicleType={selectedVehicleType}
-                setSelectedVehicleType={(v) => { setSelectedVehicleType(v); setVehicleTypeError(undefined); }}
+                setSelectedVehicleType={(v) => {
+                  setSelectedVehicleType(v);
+                  setVehicleTypeError(undefined);
+                }}
                 vehicleTypeError={vehicleTypeError}
               />
             )}
@@ -1034,9 +1047,22 @@ export default function UtilitySelectScreen() {
           service === "transportation"
             ? [
                 { label: "Route", value: selectedTransportRoute?.label || "" },
-                { label: "Departure Time", value: selectedTransportRoute?.departureTime || "" },
-                { label: "Duration", value: selectedTransportRoute?.duration || "" },
-                { label: "Vehicle Type", value: selectedVehicleType ? selectedVehicleType.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "" },
+                {
+                  label: "Departure Time",
+                  value: selectedTransportRoute?.departureTime || "",
+                },
+                {
+                  label: "Duration",
+                  value: selectedTransportRoute?.duration || "",
+                },
+                {
+                  label: "Vehicle Type",
+                  value: selectedVehicleType
+                    ? selectedVehicleType
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (c) => c.toUpperCase())
+                    : "",
+                },
                 { label: "Passenger", value: passengerName },
                 { label: "Date", value: departureDate },
               ].filter((r) => r.value)
@@ -1157,16 +1183,13 @@ export default function UtilitySelectScreen() {
         visible={showPinValidator}
         onClose={() => setShowPinValidator(false)}
         onValidatePin={async (pin) => {
-          console.log("Validating PIN:", pin);
           try {
             const res = await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
               transactionPin: String(pin),
             });
-            console.log("PIN validation response:", res.data);
             return true;
           } catch (error) {
             const { message } = parseNetworkError(error);
-            console.log("PIN validation error:", error, message);
             showError(message || "Invalid transaction pin");
             return false;
           }

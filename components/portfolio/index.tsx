@@ -52,7 +52,7 @@ export function Header({
     <View style={styles.header}>
       <ThemedText style={styles.headerTitle}>Portfolio</ThemedText>
       <View style={styles.headerIcons}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={onCurrencyPress}
           style={styles.currencyButton}
           activeOpacity={0.7}
@@ -63,7 +63,7 @@ export function Header({
         </TouchableOpacity>
         <TouchableOpacity onPress={onSearchPress} activeOpacity={0.7}>
           <SearchNormal color={C.text} size={16} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

@@ -3,18 +3,18 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest from "@/services";
-import { MOBILE_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
+import { TRANSACTION_SERVICE } from "@/services/routes";
 import { formatDate, parseTransaction, priceFormatter } from "@/utils/helpers";
 import { ITransactionDetail } from "@/utils/index";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { InfoCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -58,20 +58,6 @@ const getReferenceId = (transaction: ITransactionDetail | null) => {
   );
 };
 
-const getBalanceValue = (
-  meta: any,
-  transaction: ITransactionDetail | null,
-  key: string,
-) => {
-  return (
-    meta?.[key] ??
-    meta?.data?.[key] ??
-    meta?.transaction?.[key] ??
-    (transaction as any)?.[key] ??
-    0
-  );
-};
-
 export default function TransactionDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -82,7 +68,6 @@ export default function TransactionDetailScreen() {
   const [transaction, setTransaction] = useState<ITransactionDetail | null>(
     null,
   );
-  const [meta, setMeta] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -100,15 +85,6 @@ export default function TransactionDetailScreen() {
         const tx = txRes?.data || txRes;
         const parsed = parseTransaction(tx as ITransactionDetail);
         setTransaction(parsed);
-
-        if (parsed?.transactionId) {
-          const metaRes: any = await BaseRequest.get(
-            MOBILE_SERVICE.TRANSACTION_ID(String(parsed.transactionId)),
-          );
-          setMeta(metaRes?.data || metaRes);
-        } else {
-          setMeta(null);
-        }
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -125,15 +101,6 @@ export default function TransactionDetailScreen() {
     () => getStatusStyles(transaction?.status, C),
     [transaction?.status, C],
   );
-
-  const balanceBefore = Number(
-    getBalanceValue(meta, transaction, "balanceBefore"),
-  );
-  const balanceAfter = Number(
-    getBalanceValue(meta, transaction, "balanceAfter"),
-  );
-
-  console.log("Transaction Detail:", transaction);
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
@@ -146,7 +113,7 @@ export default function TransactionDetailScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color={C.primary} />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : (
         <ScrollView
@@ -179,13 +146,15 @@ export default function TransactionDetailScreen() {
               <View style={styles.bracsLeft}>
                 <InfoCircle size={18} color={C.primary} variant='Outline' />
                 <ThemedText style={[styles.bracsLabel, { color: C.text }]}>
-                  Earned BRACs
+                  Bracs
                 </ThemedText>
               </View>
               <ThemedText style={[styles.bracsValue, { color: C.text }]}>
-                {Number(
-                  transaction?.points || transaction?.bracValue || 0,
-                ).toFixed(2)}
+                {["debit"].includes(String(transaction?.actionType))
+                  ? `${Number(
+                      transaction?.points || transaction?.bracValue || 0,
+                    ).toFixed(2)}`
+                  : `${Number(0)}`}
               </ThemedText>
             </View>
 
@@ -226,24 +195,20 @@ export default function TransactionDetailScreen() {
                   C={C}
                 />
               )}
-              <DetailRow
-                title='Service Charge'
-                value={priceFormatter(
-                  Number(transaction?.serviceCharge || 0),
-                  0,
-                )}
-                C={C}
-              />
-              <DetailRow
-                title='Balance Before'
-                value={priceFormatter(balanceBefore, 2)}
-                C={C}
-              />
-              <DetailRow
-                title='Balance After'
-                value={priceFormatter(balanceAfter, 2)}
-                C={C}
-              />
+              {(String(transaction?.actionType || "").toLowerCase() ===
+                "wallet" ||
+                String(transaction?.actionType || "")
+                  .toLowerCase()
+                  .includes("transfer")) && (
+                <DetailRow
+                  title='Service Charge'
+                  value={priceFormatter(
+                    Number(transaction?.serviceCharge || 0),
+                    0,
+                  )}
+                  C={C}
+                />
+              )}
             </View>
           </View>
         </ScrollView>

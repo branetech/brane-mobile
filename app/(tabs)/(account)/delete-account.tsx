@@ -1,5 +1,5 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
 import { OTPInput } from "@/components/otp-input";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -64,13 +64,7 @@ export default function DeleteAccountScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header} row aligned>
-        <Back onPress={() => router.back()} />
-        <ThemedText type='subtitle' style={styles.headerTitle}>
-          Delete Account
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Delete Account' />
 
       <ScrollView
         contentContainerStyle={styles.content}
