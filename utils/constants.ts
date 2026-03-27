@@ -280,7 +280,6 @@ export const options = [
   },
 ];
 
-<<<<<<< HEAD
 
 
 
@@ -295,7 +294,3 @@ What You Get
 • Clear & Secure: Transparent reporting and trusted processes keep you in control.
 
 With Managed Portfolio & Wealth Investment, you don't just save you grow. It's the smarter way to build wealth while staying focused on what matters most in your life.`;
-=======
-export const details =
-  "MTN Group Limited is a South African multinational corporation and mobile telecommunications provider. Its head office is in Johannesburg. As of December 2022 MTN recorded 289.1 million subscribers. MTN is among the largest mobile network operators in the world, and the largest in Africa.";
->>>>>>> 8f27faacc75156be260356a7c6343cd5c774a347
