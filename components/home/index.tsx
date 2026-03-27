@@ -83,9 +83,9 @@ export const HomeHeader = () => {
 
       {/* Right: Chat + Notifications */}
       <View row gap={24}>
-        <TouchableOpacity onPress={() => router.push("/support")}>
+        {/* <TouchableOpacity onPress={() => router.push("/support")}>
           <Messages2 color={C.text} size={20} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity onPress={() => router.push("/notification")}>
           <View style={{ position: "relative" }}>
