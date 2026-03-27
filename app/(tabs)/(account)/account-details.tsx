@@ -1,6 +1,6 @@
 import { Avatar } from "@/components/avatar";
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -233,13 +233,7 @@ export default function AccountDetailsScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header} row aligned>
-        <Back onPress={() => router.back()} />
-        <ThemedText type='subtitle' style={{ color: C.text }}>
-          Account Details
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Account Details' />
 
       <ScrollView
         contentContainerStyle={styles.content}
@@ -269,7 +263,7 @@ export default function AccountDetailsScreen() {
                   ] as any
                 }
               >
-                <ActivityIndicator size='large' color={C.primary} />
+                <ActivityIndicator size='small' color={C.primary} />
               </View>
             )}
             {!isLoading && (

@@ -1,5 +1,5 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -8,7 +8,7 @@ import { MOBILE_SERVICE } from "@/services/routes";
 import { showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { SearchNormal1, Trash, Plus } from "iconsax-react-native";
+import { SearchNormal1, Trash } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     ActivityIndicator,
@@ -16,9 +16,9 @@ import {
     Modal,
     Pressable,
     RefreshControl,
+    View as RNView,
     StyleSheet,
     TextInput,
-    View as RNView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -47,7 +47,8 @@ export default function ManageBeneficiaryScreen() {
   const [search, setSearch] = useState("");
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [deleteConfirmModal, setDeleteConfirmModal] = useState(false);
-  const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
+  const [selectedBeneficiary, setSelectedBeneficiary] =
+    useState<Beneficiary | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchBeneficiaries = useCallback(async (refresh = false) => {
@@ -111,13 +112,7 @@ export default function ManageBeneficiaryScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header} row aligned>
-        <Back onPress={() => router.back()} />
-        <ThemedText type='subtitle' style={styles.title}>
-          Manage Beneficiaries
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Manage Beneficiaries' />
 
       <View style={[styles.searchWrap, { borderColor: C.border }]} row aligned>
         <SearchNormal1 size={18} color={C.muted} />
@@ -215,13 +210,18 @@ export default function ManageBeneficiaryScreen() {
               Remove Beneficiary?
             </ThemedText>
             <ThemedText style={[styles.confirmText, { color: C.muted }]}>
-              {selectedBeneficiary ? `Remove ${selectedBeneficiary.name} from your beneficiaries?` : "Are you sure you want to remove this beneficiary?"}
+              {selectedBeneficiary
+                ? `Remove ${selectedBeneficiary.name} from your beneficiaries?`
+                : "Are you sure you want to remove this beneficiary?"}
             </ThemedText>
 
             <RNView style={styles.confirmActions}>
               <BraneButton
                 text='Remove'
-                onPress={() => selectedBeneficiary && onDeleteBeneficiary(selectedBeneficiary)}
+                onPress={() =>
+                  selectedBeneficiary &&
+                  onDeleteBeneficiary(selectedBeneficiary)
+                }
                 loading={isDeleting}
                 disabled={isDeleting}
                 backgroundColor={C.error}

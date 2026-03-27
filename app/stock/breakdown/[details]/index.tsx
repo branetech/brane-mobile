@@ -1,5 +1,5 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -10,10 +10,10 @@ import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -79,15 +79,7 @@ export default function BracsBreakdownScreen() {
         backgroundColor: C.background,
       }}
     >
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText
-          style={{ ...StyleSheet.flatten(styles.headerTitle), color: C.text }}
-        >
-          {String(network).toUpperCase()} BRACS
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title={`${String(network).toUpperCase()} BRACS`} />
 
       {isLoading ? (
         <View style={styles.loaderWrap}>

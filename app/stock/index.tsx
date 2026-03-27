@@ -233,7 +233,7 @@ export default function StockMarketScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color={C.primary} />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : mainTab === "Listing" ? (
         <FlatList

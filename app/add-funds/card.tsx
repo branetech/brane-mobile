@@ -1,6 +1,6 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
+import { Header } from "@/components/header";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -45,13 +45,7 @@ export default function CardScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-          Fund Wallet With Card
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Fund Wallet With Card' />
 
       <ScrollView
         showsVerticalScrollIndicator={false}

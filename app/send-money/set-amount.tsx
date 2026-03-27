@@ -1,6 +1,6 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
+import { Header } from "@/components/header";
 import { type PaymentOption } from "@/components/payment-method-selector";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
@@ -126,13 +126,7 @@ export default function SendMoneySetAmountScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-          Send Money
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Send Money' />
 
       <ScrollView
         showsVerticalScrollIndicator={false}

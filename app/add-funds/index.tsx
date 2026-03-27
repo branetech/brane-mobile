@@ -1,12 +1,10 @@
-import Back from "@/components/back";
 import { BraneRadioButton } from "@/components/brane-radio-button";
-import { BankIcon, CardIcon, USSD } from "@/components/svg";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { Text, View } from "@idimma/rn-widget";
+import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { Bank, Coin, Coin1, Copy, ExportCurve } from "iconsax-react-native";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,11 +18,7 @@ export default function FundScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: C.background }]}>
-      <View w={"100%"} spaced row aligned>
-        <Back />
-        <ThemedText type='subtitle'>Add Funds</ThemedText>
-        <View />
-      </View>
+      <Header title='Add Funds' />
 
       <ThemedText style={{ fontSize: 12, color: C.muted }}>
         Fund your wallet by selecting your preferred method from the available
@@ -37,10 +31,10 @@ export default function FundScreen() {
           selected={selected === "bank"}
           onPress={() => setSelected("bank")}
           size={16}
-          bg={selected === "bank" ? '#FAF6E6' : C.background}
+          bg={selected === "bank" ? "#FAF6E6" : C.background}
           color={C.primary}
         >
-         <FundWithBankScren />
+          <FundWithBankScren />
         </BraneRadioButton>
 
         {/* Card */}

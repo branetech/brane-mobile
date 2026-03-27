@@ -14,20 +14,20 @@ import { format, isValid, parseISO } from "date-fns";
 import { useRouter } from "expo-router";
 import { CloseCircle, Setting4 } from "iconsax-react-native";
 import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import {
-  ActivityIndicator,
-  Modal,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -288,7 +288,7 @@ export default function TransactionScreen() {
       {/* Transaction list */}
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color={C.primary} />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : (
         <ScrollView

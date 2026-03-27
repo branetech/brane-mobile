@@ -1,4 +1,4 @@
-import Back from "@/components/back";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -9,10 +9,10 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -174,13 +174,7 @@ export default function SpendingPatternScreen() {
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header} row aligned>
-        <Back onPress={() => router.back()} />
-        <ThemedText type='subtitle' style={styles.headerTitle}>
-          Spending Pattern
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Spending Pattern' />
 
       <ScrollView
         contentContainerStyle={styles.content}

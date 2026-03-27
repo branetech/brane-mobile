@@ -10,11 +10,11 @@ import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -301,7 +301,7 @@ export default function StockTransactionScreen() {
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator color={C.primary} />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : isAll ? (
         <FlatList

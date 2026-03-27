@@ -345,7 +345,7 @@ export default function StockSearchScreen() {
       {/* Results */}
       {isLoading ? (
         <View style={styles.loader}>
-          <ActivityIndicator color={C.primary} />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       ) : (
         <FlatList

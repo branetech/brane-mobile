@@ -4,6 +4,7 @@ import { SearchInput } from "@/components/search-input";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { onAddToCheckouts } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
 import { STOCKS_SERVICE } from "@/services/routes";
 import { useRequest } from "@/services/useRequest";
@@ -14,12 +15,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { ShoppingCart } from "iconsax-react-native";
 import React, { useMemo, useState } from "react";
 import {
-    FlatList,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
 
 const STOCK_TABS = [
   { key: "", label: "Stocks" },
@@ -30,6 +32,7 @@ const STOCK_TABS = [
 ];
 
 export default function AssetsScreen() {
+  const dispatch = useDispatch();
   const router = useRouter();
   const { tab: initialTab } = useLocalSearchParams<{ tab?: string }>();
   const rawScheme = useColorScheme();
@@ -51,11 +54,13 @@ export default function AssetsScreen() {
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
 
-  const topPicks = useMemo(
-    () =>
-      collection(data)?.filter((item: StockInterface) => item.isTopPick) || [],
-    [data],
-  );
+  const topPicks = useMemo(() => {
+    const _collection = collection(data);
+    return _collection.filter(
+      (item: StockInterface) =>
+        item.isTopPick && item.braneStockCategory === "stocks",
+    );
+  }, [data]);
 
   const assets = useMemo(() => {
     const _collection = collection(data);
@@ -125,8 +130,8 @@ export default function AssetsScreen() {
     router.push(`/(tabs)/(portfolio)/company/${tickerSymbol}` as any);
   };
 
-  const handleAddToCart = (_asset: StockInterface) => {
-    router.push("/(tabs)/(portfolio)/checkout" as any);
+  const handleAddToCart = (asset: StockInterface) => {
+    dispatch(onAddToCheckouts(asset));
   };
 
   const handleCartClick = () => {
@@ -172,9 +177,8 @@ export default function AssetsScreen() {
           </TouchableOpacity>
         </WidgetView>
 
-        {/* Top Picks Section */}
+        {/* Search and Tabs (always visible) */}
         <WidgetView style={styles.section}>
-          {/* Search Input */}
           <SearchInput
             placeholder='Search assets...'
             keyboardType='default'
@@ -221,44 +225,52 @@ export default function AssetsScreen() {
             )}
           />
 
-          <ThemedText type='subtitle' style={{ color: C.muted, fontSize: 14 }}>
-            Top Picks
-          </ThemedText>
+          {/* Top Picks only for Stocks tab */}
+          {activeTab === "" && (
+            <>
+              <ThemedText
+                type='subtitle'
+                style={{ color: C.muted, fontSize: 14 }}
+              >
+                Top Picks
+              </ThemedText>
 
-          {filteredTopPicks.length === 0 ? (
-            <ThemedText
-              style={{
-                color: C.muted,
-                fontSize: 14,
-                textAlign: "center",
-                marginVertical: 20,
-              }}
-            >
-              {normalizedSearchQuery
-                ? "No top picks match your search"
-                : "Curated stock picks will appear here"}
-            </ThemedText>
-          ) : (
-            <FlatList
-              data={filteredTopPicks}
-              keyExtractor={(item) => item.tickerSymbol}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.topPicksList}
-              renderItem={({ item }) => (
-                <StockItemCard
-                  stockName={item.tickerSymbol}
-                  tickerSymbol={item.tickerSymbol}
-                  companyName={item.companyName}
-                  currentPrice={item.currentPrice}
-                  logo={item.logo}
-                  minWidth='200px'
-                  variant='stacked'
-                  onClick={() => handleStockClick(item.tickerSymbol)}
-                  ticker={item?.ticker}
+              {filteredTopPicks.length === 0 ? (
+                <ThemedText
+                  style={{
+                    color: C.muted,
+                    fontSize: 14,
+                    textAlign: "center",
+                    marginVertical: 20,
+                  }}
+                >
+                  {normalizedSearchQuery
+                    ? "No top picks match your search"
+                    : "Curated  picks will appear here"}
+                </ThemedText>
+              ) : (
+                <FlatList
+                  data={filteredTopPicks}
+                  keyExtractor={(item) => item.tickerSymbol}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.topPicksList}
+                  renderItem={({ item }) => (
+                    <StockItemCard
+                      stockName={item.tickerSymbol}
+                      tickerSymbol={item.tickerSymbol}
+                      companyName={item.companyName}
+                      currentPrice={item.currentPrice}
+                      logo={item.logo}
+                      minWidth='200px'
+                      variant='stacked'
+                      onClick={() => handleStockClick(item.tickerSymbol)}
+                      ticker={item?.ticker}
+                    />
+                  )}
                 />
               )}
-            />
+            </>
           )}
         </WidgetView>
 
@@ -301,6 +313,12 @@ export default function AssetsScreen() {
                   variant='list'
                   onClick={() => handleStockClick(item.tickerSymbol)}
                   onAddToCart={() => handleAddToCart(item)}
+                  isInCart={
+                    Array.isArray(checkouts) &&
+                    checkouts.some(
+                      (c: any) => c.tickerSymbol === item.tickerSymbol,
+                    )
+                  }
                   ticker={item?.ticker}
                 />
               )}

@@ -1,6 +1,6 @@
-import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
+import { Header } from "@/components/header";
 import { PhoneInput } from "@/components/phone-input";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
@@ -14,12 +14,12 @@ import { useRouter } from "expo-router";
 import { ArrowDown2, SearchNormal1, TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity
+    Modal,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
@@ -193,13 +193,7 @@ export default function UpdateKinDetailsScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header} row aligned>
-        <Back onPress={() => router.push("/(tabs)/(account)")} />
-        <ThemedText type='subtitle' style={styles.title}>
-          Next of Kin
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='Next of Kin' handleBackPress='/(tabs)/(account)' />
 
       {fetching ? (
         <View style={styles.loaderWrap}>

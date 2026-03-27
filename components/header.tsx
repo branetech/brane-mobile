@@ -2,10 +2,10 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Colors } from "@/constants/colors";
 import { View, TouchableOpacity } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { ArrowLeft } from "iconsax-react-native";
 import { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { ThemedText } from "./themed-text";
+import Back from "./back";
 
 interface IHeaderProps {
   title?: string;
@@ -30,7 +30,7 @@ export const Header = ({
 
   const onGoBack = useCallback(() => {
     if (typeof handleBackPress === "string")
-      return router.push(handleBackPress);
+      return router.push(handleBackPress as any);
     if (typeof handleBackPress === "function") return handleBackPress(router);
     router.back();
   }, [handleBackPress, router]);
@@ -40,9 +40,9 @@ export const Header = ({
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      height: 56,
+      height: 100,
       paddingHorizontal: 16,
-      paddingVertical: 8,
+      paddingTop: 32,
       backgroundColor: bgColor || C.background,
     },
     backButton: {
@@ -75,13 +75,7 @@ export const Header = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={onGoBack}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-      >
-        <ArrowLeft size={20} color={C.text} />
-      </TouchableOpacity>
+      <Back onPress={onGoBack} />
 
       <View style={styles.centerContent}>
         {title && <ThemedText style={styles.title}>{title}</ThemedText>}

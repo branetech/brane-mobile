@@ -1,4 +1,4 @@
-import Back from "@/components/back";
+import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -9,11 +9,11 @@ import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
+    ActivityIndicator,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -147,13 +147,7 @@ export default function MyStocksScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
-      <View style={styles.header}>
-        <Back onPress={() => router.back()} />
-        <ThemedText style={[styles.headerTitle, { color: C.text }]}>
-          My Stocks
-        </ThemedText>
-        <View style={{ width: 44 }} />
-      </View>
+      <Header title='My Stocks' />
 
       {isLoading ? (
         <View style={styles.loaderWrap}>
