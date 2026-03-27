@@ -1,8 +1,7 @@
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import About from "@/components/portfolio/about";
-import Financials from "@/components/portfolio/finacials";
-import { ThemedTabNavigator, useTabNavigator } from "@/components/tabs";
+import { useTabNavigator } from "@/components/tabs";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
