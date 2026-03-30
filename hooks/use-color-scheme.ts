@@ -17,5 +17,8 @@ export function useColorScheme(): "light" | "dark" {
   }
 
   // If system is selected, use the native system preference
-  return systemScheme || "light";
+  if (systemScheme === "dark") return "dark";
+  if (systemScheme === "light") return "light";
+  // Treat null, undefined, or "unspecified" as "light"
+  return "light";
 }
