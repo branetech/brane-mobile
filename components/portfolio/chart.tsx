@@ -1,9 +1,9 @@
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
-import { LineChart, LineChartProvider } from "react-native-wagmi-charts";
+import Svg, { Defs, LinearGradient, Path, Stop } from "react-native-svg";
 
-const { width } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const colorGradients = {
   green: { from: "#2f855a", to: "#D2F1E4" },
@@ -31,73 +31,69 @@ export default function ChartComponent({
   const C = Colors[scheme];
   const { from } = colorGradients[colorType];
 
-  // Match wagmi-charts data shape
-  const data = values.map((value, i) => ({
-    timestamp: i,
-    value,
+  const chartWidth = SCREEN_WIDTH - 32;
+  const labelAreaH = 20;
+  const chartH = height - labelAreaH;
+
+  if (!values || values.length < 2) return null;
+
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const range = maxVal - minVal || 1;
+
+  // Map values to SVG coordinates with 5% top/bottom padding
+  const pad = chartH * 0.08;
+  const points = values.map((v, i) => ({
+    x: (i / (values.length - 1)) * chartWidth,
+    y: chartH - pad - ((v - minVal) / range) * (chartH - 2 * pad),
   }));
 
+  const linePath = points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+    .join(" ");
+
+  const fillPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)},${chartH} L 0,${chartH} Z`;
+
+  // ~5 evenly-spaced x-axis date labels
+  const labelCount = Math.min(5, dates.length);
+  const labelIndices =
+    labelCount > 1
+      ? Array.from({ length: labelCount }, (_, i) =>
+          Math.round((i / (labelCount - 1)) * (dates.length - 1)),
+        )
+      : [0];
+
   return (
-    <View style={[styles.container]}>
-      <LineChartProvider data={data}>
-        <LineChart height={height} width={width - 32}>
-          {/* Gradient fill — mirrors your backgroundColor gradient */}
-          <LineChart.Path color={from} width={1.5}>
-            <LineChart.Gradient
-              color={from}
-              // from = top color, to = bottom (transparent)
-            />
-          </LineChart.Path>
+    <View style={styles.container}>
+      <Svg width={chartWidth} height={chartH}>
+        <Defs>
+          <LinearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor={from} stopOpacity="0.55" />
+            <Stop offset="1" stopColor={from} stopOpacity="0.03" />
+          </LinearGradient>
+        </Defs>
+        <Path d={fillPath} fill="url(#cg)" />
+        <Path d={linePath} stroke={from} strokeWidth={1.8} fill="none" />
+      </Svg>
 
-          {/* Cursor line on touch */}
-          <LineChart.CursorLine color={from} />
-
-          {/* Dot + tooltip on touch — mirrors pointHoverRadius */}
-          <LineChart.CursorCrosshair color={from} size={12} outerSize={24}>
-            <LineChart.Tooltip
-              textStyle={{
-                color: "#fff",
-                fontSize: 12,
-                backgroundColor: from,
-                paddingHorizontal: 8,
-                paddingVertical: 4,
-                borderRadius: 6,
-                overflow: "hidden",
-              }}
-            />
-          </LineChart.CursorCrosshair>
-        </LineChart>
-      </LineChartProvider>
-
-      {/* X-axis labels — mirrors your dates labels */}
+      {/* X-axis labels */}
       <View style={styles.xAxis}>
-        {dates
-          .filter((_, i) => i % Math.ceil(dates.length / 6) === 0) // show ~6 labels
-          .map((d, i) => (
-            <Text key={i} style={[styles.xLabel, { color: C.muted }]}>
-              {d}
-            </Text>
-          ))}
+        {labelIndices.map((idx) => (
+          <Text key={idx} style={[styles.xLabel, { color: C.muted }]}>
+            {dates[idx]}
+          </Text>
+        ))}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 16,
-    borderRadius: 16,
-  },
+  container: { paddingHorizontal: 16 },
   xAxis: {
     flexDirection: "row",
-    // justifyContent: "space-between",
-    // marginTop: 4,
-    // paddingHorizontal: 4,
+    justifyContent: "space-between",
+    marginTop: 4,
   },
-  xLabel: {
-    fontSize: 11,
-    overflow: "hidden",
-    flex: 1,
-    textAlign: "center",
-  },
+  xLabel: { fontSize: 10 },
 });
