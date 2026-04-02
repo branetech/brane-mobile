@@ -6,6 +6,7 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import BaseRequest, { catchError } from "@/services";
+import { getUserFromState } from "@/utils";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { DocumentText1 } from "iconsax-react-native";
@@ -17,7 +18,8 @@ export default function AddressVerificationScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [fileUri, setFileUri] = useState<string | undefined>();

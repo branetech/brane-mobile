@@ -8,6 +8,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import { useRequest } from "@/services/useRequest";
+import { getUserFromState } from "@/utils";
 import { showError, showSuccess } from "@/utils/helpers";
 import * as Clipboard from "expo-clipboard";
 import { Copy, ExportCurve } from "iconsax-react-native";
@@ -29,7 +30,8 @@ export const BankTransferDetails = () => {
   const rawScheme = useColorScheme();
   const scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
   const [errorStatus, setErrorStatus] = useState("");
 
   const { data: account, isLoading } = useRequest(

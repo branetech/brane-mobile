@@ -1,27 +1,38 @@
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { EmptyState } from "@/components/empty-state";
-import { ThemedText } from "@/components/themed-text";
 import { TransactionLineItem2 } from "@/components/home/cards";
+import { WithdrawIcn } from "@/components/svg";
+import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
-import { TRANSACTION_SERVICE, STOCKS_SERVICE } from "@/services/routes";
-import { formatDate, parseTransaction, priceFormatter, toArray } from "@/utils/helpers";
+import { TRANSACTION_SERVICE } from "@/services/routes";
+import {
+  formatDate,
+  parseTransaction,
+  priceFormatter,
+  toArray,
+} from "@/utils/helpers";
 import { ITransactionDetail } from "@/utils/index";
 import { useRouter } from "expo-router";
-import { Add, ArrowDown2, Eye, EyeSlash, Receipt1, ArrowRight2 } from "iconsax-react-native";
+import {
+  Add,
+  ArrowDown2,
+  ArrowRight2,
+  Eye,
+  EyeSlash
+} from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Modal,
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
   View,
-  Modal,
 } from "react-native";
-import { WithdrawIcn, TotalDiv } from "@/components/svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type WalletTransaction = {
@@ -48,7 +59,6 @@ export default function WalletScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
- 
   const fetchData = useCallback(async (refresh = false) => {
     if (refresh) setIsRefreshing(true);
     else setIsLoading(true);
@@ -107,7 +117,9 @@ export default function WalletScreen() {
     <>
       <View style={[styles.balanceCard, { backgroundColor: C.primary }]}>
         <View style={styles.cardRow}>
-          <ThemedText style={[styles.balanceLabel, { color: C.googleBg }]}>Wallet balance</ThemedText>
+          <ThemedText style={[styles.balanceLabel, { color: C.googleBg }]}>
+            Wallet balance
+          </ThemedText>
           <TouchableOpacity
             onPress={() => setBalanceVisible((v) => !v)}
             hitSlop={8}
@@ -123,7 +135,7 @@ export default function WalletScreen() {
         <ThemedText style={styles.balanceAmount}>
           {balanceVisible
             ? priceFormatter(balance, 0)
-            : "\u20a6 \u2022\u2022\u2022\u2022\u2022\u2022"}
+            : "\u2022\u2022\u2022\u2022\u2022\u2022\u2022"}
         </ThemedText>
 
         <View style={styles.cardBtns}>
@@ -150,25 +162,27 @@ export default function WalletScreen() {
         </View>
       </View>
 
-      <View style={styles.sectionRow}>
-        <ThemedText
-          type='defaultSemiBold'
-          style={{ fontSize: 15, color: C.muted }}
-        >
-          Recent Transactions
-        </ThemedText>
-        <TouchableOpacity
-          onPress={() => router.push("/(tabs)/(transaction)" as any)}
-          style={[styles.seeAllButton, { backgroundColor: C.googleBg }]}
-          activeOpacity={0.7}
-        >
+      {transactions.length > 0 && (
+        <View style={styles.sectionRow}>
           <ThemedText
-            style={{ color: C.primary, fontSize: 16, fontWeight: "600" }}
+            type='defaultSemiBold'
+            style={{ fontSize: 15, color: C.muted }}
           >
-            See All
+            Recent Transactions
           </ThemedText>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={() => router.push("/(tabs)/(transaction)" as any)}
+            style={[styles.seeAllButton, { backgroundColor: C.googleBg }]}
+            activeOpacity={0.7}
+          >
+            <ThemedText
+              style={{ color: C.primary, fontSize: 16, fontWeight: "600" }}
+            >
+              See All
+            </ThemedText>
+          </TouchableOpacity>
+        </View>
+      )}
     </>
   );
 
@@ -201,10 +215,9 @@ export default function WalletScreen() {
             />
           }
           ListEmptyComponent={
-            <EmptyState>
-              <Receipt1 size={40} color={C.muted} />
+            <EmptyState style={{ marginTop: 100 }}>
               <ThemedText
-                style={{ color: C.muted, textAlign: "center", marginTop: 8 }}
+                style={{ color: C.muted, textAlign: "center" }}
               >
                 No recent transactions
               </ThemedText>
@@ -240,11 +253,14 @@ export default function WalletScreen() {
       <Modal
         visible={showWithdrawModal}
         transparent
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setShowWithdrawModal(false)}
       >
         <TouchableOpacity
-          style={[styles.modalOverlay, { backgroundColor: "rgba(1, 61, 37, 0.3)" }]}
+          style={[
+            styles.modalOverlay,
+            { backgroundColor: "rgba(1, 61, 37, 0.3)" },
+          ]}
           activeOpacity={1}
           onPress={() => setShowWithdrawModal(false)}
         >
@@ -257,7 +273,9 @@ export default function WalletScreen() {
               Withdraw
             </ThemedText>
 
-            <View style={[styles.modalDivider, { borderBottomColor: C.border }]}>
+            <View
+              style={[styles.modalDivider, { borderBottomColor: C.border }]}
+            >
               <TouchableOpacity
                 style={styles.modalOption}
                 onPress={() => {
@@ -268,7 +286,7 @@ export default function WalletScreen() {
               >
                 <View style={styles.optionContent}>
                   <WithdrawIcn />
-                  <ThemedText style={[styles.optionTitle, { color: C.text,  }]}>
+                  <ThemedText style={[styles.optionTitle, { color: C.text }]}>
                     Withdraw from wallet balance
                   </ThemedText>
                 </View>

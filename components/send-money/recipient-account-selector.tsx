@@ -41,12 +41,11 @@ export function RecipientAccountSelector({
 
   return (
     <View>
-      
       <FormInput
         placeholder='0127277063'
         keyboardType='number-pad'
         value={accountNumber}
-        labelText="Recipient Account"
+        labelText='Recipient Account'
         labelStyle={[styles.label, { color: C.muted }]}
         onChangeText={onAccountChange}
         error={accountError}
@@ -66,18 +65,28 @@ export function RecipientAccountSelector({
         disabled={loading}
         style={[
           styles.inputContainer,
-          { backgroundColor: C.inputBg, borderColor: C.border, marginBottom: 16 },
+          {
+            backgroundColor: C.inputBg,
+            borderColor: C.border,
+            marginBottom: 16,
+          },
         ]}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-          <ThemedText
-          style={[styles.bankText, { color: bankName ? C.text : C.muted }]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
         >
-          {bankName || "Bank - autofill or select manually"}
-        </ThemedText>
-        <Arrow/>
+          <ThemedText
+            style={[styles.bankText, { color: bankName ? C.text : C.muted }]}
+            numberOfLines={1}
+            ellipsizeMode='tail'
+          >
+            {bankName || "Bank - autofill or select manually"}
+          </ThemedText>
+          <Arrow />
         </View>
         {loading && <ActivityIndicator color={C.primary} size='small' />}
       </TouchableOpacity>
@@ -87,20 +96,19 @@ export function RecipientAccountSelector({
         </ThemedText>
       )}
       {verified && (
-              
-                  <FormInput
-        placeholder='0127277063'
-        keyboardType='number-pad'
-        value={recipientName || ""}
-        labelText="Account Name"
-        labelStyle={[styles.label, { color: C.muted }]}
-        inputContainerStyle={[
-          // styles.inputContainer,
-          { backgroundColor: C.inputBg },
-        ]}
-        inputStyle={{ color: C.text }}
-      />
-              )}
+        <FormInput
+          placeholder='0127277063'
+          keyboardType='number-pad'
+          value={recipientName || ""}
+          labelText='Account Name'
+          labelStyle={[styles.label, { color: C.muted }]}
+          inputContainerStyle={[
+            // styles.inputContainer,
+            { backgroundColor: C.inputBg },
+          ]}
+          inputStyle={{ color: C.text }}
+        />
+      )}
     </View>
   );
 }

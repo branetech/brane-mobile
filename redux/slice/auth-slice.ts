@@ -83,6 +83,7 @@ export interface Auth {
   showNewUserModal: boolean;
   showSupportChat: boolean;
   showBalance: boolean;
+  onboardingStepsCompleted: string[];
 }
 
 interface AssetCheckout {
@@ -130,6 +131,7 @@ const initialState: Auth = {
   showNewUserModal: false,
   showSupportChat: false,
   showBalance: false,
+  onboardingStepsCompleted: [],
 };
 
 const { reducer, actions } = createSlice({
@@ -148,6 +150,9 @@ const { reducer, actions } = createSlice({
     },
     setUser: (state, action) => {
       state.user = parseUserInfo(action.payload);
+    },
+    setOnboardingStepsCompleted: (state, action) => {
+      state.onboardingStepsCompleted = action.payload;
     },
     setToken: (state, action) => {
       state.token = action.payload;
@@ -264,6 +269,7 @@ export const {
   setToken,
   setLoader,
   setUser,
+  setOnboardingStepsCompleted,
   setAppState,
   setLoaderConfig,
   onHideInsFunds,

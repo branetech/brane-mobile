@@ -54,15 +54,22 @@ export default function LoginScreen() {
   } = useBiometricAuth();
 
   // ─── Shared post-login handler ──────────────────────────
-  const handleLoginSuccess = (response: any) => {
+  const handleLoginSuccess = async (response: any) => {
     const { authCredentials, user } = extractAuthData(response);
     if (!authCredentials?.accessToken) {
       showError("Unable to complete login. Please try again.");
       return false;
     }
-    dispatch(setUser(user));
     dispatch(setToken(authCredentials.accessToken));
     dispatch(setRefreshToken(authCredentials.refreshToken || null));
+    try {
+      // Fetch full user profile after login
+      const fullUser = await BaseRequest.get("/auth-service/user");
+      dispatch(setUser(fullUser));
+    } catch (e) {
+      // fallback to partial user if profile fetch fails
+      dispatch(setUser(user));
+    }
     return true;
   };
 
@@ -87,7 +94,7 @@ export default function LoginScreen() {
         password: credResult.credentials.password,
       });
 
-      if (handleLoginSuccess(response)) {
+      if (await handleLoginSuccess(response)) {
         router.replace("/(tabs)");
       }
     } catch (error: any) {
@@ -124,7 +131,7 @@ export default function LoginScreen() {
 
         const response: any = await BaseRequest.post(LOGIN_ENDPOINT, payload);
 
-        if (handleLoginSuccess(response)) {
+        if (await handleLoginSuccess(response)) {
           // Save credentials for future biometric logins
           await saveCredentials(payload.phone, data.password);
           router.replace("/(tabs)");

@@ -4,6 +4,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
+import { getUserFromState } from "@/utils";
 import { useRouter } from "expo-router";
 import { DocumentText1, Location, ProfileCircle } from "iconsax-react-native";
 import React from "react";
@@ -14,12 +15,13 @@ export default function IdentityVerificationScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const { user } = useAppState();
-
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
+  console.log("User KYC Status:", user?.firstName);
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>
-        <Back onPress={() => router.push("/kyc")} />
+        <Back onPress={() => router.back()} />
       </View>
 
       <View style={styles.content}>

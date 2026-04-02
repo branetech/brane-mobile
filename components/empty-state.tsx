@@ -1,9 +1,9 @@
 import { View } from "@idimma/rn-widget";
 import { Gift } from "iconsax-react-native";
 
-export const EmptyState = ({ children }: { children?: React.ReactNode }) => {
+export const EmptyState = ({ children, style }: { children?: React.ReactNode, style?: any }) => {
   return (
-    <View w="100%" h="auto" justify="center" align="center" mx={"auto"} gap={8}>
+    <View w="100%" h="auto" justify="center" align="center" mx={"auto"} gap={8} style={style}>
       <View
         w={56}
         h={56}

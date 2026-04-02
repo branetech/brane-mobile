@@ -50,7 +50,7 @@ const LogOutModal: React.FC<LogOutModalProps> = ({ isOpen, closeModal }) => {
             style={styles.logoutBtn}
             onPress={() => {
               dispatch(logOut());
-              router.replace("/");
+              router.replace("/(auth)/login");
             }}
           >
             <ThemedText style={styles.logoutText}>Yes, log out</ThemedText>

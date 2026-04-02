@@ -6,7 +6,6 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { formatDate } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
-import { Notification as BellIcon } from "iconsax-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
     ActivityIndicator,

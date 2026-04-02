@@ -6,6 +6,7 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { setUser } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
+import { getUserFromState } from "@/utils";
 import BaseRequest, { catchError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
 import { EMPLOYMENT_STATUS } from "@/utils/constants";
@@ -27,7 +28,8 @@ const schema = yup.object({
 export default function KycVerificationScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
 
