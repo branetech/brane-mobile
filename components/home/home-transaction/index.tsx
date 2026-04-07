@@ -91,7 +91,7 @@ export const Transactions = () => {
   }, [transactions]);
 
   const handleSeeAll = () => {
-    router.push("/(tabs)/transactions");
+    router.push("/(tabs)/(transaction)");
   };
 
   const handleTransactionPress = (transactionId: string) => {
@@ -102,7 +102,7 @@ export const Transactions = () => {
   };
 
   return (
-    <View w='100%' mt={24} mb={24} gap={20} minH={260}>
+    <View w='100%' mt={24} mb={24}  minH={260}>
       {/* Header */}
       <View row spaced>
         <ThemedText type='defaultSemiBold'>Recent Transactions</ThemedText>
@@ -122,7 +122,7 @@ export const Transactions = () => {
       </View>
 
       {/* Content */}
-      <View justified mt={10}>
+      <View justified mt={10} gap={20}>
         {isLoading ? (
           <EmptyState>
             <ThemedText

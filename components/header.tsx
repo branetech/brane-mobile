@@ -1,9 +1,9 @@
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Colors } from "@/constants/colors";
-import { View, TouchableOpacity } from "@idimma/rn-widget";
+import { View, IS_IOS } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { useCallback } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import { ThemedText } from "./themed-text";
 import Back from "./back";
 
@@ -40,9 +40,9 @@ export const Header = ({
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      height: 100,
+      // height: 100,
       paddingHorizontal: 16,
-      paddingTop: 32,
+      paddingVertical: IS_IOS ? 2 : 5,
       backgroundColor: bgColor || C.background,
     },
     backButton: {

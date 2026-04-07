@@ -8,12 +8,12 @@ import { priceFormatter } from "@/utils/helpers";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import {
-    ChartSquare,
-    Eye,
-    EyeSlash,
-    Mobile,
-    Money,
-    WifiSquare,
+  ChartSquare,
+  Eye,
+  EyeSlash,
+  Mobile,
+  Money,
+  WifiSquare,
 } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
@@ -52,35 +52,42 @@ export const HomeCard = () => {
                 )}
               </TouchableOpacity>
             </View>
-            <View row aligned>
+           
+          </View>
+           <View center>
               {isLoading ? (
                 <ActivityIndicator size='small' color={"#fff"} />
               ) : (
-                <ThemedText type='title' style={{ color: "#fff" }}>
+                <ThemedText type='title' style={{ color: "#fff", textAlign: "center" }}>
                   {showBalance ? priceFormatter(data) : "••••••"}
                 </ThemedText>
               )}
             </View>
-          </View>
           <View gap={8} w='100%' aligned spaced row>
-            <BraneButton
-              text='Add Funds'
-              onPress={() => {
-                router.push("/add-funds");
-              }}
-              backgroundColor={C.primary}
-              textColor={C.background}
-              width={160}
-              radius={32}
-            />
-            <BraneButton
-              text='My Wallet'
-              onPress={() => router.push("/wallet")}
-              backgroundColor={"#D2F1E41A"}
-              textColor={"#fff"}
-              width={160}
-              radius={32}
-            />
+
+            <View flex>
+              <BraneButton
+                text='Add Funds'
+                onPress={() => {
+                  router.push("/add-funds");
+                }}
+                backgroundColor={C.primary}
+                textColor={C.background}
+                radius={32}
+              />
+
+            </View>
+            <View flex>
+              <BraneButton
+                text='My Wallet'
+                onPress={() => router.push("/wallet")}
+                backgroundColor={"#D2F1E41A"}
+                textColor={"#fff"}
+
+                radius={32}
+              />
+            </View>
+
           </View>
         </View>
       </CardStyle>

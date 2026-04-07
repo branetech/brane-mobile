@@ -57,7 +57,7 @@ function RootLayoutContent() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={navigationTheme}>
         <Stack screenOptions={{ headerShown: false }} />
-        <StatusBar hidden={true} />
+        <StatusBar   />
         <Toaster />
       </ThemeProvider>
     </GestureHandlerRootView>

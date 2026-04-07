@@ -63,7 +63,7 @@ export const HomeHeader = () => {
   // };
 
   return (
-    <View row justify='space-between' w='100%' aligned mb={16}>
+    <View row justify='space-between' w='100%' aligned pt={5} mb={16}>
       {/* Left: Avatar + Greeting */}
       <View row gap={4} aligned>
         <TouchableOpacity onPress={() => router.push("/(tabs)/(account)")}>
@@ -96,7 +96,7 @@ export const HomeHeader = () => {
                 style={{
                   position: "absolute",
                   top: -4,
-                  right: -4,
+                  right: 2,
                   width: 8,
                   height: 8,
                   borderRadius: 4,

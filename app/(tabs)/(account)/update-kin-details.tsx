@@ -9,17 +9,17 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
 import { formatPhoneNumber } from "@/utils/helpers";
-import { View } from "@idimma/rn-widget";
+import { KeyboardAvoidingView, View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { ArrowDown2, SearchNormal1, TickCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    Modal,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
@@ -201,99 +201,104 @@ export default function UpdateKinDetailsScreen() {
         </View>
       ) : (
         <>
-          <ScrollView
-            contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps='handled'
-          >
+          <View flex p={16}>
             <ThemedText style={[styles.helperText, { color: C.muted }]}>
               Your next of kin (NOK) is your closest living relative. We&apos;ll
               contact them if we can&apos;t reach you for an extended period.
             </ThemedText>
 
-            <View gap={18} style={{ marginTop: 32 }}>
-              <FormInput
-                labelText='Next Of Kin First Name'
-                placeholder='Enter first name'
-                value={form.firstName}
-                onChangeText={(value) => updateField("firstName", value)}
-                error={errors.firstName}
-              />
+            <KeyboardAvoidingView
+              style={{
+              
+                flex: 1,
+              }}
+            >
+              <View gap={18}  pt={32} pb={120}>
+                <FormInput
+                  labelText='Next Of Kin First Name'
+                  placeholder='Enter first name'
+                  value={form.firstName}
+                  onChangeText={(value) => updateField("firstName", value)}
+                  error={errors.firstName}
+                />
 
-              <FormInput
-                labelText='Next Of Kin Last Name'
-                placeholder='Enter last name'
-                value={form.lastName}
-                onChangeText={(value) => updateField("lastName", value)}
-                error={errors.lastName}
-              />
+                <FormInput
+                  labelText='Next Of Kin Last Name'
+                  placeholder='Enter last name'
+                  value={form.lastName}
+                  onChangeText={(value) => updateField("lastName", value)}
+                  error={errors.lastName}
+                />
 
-              <View>
-                <ThemedText style={styles.inputLabel}>
-                  What is your relationship
-                </ThemedText>
-                <Pressable
-                  style={[
-                    styles.selectField,
-                    { backgroundColor: C.inputBg, borderColor: C.border },
-                  ]}
-                  onPress={() => setShowRelationshipModal(true)}
-                >
-                  <ThemedText
+                <View>
+                  <ThemedText style={styles.inputLabel}>
+                    What is your relationship
+                  </ThemedText>
+                  <Pressable
                     style={[
-                      form.relationship
-                        ? styles.selectText
-                        : styles.selectPlaceholder,
-                      { color: form.relationship ? C.text : C.muted },
+                      styles.selectField,
+                      { backgroundColor: C.inputBg, borderColor: C.border },
                     ]}
+                    onPress={() => setShowRelationshipModal(true)}
                   >
-                    {selectedRelationshipLabel}
-                  </ThemedText>
-                  <ArrowDown2 size={16} color={C.muted} />
-                </Pressable>
-                {!!errors.relationship && (
-                  <ThemedText style={[styles.errorText, { color: C.error }]}>
-                    {errors.relationship}
-                  </ThemedText>
-                )}
-              </View>
+                    <ThemedText
+                      style={[
+                        form.relationship
+                          ? styles.selectText
+                          : styles.selectPlaceholder,
+                        { color: form.relationship ? C.text : C.muted },
+                      ]}
+                    >
+                      {selectedRelationshipLabel}
+                    </ThemedText>
+                    <ArrowDown2 size={16} color={C.muted} />
+                  </Pressable>
+                  {!!errors.relationship && (
+                    <ThemedText style={[styles.errorText, { color: C.error }]}>
+                      {errors.relationship}
+                    </ThemedText>
+                  )}
+                </View>
 
-              <FormInput
-                labelText='Next Of Kin Email Address'
-                placeholder='Enter email address'
-                keyboardType='email-address'
-                autoCapitalize='none'
-                value={form.email}
-                onChangeText={(value) => updateField("email", value)}
-                error={errors.email}
-              />
+                <FormInput
+                  labelText='Next Of Kin Email Address'
+                  placeholder='Enter email address'
+                  keyboardType='email-address'
+                  autoCapitalize='none'
+                  value={form.email}
+                  onChangeText={(value) => updateField("email", value)}
+                  error={errors.email}
+                />
 
-              <View>
-                <ThemedText style={styles.inputLabel}>
-                  Next of Kin Phone number
-                </ThemedText>
-                <PhoneInput
-                  value={form.phone}
-                  onFormattedChange={(_, raw) => {
-                    updateField("phone", raw);
-                  }}
-                  placeholder='+234 70000 0000'
-                  error={!!errors.phone}
-                  errorMessage={errors.phone}
+                <View mb={30}>
+                  <ThemedText style={styles.inputLabel}>
+                    Next of Kin Phone number
+                  </ThemedText>
+                  <PhoneInput
+                    value={form.phone}
+                    onFormattedChange={(_, raw) => {
+                      updateField("phone", raw);
+                    }}
+                    placeholder='700 000 0000'
+                    error={!!errors.phone}
+                    errorMessage={errors.phone}
+                  />
+                </View>
+
+                <BraneButton
+                  text={form.id ? "Update Next of Kin" : "Submit"}
+                  onPress={onSubmit}
+                  loading={loading}
+                  disabled={loading}
+                  height={50}
+                  radius={10}
                 />
               </View>
-            </View>
-          </ScrollView>
 
-          <View style={styles.footer}>
-            <BraneButton
-              text={form.id ? "Update Next of Kin" : "Submit"}
-              onPress={onSubmit}
-              loading={loading}
-              disabled={loading}
-              height={50}
-              radius={10}
-            />
+            </KeyboardAvoidingView>
           </View>
+
+
         </>
       )}
 
@@ -324,7 +329,7 @@ export default function UpdateKinDetailsScreen() {
                 },
               ] as any
             }
-            onPress={() => {}}
+            onPress={() => { }}
           >
             <ThemedText
               type='defaultSemiBold'
