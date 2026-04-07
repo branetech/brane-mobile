@@ -8,12 +8,12 @@ import { priceFormatter } from "@/utils/helpers";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import {
-  ChartSquare,
-  Eye,
-  EyeSlash,
-  Mobile,
-  Money,
-  WifiSquare,
+    ChartSquare,
+    Eye,
+    EyeSlash,
+    Mobile,
+    Money,
+    WifiSquare,
 } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";

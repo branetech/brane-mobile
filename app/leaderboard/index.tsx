@@ -141,6 +141,7 @@ export default function LeaderboardScreen() {
 
       {isLoading ? (
         <ActivityIndicator
+          size='small'
           style={styles.loader}
           size='small'
           color={C.primary}

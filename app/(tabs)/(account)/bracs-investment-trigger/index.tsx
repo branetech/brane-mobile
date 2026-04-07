@@ -1,30 +1,36 @@
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Slider from "@react-native-community/slider";
-import { useFocusEffect, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowDown2, ArrowLeft, Cardano, CloseCircle, InfoCircle } from "iconsax-react-native";
+import Back from "@/components/back";
+import { BraneButton } from "@/components/brane-button";
+import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import Back from "@/components/back";
-import { ThemedText } from "@/components/themed-text";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import { showSuccess } from "@/utils/helpers";
-import { BraneButton } from "@/components/brane-button";
+import Slider from "@react-native-community/slider";
+import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect, useRouter } from "expo-router";
+import {
+    ArrowDown2,
+    ArrowLeft,
+    Cardano,
+    CloseCircle,
+    InfoCircle,
+} from "iconsax-react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+    ActivityIndicator,
+    Image,
+    Modal,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Scheme = "light" | "dark";
 
@@ -72,7 +78,12 @@ const SallyIntroModal = ({
   onNext: () => void;
   C: (typeof Colors)["light"];
 }) => (
-  <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+  <Modal
+    visible={visible}
+    transparent
+    animationType='fade'
+    onRequestClose={onClose}
+  >
     <Pressable style={styles.modalOverlay} onPress={onClose}>
       <Pressable style={{ width: "100%" }} onPress={() => {}}>
         <LinearGradient
@@ -88,7 +99,7 @@ const SallyIntroModal = ({
               <Image
                 source={require("@/assets/images/network/Rectangle.png")}
                 style={styles.introImage}
-                resizeMode="contain"
+                resizeMode='contain'
               />
             </View>
 
@@ -97,15 +108,15 @@ const SallyIntroModal = ({
             </Text>
 
             <Text style={[styles.introDesc, { color: "#404040" }]}>
-              Sally automatically invests your Bracs into diversified assets once
-              you reach your set goal. You can modify this anytime.
+              Sally automatically invests your Bracs into diversified assets
+              once you reach your set goal. You can modify this anytime.
             </Text>
 
             <View style={styles.benefitsList}>
               {benefits.map((benefit, i) => (
                 <View key={i} style={styles.benefitRow}>
                   <View style={styles.benefitIconWrap}>
-                    <Cardano size={12} color="#404040" />
+                    <Cardano size={12} color='#404040' />
                   </View>
                   <Text style={styles.benefitText}>{benefit}</Text>
                 </View>
@@ -114,10 +125,10 @@ const SallyIntroModal = ({
           </ScrollView>
 
           <BraneButton
-            text="Get Started"
+            text='Get Started'
             onPress={onNext}
-            backgroundColor="#013D25"
-            textColor="#D2F1E4"
+            backgroundColor='#013D25'
+            textColor='#D2F1E4'
             height={56}
             radius={12}
             style={{ marginTop: 24 }}
@@ -168,16 +179,28 @@ const SallyConfigModal = ({
   }, [onClose, onSallyEnabled]);
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType='fade'
+      onRequestClose={onClose}
+    >
       <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable style={[styles.modalSheet, styles.centeredSheet, { backgroundColor: "#ffffff" }]} onPress={() => {}}>
+        <Pressable
+          style={[
+            styles.modalSheet,
+            styles.centeredSheet,
+            { backgroundColor: "#ffffff" },
+          ]}
+          onPress={() => {}}
+        >
           {/* Header */}
           <View style={styles.configHeader}>
             <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-              <ArrowLeft size={20} color="#342A3B" />
+              <ArrowLeft size={20} color='#342A3B' />
             </TouchableOpacity>
             <TouchableOpacity onPress={onClose}>
-              <CloseCircle size={24} color="#342A3B" />
+              <CloseCircle size={24} color='#342A3B' />
             </TouchableOpacity>
           </View>
 
@@ -198,7 +221,7 @@ const SallyConfigModal = ({
               <Text style={[styles.thresholdLabel, { color: "#0B0014" }]}>
                 Drag to set threshold
               </Text>
-              <InfoCircle size={16} color="#342A3B" />
+              <InfoCircle size={16} color='#342A3B' />
             </View>
 
             {/* Tooltip + Slider */}
@@ -214,7 +237,7 @@ const SallyConfigModal = ({
                 ]}
               >
                 <Text style={styles.tooltipText}>{bracsValue} Bracs</Text>
-                <ArrowDown2 size={12} color="#404040" variant="Bold" />
+                <ArrowDown2 size={12} color='#404040' variant='Bold' />
               </View>
 
               <View
@@ -229,19 +252,21 @@ const SallyConfigModal = ({
                   step={5}
                   value={threshold}
                   onValueChange={setThreshold}
-                  minimumTrackTintColor="#013D25"
-                  maximumTrackTintColor="#E7E6E8"
-                  thumbTintColor={Platform.OS === "android" ? "#013D25" : undefined}
+                  minimumTrackTintColor='#013D25'
+                  maximumTrackTintColor='#E7E6E8'
+                  thumbTintColor={
+                    Platform.OS === "android" ? "#013D25" : undefined
+                  }
                 />
               </View>
             </View>
           </View>
 
           <BraneButton
-            text="Save and Activate"
+            text='Save and Activate'
             onPress={handleSave}
-            backgroundColor="#013D25"
-            textColor="#D2F1E4"
+            backgroundColor='#013D25'
+            textColor='#D2F1E4'
             height={50}
             radius={12}
             loading={isLoading}
@@ -286,7 +311,9 @@ const OptionRow = ({
           </View>
         )}
       </View>
-      <Text style={[styles.optionDesc, { color: "#85808A" }]}>{description}</Text>
+      <Text style={[styles.optionDesc, { color: "#85808A" }]}>
+        {description}
+      </Text>
     </TouchableOpacity>
 
     <Switch
@@ -294,7 +321,7 @@ const OptionRow = ({
       onValueChange={onToggle}
       trackColor={{ false: "#E7E6E8", true: "#D2F1E4" }}
       thumbColor={isSelected ? "#013D25" : "#ACAAAD"}
-      ios_backgroundColor="#E7E6E8"
+      ios_backgroundColor='#E7E6E8'
     />
   </View>
 );
@@ -315,10 +342,13 @@ export default function BracsInvestmentTriggerScreen() {
   const fetchAllocation = useCallback(async () => {
     try {
       const res: any = await BaseRequest.get(
-        TRANSACTION_SERVICE.ACCOUNT_BRACS_ALLOCATION
+        TRANSACTION_SERVICE.ACCOUNT_BRACS_ALLOCATION,
       );
       // Handle both flat { allocationType } and nested { data: { allocationType } } shapes
-      const type = res?.allocationType ?? res?.data?.allocationType ?? res?.records?.allocationType;
+      const type =
+        res?.allocationType ??
+        res?.data?.allocationType ??
+        res?.records?.allocationType;
       if (type === "do-it-yourself") setSelectedOption("diy");
       else if (type === "managed") setSelectedOption("managed");
       else if (type === "ai-automated") setSelectedOption("sally");
@@ -338,7 +368,7 @@ export default function BracsInvestmentTriggerScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchAllocation();
-    }, [fetchAllocation])
+    }, [fetchAllocation]),
   );
 
   const canNavigate = (value: string) => {
@@ -352,7 +382,7 @@ export default function BracsInvestmentTriggerScreen() {
       // Already active — navigate to the sub-page
       if (value === "managed") {
         router.push(
-          "/(account)/bracs-investment-trigger/managed-portfolio/about-managed-portfolio" as any
+          "/(account)/bracs-investment-trigger/managed-portfolio/about-managed-portfolio" as any,
         );
         return;
       }
@@ -384,7 +414,7 @@ export default function BracsInvestmentTriggerScreen() {
   const handleRowPress = (value: string, url?: string) => {
     if (value === "managed" && selectedOption === "managed") {
       router.push(
-        "/(account)/bracs-investment-trigger/managed-portfolio/about-managed-portfolio" as any
+        "/(account)/bracs-investment-trigger/managed-portfolio/about-managed-portfolio" as any,
       );
     } else if (value === "diy" && selectedOption === "diy" && url) {
       router.push(url as any);
@@ -404,7 +434,7 @@ export default function BracsInvestmentTriggerScreen() {
 
       {isLoading ? (
         <View style={styles.loader}>
-          <ActivityIndicator color={C.primary} size="large" />
+          <ActivityIndicator color={C.primary} size='small' />
         </View>
       ) : (
         <ScrollView
@@ -419,7 +449,11 @@ export default function BracsInvestmentTriggerScreen() {
               comingSoon={opt.comingSoon}
               isSelected={selectedOption === opt.value}
               onToggle={() => handleToggle(opt.value, opt.url)}
-              onRowPress={canNavigate(opt.value) ? () => handleRowPress(opt.value, opt.url) : undefined}
+              onRowPress={
+                canNavigate(opt.value)
+                  ? () => handleRowPress(opt.value, opt.url)
+                  : undefined
+              }
               C={C}
             />
           ))}
@@ -522,7 +556,12 @@ const styles = StyleSheet.create({
   // Sally intro modal
   introImageWrap: { alignItems: "center", marginBottom: 24 },
   introImage: { width: 180, height: 180 },
-  introTitle: { fontSize: 20, fontWeight: "700", paddingTop: 32, paddingBottom: 4 },
+  introTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    paddingTop: 32,
+    paddingBottom: 4,
+  },
   introDesc: {
     fontSize: 14,
     lineHeight: 20,
@@ -533,7 +572,12 @@ const styles = StyleSheet.create({
   benefitRow: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
   benefitIconWrap: { marginTop: 3, width: 14, alignItems: "center" },
   benefitDot: { width: 6, height: 6, borderRadius: 3, marginTop: 6 },
-  benefitText: { fontSize: 14, lineHeight: 20, color: "#404040", flexShrink: 1 },
+  benefitText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#404040",
+    flexShrink: 1,
+  },
 
   // Sally config modal
   configHeader: {

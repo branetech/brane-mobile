@@ -9,24 +9,24 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
 import {
-  hideAppLoader,
-  priceFormatter,
-  showAppLoader,
-  showSuccess,
-  toArray,
+    hideAppLoader,
+    priceFormatter,
+    showAppLoader,
+    showSuccess,
+    toArray,
 } from "@/utils/helpers";
 import { Bank } from "iconsax-react-native";
 import React, { useCallback, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    FlatList,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 type Stage = "choice" | "form" | "account" | "pin" | "success";

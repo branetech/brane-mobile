@@ -8,6 +8,7 @@ import { logOut, setUser } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
 import BaseRequest, { baseURL, catchError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
+import { getUserFromState } from "@/utils";
 import { showError, showSuccess } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import * as ImagePicker from "expo-image-picker";
@@ -15,14 +16,14 @@ import { useRouter } from "expo-router";
 import { Camera, TickCircle, Trash } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Modal,
-    Pressable,
-    View as RNView,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
+  ActivityIndicator,
+  Modal,
+  Pressable,
+  View as RNView,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
@@ -59,7 +60,8 @@ export default function AccountDetailsScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
   const dispatch = useDispatch();
   const [showPhotoMenu, setShowPhotoMenu] = useState(false);
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);

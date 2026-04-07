@@ -2,9 +2,9 @@
 // utils/helpers.ts
 import { Colors } from "@/constants/colors";
 import {
-  onShowInsFunds,
-  setLoader,
-  setLoaderConfig,
+    onShowInsFunds,
+    setLoader,
+    setLoaderConfig,
 } from "@/redux/slice/auth-slice";
 import { dispatch } from "@/redux/store";
 import { ITransactionDetail } from "@/utils/index";
@@ -83,10 +83,11 @@ export function showMessage(
   description: string,
   type: NotificationType,
 ) {
-  // Dynamically get theme
-  const scheme =
-    (typeof window !== "undefined" && window.__BRANE_SCHEME__) ||
-    (require("@/hooks/use-color-scheme").useColorScheme?.() ?? "light");
+  // Dynamically get theme (NO HOOKS)
+  let scheme: "light" | "dark" = "light";
+  if (typeof window !== "undefined" && window.__BRANE_SCHEME__) {
+    scheme = window.__BRANE_SCHEME__;
+  }
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   let bg = C.background;
   let color = C.text;

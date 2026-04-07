@@ -79,8 +79,10 @@ const FALLBACK_SECTION_ICONS: Record<string, React.ReactNode> = {
   betting: <GamingSportIcon />,
 };
 
-const formatProviderLabel = (label: string) =>
-  String(label || "").replace(/-data$/i, "");
+const formatProviderLabel = (label: string) => {
+  const cleaned = String(label || "").replace(/-data$/i, "");
+  return cleaned.replace(/\b\w/g, (c) => c.toUpperCase());
+};
 
 const getProviderKey = (item: SelectOption) =>
   normalizeKey(`${item.id} ${item.label} ${item.description || ""}`);
@@ -507,7 +509,7 @@ const createStyles = (C: (typeof Colors)["light"]) =>
       height: 42,
     },
     providerLabel: {
-      fontSize: 9,
+      fontSize: 10,
       color: C.text,
       textAlign: "center",
     },

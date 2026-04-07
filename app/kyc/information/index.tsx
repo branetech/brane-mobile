@@ -5,6 +5,7 @@ import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import { useRequest } from "@/services/useRequest";
+import { getUserFromState } from "@/utils";
 import { useRouter } from "expo-router";
 import { Card, Note1 } from "iconsax-react-native";
 import React from "react";
@@ -15,7 +16,8 @@ export default function KycInformationScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
 
   const { data: beneficiaries } = useRequest(
     "/transactions-service/banking-info/accounts",

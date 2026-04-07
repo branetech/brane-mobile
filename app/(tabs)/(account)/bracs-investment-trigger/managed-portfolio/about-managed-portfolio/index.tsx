@@ -1,20 +1,20 @@
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Svg, { Path, G } from "react-native-svg";
-import { ArrowLeft } from "iconsax-react-native";
 import BaseRequest from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
-import { priceFormatter } from "@/utils/helpers";
 import { details } from "@/utils/constants";
+import { priceFormatter } from "@/utils/helpers";
+import { useRouter } from "expo-router";
+import { ArrowLeft } from "iconsax-react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Svg, { G, Path } from "react-native-svg";
 
 // ── Pie Chart ────────────────────────────────────────────────────────────────
 
@@ -93,12 +93,16 @@ const InvestmentCard = ({
   bgColor: string;
 }) => {
   const isPositive =
-    !ytdReturnDisplay || ytdReturnDisplay.startsWith("▲") || ytdReturnDisplay === "";
+    !ytdReturnDisplay ||
+    ytdReturnDisplay.startsWith("▲") ||
+    ytdReturnDisplay === "";
   return (
     <View style={[cardStyles.card, { backgroundColor: bgColor }]}>
       <View style={cardStyles.top}>
         <View style={cardStyles.tickerIcon}>
-          <Text style={cardStyles.tickerText}>{tickerSymbol.toUpperCase().slice(0, 2)}</Text>
+          <Text style={cardStyles.tickerText}>
+            {tickerSymbol.toUpperCase().slice(0, 2)}
+          </Text>
         </View>
         <View>
           <Text style={cardStyles.ticker}>{tickerSymbol.toUpperCase()}</Text>
@@ -115,10 +119,7 @@ const InvestmentCard = ({
       </View>
 
       <Text
-        style={[
-          cardStyles.ytd,
-          { color: isPositive ? "#03A161" : "#E54B4B" },
-        ]}
+        style={[cardStyles.ytd, { color: isPositive ? "#03A161" : "#E54B4B" }]}
       >
         {isPositive ? "▲" : "▼"}{" "}
         {ytdReturnDisplay.replace("▲", "").replace("▼", "").trim() || "0%"}
@@ -153,7 +154,12 @@ const cardStyles = StyleSheet.create({
     alignItems: "center",
     marginTop: 14,
   },
-  valueBold: { fontSize: 14, fontWeight: "700", color: "#1a1a1a", marginBottom: 4 },
+  valueBold: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    marginBottom: 4,
+  },
   muted: { fontSize: 13, color: "#85808A" },
   ytd: { fontSize: 12, marginTop: 14 },
 });
@@ -256,7 +262,11 @@ export default function AboutManagedPortfolioScreen() {
   const fetchData = useCallback(async () => {
     try {
       const res: any = await BaseRequest.get(STOCKS_SERVICE.ASSET_PICKER);
-      const arr = Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : [];
+      const arr = Array.isArray(res)
+        ? res
+        : Array.isArray(res?.data)
+          ? res.data
+          : [];
       setInvestmentData(arr);
     } catch {
       // silent — use empty array
@@ -281,9 +291,7 @@ export default function AboutManagedPortfolioScreen() {
   const renderDetails = () => {
     if (!showMore) {
       const preview = details?.split("\n")[2]?.substring(0, 150) ?? "";
-      return (
-        <Text style={aboutStyles.bodyText}>{preview}...</Text>
-      );
+      return <Text style={aboutStyles.bodyText}>{preview}...</Text>;
     }
 
     return details?.split("\n").map((line, i) => {
@@ -296,7 +304,9 @@ export default function AboutManagedPortfolioScreen() {
 
       if (isHeader) {
         return (
-          <Text key={i} style={aboutStyles.detailHeader}>{t}</Text>
+          <Text key={i} style={aboutStyles.detailHeader}>
+            {t}
+          </Text>
         );
       }
 
@@ -310,14 +320,18 @@ export default function AboutManagedPortfolioScreen() {
               <Text style={{ fontWeight: "700", color: "#0B0014" }}>
                 {parts[0]}:
               </Text>
-              <Text style={{ color: "#85808A" }}>{parts.slice(1).join(":")}</Text>
+              <Text style={{ color: "#85808A" }}>
+                {parts.slice(1).join(":")}
+              </Text>
             </Text>
           );
         }
       }
 
       return (
-        <Text key={i} style={aboutStyles.bodyText}>{t}</Text>
+        <Text key={i} style={aboutStyles.bodyText}>
+          {t}
+        </Text>
       );
     });
   };
@@ -327,7 +341,7 @@ export default function AboutManagedPortfolioScreen() {
       {/* Header */}
       <View style={aboutStyles.header}>
         <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
-          <ArrowLeft size={22} color="#342A3B" />
+          <ArrowLeft size={22} color='#342A3B' />
         </TouchableOpacity>
         <Text style={aboutStyles.headerTitle}>MANAGED WEALTH</Text>
         <View style={{ width: 44 }} />
@@ -362,19 +376,23 @@ export default function AboutManagedPortfolioScreen() {
           <Text style={aboutStyles.sectionLabel}>Top Picks</Text>
 
           {isLoading ? (
-            <ActivityIndicator color="#013D25" />
+            <ActivityIndicator color='#013D25' size='small' />
           ) : cards.length > 0 ? (
             <StackedCards cards={cards} />
           ) : (
             <View style={aboutStyles.emptyBox}>
-              <Text style={aboutStyles.emptyText}>No top picks at the moment</Text>
+              <Text style={aboutStyles.emptyText}>
+                No top picks at the moment
+              </Text>
             </View>
           )}
         </View>
 
         {/* Wealth Allocation — matches web: sectionTitle with border-b + chartTitle sub-label */}
         <View style={aboutStyles.section}>
-          <Text style={aboutStyles.allocationTitle}>Why you should allow pro</Text>
+          <Text style={aboutStyles.allocationTitle}>
+            Why you should allow pro
+          </Text>
           <Text style={aboutStyles.allocationSubTitle}>Wealth Allocation</Text>
 
           <View style={{ alignItems: "center", marginBottom: 48 }}>
@@ -440,12 +458,26 @@ const aboutStyles = StyleSheet.create({
     marginBottom: 20,
   },
   section: { marginBottom: 32 },
-  sectionLabel: { fontSize: 14, fontWeight: "600", color: "#85808A", marginBottom: 12 },
+  sectionLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#85808A",
+    marginBottom: 12,
+  },
   bodyText: { fontSize: 12, color: "#85808A", lineHeight: 18, marginBottom: 8 },
   detailHeader: {
-    fontSize: 14, fontWeight: "700", color: "#0B0014", marginTop: 16, marginBottom: 6,
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#0B0014",
+    marginTop: 16,
+    marginBottom: 6,
   },
-  bulletText: { fontSize: 13, lineHeight: 20, marginBottom: 10, paddingLeft: 4 },
+  bulletText: {
+    fontSize: 13,
+    lineHeight: 20,
+    marginBottom: 10,
+    paddingLeft: 4,
+  },
   emptyBox: {
     paddingVertical: 32,
     borderWidth: 2,
@@ -456,13 +488,19 @@ const aboutStyles = StyleSheet.create({
   },
   emptyText: { fontSize: 13, color: "#85808A", fontStyle: "italic" },
   allocationTitle: {
-    fontSize: 14, fontWeight: "600", color: "#1a1a1a",
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#1a1a1a",
     paddingVertical: 16,
-    borderBottomWidth: 1, borderBottomColor: "#F7F7F8",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F7F7F8",
     marginBottom: 16,
   },
   allocationSubTitle: {
-    fontSize: 14, fontWeight: "600", color: "#85808A", marginBottom: 16,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#85808A",
+    marginBottom: 16,
   },
   legendRow: {
     flexDirection: "row",

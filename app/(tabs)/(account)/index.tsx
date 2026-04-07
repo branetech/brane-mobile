@@ -5,6 +5,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
+import { getUserFromState } from "@/utils";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import { ArrowRight2 } from "iconsax-react-native";
@@ -15,7 +16,8 @@ export default function AccountScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
 
   const fullName = [user?.firstName, user?.lastName]
     .filter(Boolean)
@@ -30,13 +32,12 @@ export default function AccountScreen() {
 
   const header = (
     <RNView style={styles.headerWrapper}>
-      
-     <View row  aligned gap={108}>
-      <Back/>
-       <ThemedText type='subtitle' style={styles.pageTitle}>
-        Account
-      </ThemedText>
-     </View>
+      <View row aligned gap={108}>
+        <Back />
+        <ThemedText type='subtitle' style={styles.pageTitle}>
+          Account
+        </ThemedText>
+      </View>
 
       <RNView
         style={[
@@ -67,7 +68,11 @@ export default function AccountScreen() {
         <RNView
           style={[
             styles.kycCard,
-            {width: "100%", backgroundColor: C.background, borderColor: C.border },
+            {
+              width: "100%",
+              backgroundColor: C.background,
+              borderColor: C.border,
+            },
           ]}
         >
           <View row spaced aligned w='100%'>

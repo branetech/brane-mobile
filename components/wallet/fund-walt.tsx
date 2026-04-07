@@ -3,6 +3,7 @@ import SelectSavedCard from "@/components/wallet/saveed-cards";
 import { useAppState } from "@/redux/store";
 import BaseRequest, { catchError } from "@/services";
 import { PAYMENT_CALLBACK_URL } from "@/services/routes";
+import { getUserFromState } from "@/utils";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 
@@ -11,7 +12,8 @@ const BankWallet = () => {
   const [stage, setStage] = useState<"amount" | "choose-card">("amount");
   const [isLoading, setIsLoading] = useState(false);
   const { amount } = useAppState("fundCardSlice");
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
 
   const onAmountEntered = () => setStage("choose-card");
 

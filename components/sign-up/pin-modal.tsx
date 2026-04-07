@@ -18,7 +18,7 @@ export const PinSuccessModal = ({
   const C = Colors[themeKey];
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
+    <Modal visible={visible} transparent animationType='fade'>
       <View style={styles.overlay}>
         <View style={styles.card}>
           <View style={StyleSheet.absoluteFill}>
@@ -30,7 +30,7 @@ export const PinSuccessModal = ({
           </View>
 
           <View style={{ alignItems: "center", paddingHorizontal: 20 }}>
-            <ThemedText type="subtitle">Pin Created</ThemedText>
+            <ThemedText type='subtitle'>Pin Created</ThemedText>
             <ThemedText
               style={{
                 fontSize: 12,
@@ -46,12 +46,12 @@ export const PinSuccessModal = ({
           </View>
 
           <BraneButton
-            text="Continue"
+            text='Continue'
             onPress={onContinue}
             height={48}
             radius={12}
-            backgroundColor="#013D25"
-            textColor="#D2F1E4"
+            backgroundColor='#013D25'
+            textColor='#D2F1E4'
             style={{ width: 280 }}
           />
         </View>
