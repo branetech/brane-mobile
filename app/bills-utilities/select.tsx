@@ -31,7 +31,7 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AirtimeDataForm } from "./AirtimeDataForm";
+import  AirtimeDataForm  from "./AirtimeDataForm";
 import { BettingForm } from "./BettingForm";
 import { CableForm } from "./CableForm";
 import { ElectricityForm } from "./ElectricityForm";
