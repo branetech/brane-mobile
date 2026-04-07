@@ -33,7 +33,7 @@ import {
   normalizeKey,
   normalizeOption,
   toArray,
-} from "../bills-utilities/helpers";
+} from "@/components/bills-utilities/helpers";
 import {
   CABLE_IMAGES,
   ELECTRICITY_IMAGES,
@@ -41,7 +41,7 @@ import {
   TRANSPORT_KEYWORDS,
   type SelectOption,
   type UtilityService,
-} from "../bills-utilities/types";
+} from "@/components/bills-utilities/types";
 
 type Category = {
   id: string;

@@ -31,10 +31,10 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AirtimeDataForm } from "./AirtimeDataForm";
-import { BettingForm } from "./BettingForm";
-import { CableForm } from "./CableForm";
-import { ElectricityForm } from "./ElectricityForm";
+import { AirtimeDataForm } from "@/components/bills-utilities/AirtimeDataForm";
+import { BettingForm } from "@/components/bills-utilities/BettingForm";
+import { CableForm } from "@/components/bills-utilities/CableForm";
+import { ElectricityForm } from "@/components/bills-utilities/ElectricityForm";
 import {
     BettingProviderModal,
     BoostModal,
@@ -45,8 +45,8 @@ import {
     SummaryModal,
     TransportProviderModal,
     TransportRouteModal,
-} from "./Modals";
-import { TransportationForm } from "./TransportationForm";
+} from "@/components/bills-utilities/Modals";
+import { TransportationForm } from "@/components/bills-utilities/TransportationForm";
 import {
     getNetworkImageKey,
     normalizeCablePlan,
@@ -54,7 +54,7 @@ import {
     normalizeElectricityProviders,
     normalizeOption,
     toArray,
-} from "./helpers";
+} from "@/components/bills-utilities/helpers";
 import {
     NETWORK_ORDER,
     type Beneficiary,
@@ -63,7 +63,7 @@ import {
     type SelectOption,
     type TransportRoute,
     type UtilityService,
-} from "./types";
+} from "@/components/bills-utilities/types";
 
 export default function UtilitySelectScreen() {
   const router = useRouter();

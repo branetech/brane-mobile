@@ -178,3 +178,5 @@ const styles = StyleSheet.create({
 
   actionsRow: { flexDirection: "row", gap: 16, alignItems: "center" },
 });
+
+export default FundWithBankScren;

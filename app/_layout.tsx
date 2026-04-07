@@ -64,7 +64,7 @@ function RootLayoutContent() {
   );
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -73,3 +73,5 @@ export default function RootLayout() {
     </Provider>
   );
 }
+
+export default RootLayout;
