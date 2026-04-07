@@ -58,6 +58,14 @@
             "kotlinVersion": "2.1.21"
           }
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "brane-mobile",
+          "organization": "brane-technologies"
+        }
       ]
     ],
     "experiments": {
