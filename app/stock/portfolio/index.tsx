@@ -10,14 +10,14 @@ import { useRouter } from "expo-router";
 import { ArrowDown2, Eye, EyeSlash, SearchNormal1 } from "iconsax-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Dimensions,
-  Image,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

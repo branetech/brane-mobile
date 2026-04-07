@@ -1,26 +1,24 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import Back from "@/components/back";
+import { BraneButton } from "@/components/brane-button";
+import { ThemedText } from "@/components/themed-text";
+import { Colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import BaseRequest, { catchError } from "@/services";
+import { TRANSACTION_SERVICE } from "@/services/routes";
+import { showSuccess } from "@/utils/helpers";
+import Slider from "@react-native-community/slider";
+import { useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Platform,
   ScrollView,
   StyleSheet,
   Switch,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
-import Slider from "@react-native-community/slider";
-import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft } from "iconsax-react-native";
-import { Colors } from "@/constants/colors";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import Back from "@/components/back";
-import { ThemedText } from "@/components/themed-text";
-import BaseRequest, { catchError } from "@/services";
-import { TRANSACTION_SERVICE } from "@/services/routes";
-import { showSuccess } from "@/utils/helpers";
-import { BraneButton } from "@/components/brane-button";
 
 type Scheme = "light" | "dark";
 
@@ -60,7 +58,7 @@ const SliderCard = ({
             ]}
             value={value === 0 ? "0" : String(value)}
             onChangeText={handleInputChange}
-            keyboardType="number-pad"
+            keyboardType='number-pad'
             maxLength={3}
             selectTextOnFocus
           />
@@ -75,9 +73,9 @@ const SliderCard = ({
         step={1}
         value={value}
         onValueChange={onChange}
-        minimumTrackTintColor="#013D25"
-        maximumTrackTintColor="#AABEB6"
-        thumbTintColor="#013D25"
+        minimumTrackTintColor='#013D25'
+        maximumTrackTintColor='#AABEB6'
+        thumbTintColor='#013D25'
       />
 
       <View style={[sliderStyles.divider, { backgroundColor: "#F7F7F8" }]} />
@@ -142,7 +140,7 @@ export default function BracsAllocationScreen() {
   const fetchAllocation = useCallback(async () => {
     try {
       const res: any = await BaseRequest.get(
-        TRANSACTION_SERVICE.ACCOUNT_BRACS_ALLOCATION
+        TRANSACTION_SERVICE.ACCOUNT_BRACS_ALLOCATION,
       );
       if (res) {
         setStockAssets(res.stockAsset ?? 25);
@@ -193,13 +191,13 @@ export default function BracsAllocationScreen() {
 
       {isFetching ? (
         <View style={styles.loader}>
-          <ActivityIndicator color={C.primary} size="large" />
+          <ActivityIndicator color={C.primary} size='small' />
         </View>
       ) : (
         <ScrollView
           contentContainerStyle={[styles.content]}
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          keyboardShouldPersistTaps='handled'
         >
           <Text style={[styles.subtitle, { color: C.muted }]}>
             Preset your Bracc distribution across available assets. Bracc will
@@ -213,25 +211,25 @@ export default function BracsAllocationScreen() {
           {/* Slider cards */}
           <View style={styles.sliders}>
             <SliderCard
-              label="Stock assets"
+              label='Stock assets'
               value={stockAssets}
               onChange={setStockAssets}
               C={C}
             />
             <SliderCard
-              label="Gold assets"
+              label='Gold assets'
               value={goldAssets}
               onChange={setGoldAssets}
               C={C}
             />
             <SliderCard
-              label="Fixed income"
+              label='Fixed income'
               value={fixedIncome}
               onChange={setFixedIncome}
               C={C}
             />
             <SliderCard
-              label="Index funds"
+              label='Index funds'
               value={indexFunds}
               onChange={setIndexFunds}
               C={C}
@@ -240,9 +238,7 @@ export default function BracsAllocationScreen() {
 
           {/* Validation error — matches web: single line "Current: X%" */}
           {!isValid && (
-            <Text style={styles.validationError}>
-              Current: {total}%
-            </Text>
+            <Text style={styles.validationError}>Current: {total}%</Text>
           )}
 
           {/* AI Recommended Trades toggle */}
@@ -260,14 +256,14 @@ export default function BracsAllocationScreen() {
               onValueChange={setIsAiTradesEnabled}
               trackColor={{ false: "#E7E6E8", true: "#D2F1E4" }}
               thumbColor={isAiTradesEnabled ? "#013D25" : "#ACAAAD"}
-              ios_backgroundColor="#E7E6E8"
+              ios_backgroundColor='#E7E6E8'
             />
           </View>
 
           {/* Save button */}
           <View style={styles.saveBtn}>
             <BraneButton
-              text="Save Settings"
+              text='Save Settings'
               onPress={handleSave}
               backgroundColor={isValid ? "#013D25" : "#AABEB6"}
               textColor={isValid ? "#D2F1E4" : "#8CA198"}

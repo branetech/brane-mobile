@@ -5,11 +5,11 @@ import { TRANSACTION_SERVICE } from "@/services/routes";
 import { ArrowLeft, CloseCircle, InfoCircle } from "iconsax-react-native";
 import React, { useCallback, useState } from "react";
 import {
-  ActivityIndicator,
-  Slider,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Slider,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 interface SallySecondModalContentProps {

@@ -22,10 +22,10 @@ import { IconRender } from "../icon-render";
 
 export const CardStyle = ({ children, bg }: any) => {
   return (
-    <View w='100%' h={196} radius={16} bg={bg || "#013D25"}>
+    <View w='100%' h={'auto'} radius={16} bg={bg || "#013D25"}>
       <ImageBackground
         source={require("@/assets/images/bg.png")}
-        style={{ flex: 1, width: "100%", height: "auto", overflow: "hidden" }}
+        style={{ flex: 1, width: "100%", height: 170, overflow: "hidden" }}
         resizeMode='cover'
       >
         <View p={18} flex={1}>

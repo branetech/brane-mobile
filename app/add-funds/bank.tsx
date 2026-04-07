@@ -6,17 +6,18 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import { useRequest } from "@/services/useRequest";
+import { getUserFromState } from "@/utils";
 import { showError, showSuccess } from "@/utils/helpers";
 import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
 import { Copy, ExportCurve } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Share as RNShare,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Share as RNShare,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 const BANK_NAME = "FCMB MFB";
@@ -25,7 +26,8 @@ export function FundWithBankScren() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
 
   const [errorStatus, setErrorStatus] = useState("");
 
@@ -79,11 +81,7 @@ export function FundWithBankScren() {
       {/* Section header */}
 
       {/* Outer sand card */}
-      <View
-        style={[
-          styles.outerCard,
-        ]}
-      >
+      <View style={[styles.outerCard]}>
         {/* Bank Transfer label row */}
         <View style={styles.labelRow}>
           {/* Bank icon placeholder — swap with your <BankIcn /> SVG */}

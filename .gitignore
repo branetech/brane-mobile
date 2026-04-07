@@ -41,5 +41,10 @@ app-example
 # generated native folders
 /ios
 /android
+<<<<<<< HEAD
 .env
 .sentryclirc
+=======
+
+.env.local
+>>>>>>> b1fc3017b0bccd6eba11a52b76395a7373845c79

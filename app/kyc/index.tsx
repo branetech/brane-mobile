@@ -4,6 +4,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
+import { getUserFromState } from "@/utils";
 import { useRouter } from "expo-router";
 import { Card, Profile2User, User, UserTag } from "iconsax-react-native";
 import React from "react";
@@ -14,7 +15,8 @@ export default function KycScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>

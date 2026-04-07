@@ -5,12 +5,12 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useFormHandler } from "@/hooks/use-formik";
+import { useAppState } from "@/redux/store";
 import BaseRequest, { parseNetworkError } from "@/services";
 import { showError, showSuccess } from "@/utils/helpers";
-import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
 
@@ -19,7 +19,8 @@ export default function BvnVerificationScreen() {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const [isLoading, setIsLoading] = useState(false);
-
+  const {user} = useAppState();
+  console.log(user)
   const { form, isDisabled } = useFormHandler({
     initialValues: {
       bvn: "",
@@ -33,7 +34,7 @@ export default function BvnVerificationScreen() {
     onSubmit: async (data) => {
       setIsLoading(true);
       try {
-        const response: any = await BaseRequest.post("/auth-service/kyc/bvn", {
+        const response: any = await BaseRequest.post("/auth-service/kyc/verify-identity", {
           bvn: data.bvn,
         });
 

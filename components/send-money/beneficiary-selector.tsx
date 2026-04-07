@@ -5,10 +5,10 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { User } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export interface Beneficiary {

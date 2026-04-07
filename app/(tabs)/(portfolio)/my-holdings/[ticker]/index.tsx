@@ -4,11 +4,11 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { onAddToCheckouts } from "@/redux/slice/auth-slice";
-import { useAppState } from "@/redux/store";
+// import { useAppState } from "@/redux/store";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
 import { textToImage, useRequest } from "@/services/useRequest";
-import { priceFormatter } from "@/utils/helpers";
+import { collection, priceFormatter } from "@/utils/helpers";
 import {
   useFocusEffect,
   useLocalSearchParams,
@@ -36,17 +36,7 @@ import { useDispatch } from "react-redux";
 
 type MainTab = "Overview" | "History";
 type HistorySubTab = "All" | "Buy" | "Sell" | "Returns";
-type TimeFilter = "Today" | "1W" | "1M" | "3M" | "6M" | "1Y" | "5Y";
 
-const TIME_FILTERS: TimeFilter[] = [
-  "Today",
-  "1W",
-  "1M",
-  "3M",
-  "6M",
-  "1Y",
-  "5Y",
-];
 const HISTORY_TABS: HistorySubTab[] = ["All", "Buy", "Sell", "Returns"];
 
 const num = (v: any) => Number(v ?? 0);
@@ -97,14 +87,14 @@ export default function HoldingDetailScreen() {
     }, [navigation, C.inputBg]),
   );
 
-  const { checkouts } = useAppState();
-  const inCart = Array.isArray(checkouts)
-    ? checkouts.some((item: any) => item?.tickerSymbol === tickerSymbol)
-    : false;
+  // const { checkouts } = useAppState();
+  // const inCart = Array.isArray(checkouts)
+  //   ? checkouts.some((item: any) => item?.tickerSymbol === tickerSymbol)
+  //   : false;
 
   const [mainTab, setMainTab] = useState<MainTab>("Overview");
   const [historyTab, setHistoryTab] = useState<HistorySubTab>("All");
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>("1M");
+  // const [timeFilter, setTimeFilter] = useState<TimeFilter>("1M");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [txLoading, setTxLoading] = useState(false);
@@ -134,14 +124,19 @@ export default function HoldingDetailScreen() {
     BaseRequest.get(STOCKS_SERVICE.HISTORY(tickerSymbol))
       .then((res: any) => {
         // Check every possible response shape
-        const raw: any[] =
-          Array.isArray(res) ? res :
-          Array.isArray(res?.data) ? res.data :
-          Array.isArray(res?.records) ? res.records :
-          Array.isArray(res?.data?.records) ? res.data.records :
-          Array.isArray(res?.chartData) ? res.chartData :
-          Array.isArray(res?.prices) ? res.prices :
-          [];
+        const raw: any[] = Array.isArray(res)
+          ? res
+          : Array.isArray(res?.data)
+            ? res.data
+            : Array.isArray(res?.records)
+              ? res.records
+              : Array.isArray(res?.data?.records)
+                ? res.data.records
+                : Array.isArray(res?.chartData)
+                  ? res.chartData
+                  : Array.isArray(res?.prices)
+                    ? res.prices
+                    : [];
         if (raw.length > 0) setHistoryRaw(raw);
       })
       .catch(() => {});
@@ -181,7 +176,10 @@ export default function HoldingDetailScreen() {
   }, [revalidateDetail, revalidateBrac, fetchHistory, fetchTransactions]);
 
   // ── Derived data ──
-  const stock = stockDetail || { tickerSymbol };
+  const stock = useMemo(
+    () => stockDetail || { tickerSymbol },
+    [stockDetail, tickerSymbol],
+  );
 
   const logoUri = useMemo(() => {
     const logo = (stock as any)?.logo;
@@ -190,29 +188,12 @@ export default function HoldingDetailScreen() {
     return logo;
   }, [stock, tickerSymbol]);
 
-  // Chart data filtered by time range
-  const [chartDates, chartValues] = useMemo(() => {
-    const sliceMap: Record<TimeFilter, number> = {
-      Today: 1,
-      "1W": 7,
-      "1M": 30,
-      "3M": 90,
-      "6M": 180,
-      "1Y": 365,
-      "5Y": 1825,
-    };
-    const count = sliceMap[timeFilter];
-    const sliced = historyRaw.slice(-count);
-    const dates = sliced.map((item: any) =>
-      Array.isArray(item)
-        ? moment(item[0]).format("Do MMM")
-        : moment(item?.date ?? item?.timestamp ?? item?.day ?? 0).format("Do MMM"),
-    );
-    const values = sliced.map((item: any) =>
-      Number(Array.isArray(item) ? item[1] : (item?.price ?? item?.value ?? item?.close ?? item?.open ?? 0)),
-    );
-    return [dates, values];
-  }, [historyRaw, timeFilter]);
+  // Chart data filtered by time range (match About component)
+  const trends = collection(historyRaw);
+
+  const sliced = trends;
+  const chartDates = sliced.map(([d]: any) => moment(d).format("Do MMM"));
+  const chartValues = sliced.map(([, v]: any) => Number(v));
 
   const currentPrice = num((stock as any)?.currentPrice);
   const pct = num((stock as any)?.percentage);
@@ -341,7 +322,7 @@ export default function HoldingDetailScreen() {
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <ActivityIndicator size="large" color={C.primary} />
+          <ActivityIndicator size='small' color={C.primary} />
         </View>
       </SafeAreaView>
     );
@@ -368,7 +349,7 @@ export default function HoldingDetailScreen() {
           onPress={() => {}}
           activeOpacity={0.7}
         >
-          <Filter size={20} color={C.text} variant="Outline" />
+          <Filter size={20} color={C.text} variant='Outline' />
         </TouchableOpacity>
       </View>
 
@@ -432,8 +413,6 @@ export default function HoldingDetailScreen() {
             chartDates={chartDates}
             chartValues={chartValues}
             chartColor={chartColor}
-            timeFilter={timeFilter}
-            setTimeFilter={setTimeFilter}
             currentValue={currentValue}
             investedValue={investedValue}
             avgPrice={avgPrice}
@@ -529,7 +508,7 @@ function OverviewTab({
         <Image
           source={{ uri: logoUri }}
           style={[styles.logo, { backgroundColor: C.inputBg }]}
-          resizeMode="contain"
+          resizeMode='contain'
         />
         <View style={{ flex: 1 }}>
           <ThemedText
@@ -556,10 +535,9 @@ function OverviewTab({
       <View style={styles.chartWrap}>
         {chartValues.length > 1 ? (
           <ChartComponent
-            colorType={chartColor}
             dates={chartDates}
             values={chartValues}
-            height={170}
+            colorType={chartColor}
           />
         ) : (
           <View
@@ -569,7 +547,7 @@ function OverviewTab({
       </View>
 
       {/* Time filters — plain text */}
-      <View style={[styles.timeRow, { borderBottomColor: C.border }]}>
+      {/* <View style={[styles.timeRow, { borderBottomColor: C.border }]}>
         {TIME_FILTERS.map((tf) => (
           <TouchableOpacity
             key={tf}
@@ -587,7 +565,7 @@ function OverviewTab({
             </ThemedText>
           </TouchableOpacity>
         ))}
-      </View>
+      </View> */}
 
       {/* Stats — no card background */}
       <View style={styles.statsSection}>
@@ -610,9 +588,9 @@ function OverviewTab({
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
                 {hideBalance ? (
-                  <EyeSlash size={14} color={C.muted} variant="Outline" />
+                  <EyeSlash size={14} color={C.muted} variant='Outline' />
                 ) : (
-                  <Eye size={14} color={C.muted} variant="Outline" />
+                  <Eye size={14} color={C.muted} variant='Outline' />
                 )}
               </TouchableOpacity>
             </View>
@@ -720,16 +698,16 @@ function OverviewTab({
       {/* Sally Recommendations */}
       <View style={styles.sallyCard}>
         <View style={styles.sallyHeaderRow}>
-          <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+          <Svg width={24} height={24} viewBox='0 0 24 24' fill='none'>
             <Path
-              d="M8.69629 21.1113C10.865 20.4972 13.1484 20.4965 15.3174 21.1094C15.4361 21.1447 15.4839 21.2532 15.4609 21.3418C15.4244 21.4475 15.3354 21.5 15.2598 21.5C15.2564 21.5 15.2495 21.5003 15.2412 21.499C15.234 21.4979 15.2296 21.4964 15.2285 21.4961L15.2178 21.4922L15.207 21.4893L14.8115 21.3848C12.834 20.897 10.7757 20.9309 8.80957 21.4873C8.69063 21.5194 8.58645 21.4482 8.5625 21.3604L8.55957 21.3477L8.55273 21.3105C8.54588 21.223 8.6029 21.1371 8.69043 21.1133L8.69629 21.1113Z"
-              fill="#008753"
-              stroke="#008753"
+              d='M8.69629 21.1113C10.865 20.4972 13.1484 20.4965 15.3174 21.1094C15.4361 21.1447 15.4839 21.2532 15.4609 21.3418C15.4244 21.4475 15.3354 21.5 15.2598 21.5C15.2564 21.5 15.2495 21.5003 15.2412 21.499C15.234 21.4979 15.2296 21.4964 15.2285 21.4961L15.2178 21.4922L15.207 21.4893L14.8115 21.3848C12.834 20.897 10.7757 20.9309 8.80957 21.4873C8.69063 21.5194 8.58645 21.4482 8.5625 21.3604L8.55957 21.3477L8.55273 21.3105C8.54588 21.223 8.6029 21.1371 8.69043 21.1133L8.69629 21.1113Z'
+              fill='#008753'
+              stroke='#008753'
             />
             <Path
-              d="M12.5049 6.75879C11.9338 6.50578 11.2435 6.71954 10.918 7.27734L10.916 7.28027L9.84668 9.14062L9.84473 9.14258C9.52454 9.70621 9.47163 10.358 9.79688 10.9199L9.7998 10.9248C10.1185 11.4608 10.6951 11.7508 11.3359 11.7578L10.916 12.4902V12.4912C10.5821 13.0756 10.7791 13.829 11.3613 14.1807V14.1816C11.3638 14.1832 11.3667 14.184 11.3691 14.1855C11.3721 14.1873 11.3749 14.1897 11.3779 14.1914V14.1904C11.58 14.3141 11.8013 14.3594 12 14.3594C12.4397 14.3593 12.8535 14.1233 13.082 13.7314L13.083 13.7285L14.1523 11.8711C14.4769 11.3129 14.5266 10.6493 14.2021 10.0889L14.1992 10.084C13.8802 9.54763 13.3034 9.2576 12.6621 9.25098L13.083 8.51855L13.084 8.51758C13.421 7.92764 13.2172 7.16465 12.6221 6.81738L12.5049 6.75879ZM8.35938 16.6533L8.13867 16.5039C5.9201 15.0154 4.46984 12.4535 4.46973 10.0498C4.46973 7.75048 5.49162 5.60497 7.29102 4.1709L7.29395 4.16895C9.08371 2.72596 11.4277 2.17983 13.7217 2.6875H13.7227C15.9082 3.16588 17.7908 4.62076 18.7617 6.58105V6.58203C20.6459 10.3691 18.8404 14.5226 15.9004 16.5049L15.6797 16.6533V17.6377C15.6896 17.9062 15.6805 18.2015 15.4658 18.4258C15.3048 18.5868 15.0376 18.7099 14.5898 18.71H9.45996C9.04783 18.71 8.72882 18.6571 8.53809 18.4609C8.35942 18.2768 8.34927 18.0507 8.35938 17.7676V16.6533Z"
-              fill="#008753"
-              stroke="#008753"
+              d='M12.5049 6.75879C11.9338 6.50578 11.2435 6.71954 10.918 7.27734L10.916 7.28027L9.84668 9.14062L9.84473 9.14258C9.52454 9.70621 9.47163 10.358 9.79688 10.9199L9.7998 10.9248C10.1185 11.4608 10.6951 11.7508 11.3359 11.7578L10.916 12.4902V12.4912C10.5821 13.0756 10.7791 13.829 11.3613 14.1807V14.1816C11.3638 14.1832 11.3667 14.184 11.3691 14.1855C11.3721 14.1873 11.3749 14.1897 11.3779 14.1914V14.1904C11.58 14.3141 11.8013 14.3594 12 14.3594C12.4397 14.3593 12.8535 14.1233 13.082 13.7314L13.083 13.7285L14.1523 11.8711C14.4769 11.3129 14.5266 10.6493 14.2021 10.0889L14.1992 10.084C13.8802 9.54763 13.3034 9.2576 12.6621 9.25098L13.083 8.51855L13.084 8.51758C13.421 7.92764 13.2172 7.16465 12.6221 6.81738L12.5049 6.75879ZM8.35938 16.6533L8.13867 16.5039C5.9201 15.0154 4.46984 12.4535 4.46973 10.0498C4.46973 7.75048 5.49162 5.60497 7.29102 4.1709L7.29395 4.16895C9.08371 2.72596 11.4277 2.17983 13.7217 2.6875H13.7227C15.9082 3.16588 17.7908 4.62076 18.7617 6.58105V6.58203C20.6459 10.3691 18.8404 14.5226 15.9004 16.5049L15.6797 16.6533V17.6377C15.6896 17.9062 15.6805 18.2015 15.4658 18.4258C15.3048 18.5868 15.0376 18.7099 14.5898 18.71H9.45996C9.04783 18.71 8.72882 18.6571 8.53809 18.4609C8.35942 18.2768 8.34927 18.0507 8.35938 17.7676V16.6533Z'
+              fill='#008753'
+              stroke='#008753'
             />
           </Svg>
           <ThemedText style={styles.sallyHeaderTxt}>
@@ -880,7 +858,7 @@ function HistoryTab({
 
       {txLoading ? (
         <ActivityIndicator
-          size="small"
+          size='small'
           color={C.primary}
           style={{ marginTop: 20 }}
         />
@@ -1066,7 +1044,7 @@ const styles = StyleSheet.create({
   // Stats section (no background)
   statsSection: {
     padding: 16,
-    marginBottom: 24,
+    marginVertical: 30,
     gap: 16,
     backgroundColor: "#F8FCFA",
     marginHorizontal: 16,

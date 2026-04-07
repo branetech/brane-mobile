@@ -17,6 +17,26 @@ import "react-native-reanimated";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "sonner-native";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://579694169e23c6dd89026602e33a4ee4@o4507425691271168.ingest.de.sentry.io/4511178373857360',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: false,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 function RootLayoutContent() {
   const colorScheme = useColorScheme();
@@ -57,14 +77,14 @@ function RootLayoutContent() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={navigationTheme}>
         <Stack screenOptions={{ headerShown: false }} />
-        <StatusBar hidden={true} />
+        <StatusBar   />
         <Toaster />
       </ThemeProvider>
     </GestureHandlerRootView>
   );
 }
 
-function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -72,6 +92,4 @@ function RootLayout() {
       </PersistGate>
     </Provider>
   );
-}
-
-export default RootLayout;
+});

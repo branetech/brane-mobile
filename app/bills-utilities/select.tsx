@@ -1,3 +1,36 @@
+import AirtimeDataForm from "@/components/bills-utilities/AirtimeDataForm";
+import { BettingForm } from "@/components/bills-utilities/BettingForm";
+import { CableForm } from "@/components/bills-utilities/CableForm";
+import { ElectricityForm } from "@/components/bills-utilities/ElectricityForm";
+import {
+  BettingProviderModal,
+  BoostModal,
+  CablePlanModal,
+  ContactPickerModal,
+  DataPlanModal,
+  ElectricityProviderModal,
+  SummaryModal,
+  TransportProviderModal,
+  TransportRouteModal,
+} from "@/components/bills-utilities/Modals";
+import { TransportationForm } from "@/components/bills-utilities/TransportationForm";
+import {
+  getNetworkImageKey,
+  normalizeCablePlan,
+  normalizeDataPlan,
+  normalizeElectricityProviders,
+  normalizeOption,
+  toArray,
+} from "@/components/bills-utilities/helpers";
+import {
+  NETWORK_ORDER,
+  type Beneficiary,
+  type CablePlan,
+  type DataPlan,
+  type SelectOption,
+  type TransportRoute,
+  type UtilityService,
+} from "@/components/bills-utilities/types";
 import { BraneButton } from "@/components/brane-button";
 import { Header } from "@/components/header";
 import { type PaymentOption } from "@/components/payment-method-selector";
@@ -8,62 +41,29 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import BaseRequest, { parseNetworkError } from "@/services";
 import {
-    onTransactionPinBettingValidation,
-    onTransactionPinCabelValidation,
-    onTransactionPinElectricityValidation,
-    onTransactionPinValidated,
+  onTransactionPinBettingValidation,
+  onTransactionPinCabelValidation,
+  onTransactionPinElectricityValidation,
+  onTransactionPinValidated,
 } from "@/services/data";
 import {
-    AUTH_SERVICE,
-    MOBILE_SERVICE,
-    PAYMENT_CALLBACK_URL,
-    TRANSACTION_SERVICE,
+  AUTH_SERVICE,
+  MOBILE_SERVICE,
+  PAYMENT_CALLBACK_URL,
+  TRANSACTION_SERVICE,
 } from "@/services/routes";
 import { hideAppLoader, showError } from "@/utils/helpers";
 import * as Contacts from "expo-contacts";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    StyleSheet,
-    View,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AirtimeDataForm } from "@/components/bills-utilities/AirtimeDataForm";
-import { BettingForm } from "@/components/bills-utilities/BettingForm";
-import { CableForm } from "@/components/bills-utilities/CableForm";
-import { ElectricityForm } from "@/components/bills-utilities/ElectricityForm";
-import {
-    BettingProviderModal,
-    BoostModal,
-    CablePlanModal,
-    ContactPickerModal,
-    DataPlanModal,
-    ElectricityProviderModal,
-    SummaryModal,
-    TransportProviderModal,
-    TransportRouteModal,
-} from "@/components/bills-utilities/Modals";
-import { TransportationForm } from "@/components/bills-utilities/TransportationForm";
-import {
-    getNetworkImageKey,
-    normalizeCablePlan,
-    normalizeDataPlan,
-    normalizeElectricityProviders,
-    normalizeOption,
-    toArray,
-} from "@/components/bills-utilities/helpers";
-import {
-    NETWORK_ORDER,
-    type Beneficiary,
-    type CablePlan,
-    type DataPlan,
-    type SelectOption,
-    type TransportRoute,
-    type UtilityService,
-} from "@/components/bills-utilities/types";
 
 export default function UtilitySelectScreen() {
   const router = useRouter();
@@ -457,7 +457,7 @@ export default function UtilitySelectScreen() {
         setSelectedTransportRouteId("");
         if (minPrice > 0) setAmount(String(minPrice));
       }
-    } catch (e) {
+    } catch {
       setTransportRoutes([]);
       setSelectedTransportRouteId("");
       setTransportVehicleTypes([]);
@@ -853,7 +853,7 @@ export default function UtilitySelectScreen() {
 
       {isFetchingMeta ? (
         <View style={styles.fullPageLoader}>
-          <ActivityIndicator size='small' color='#013D25' />
+          <ActivityIndicator size="small" color="#013D25" />
           <ThemedText style={styles.loadingText}>
             Loading services...
           </ThemedText>
@@ -1016,8 +1016,8 @@ export default function UtilitySelectScreen() {
                   setShowSummaryModal(true);
                 }
               }}
-              backgroundColor='#013D25'
-              textColor='#D2F1E4'
+              backgroundColor="#013D25"
+              textColor="#D2F1E4"
               height={52}
               radius={12}
               loading={isSubmitting}
@@ -1184,7 +1184,7 @@ export default function UtilitySelectScreen() {
         onClose={() => setShowPinValidator(false)}
         onValidatePin={async (pin) => {
           try {
-            const res = await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
+            await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
               transactionPin: String(pin),
             });
             return true;

@@ -1,3 +1,7 @@
+/**
+ * Returns the user object from redux state, handling both user and user?.data shapes.
+ * Usage: const user = getUserFromState(userFromRedux)
+ */
 import {
   Lock,
   Message2,
@@ -14,6 +18,9 @@ import { jwtDecode } from "jwt-decode";
 import { ReactNode } from "react";
 
 import type { JSX } from "react";
+export function getUserFromState(user: any) {
+  return user?.data ?? user;
+}
 
 export const VERSION = "1.0.5";
 

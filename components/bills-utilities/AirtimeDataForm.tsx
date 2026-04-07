@@ -57,7 +57,7 @@ type Props = {
   onOpenDataPlanModal: () => void;
 };
 
-export function AirtimeDataForm({
+export default function AirtimeDataForm({
   service,
   orderedNetworks,
   network,

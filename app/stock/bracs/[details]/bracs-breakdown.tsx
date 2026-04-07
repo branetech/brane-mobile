@@ -9,10 +9,10 @@ import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

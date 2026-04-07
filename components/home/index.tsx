@@ -1,18 +1,19 @@
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { setShowSupportChat } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
+import { useRequest } from "@/services/useRequest";
+import { getUserFromState } from "@/utils";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
-import { Messages2, Notification } from "iconsax-react-native";
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import { Notification } from "iconsax-react-native";
+import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { Avatar } from "../avatar";
 import { ThemedText } from "../themed-text";
-import { useRequest } from "@/services/useRequest";
 
 export const HomeHeader = () => {
-  const { user } = useAppState();
+  const { user: userFromRedux } = useAppState();
+  const user = getUserFromState(userFromRedux);
   const router = useRouter();
   const dispatch = useDispatch();
   const colorScheme = useColorScheme();
@@ -23,19 +24,19 @@ export const HomeHeader = () => {
     "/notification-service/notifications/user",
     {
       initialValue: [],
-      params: { currentPage: 0, perPage: 300 }
-    }
+      params: { currentPage: 0, perPage: 300 },
+    },
   );
-
 
   // Check for unread notifications
   const hasUnreadNotifications = useMemo(() => {
     if (Array.isArray(notifications)) {
-      return notifications?.some((notification: any) => notification?.readAt === null);
+      return notifications?.some(
+        (notification: any) => notification?.readAt === null,
+      );
     }
     return false;
   }, [notifications]);
-
 
   const now = new Date();
   const currentHour = now.getHours();
@@ -59,10 +60,10 @@ export const HomeHeader = () => {
   //   setTimeout(() => {
   //     hideChat();
   //   }, 5000);
-  // };    
+  // };
 
   return (
-    <View row justify='space-between' w='100%' aligned mb={16}>
+    <View row justify='space-between' w='100%' aligned pt={5} mb={16}>
       {/* Left: Avatar + Greeting */}
       <View row gap={4} aligned>
         <TouchableOpacity onPress={() => router.push("/(tabs)/(account)")}>
@@ -95,7 +96,7 @@ export const HomeHeader = () => {
                 style={{
                   position: "absolute",
                   top: -4,
-                  right: -4,
+                  right: 2,
                   width: 8,
                   height: 8,
                   borderRadius: 4,
