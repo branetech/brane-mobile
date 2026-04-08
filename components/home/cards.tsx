@@ -22,11 +22,11 @@ import { IconRender } from "../icon-render";
 
 export const CardStyle = ({ children, bg }: any) => {
   return (
-    <View w='100%' h={'auto'} radius={16} bg={bg || "#013D25"}>
+    <View w="100%" h={"auto"} radius={16} bg={bg || "#013D25"}>
       <ImageBackground
         source={require("@/assets/images/bg.png")}
         style={{ flex: 1, width: "100%", height: 170, overflow: "hidden" }}
-        resizeMode='cover'
+        resizeMode="cover"
       >
         <View p={18} flex={1}>
           {children}
@@ -64,7 +64,7 @@ export const LearnCard = ({
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} disabled={!onPress}>
       <View
-        w='100%'
+        w="100%"
         h={120}
         p={16}
         radius={12}
@@ -80,9 +80,9 @@ export const LearnCard = ({
           marginBottom: 12,
         }}
       >
-        <View w='72%'>
+        <View w="72%">
           <ThemedText
-            type='defaultSemiBold'
+            type="defaultSemiBold"
             style={{ fontSize: 13, lineHeight: 20, marginBottom: 8 }}
           >
             {resolvedTitle}
@@ -96,7 +96,7 @@ export const LearnCard = ({
 
           <View row style={{ alignItems: "center", gap: 6, marginTop: 14 }}>
             <ThemedText
-              type='defaultSemiBold'
+              type="defaultSemiBold"
               style={{ fontSize: 10, color: "#A28C34" }}
             >
               {resolvedCta.replace("→", "").trim()}
@@ -239,42 +239,59 @@ export const TransactionLineItem2 = ({
 }: ETransactionDetails) => {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
+  const isDark = scheme === "dark";
 
   const amountLabel = isSwap(transactionType)
     ? pluralize(rebateAmount ?? 0, "Brac")
     : priceFormatter(amount);
 
+  // Enhanced shadow and theme-aware border
+  const enhancedBorderColor = isDark ? "#2A2B2D" : borderColor;
+  const shadowColor = isDark ? "rgba(0, 0, 0, 0.3)" : "rgba(12, 12, 13, 0.15)";
+
   return (
     <RNV
-      style={[
-        styles.row,
-        {
-          borderWidth: 1,
-          borderColor,
-          borderRadius,
-        },
-      ]}
+      style={{
+        shadowColor,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 1,
+        shadowRadius: 12,
+        elevation: 5,
+        borderRadius,
+        marginBottom: 2,
+      }}
     >
-      {/* Left: icon + description */}
-      <RNV style={styles.left}>
-        <IconRender id={id} icon={icon} type={transactionType} />
-        <RNV style={styles.textCol}>
-          <ThemedText
-            style={[styles.description, { color: C.text }]}
-            numberOfLines={1}
-          >
-            {transactionDescription}
-          </ThemedText>
-          <ThemedText style={[styles.datetime, { color: C.muted }]}>
-            {date} at {time}
-          </ThemedText>
+      <RNV
+        style={[
+          styles.row,
+          {
+            borderWidth: 2,
+            borderColor: enhancedBorderColor,
+            borderRadius,
+          },
+        ]}
+      >
+        {/* Left: icon + description */}
+        <RNV style={styles.left}>
+          <IconRender id={id} icon={icon} type={transactionType} />
+          <RNV style={styles.textCol}>
+            <ThemedText
+              style={[styles.description, { color: C.text }]}
+              numberOfLines={1}
+            >
+              {transactionDescription}
+            </ThemedText>
+            <ThemedText style={[styles.datetime, { color: C.muted }]}>
+              {date} at {time}
+            </ThemedText>
+          </RNV>
         </RNV>
-      </RNV>
 
-      {/* Right: amount */}
-      <ThemedText style={[styles.amount, { color: C.text }]}>
-        {amountLabel}
-      </ThemedText>
+        {/* Right: amount */}
+        <ThemedText style={[styles.amount, { color: C.text }]}>
+          {amountLabel}
+        </ThemedText>
+      </RNV>
     </RNV>
   );
 };
@@ -283,7 +300,7 @@ export const Ticker = ({ ticker }: any) => {
   if ([-1, "down"].includes(ticker)) {
     return (
       <RNV style={[styles.tickerPill, { backgroundColor: "#FCEDED" }]}>
-        <ArrowDown3 size={12} color='#CB010B' variant='Bold' />
+        <ArrowDown3 size={12} color="#CB010B" variant="Bold" />
       </RNV>
     );
   }
@@ -291,7 +308,7 @@ export const Ticker = ({ ticker }: any) => {
   if ([1, "up"].includes(ticker)) {
     return (
       <RNV style={[styles.tickerPill, { backgroundColor: "#E9F7F0" }]}>
-        <ArrowUp3 size={12} color='#008753' variant='Bold' />
+        <ArrowUp3 size={12} color="#008753" variant="Bold" />
       </RNV>
     );
   }
@@ -418,7 +435,7 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
                   styles.stockListSubtitle,
                   { color: C.muted, width: "70%" },
                 ]}
-                ellipsizeMode='tail'
+                ellipsizeMode="tail"
               >
                 {companyName}
               </ThemedText>
@@ -429,7 +446,7 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
             <ThemedText style={[styles.stockListPrice, { color: C.text }]}>
               {`${priceFormatter(currentPrice, 0)}`}
             </ThemedText>
-            <View row align='center' gap={4}>
+            <View row align="center" gap={4}>
               <Ticker ticker={ticker} />
               <ThemedText style={{ color: priceChangeColor, fontSize: 10 }}>
                 {`${formatNumberToDecimal(percentage ?? 0)}%`}
@@ -491,7 +508,7 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
         </RNV>
       </RNV>
 
-      <View row align='center' spaced mt={24}>
+      <View row align="center" spaced mt={24}>
         <View gap={4}>
           <ThemedText style={[styles.stockPrice, { color: priceChangeColor }]}>
             {priceFormatter(currentPrice, 2)}
@@ -502,7 +519,7 @@ export const StockItemCard: React.FC<CardProps> = (asset) => {
           <Image
             source={chartSource}
             style={styles.stockChartImage}
-            resizeMode='cover'
+            resizeMode="cover"
           />
         </View>
       </View>
@@ -535,18 +552,18 @@ export const PointEarnedCard = ({
 }: PointEarnedCardProps) => {
   return (
     <div
-      className='py-[16px] px-[10px] rounded-xl flex flex-col relative items-start gap-5 h-[130px] w-full'
+      className="py-[16px] px-[10px] rounded-xl flex flex-col relative items-start gap-5 h-[130px] w-full"
       style={{ border: border }}
     >
-      <div className='flex flex-row gap-[14px]'>
+      <div className="flex flex-row gap-[14px]">
         <IconRender icon={icon} id={id} />
       </div>
       <div className={"text-start"}>
-        <p className='text-xs w-full overflow-hidden ...'>{title}</p>
-        <h1 className='text-xl '>{price}</h1>
+        <p className="text-xs w-full overflow-hidden ...">{title}</p>
+        <h1 className="text-xl ">{price}</h1>
       </div>
 
-      <div className='absolute top-0 right-0 bottom-0 centered p-[10px]' />
+      <div className="absolute top-0 right-0 bottom-0 centered p-[10px]" />
     </div>
   );
 };

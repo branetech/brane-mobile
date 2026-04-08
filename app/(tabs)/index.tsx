@@ -5,7 +5,7 @@ import { NewUserOnboardingModal } from "@/components/new-user-onboarding-modal";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { setShowNewUserModal } from "@/redux/slice/auth-slice";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { RefreshControl, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,16 +16,21 @@ export default function HomeScreen() {
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const [isRefreshing, setIsRefreshing] = useState(false);
   const dispatch = useDispatch();
+  const transactionsRef = useRef<any>(null);
   const showNewUserModal = useSelector(
     (state: any) => state.auth.showNewUserModal,
   );
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    // Trigger refresh in child components
-    setTimeout(() => {
+    try {
+      // Refresh transactions data
+      if (transactionsRef.current?.refresh) {
+        await transactionsRef.current.refresh();
+      }
+    } finally {
       setIsRefreshing(false);
-    }, 1500);
+    }
   }, []);
 
   const handleCloseModal = () => {
@@ -44,7 +49,7 @@ export default function HomeScreen() {
         <HomeHeader />
         <HomeCard />
         <Quick />
-        <Transactions />
+        <Transactions ref={transactionsRef} />
         <Learning />
       </ScrollView>
       <NewUserOnboardingModal
