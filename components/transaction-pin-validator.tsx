@@ -6,11 +6,11 @@ import { View } from "@idimma/rn-widget";
 import { ArrowLeft2, FingerCricle } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Modal,
-    View as RNView,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  Modal,
+  View as RNView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -84,7 +84,7 @@ export const TransactionPinValidator = ({
     <Modal
       visible={visible}
       transparent={false}
-      animationType='slide'
+      animationType="slide"
       onRequestClose={handleClose}
     >
       <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
@@ -110,7 +110,7 @@ export const TransactionPinValidator = ({
                   key={index}
                   style={{
                     ...styles.dot,
-                    backgroundColor: index < pinLength ? C.text : C.muted,
+                    backgroundColor: index < pinLength ? C.text : "#ffffff",
                   }}
                 />
               ))}
@@ -119,7 +119,7 @@ export const TransactionPinValidator = ({
 
           {isLoading ? (
             <View style={styles.loadingWrap}>
-              <ActivityIndicator size='small' color={C.primary} />
+              <ActivityIndicator size="small" color={C.primary} />
               <ThemedText style={dynamicStyles.loadingText}>
                 Please wait
               </ThemedText>
@@ -210,7 +210,7 @@ export const TransactionPinValidator = ({
         <Modal
           visible={showInvalid}
           transparent
-          animationType='fade'
+          animationType="fade"
           onRequestClose={() => setShowInvalid(false)}
         >
           <RNView
@@ -240,7 +240,7 @@ export const TransactionPinValidator = ({
                 Can’t remember PIN?
               </ThemedText>
               <BraneButton
-                text='Click here to reset'
+                text="Click here to reset"
                 onPress={() => {
                   setShowInvalid(false);
                   onResetPin?.();
