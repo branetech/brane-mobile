@@ -7,7 +7,7 @@ import {
   normalizeKey,
   normalizeOption,
   toArray,
-} from "@/app/bills-utilities/helpers";
+} from "@/components/bills-utilities/helpers";
 import {
   BETTING_IMAGES,
   BETTING_ORDER,
@@ -16,7 +16,7 @@ import {
   NETWORK_IMAGES,
   type SelectOption,
   type UtilityService,
-} from "@/app/bills-utilities/types";
+} from "@/components/bills-utilities/types";
 import Back from "@/components/back";
 import {
   AirtimeDataIcon,

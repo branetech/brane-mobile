@@ -22,7 +22,9 @@ import { Copy } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
     Dimensions,
+    KeyboardAvoidingView,
     Modal,
+    Platform,
     View as RNView,
     ScrollView,
     StyleSheet,
@@ -126,6 +128,10 @@ export default function SendMoneySetAmountScreen() {
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.screen}
+      >
       <Header title='Send Money' />
 
       <ScrollView
@@ -285,6 +291,7 @@ export default function SendMoneySetAmountScreen() {
           fontSize={16}
         />
       </View>
+      </KeyboardAvoidingView>
 
       {/* Confirm Sheet Modal */}
       <Modal
@@ -439,11 +446,12 @@ export default function SendMoneySetAmountScreen() {
         onResetPin={() => router.push("/account/reset-transaction-pin" as any)}
         onValidatePin={async (pin) => {
           try {
-            const res = await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
-              pin,
+            await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
+              transactionPin: String(pin),
             });
             return true;
-          } catch {
+          } catch (error) {
+            catchError(error);
             return false;
           }
         }}
@@ -567,9 +575,8 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 10,
     borderWidth: 1,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
     paddingTop: 10,
+    paddingBottom: 10,
   },
   remarkInputText: { fontSize: 13 },
   counter: {

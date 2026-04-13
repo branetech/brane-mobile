@@ -3,8 +3,11 @@ import { FormInput } from "@/components/formInput";
 import { Header } from "@/components/header";
 import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
+import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import BaseRequest, { catchError } from "@/services";
+import { AUTH_SERVICE } from "@/services/routes";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Add } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
@@ -25,6 +28,7 @@ export default function CardScreen() {
   const [amount, setAmount] = useState("");
   const [savedCards, setSavedCards] = useState<string[]>([]);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [showPinValidator, setShowPinValidator] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
@@ -38,6 +42,10 @@ export default function CardScreen() {
   }, [params.newCard, savedCards]);
 
   const handleFund = () => {
+    setShowPinValidator(true);
+  };
+
+  const handlePinValidated = () => {
     setShowSuccessModal(true);
   };
 
@@ -221,6 +229,23 @@ export default function CardScreen() {
           setShowSuccessModal(false);
           router.replace("/(tabs)");
         }}
+      />
+
+      <TransactionPinValidator
+        visible={showPinValidator}
+        onClose={() => setShowPinValidator(false)}
+        onValidatePin={async (pin) => {
+          try {
+            await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
+              transactionPin: String(pin),
+            });
+            return true;
+          } catch (error) {
+            catchError(error);
+            return false;
+          }
+        }}
+        onTransactionPinValidated={handlePinValidated}
       />
     </SafeAreaView>
   );

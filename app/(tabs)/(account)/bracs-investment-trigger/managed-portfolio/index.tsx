@@ -19,7 +19,7 @@ import { TRANSACTION_SERVICE } from "@/services/routes";
 import { showSuccess } from "@/utils/helpers";
 import { BraneButton } from "@/components/brane-button";
 import Svg, { Path } from "react-native-svg";
-import { ManagedEarnIcon, ManagedExpertIcon } from "../managed-icons";
+import { ManagedEarnIcon, ManagedExpertIcon } from "@/components/bracs-investment-trigger/managed-icons";
 
 // ── Risk Disclosure Modal ────────────────────────────────────────────────────
 
