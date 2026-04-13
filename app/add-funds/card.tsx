@@ -5,6 +5,7 @@ import { SuccessModal } from "@/components/success-modal";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
@@ -331,13 +332,13 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#EA2D2D",
+    backgroundColor: palette.mastercardRed,
   },
   brandYellow: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#F3BD30",
+    backgroundColor: palette.visaAmber,
     marginLeft: -3,
   },
   radioCircle: {
@@ -414,7 +415,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   fundBtnText: {
-    color: "#fff",
+    color: palette.white,
     fontSize: 16,
     fontWeight: "bold",
   },

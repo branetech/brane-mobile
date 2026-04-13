@@ -1,6 +1,7 @@
 import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
@@ -114,8 +115,8 @@ export default function StockMarketScreen() {
       item?.changePercent || item?.percentChange || 0,
     );
     const isPositive = changePercent >= 0;
-    const changeColor = isPositive ? C.primary : "#D50000";
-    const changeBgColor = isPositive ? C.primary + "15" : "#FCE4E4";
+    const changeColor = isPositive ? C.primary : palette.error;
+    const changeBgColor = isPositive ? C.primary + "15" : palette.statusFailedBg;
     return (
       <TouchableOpacity
         style={[styles.stockRow, { borderBottomColor: C.border }]}
@@ -157,8 +158,8 @@ export default function StockMarketScreen() {
     const isBuy = String(item?.type || item?.transactionType || "")
       .toLowerCase()
       .includes("buy");
-    const txBgColor = isBuy ? C.primary + "15" : "#FCE4E4";
-    const txTextColor = isBuy ? C.primary : "#D50000";
+    const txBgColor = isBuy ? C.primary + "15" : palette.statusFailedBg;
+    const txTextColor = isBuy ? C.primary : palette.error;
     return (
       <View
         style={{
@@ -300,7 +301,7 @@ export default function StockMarketScreen() {
                         item?.changePercent || item?.percentChange || 0,
                       );
                       const pos = chg >= 0;
-                      const topChangeColor = pos ? C.primary : "#D50000";
+                      const topChangeColor = pos ? C.primary : palette.error;
                       return (
                         <TouchableOpacity
                           key={i}

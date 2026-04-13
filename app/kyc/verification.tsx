@@ -3,6 +3,7 @@ import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { setUser } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   error: {
-    color: "#DC2626",
+    color: palette.error,
     fontSize: 11,
     marginTop: 2,
   },

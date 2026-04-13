@@ -22,7 +22,7 @@ export function getUserFromState(user: any) {
   return user?.data ?? user;
 }
 
-export const VERSION = "1.0.5";
+export const VERSION = "1.0.7";
 
 export interface IUSER {
   id: string;

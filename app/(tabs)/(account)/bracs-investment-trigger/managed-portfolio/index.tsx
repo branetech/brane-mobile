@@ -18,6 +18,7 @@ import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
 import { showSuccess } from "@/utils/helpers";
 import { BraneButton } from "@/components/brane-button";
+import { palette } from "@/constants";
 import Svg, { Path } from "react-native-svg";
 import { ManagedEarnIcon, ManagedExpertIcon } from "@/components/bracs-investment-trigger/managed-icons";
 
@@ -89,8 +90,8 @@ const RiskDisclosureModal = ({
             <BraneButton
               text="Accept and Continue"
               onPress={handleAccept}
-              backgroundColor={isChecked ? "#013D25" : "#AABEB6"}
-              textColor="#D2F1E4"
+              backgroundColor={isChecked ? palette.brandDeep : "#AABEB6"}
+              textColor={palette.brandMint}
               height={50}
               radius={12}
               loading={isLoading}
@@ -106,7 +107,7 @@ const RiskDisclosureModal = ({
 const rStyles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "flex-end" },
   sheet: {
-    backgroundColor: "#fff",
+    backgroundColor: palette.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
@@ -115,8 +116,8 @@ const rStyles = StyleSheet.create({
   },
   title: { fontSize: 24, fontWeight: "700", color: "#1a1a1a", marginBottom: 40, paddingHorizontal: 4 },
   sectionHeader: { fontSize: 14, fontWeight: "600", color: "#1a1a1a", marginBottom: 8 },
-  body: { fontSize: 14, color: "#85808A", lineHeight: 20 },
-  footer: { paddingTop: 16, borderTopWidth: 1, borderTopColor: "#F7F7F8", marginTop: 8 },
+  body: { fontSize: 14, color: palette.gray350, lineHeight: 20 },
+  footer: { paddingTop: 16, borderTopWidth: 1, borderTopColor: palette.surface100, marginTop: 8 },
   checkRow: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
   checkBox: {
     width: 24, height: 24,
@@ -126,11 +127,11 @@ const rStyles = StyleSheet.create({
     overflow: "hidden",
   },
   checkFilled: {
-    backgroundColor: "#013D25",
+    backgroundColor: palette.brandDeep,
     width: 24, height: 24,
     alignItems: "center", justifyContent: "center",
   },
-  checkLabel: { fontSize: 14, color: "#0B0014", flex: 1 },
+  checkLabel: { fontSize: 14, color: palette.ink, flex: 1 },
 });
 
 // ── Feature Item ─────────────────────────────────────────────────────────────
@@ -156,7 +157,7 @@ const FeatureItem = ({
 const fStyles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "flex-start", gap: 12, marginBottom: 24 },
   iconWrap: { marginTop: 2 },
-  title: { fontSize: 15, fontWeight: "600", color: "#fff", marginBottom: 4 },
+  title: { fontSize: 15, fontWeight: "600", color: palette.white, marginBottom: 4 },
   desc: { fontSize: 13, color: "rgba(255,255,255,0.8)", lineHeight: 18 },
 });
 
@@ -218,7 +219,7 @@ export default function ManagedPortfolioScreen() {
                 onPress={() => router.back()}
                 style={styles.backBtn}
               >
-                <ArrowLeft size={22} color="#fff" />
+                <ArrowLeft size={22} color={palette.white} />
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Bracs Investment Trigger</Text>
               <View style={{ width: 44 }} />
@@ -267,8 +268,8 @@ export default function ManagedPortfolioScreen() {
               <BraneButton
                 text="Proceed"
                 onPress={handleProceed}
-                backgroundColor="#013D25"
-                textColor="#D2F1E4"
+                backgroundColor={palette.brandDeep}
+                textColor={palette.brandMint}
                 height={50}
                 radius={12}
                 loading={isLoading}
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 12,
   },
-  headerTitle: { fontSize: 17, fontWeight: "600", color: "#fff" },
+  headerTitle: { fontSize: 17, fontWeight: "600", color: palette.white },
   backBtn: { padding: 4 },
   content: { paddingTop: 20, paddingBottom: 24 },
   logoWrap: {
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#fff",
+    color: palette.white,
     lineHeight: 33,
     marginBottom: 40,
   },

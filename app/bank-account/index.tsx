@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/empty-state";
 import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -283,7 +284,7 @@ export default function BankAccountScreen() {
                 ) : (
                   <ThemedText
                     type='defaultSemiBold'
-                    style={{ fontSize: 14, color: "#FFFFFF" }}
+                    style={{ fontSize: 14, color: palette.white }}
                   >
                     Remove
                   </ThemedText>
@@ -400,7 +401,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "#013D254D",
+    backgroundColor: palette.modalOverlay,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 24,

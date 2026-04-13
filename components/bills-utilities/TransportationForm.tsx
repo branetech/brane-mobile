@@ -1,92 +1,205 @@
+import { TransportProviderModal, TransportRouteModal } from "@/components/bills-utilities/Modals";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import BaseRequest from "@/services";
+import { MOBILE_SERVICE } from "@/services/routes";
 import DateTimePicker, {
-  DateTimePickerEvent,
+    DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { ArrowDown2 } from "iconsax-react-native";
-import React, { useState } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 import {
-  Modal,
-  Platform,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Modal,
+    Platform,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
-import type { SelectOption, TransportRoute } from "./types";
+import { normalizeOption, toArray } from "./helpers";
+import type { SelectOption, TransportRoute, UtilityFormData, UtilityFormRef } from "./types";
 
 type Props = {
-  transportProviders: SelectOption[];
-  selectedTransportProvider?: SelectOption;
-  transportRoutes: TransportRoute[];
-  selectedRoute?: TransportRoute;
-  departureDate: string;
-  setDepartureDate: (v: string) => void;
-  passengerName: string;
-  setPassengerName: (v: string) => void;
-  passengerEmail: string;
-  setPassengerEmail: (v: string) => void;
-  seatNumber: string;
-  setSeatNumber: (v: string) => void;
-  amount: string;
-  setAmount: (v: string) => void;
-  // per-field errors
-  providerError?: string;
-  routeError?: string;
-  dateError?: string;
-  nameError?: string;
-  emailError?: string;
-  seatError?: string;
-  amountError?: string;
-  vehicleTypeError?: string;
-  vehicleTypes: string[];
-  selectedVehicleType: string;
-  setSelectedVehicleType: (v: string) => void;
-  clearError: (field: string) => void;
-  onOpenProviderModal: () => void;
-  onOpenRouteModal: () => void;
+  onReady: (data: UtilityFormData) => void;
 };
 
-export function TransportationForm({
-  transportProviders,
-  selectedTransportProvider,
-  transportRoutes,
-  selectedRoute,
-  departureDate,
-  setDepartureDate,
-  passengerName,
-  setPassengerName,
-  passengerEmail,
-  setPassengerEmail,
-  seatNumber,
-  setSeatNumber,
-  amount,
-  setAmount,
-  providerError,
-  routeError,
-  dateError,
-  nameError,
-  emailError,
-  seatError,
-  amountError,
-  vehicleTypeError,
-  vehicleTypes,
-  selectedVehicleType,
-  setSelectedVehicleType,
-  clearError,
-  onOpenProviderModal,
-  onOpenRouteModal,
-}: Props) {
+export const TransportationForm = forwardRef<UtilityFormRef, Props>(({ onReady }, ref) => {
   const scheme = useColorScheme();
   const themeKey: "light" | "dark" = scheme === "dark" ? "dark" : "light";
   const C = Colors[themeKey];
-  const styles = createStyles(C);
+  const styles = createStyles(C as typeof Colors.light);
+
+  // ── State ───────────────────────────────────────────────────────────────────
+  const [providers, setProviders] = useState<SelectOption[]>([]);
+  const [transportProvider, setTransportProvider] = useState("");
+  const [showProviderModal, setShowProviderModal] = useState(false);
+
+  const [routes, setRoutes] = useState<TransportRoute[]>([]);
+  const [selectedTransportRouteId, setSelectedTransportRouteId] = useState("");
+  const [showRouteModal, setShowRouteModal] = useState(false);
+
+  const [vehicleTypes, setVehicleTypes] = useState<string[]>([]);
+  const [selectedVehicleType, setSelectedVehicleType] = useState("");
+
+  const [departureDate, setDepartureDate] = useState("");
+  const [passengerName, setPassengerName] = useState("");
+  const [passengerEmail, setPassengerEmail] = useState("");
+  const [seatNumber, setSeatNumber] = useState("");
+  const [amount, setAmount] = useState("");
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [pickerDate, setPickerDate] = useState(new Date());
-  const today = new Date();
 
+  // errors
+  const [providerError, setProviderError] = useState<string | undefined>();
+  const [routeError, setRouteError] = useState<string | undefined>();
+  const [vehicleTypeError, setVehicleTypeError] = useState<string | undefined>();
+  const [dateError, setDateError] = useState<string | undefined>();
+  const [nameError, setNameError] = useState<string | undefined>();
+  const [emailError, setEmailError] = useState<string | undefined>();
+  const [seatError, setSeatError] = useState<string | undefined>();
+  const [amountError, setAmountError] = useState<string | undefined>();
+
+  // ── Data loading ─────────────────────────────────────────────────────────────
+  const fetchTransportProviders = useCallback(async () => {
+    try {
+      const res: any = await BaseRequest.get(MOBILE_SERVICE.TRANSPORT_SERVICE_IDS);
+      const raw = (() => {
+        const t = res as any;
+        if (Array.isArray(t)) return t as any[];
+        if (Array.isArray(t?.data)) return t.data as any[];
+        if (Array.isArray(t?.data?.serviceIds)) return t.data.serviceIds as any[];
+        if (Array.isArray(t?.data?.services)) return t.data.services as any[];
+        if (Array.isArray(t?.serviceIds)) return t.serviceIds as any[];
+        if (Array.isArray(t?.services)) return t.services as any[];
+        if (t?.data && typeof t.data === "object") {
+          const found = Object.values(t.data).find((v) => Array.isArray(v));
+          if (found) return found as any[];
+        }
+        return toArray(t);
+      })();
+      const list: SelectOption[] = raw.map(normalizeOption);
+      setProviders(list);
+      if (list.length > 0) setTransportProvider(list[0].id);
+    } catch {
+      setProviders([]);
+    }
+  }, []);
+
+  const fetchRoutes = useCallback(async (serviceId: string) => {
+    if (!serviceId) {
+      setRoutes([]);
+      setVehicleTypes([]);
+      return;
+    }
+    try {
+      const res: any = await BaseRequest.get(MOBILE_SERVICE.TRANSPORT_ROUTES(serviceId));
+      const rawRoutes: any[] = (() => {
+        if (Array.isArray(res?.data?.routes)) return res.data.routes;
+        if (Array.isArray(res?.routes)) return res.routes;
+        if (Array.isArray(res?.data)) return res.data;
+        if (Array.isArray(res)) return res;
+        return [];
+      })();
+      const data = res?.data || res;
+      const fetchedVehicleTypes: string[] = Array.isArray(data?.supportedVehicleTypes)
+        ? data.supportedVehicleTypes
+        : Array.isArray(res?.supportedVehicleTypes)
+          ? res.supportedVehicleTypes
+          : [];
+      const minPrice = Number(data?.minimumPrice || res?.minimumPrice || 0);
+      const newRoutes: TransportRoute[] = rawRoutes
+        .filter((r: any) => (r.status || "active") !== "inactive")
+        .map((r: any) => ({
+          id: r.routeCode || r.routeName || String(r.fromStation) + r.toStation,
+          routeCode: r.routeCode || "",
+          routeName: r.routeName || "",
+          fromStation: r.fromStation || "",
+          toStation: r.toStation || "",
+          amount: Number(r.price || r.amount || 0),
+          departureTime: r.departureTime || r.departure_time || "",
+          duration: r.duration || "",
+          label: r.routeName || `${r.fromStation} → ${r.toStation}`,
+        }));
+      setRoutes(newRoutes);
+      setVehicleTypes(fetchedVehicleTypes);
+      setSelectedVehicleType(fetchedVehicleTypes.length > 0 ? fetchedVehicleTypes[0] : "");
+      if (newRoutes.length > 0) {
+        setSelectedTransportRouteId(newRoutes[0].id);
+        setAmount(String(newRoutes[0].amount || minPrice || ""));
+      }
+    } catch {
+      setRoutes([]);
+      setVehicleTypes([]);
+    }
+  }, []);
+
+  useEffect(() => { fetchTransportProviders(); }, [fetchTransportProviders]);
+  useEffect(() => {
+    if (!transportProvider) return;
+    fetchRoutes(transportProvider);
+  }, [fetchRoutes, transportProvider]);
+
+  // ── Derived ──────────────────────────────────────────────────────────────────
+  const selectedTransportProvider = providers.find((p) => p.id === transportProvider);
+  const selectedRoute = useMemo(
+    () => routes.find((r) => r.id === selectedTransportRouteId),
+    [routes, selectedTransportRouteId],
+  );
+
+  // ── onReady emission ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    onReady({
+      service: "transportation",
+      amountToPay: Number(amount || 0),
+      transactionTarget: selectedRoute?.label || "",
+      transportProviderId: transportProvider,
+      selectedTransportRoute: selectedRoute,
+      selectedVehicleType,
+      departureDate,
+      passengerName,
+      passengerEmail,
+      seatNumber,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transportProvider, selectedRoute, selectedVehicleType, departureDate, passengerName, passengerEmail, seatNumber, amount]);
+
+  // ── Validation ───────────────────────────────────────────────────────────────
+  const validate = (): boolean => {
+    let valid = true;
+    setProviderError(undefined);
+    setRouteError(undefined);
+    setVehicleTypeError(undefined);
+    setDateError(undefined);
+    setNameError(undefined);
+    setEmailError(undefined);
+    setSeatError(undefined);
+    setAmountError(undefined);
+
+    if (!transportProvider) { setProviderError("Select a transport provider"); valid = false; }
+    if (!selectedRoute) { setRouteError("Select a route"); valid = false; }
+    if (vehicleTypes.length > 0 && !selectedVehicleType) { setVehicleTypeError("Select a vehicle type"); valid = false; }
+    if (!departureDate.trim()) { setDateError("Select a departure date"); valid = false; }
+    if (!passengerName.trim()) { setNameError("Enter passenger name"); valid = false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(passengerEmail)) { setEmailError("Enter a valid email address"); valid = false; }
+    if (!seatNumber.trim()) { setSeatError("Enter seat number"); valid = false; }
+    if (Number(amount) <= 0) { setAmountError("Enter a valid amount"); valid = false; }
+
+    return valid;
+  };
+
+  useImperativeHandle(ref, () => ({ validate }));
+
+  // ── Date picker ──────────────────────────────────────────────────────────────
+  const today = new Date();
   const formatDate = (d: Date) => d.toISOString().split("T")[0];
 
   const onDateChange = (_event: DateTimePickerEvent, selected?: Date) => {
@@ -95,11 +208,12 @@ export function TransportationForm({
       setPickerDate(selected);
       if (Platform.OS === "android") {
         setDepartureDate(formatDate(selected));
-        clearError("date");
+        setDateError(undefined);
       }
     }
   };
 
+  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <View style={styles.container}>
       {/* Provider */}
@@ -107,12 +221,10 @@ export function TransportationForm({
         <ThemedText style={styles.fieldLabel}>Select Provider</ThemedText>
         <TouchableOpacity
           style={[styles.selectField, providerError ? styles.fieldError : undefined]}
-          onPress={() => { clearError("provider"); onOpenProviderModal(); }}
+          onPress={() => { setProviderError(undefined); setShowProviderModal(true); }}
           activeOpacity={0.85}
         >
-          <ThemedText
-            style={[styles.selectText, !selectedTransportProvider && styles.placeholderText]}
-          >
+          <ThemedText style={[styles.selectText, !selectedTransportProvider && styles.placeholderText]}>
             {selectedTransportProvider ? selectedTransportProvider.label : "Select a provider"}
           </ThemedText>
           <ArrowDown2 size={18} color={C.muted} />
@@ -126,12 +238,10 @@ export function TransportationForm({
           <ThemedText style={styles.fieldLabel}>Select Route</ThemedText>
           <TouchableOpacity
             style={[styles.selectField, routeError ? styles.fieldError : undefined]}
-            onPress={() => { clearError("route"); onOpenRouteModal(); }}
+            onPress={() => { setRouteError(undefined); setShowRouteModal(true); }}
             activeOpacity={0.85}
           >
-            <ThemedText
-              style={[styles.selectText, !selectedRoute && styles.placeholderText]}
-            >
+            <ThemedText style={[styles.selectText, !selectedRoute && styles.placeholderText]}>
               {selectedRoute
                 ? `${selectedRoute.fromStation} → ${selectedRoute.toStation}`
                 : "Select a route"}
@@ -151,7 +261,7 @@ export function TransportationForm({
               <TouchableOpacity
                 key={vt}
                 style={[styles.pill, selectedVehicleType === vt && styles.pillActive]}
-                onPress={() => setSelectedVehicleType(vt)}
+                onPress={() => { setSelectedVehicleType(vt); setVehicleTypeError(undefined); }}
               >
                 <ThemedText style={[styles.pillText, selectedVehicleType === vt && styles.pillTextActive]}>
                   {vt.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
@@ -168,7 +278,7 @@ export function TransportationForm({
         <ThemedText style={styles.fieldLabel}>Departure Date</ThemedText>
         <TouchableOpacity
           style={[styles.selectField, dateError ? styles.fieldError : undefined]}
-          onPress={() => { clearError("date"); setShowDatePicker(true); }}
+          onPress={() => { setDateError(undefined); setShowDatePicker(true); }}
           activeOpacity={0.85}
         >
           <ThemedText style={[styles.selectText, !departureDate && styles.placeholderText]}>
@@ -188,7 +298,7 @@ export function TransportationForm({
             placeholder="Enter passenger name"
             placeholderTextColor={C.muted}
             value={passengerName}
-            onChangeText={(v) => { setPassengerName(v); clearError("name"); }}
+            onChangeText={(v) => { setPassengerName(v); setNameError(undefined); }}
           />
         </View>
         {nameError ? <ThemedText style={styles.errorText}>{nameError}</ThemedText> : null}
@@ -205,7 +315,7 @@ export function TransportationForm({
             keyboardType="email-address"
             autoCapitalize="none"
             value={passengerEmail}
-            onChangeText={(v) => { setPassengerEmail(v); clearError("email"); }}
+            onChangeText={(v) => { setPassengerEmail(v); setEmailError(undefined); }}
           />
         </View>
         {emailError ? <ThemedText style={styles.errorText}>{emailError}</ThemedText> : null}
@@ -220,7 +330,7 @@ export function TransportationForm({
             placeholder="e.g. A12"
             placeholderTextColor={C.muted}
             value={seatNumber}
-            onChangeText={(v) => { setSeatNumber(v); clearError("seat"); }}
+            onChangeText={(v) => { setSeatNumber(v); setSeatError(undefined); }}
           />
         </View>
         {seatError ? <ThemedText style={styles.errorText}>{seatError}</ThemedText> : null}
@@ -236,7 +346,7 @@ export function TransportationForm({
             placeholderTextColor={C.muted}
             keyboardType="number-pad"
             value={amount}
-            onChangeText={(v) => { setAmount(v.replace(/\D/g, "")); clearError("amount"); }}
+            onChangeText={(v) => { setAmount(v.replace(/\D/g, "")); setAmountError(undefined); }}
           />
         </View>
         {amountError ? <ThemedText style={styles.errorText}>{amountError}</ThemedText> : null}
@@ -272,7 +382,7 @@ export function TransportationForm({
               <TouchableOpacity
                 onPress={() => {
                   setDepartureDate(formatDate(pickerDate));
-                  clearError("date");
+                  setDateError(undefined);
                   setShowDatePicker(false);
                 }}
               >
@@ -290,9 +400,35 @@ export function TransportationForm({
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
+
+      <TransportProviderModal
+        visible={showProviderModal}
+        onClose={() => setShowProviderModal(false)}
+        providers={providers}
+        selectedId={transportProvider}
+        onSelect={(id) => {
+          setTransportProvider(id);
+          setShowProviderModal(false);
+        }}
+      />
+
+      <TransportRouteModal
+        visible={showRouteModal}
+        onClose={() => setShowRouteModal(false)}
+        routes={routes}
+        selectedRouteId={selectedTransportRouteId}
+        onSelect={(id) => {
+          setSelectedTransportRouteId(id);
+          const route = routes.find((r) => r.id === id);
+          if (route?.amount) setAmount(String(route.amount));
+          setShowRouteModal(false);
+        }}
+      />
     </View>
   );
-}
+});
+
+TransportationForm.displayName = "TransportationForm";
 
 const createStyles = (C: typeof Colors.light) =>
   StyleSheet.create({
@@ -355,10 +491,7 @@ const createStyles = (C: typeof Colors.light) =>
       paddingTop: 18,
       paddingBottom: 4,
     },
-    pickerBtn: {
-      fontSize: 16,
-      fontWeight: "600",
-    },
+    pickerBtn: { fontSize: 16, fontWeight: "600" },
     calendarTitle: {
       fontSize: 16,
       fontWeight: "700",

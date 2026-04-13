@@ -4,11 +4,13 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppInitialization } from "@/hooks/useAppInitialization";
 import { useRouteProtection } from "@/hooks/useRouteProtection";
 import store, { persistor } from "@/redux/store";
+import { WidgetProvider } from "@idimma/rn-widget";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import * as Sentry from '@sentry/react-native';
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useMemo } from "react";
@@ -17,7 +19,6 @@ import "react-native-reanimated";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "sonner-native";
-import * as Sentry from '@sentry/react-native';
 
 Sentry.init({
   dsn: 'https://579694169e23c6dd89026602e33a4ee4@o4507425691271168.ingest.de.sentry.io/4511178373857360',
@@ -75,11 +76,18 @@ function RootLayoutContent() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={navigationTheme}>
-        <Stack screenOptions={{ headerShown: false }} />
-        <StatusBar   />
-        <Toaster />
-      </ThemeProvider>
+      <WidgetProvider
+        theme={colorScheme === "dark" ? "dark" : "light"}
+        disableSafeArea
+        lightTheme={Colors.light}
+        darkTheme={Colors.dark}
+      >
+        <ThemeProvider value={navigationTheme}>
+          <Stack screenOptions={{ headerShown: false }} />
+          <StatusBar />
+          <Toaster />
+        </ThemeProvider>
+      </WidgetProvider>
     </GestureHandlerRootView>
   );
 }

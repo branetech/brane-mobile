@@ -167,7 +167,7 @@ export function TransactionSummaryModal({
             ))}
           </View>
 
-          {/* Bracs Reward Banner */}
+          
           {bracsReward > 0 && (
             <TouchableOpacity
               style={styles.bracsRewardBanner}
@@ -177,7 +177,7 @@ export function TransactionSummaryModal({
               <View style={styles.bracsRewardLeft}>
                 <BracsInfoIcon size={18} />
                 <ThemedText style={[styles.bracsRewardText, { color: C.text }]}>
-                  {rewardBannerLabel || "Bracs reward + cash boost"}
+                  {rewardBannerLabel || "Bracs + Brac Booster"}
                 </ThemedText>
               </View>
               <ThemedText style={[styles.bracsRewardValue, { color: C.text }]}>

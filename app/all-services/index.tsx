@@ -1,6 +1,7 @@
 import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
@@ -36,14 +37,14 @@ const SECTIONS: Section[] = [
         id: "airtime",
         name: "Buy Airtime",
         route: "/buy-airtime",
-        color: "#D2F1E4",
+        color: palette.brandMint,
         initials: "AT",
       },
       {
         id: "data",
         name: "Buy Data",
         route: "/buy-data",
-        color: "#FFF3DB",
+        color: palette.spendDataBg,
         initials: "BD",
       },
       {
@@ -51,7 +52,7 @@ const SECTIONS: Section[] = [
         name: "Electricity",
         route: "/bills-utilities/select",
         params: { service: "electricity" },
-        color: "#E1F0FF",
+        color: palette.spendElectricBg,
         initials: "EL",
       },
       {
@@ -59,7 +60,7 @@ const SECTIONS: Section[] = [
         name: "Cable TV",
         route: "/bills-utilities/select",
         params: { service: "cable" },
-        color: "#FFE8E8",
+        color: palette.spendCableBg,
         initials: "TV",
       },
       {
@@ -67,7 +68,7 @@ const SECTIONS: Section[] = [
         name: "Betting",
         route: "/bills-utilities/select",
         params: { service: "betting" },
-        color: "#EDE1FF",
+        color: palette.spendBettingBg,
         initials: "BT",
       },
     ],

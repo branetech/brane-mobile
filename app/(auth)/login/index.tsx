@@ -10,14 +10,16 @@ import { useFormHandler } from "@/hooks/use-formik";
 import { useBiometricAuth } from "@/hooks/useBiometricAuth";
 import { setRefreshToken, setToken, setUser } from "@/redux/slice/auth-slice";
 import BaseRequest, { parseNetworkError } from "@/services";
+import { VERSION } from "@/utils";
 import { formatPhoneNumber, showError } from "@/utils/helpers";
 import { useRouter } from "expo-router";
 import { Eye, EyeSlash, FingerScan } from "iconsax-react-native";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -44,6 +46,7 @@ export default function LoginScreen() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const passwordRef = useRef<TextInput>(null);
 
   const {
     isLoading: isBiometricLoading,
@@ -66,7 +69,7 @@ export default function LoginScreen() {
       // Fetch full user profile after login
       const fullUser = await BaseRequest.get("/auth-service/user");
       dispatch(setUser(fullUser));
-    } catch (e) {
+    } catch {
       // fallback to partial user if profile fetch fails
       dispatch(setUser(user));
     }
@@ -170,13 +173,15 @@ export default function LoginScreen() {
                 <PhoneInput
                   value={form.values.phone}
                   onPhoneChange={(val) => form.setFieldValue("phone", val)}
-                  placeholder='809 327 3776'
+                  onSubmitEditing={() => passwordRef.current?.focus()}
+                  placeholder='810 123 4567'
                 />
               </View>
 
               {/* Password */}
               <View style={styles.passwordWrap}>
                 <FormInput
+                  ref={passwordRef}
                   leftContent={
                     <PassWrd
                       color={
@@ -189,6 +194,8 @@ export default function LoginScreen() {
                   }
                   placeholder='Enter password'
                   secureTextEntry={!showPassword}
+                  returnKeyType="done"
+                  onSubmitEditing={() => form.handleSubmit()}
                   rightContent={
                     <TouchableOpacity
                       onPress={() => setShowPassword((p) => !p)}
@@ -284,7 +291,7 @@ export default function LoginScreen() {
             {/* Version */}
             <View style={styles.versionWrap}>
               <ThemedText style={[styles.version, { color: C.muted }]}>
-                Version 1.0.6
+                Version {VERSION}
               </ThemedText>
             </View>
           </View>

@@ -1,4 +1,5 @@
 import BaseRequest from "@/services";
+import { palette } from "@/constants";
 import { STOCKS_SERVICE } from "@/services/routes";
 import { details } from "@/utils/constants";
 import { priceFormatter } from "@/utils/helpers";
@@ -145,9 +146,9 @@ const cardStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  tickerText: { fontSize: 12, fontWeight: "700", color: "#013D25" },
+  tickerText: { fontSize: 12, fontWeight: "700", color: palette.brandDeep },
   ticker: { fontSize: 12, fontWeight: "600", color: "#1a1a1a" },
-  name: { fontSize: 14, color: "#85808A" },
+  name: { fontSize: 14, color: palette.gray350 },
   mid: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -160,7 +161,7 @@ const cardStyles = StyleSheet.create({
     color: "#1a1a1a",
     marginBottom: 4,
   },
-  muted: { fontSize: 13, color: "#85808A" },
+  muted: { fontSize: 13, color: palette.gray350 },
   ytd: { fontSize: 12, marginTop: 14 },
 });
 
@@ -237,7 +238,7 @@ const ShowMore = ({
   onToggle: () => void;
 }) => (
   <TouchableOpacity onPress={onToggle} style={{ marginTop: 6 }}>
-    <Text style={{ color: "#013D25", fontSize: 13, fontWeight: "500" }}>
+    <Text style={{ color: palette.brandDeep, fontSize: 13, fontWeight: "500" }}>
       {show ? "Show less ▲" : "Show more ▼"}
     </Text>
   </TouchableOpacity>
@@ -317,10 +318,10 @@ export default function AboutManagedPortfolioScreen() {
           return (
             <Text key={i} style={aboutStyles.bulletText}>
               {"• "}
-              <Text style={{ fontWeight: "700", color: "#0B0014" }}>
+              <Text style={{ fontWeight: "700", color: palette.ink }}>
                 {parts[0]}:
               </Text>
-              <Text style={{ color: "#85808A" }}>
+              <Text style={{ color: palette.gray350 }}>
                 {parts.slice(1).join(":")}
               </Text>
             </Text>
@@ -418,7 +419,7 @@ export default function AboutManagedPortfolioScreen() {
 }
 
 const aboutStyles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: palette.white },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -436,7 +437,7 @@ const aboutStyles = StyleSheet.create({
   activeTab: {
     flex: 1,
     borderBottomWidth: 2,
-    borderBottomColor: "#013D25",
+    borderBottomColor: palette.brandDeep,
     paddingBottom: 8,
     paddingTop: 8,
     alignItems: "center",
@@ -448,27 +449,27 @@ const aboutStyles = StyleSheet.create({
     paddingTop: 8,
     alignItems: "center",
   },
-  activeTabText: { fontSize: 14, fontWeight: "600", color: "#013D25" },
-  inactiveTabText: { fontSize: 14, color: "#85808A" },
+  activeTabText: { fontSize: 14, fontWeight: "600", color: palette.brandDeep },
+  inactiveTabText: { fontSize: 14, color: palette.gray350 },
   content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48 },
   pageTitle: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#0B0014",
+    color: palette.ink,
     marginBottom: 20,
   },
   section: { marginBottom: 32 },
   sectionLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#85808A",
+    color: palette.gray350,
     marginBottom: 12,
   },
-  bodyText: { fontSize: 12, color: "#85808A", lineHeight: 18, marginBottom: 8 },
+  bodyText: { fontSize: 12, color: palette.gray350, lineHeight: 18, marginBottom: 8 },
   detailHeader: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#0B0014",
+    color: palette.ink,
     marginTop: 16,
     marginBottom: 6,
   },
@@ -486,20 +487,20 @@ const aboutStyles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
   },
-  emptyText: { fontSize: 13, color: "#85808A", fontStyle: "italic" },
+  emptyText: { fontSize: 13, color: palette.gray350, fontStyle: "italic" },
   allocationTitle: {
     fontSize: 14,
     fontWeight: "600",
     color: "#1a1a1a",
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F7F7F8",
+    borderBottomColor: palette.surface100,
     marginBottom: 16,
   },
   allocationSubTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#85808A",
+    color: palette.gray350,
     marginBottom: 16,
   },
   legendRow: {

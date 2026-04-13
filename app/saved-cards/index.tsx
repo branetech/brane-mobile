@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/empty-state";
 import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -153,11 +154,11 @@ export default function SavedCardsScreen() {
           )}
         </View>
         <TouchableOpacity
-          style={[styles.deleteBtn, { backgroundColor: "#FCE4E4" }]}
+          style={[styles.deleteBtn, { backgroundColor: palette.statusFailedBg }]}
           activeOpacity={0.7}
           onPress={() => setPendingDelete(item)}
         >
-          <Trash size={18} color='#D50000' variant='TwoTone' />
+          <Trash size={18} color={palette.error} variant='TwoTone' />
         </TouchableOpacity>
       </View>
     ),
@@ -224,7 +225,7 @@ export default function SavedCardsScreen() {
           <BraneButton
             text='Add Card'
             onPress={() => router.push("/add-funds/add-card")}
-            leftIcon={<Add size={18} color='#fff' />}
+            leftIcon={<Add size={18} color={palette.white} />}
           />
         </View>
       )}
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "#013D254D",
+    backgroundColor: palette.modalOverlay,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 24,
@@ -384,6 +385,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   removeBtn: {
-    backgroundColor: "#D50000",
+    backgroundColor: palette.error,
   },
 });

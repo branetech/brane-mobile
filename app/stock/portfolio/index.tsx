@@ -2,6 +2,7 @@ import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
@@ -130,7 +131,7 @@ export default function PortfolioScreen() {
     const price = Number(item?.currentPrice || item?.price || 0);
     const pct = Number(item?.changePercent || item?.percentChange || 0);
     const isDown = pct < 0;
-    const col = isDown ? "#D50000" : C.primary;
+    const col = isDown ? palette.error : C.primary;
 
     return (
       <TouchableOpacity
@@ -189,7 +190,7 @@ export default function PortfolioScreen() {
         <View style={s.headerRight}>
           <View style={s.flagCircle}>
             <View style={[s.flagSeg, { backgroundColor: C.primary }]} />
-            <View style={[s.flagSeg, { backgroundColor: "#fff" }]} />
+            <View style={[s.flagSeg, { backgroundColor: palette.white }]} />
             <View style={[s.flagSeg, { backgroundColor: C.primary }]} />
           </View>
           <TouchableOpacity style={s.iconBtn}>
@@ -255,7 +256,7 @@ export default function PortfolioScreen() {
               )}
             </ThemedText>
 
-            <View style={[s.profitCard, { backgroundColor: "#fff" }]}>
+            <View style={[s.profitCard, { backgroundColor: palette.white }]}>
               <View>
                 <ThemedText style={[s.profitLabel, { color: C.muted }]}>
                   Profit Return (Dividend)
@@ -331,7 +332,7 @@ export default function PortfolioScreen() {
                   <ThemedText
                     style={[
                       s.holdingChange,
-                      { color: isUp ? "#2e7d32" : "#D50000" },
+                      { color: isUp ? "#2e7d32" : palette.error },
                     ]}
                   >
                     {isUp ? "▲" : "▼"} {Math.abs(avgPct).toFixed(2)}% return
@@ -361,7 +362,7 @@ export default function PortfolioScreen() {
                 key={cat.key}
                 style={[
                   s.exploreCard,
-                  { backgroundColor: EXPLORE_BG[cat.key] ?? "#f5f5f5" },
+                  { backgroundColor: EXPLORE_BG[cat.key] ?? palette.surface200 },
                 ]}
                 onPress={() => router.push(`/explore/${cat.key}` as any)}
                 activeOpacity={0.8}
@@ -439,10 +440,10 @@ export default function PortfolioScreen() {
                         style={[
                           s.catReturnBadge,
                           {
-                            color: isUp ? C.primary : "#D50000",
+                            color: isUp ? C.primary : palette.error,
                             backgroundColor: isUp
                               ? C.primary + "15"
-                              : "#FCE4E4",
+                              : palette.statusFailedBg,
                           },
                         ]}
                       >
@@ -541,14 +542,14 @@ export default function PortfolioScreen() {
                       style={[
                         s.txBadge,
                         {
-                          backgroundColor: isBuy ? C.primary + "15" : "#FCE4E4",
+                          backgroundColor: isBuy ? C.primary + "15" : palette.statusFailedBg,
                         },
                       ]}
                     >
                       <ThemedText
                         style={[
                           s.txBadgeText,
-                          { color: isBuy ? C.primary : "#D50000" },
+                          { color: isBuy ? C.primary : palette.error },
                         ]}
                       >
                         {isBuy ? "Buy" : "Sell"}
@@ -612,12 +613,12 @@ const s = StyleSheet.create({
     padding: 20,
     overflow: "hidden",
     marginBottom: 24,
-    backgroundColor: "#e4f5ec",
+    backgroundColor: palette.brandMintPale,
   },
   blob: {
     position: "absolute",
     borderRadius: 999,
-    backgroundColor: "#1a6644",
+    backgroundColor: palette.brandDeep,
     opacity: 0.22,
   },
   netTopRow: {
@@ -660,7 +661,7 @@ const s = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     gap: 8,
-    backgroundColor: "#fde8e8",
+    backgroundColor: palette.statusFailedBg,
   },
   holdingLabel: { fontSize: 13 },
   holdingAmount: { fontSize: 18, fontWeight: "700" },

@@ -1,4 +1,5 @@
 import { View, Image } from '@idimma/rn-widget';
+import { palette } from '@/constants';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import expoSecureStorage from '@/utils/secureStore';
@@ -16,7 +17,7 @@ export default function Splash() {
   }, [router]);
 
   return (
-    <View flex bg='#013D25' spaced aligned>
+      <View flex bg={palette.brandDeep} spaced aligned>
       <View h={250} radius={50}>
         <Image source={require('@/assets/images/el.png')} contain />
       </View>

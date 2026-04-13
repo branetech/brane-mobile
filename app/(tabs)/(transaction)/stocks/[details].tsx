@@ -2,6 +2,7 @@ import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -31,9 +32,9 @@ const toArray = (v: any): any[] => {
 const getTransactionTypeColor = (type: string) => {
   const t = String(type || "").toLowerCase();
   if (t.includes("buy") || t.includes("purchase"))
-    return { color: "#09734C", bg: "#EAF8F1" };
-  if (t.includes("sell")) return { color: "#D50000", bg: "#FDECEC" };
-  return { color: "#B5760A", bg: "#FFF7E8" };
+    return { color: palette.brandGain, bg: palette.statusBuyBg };
+  if (t.includes("sell")) return { color: palette.error, bg: palette.statusSellBg };
+  return { color: palette.statusPendingText, bg: palette.statusPendingBg };
 };
 
 export default function StockTransactionScreen() {
@@ -273,7 +274,7 @@ export default function StockTransactionScreen() {
           text='Buy More Stocks'
           onPress={() => router.push("/stock")}
           backgroundColor={C.primary}
-          textColor='#D2F1E4'
+          textColor={palette.brandMint}
           height={52}
           radius={12}
           width='100%'

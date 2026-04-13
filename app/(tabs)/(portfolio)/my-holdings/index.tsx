@@ -2,6 +2,7 @@ import Back from "@/components/back";
 import { StockItemCard } from "@/components/home/cards";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE, TRANSACTION_SERVICE } from "@/services/routes";
@@ -261,7 +262,7 @@ export default function MyHoldingsScreen() {
                 <Svg width={110} height={30} viewBox="0 0 87 129">
                   <Path
                     d="M64.2362 0C63.6737 0 63.1594 0.317997 62.9081 0.821294L0.158244 126.493C-0.334553 127.48 0.383172 128.641 1.48631 128.641H21.9187C22.4812 128.641 22.9954 128.323 23.2467 127.819L85.9966 2.14755C86.4894 1.16061 85.7717 0 84.6686 0H64.2362Z"
-                    fill="#013D25"
+                    fill={palette.brandDeep}
                   />
                 </Svg>
               </View>
@@ -303,7 +304,7 @@ export default function MyHoldingsScreen() {
               <ThemedText style={[styles.returnsText, { color: C.muted }]}>
                 Total returns:{" "}
                 <ThemedText
-                  style={{ color: "#0B0014", fontSize: 12, fontWeight: "800" }}
+                  style={{ color: palette.ink, fontSize: 12, fontWeight: "800" }}
                 >
                   {mask(priceFormatter(totalReturns, 2))}
                 </ThemedText>
@@ -379,7 +380,7 @@ export default function MyHoldingsScreen() {
           const pnl = groupPnl(stocks);
           const pct = groupPct(stocks);
           const positive = pnl >= 0;
-          const pnlColor = positive ? "#0C8F5C" : "#D50000";
+          const pnlColor = positive ? palette.brandMid : palette.error;
 
           return (
             <View key={cls} style={styles.group}>
@@ -487,7 +488,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
     paddingTop: 4,
   },
-  changeGreen: { fontSize: 12, color: "#0C8F5C", marginTop: 3 },
+  changeGreen: { fontSize: 12, color: palette.brandMid, marginTop: 3 },
   returnsText: { fontSize: 12, marginTop: 3 },
   horizDivider: { height: StyleSheet.hairlineWidth },
   statsRow: { flexDirection: "row", alignItems: "flex-start" },

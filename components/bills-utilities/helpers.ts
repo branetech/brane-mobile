@@ -20,19 +20,42 @@ export const getNetworkImageKey = (value: string) => {
   if (key.includes("mtn")) return "mtn";
   if (key.includes("airtel")) return "airtel";
   if (key.includes("glo")) return "glo";
-  if (key.includes("9mobile") || key.includes("etisalat")) return "9mobile";
+  if (key.includes("9mobile") || key.includes("etisalat") || key.includes("t2mobile")) return "t2mobile";
   if (key.includes("spectranet")) return "spectranet";
   if (key.includes("smile")) return "smile-direct";
   return "mtn";
 };
 
 export const cleanNetworkLabel = (label: string): string => {
-  return label
+  return sentenceCase(label.toLowerCase()
     .replace(/[-\s]*(data|direct|network)[-\s]*/gi, "")
+    .replace('etisalat', 't2mobile')
+    .replace('9mobile', 't2mobile')
     .replace(/-/g, " ")
     .replace(/\s+/g, " ")
-    .trim();
-};
+    .toLocaleUpperCase()
+    .trim());
+}
+
+export const words = (value: string) =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean);
+
+
+export const sentenceCase = (value: string) =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")    .trim();
+
 
 export const getCableImageKey = (value: string) => {
   const key = normalizeKey(value);

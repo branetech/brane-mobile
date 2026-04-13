@@ -2,6 +2,7 @@ import { EmptyState } from "@/components/empty-state";
 import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { View } from "@idimma/rn-widget";
@@ -28,9 +29,9 @@ const toArray = (v: any): any[] => {
 };
 
 const MEDAL_COLORS: Record<number, string> = {
-  1: "#FFD700",
-  2: "#C0C0C0",
-  3: "#CD7F32",
+  1: palette.leaderboardGold,
+  2: palette.leaderboardSilver,
+  3: palette.leaderboardBronze,
 };
 
 interface LeaderboardEntry {

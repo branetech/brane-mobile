@@ -1,58 +1,68 @@
-const tintColorLight = "#13192733";
-const tintColorDark = "#fff";
+/**
+ * Brane Finance — Semantic Color Tokens
+ *
+ * All values are derived from `palette.ts`. This is what components should
+ * consume — never raw hex values or palette tokens directly.
+ *
+ * Usage in components:
+ *   const C = Colors[scheme === 'dark' ? 'dark' : 'light'];
+ */
+import { palette } from './palette';
 
 export const Colors = {
   light: {
-    text: "#342A3B",
-    background: "#ffffff",
-    inputBackground: "#F7F7F8",
-    tint: tintColorLight,
-    icon: "#013D25",
-    tabIconDefault: "#131927",
-    tabIconSelected: tintColorLight,
-    borderColor: "#F7F7F8",
-    inputBg: "#F5F5F5",
-    primary: "#013D25",
-    muted: "#85808A",
-    border: "#F7F7F8",
-    error: "#D50000",
-    screen: "#FFFFFF",
-    googleBg: "#D2F1E4",
-    fingerBorder: "#D3EBE1",
+    text:            palette.ink,
+    background:      palette.white,
+    inputBackground: palette.surface100,
+    tint:            palette.tintAlpha,
+    icon:            palette.brandDeep,
+    tabIconDefault:  palette.gray950,
+    tabIconSelected: palette.tintAlpha,
+    borderColor:     palette.surface100,
+    inputBg:         palette.surface200,
+    primary:         palette.brandDeep,
+    muted:           palette.gray350,
+    border:          palette.borderLight,
+    error:           palette.error,
+    screen:          palette.white,
+    googleBg:        palette.brandMint,
+    fingerBorder:    palette.brandMintSoft,
   },
   dark: {
-    text: "#FFFFFF",
-    background: "#151718",
-    inputBackground: "#2A2B2D",
-    tint: tintColorDark,
-    icon: "#13C965",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: tintColorDark,
-    borderColor: "#2A2B2D",
-    inputBg: "#2A2B2D",
-    primary: "#13C965",
-    muted: "#8E8E93",
-    border: "#404040",
-    error: "#D50000",
-    screen: "#151718",
-    googleBg: "#13C965",
-    fingerBorder: "#2A5F54",
+    text:            palette.white,
+    background:      palette.darkBg,
+    inputBackground: palette.darkSurface,
+    tint:            palette.brandBright,
+    icon:            palette.brandBright,
+    tabIconDefault:  palette.gray150,
+    tabIconSelected: palette.brandBright,
+    borderColor:     palette.darkSurface,
+    inputBg:         palette.darkSurface,
+    primary:         palette.brandBright,
+    muted:           palette.gray200,
+    border:          palette.borderDark,
+    error:           palette.error,
+    screen:          palette.darkBg,
+    googleBg:        palette.brandBright,
+    fingerBorder:    palette.borderDarkFing,
   },
 };
 
-export const TEXT = "#666666";
-export const WHITE_TEXT = "#F6F6F6";
-export const GRAY_TEXT = "#5D5D5D";
-export const WEIRD_TEXT = "#3D3D3D";
-export const BLACKER = "#000000EB";
+// ── Legacy standalone exports (backward compat) ──────────────────────────────
+export const TEXT       = palette.gray350;
+export const WHITE_TEXT = palette.white;
+export const GRAY_TEXT  = '#5D5D5D';
+export const WEIRD_TEXT = '#3D3D3D';
+export const BLACKER    = '#000000EB';
 
-export const BG1 = "#D3F8E2";
-export const BG2 = "#EBEAFD";
+export const BG1 = palette.brandMint;
+export const BG2 = palette.purple;
 
-export const SUCCESSFUL = "#0C8F5C";
-export const FAILED = "#FF2626";
-export const LOSS = "#D50000";
-export const GAIN = "#09734C";
+export const SUCCESSFUL = palette.brandMid;
+export const FAILED     = palette.loss;
+export const LOSS       = palette.error;
+export const GAIN       = palette.brandGain;
 
-export const MAIN = "#0C8F5C";
-export const BUTTON = "#FFFFFF66";
+export const MAIN   = palette.brandMid;
+export const BUTTON = '#FFFFFF66';
+

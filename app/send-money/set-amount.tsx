@@ -10,6 +10,7 @@ import {
     type TransactionRow,
 } from "@/components/transaction-summary-modal";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { type Scheme } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
@@ -139,7 +140,7 @@ export default function SendMoneySetAmountScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         {/* Recipient Card */}
-        <RNView style={[styles.recipientCard, { backgroundColor: "#F8FCFA" }]}>
+        <RNView style={[styles.recipientCard, { backgroundColor: palette.brandMintPale }]}>
           <ThemedText style={[styles.smallLabel, { color: C.text }]}>
             {bankName}
           </ThemedText>
@@ -160,7 +161,7 @@ export default function SendMoneySetAmountScreen() {
             <RNView
               style={[styles.checkIconWrap, { backgroundColor: C.primary }]}
             >
-              <ThemedText style={[styles.checkIcon, { color: "#FFFFFF" }]}>
+              <ThemedText style={[styles.checkIcon, { color: palette.white }]}>
                 <Copy size={20} color={C.inputBackground} />
               </ThemedText>
             </RNView>
@@ -209,7 +210,7 @@ export default function SendMoneySetAmountScreen() {
                   {
                     backgroundColor:
                       amount === preset ? C.inputBg : C.background,
-                    borderColor: amount === preset ? C.border : "#E5E5E5",
+                    borderColor: amount === preset ? C.border : palette.borderLight,
                   },
                 ]}
                 onPress={() => {
@@ -304,7 +305,7 @@ export default function SendMoneySetAmountScreen() {
           style={[
             styles.sheetOverlay,
             {
-              backgroundColor: "#013D254D",
+              backgroundColor: palette.modalOverlay,
             },
           ]}
           activeOpacity={1}
@@ -595,7 +596,7 @@ const styles = StyleSheet.create({
   // Sheet overlay
   sheetOverlay: {
     flex: 1,
-    backgroundColor: "#013D254D",
+    backgroundColor: palette.modalOverlay,
     justifyContent: "flex-end",
   },
   sheetCard: {
@@ -623,7 +624,7 @@ const styles = StyleSheet.create({
   },
   sheetRows: {
     overflow: "hidden",
-    backgroundColor: "#F8FCFA",
+    backgroundColor: palette.brandMintPale,
     borderRadius: 12,
     padding: 16,
   },

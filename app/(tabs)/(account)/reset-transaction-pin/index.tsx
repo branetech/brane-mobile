@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowBalance } from "@/redux/slice/auth-slice";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function PaymentSettingsScreen() {
@@ -93,7 +94,7 @@ export default function PaymentSettingsScreen() {
             value={fingerprintEnabled}
             onValueChange={setFingerprintEnabled}
             trackColor={{ false: C.border, true: C.primary }}
-            thumbColor={fingerprintEnabled ? "#fff" : C.muted}
+            thumbColor={fingerprintEnabled ? palette.white : C.muted}
             ios_backgroundColor={C.border}
             style={styles.switch}
           />
@@ -121,7 +122,7 @@ export default function PaymentSettingsScreen() {
             value={showBalance}
             onValueChange={handleShowBalanceChange}
             trackColor={{ false: C.border, true: C.primary }}
-            thumbColor={showBalance ? "#fff" : C.muted}
+            thumbColor={showBalance ? palette.white : C.muted}
             ios_backgroundColor={C.border}
             style={styles.switch}
           />

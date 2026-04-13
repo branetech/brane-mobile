@@ -3,6 +3,7 @@ import { BraneButton } from "@/components/brane-button";
 import { FormInput, mapFormikProps } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useFormHandler } from "@/hooks/use-formik";
 import { useAppState } from "@/redux/store";
@@ -96,7 +97,7 @@ export default function BvnVerificationScreen() {
           disabled={isDisabled || isLoading}
           loading={isLoading}
           backgroundColor={C.primary}
-          textColor='#FFFFFF'
+          textColor={palette.white}
           height={50}
           radius={10}
         />

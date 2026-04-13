@@ -1,57 +1,22 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app) etc.
+ * Brane Finance — Theme Constants
+ *
+ * `Colors` is the canonical semantic token map — all keys derive from
+ * `palette.ts` via `colors.ts`. Import `Colors` from either
+ * `@/constants/colors` or `@/constants/theme`; both resolve to the same object.
  */
 
 import { Platform } from "react-native";
+import { palette } from './palette';
 
-const tintColorLight = "#013D25";
-const tintColorDark = "#13C965";
-
-export const Colors = {
-  light: {
-    text: "#0B0014",
-    background: "#ffffff",
-    tint: tintColorLight,
-    icon: "#013D25",
-    tabIconDefault: "#131927",
-    tabIconSelected: tintColorLight,
-    bodyText: "#85808A",
-    border: "#E5E5E5",
-    inputBg: "#F5F5F5",
-    primary: "#013D25",
-    muted: "#85808A",
-    error: "#D50000",
-    screen: "#FFFFFF",
-    googleBg: "#D2F1E4",
-  },
-  dark: {
-    text: "#FFFFFF",
-    background: "#151718",
-    tint: tintColorDark,
-    icon: "#13C965",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: tintColorDark,
-    bodyText: "#FFFFFF",
-    border: "#404040",
-    inputBg: "#2A2B2D",
-    primary: "#13C965",
-    muted: "#8E8E93",
-    error: "#D50000",
-    screen: "#151718",
-    googleBg: "#13C965",
-  },
-};
+// Re-export from the single source of truth so both import paths work.
+export { Colors } from './colors';
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
     sans: "system-ui",
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: "ui-serif",
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: "ui-rounded",
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: "ui-monospace",
   },
   default: {
@@ -63,33 +28,24 @@ export const Fonts = Platform.select({
   web: {
     sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     serif: "Georgia, 'Times New Roman', serif",
-    rounded:
-      "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
+    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });
 
-/**
- * Global type definitions for theme
- */
+/** Light/dark scheme identifier */
 export type Scheme = "light" | "dark";
 
-/**
- * Modal overlay color - branded green with 30% opacity
- * Used consistently across all modal backdrops in the app
- */
-export const MODAL_OVERLAY_COLOR = "#013D254D";
+/** Modal backdrop — branded green at 30% opacity */
+export const MODAL_OVERLAY_COLOR = palette.modalOverlay;
 
-/**
- * Chat message types
- */
+/** Support chat message */
 export type ChatMessage = {
   id: string;
   text: string;
   sender: "support" | "user";
 };
 
-/**
- * FAQ entry
- */
+/** FAQ entry */
 export type FAQ = { q: string; a: string };
+

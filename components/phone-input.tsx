@@ -1,17 +1,16 @@
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { ArrowDown2 } from "iconsax-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-    FlatList,
-    ListRenderItem,
-    Modal,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  FlatList,
+  ListRenderItem,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 // Type definitions
@@ -27,6 +26,7 @@ interface Country {
 interface PhoneInputProps {
   onPhoneChange?: (phone: string) => void;
   onFormattedChange?: (formatted: string, raw: string) => void;
+  onSubmitEditing?: () => void;
   placeholder?: string;
   value?: string;
   disabled?: boolean;
@@ -122,6 +122,7 @@ const countries: Country[] = [
 export const PhoneInput: React.FC<PhoneInputProps> = ({
   onPhoneChange,
   onFormattedChange,
+  onSubmitEditing,
   placeholder = "Phone number",
   value = "",
   disabled = false,
@@ -176,20 +177,41 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     return formatted.replace(/\D/g, "");
   };
 
+  const detectCountryFromDialCode = (text: string): { country: Country; localNumber: string } | null => {
+    const trimmed = text.trim();
+    if (!trimmed.startsWith("+")) return null;
+    // Sort by longest dial code first to avoid "+1" matching "+1X" entries
+    const sorted = [...countries].sort((a, b) => b.dialCode.length - a.dialCode.length);
+    for (const country of sorted) {
+      if (trimmed.startsWith(country.dialCode)) {
+        const localNumber = getRawNumber(trimmed.slice(country.dialCode.length));
+        return { country, localNumber };
+      }
+    }
+    return null;
+  };
+
   const handlePhoneChange = (text: string): void => {
+    const detected = detectCountryFromDialCode(text);
+    if (detected) {
+      const { country, localNumber } = detected;
+      const formatted = formatPhoneNumber(localNumber, country);
+      setSelectedCountry(country);
+      setPhoneNumber(localNumber);
+      setFormattedNumber(formatted);
+      onPhoneChange?.(country.dialCode + localNumber);
+      onFormattedChange?.(country.dialCode + " " + formatted, localNumber);
+      return;
+    }
+
     const rawText = getRawNumber(text);
     const formatted = formatPhoneNumber(rawText, selectedCountry);
 
     setPhoneNumber(rawText);
     setFormattedNumber(formatted);
 
-    if (onPhoneChange) {
-      onPhoneChange(selectedCountry.dialCode + rawText);
-    }
-
-    if (onFormattedChange) {
-      onFormattedChange(selectedCountry.dialCode + " " + formatted, rawText);
-    }
+    onPhoneChange?.(selectedCountry.dialCode + rawText);
+    onFormattedChange?.(selectedCountry.dialCode + " " + formatted, rawText);
   };
 
   const handleCountrySelect = (country: Country): void => {
@@ -208,6 +230,30 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
       onFormattedChange(country.dialCode + " " + formatted, phoneNumber);
     }
   };
+
+  // Sync external value changes (e.g. contact picked from picker)
+  useEffect(() => {
+    if (!value) return;
+    // Skip if value was produced by our own onPhoneChange — no work needed
+    if (value === selectedCountry.dialCode + phoneNumber) return;
+
+    // Try to detect country from international format (with or without leading +)
+    const withPlus = value.startsWith("+") ? value : "+" + value;
+    const detected = detectCountryFromDialCode(withPlus);
+    if (detected) {
+      const { country, localNumber } = detected;
+      setSelectedCountry(country);
+      setPhoneNumber(localNumber);
+      setFormattedNumber(formatPhoneNumber(localNumber, country));
+      return;
+    }
+
+    // Local format (e.g. 08012345678) — strip leading 0 and keep for current country
+    const rawDigits = value.replace(/\D/g, "").replace(/^0+/, "");
+    setPhoneNumber(rawDigits);
+    setFormattedNumber(formatPhoneNumber(rawDigits, selectedCountry));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   const renderCountryItem: ListRenderItem<Country> = ({ item }) => (
     <TouchableOpacity
@@ -253,7 +299,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           >
             {selectedCountry.dialCode}
           </ThemedText>
-          <ArrowDown2 size='13' color={primaryColor} />
+          {/* <ArrowDown2 size='13' color={primaryColor} /> */}
         </TouchableOpacity>
 
         {/* Phone Number Input */}
@@ -277,6 +323,8 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             ]}
             value={autoFormat ? formattedNumber : phoneNumber}
             onChangeText={handlePhoneChange}
+            onSubmitEditing={onSubmitEditing}
+            returnKeyType={onSubmitEditing ? "next" : "done"}
             placeholder={placeholder}
             keyboardType='phone-pad'
             placeholderTextColor={mutedColor}
@@ -302,10 +350,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
       >
         <View style={styles.modalOverlay}>
           <View
-            style={[
-              styles.modalContainer,
-              { backgroundColor: theme.inputBackground },
-            ]}
+            style={[styles.modalContainer, { backgroundColor: theme.inputBackground }]}
           >
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>Select Country</ThemedText>
@@ -347,8 +392,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-
     overflow: "hidden",
+    gap: 4,
   },
   inputContainerError: {
     borderColor: "#e53e3e",
@@ -359,13 +404,10 @@ const styles = StyleSheet.create({
   countryPicker: {
     flexDirection: "row",
     alignItems: "center",
-    // backgroundColor: '#3B51200A',
     width: 90, // Adjusted width to accommodate the dial code
     height: 48,
     justifyContent: "center",
-    marginRight: 16,
     borderRadius: 8,
-    borderWidth: 1,
   },
   countryPickerDisabled: {
     opacity: 0.6,
@@ -397,6 +439,7 @@ const styles = StyleSheet.create({
   },
   phoneInput: {
     flex: 1,
+    height: 45,
     fontSize: 14,
     paddingVertical: 12,
   },

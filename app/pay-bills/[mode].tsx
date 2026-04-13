@@ -4,6 +4,7 @@ import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
@@ -317,7 +318,7 @@ export default function PayBillsScreen() {
             <ThemedText
               style={{
                 ...StyleSheet.flatten(styles.toggleBtnText),
-                color: meterProduct === pt ? "#FFFFFF" : C.text,
+                color: meterProduct === pt ? palette.white : C.text,
               }}
             >
               {pt.charAt(0).toUpperCase() + pt.slice(1)}

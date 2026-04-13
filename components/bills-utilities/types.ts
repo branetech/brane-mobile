@@ -6,6 +6,49 @@ export type UtilityService =
   | "electricity"
   | "transportation";
 
+/** Shape reported by each form via `onReady` and used by the strategy-pattern submit. */
+export type UtilityFormData = {
+  service: UtilityService;
+  amountToPay: number;
+  transactionTarget: string;
+  // airtime / data
+  network?: string;
+  networkLabel?: string;
+  networkImageKey?: string;
+  phone?: string;
+  addToBeneficiaries?: boolean;
+  beneficiaryName?: string;
+  selectedDataPlan?: DataPlan;
+  // betting
+  bettingProviderId?: string;
+  customerId?: string;
+  // cable
+  cableProviderId?: string;
+  cardNumber?: string;
+  cardHolderName?: string;
+  selectedCablePlan?: CablePlan;
+  // electricity
+  electricityProviderId?: string;
+  electricityProviderLabel?: string;
+  electricityProviderDescription?: string;
+  meterNumber?: string;
+  electricityProduct?: string;
+  electricityAccountName?: string;
+  // transportation
+  transportProviderId?: string;
+  selectedTransportRoute?: TransportRoute;
+  selectedVehicleType?: string;
+  departureDate?: string;
+  passengerName?: string;
+  passengerEmail?: string;
+  seatNumber?: string;
+};
+
+/** Imperative handle each form component exposes for CTA-triggered validation. */
+export type UtilityFormRef = {
+  validate: () => boolean;
+};
+
 export type SelectOption = {
   id: string;
   label: string;
@@ -96,6 +139,7 @@ export const NETWORK_IMAGES: Record<string, any> = {
   airtel: require("@/assets/images/network/airtel.png"),
   glo: require("@/assets/images/network/glo.png"),
   "9mobile": require("@/assets/images/network/9mobile.png"),
+  "t2mobile": require("@/assets/images/network/t2mobile.png"),
   etisalat: require("@/assets/images/network/9mobile.png"),
   "smile-direct": require("@/assets/images/network/smile-direct.png"),
   smile: require("@/assets/images/network/smile-direct.png"),

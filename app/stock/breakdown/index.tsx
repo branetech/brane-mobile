@@ -2,6 +2,7 @@ import { BraneButton } from "@/components/brane-button";
 import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
@@ -116,7 +117,7 @@ export default function BracsBreakdownIndexScreen() {
                 >
                   Total BRACS Balance
                 </ThemedText>
-                <ThemedText style={[styles.balanceAmount, { color: "#fff" }]}>
+                <ThemedText style={[styles.balanceAmount, { color: palette.white }]}>
                   {hideBalance ? "••••••" : `${bracsBalance.toFixed(4)} BRACS`}
                 </ThemedText>
                 {bracsData?.estimatedValue != null && (

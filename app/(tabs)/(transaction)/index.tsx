@@ -5,6 +5,7 @@ import { GroupedTransactions } from "@/components/home/home-transaction/grouped-
 import { SearchInput } from "@/components/search-input";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -644,7 +645,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "#013D254D",
+    backgroundColor: palette.modalOverlay,
     justifyContent: "flex-end",
   },
   modalCard: {
@@ -698,7 +699,7 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     fontSize: 11,
-    color: "#fff",
+    color: palette.white,
     fontWeight: "700",
     lineHeight: 14,
   },

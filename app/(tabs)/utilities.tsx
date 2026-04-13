@@ -9,6 +9,7 @@ import {
 } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
@@ -68,7 +69,7 @@ const CATEGORIES: Category[] = [
     title: "Airtime & Data",
     service: "airtime",
     bg: "#EAF5F1",
-    iconColor: "#013D25",
+    iconColor: palette.brandDeep,
     fullWidth: true,
   },
   {

@@ -2,6 +2,7 @@ import Back from "@/components/back";
 import ChartComponent from "@/components/portfolio/chart";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { onAddToCheckouts } from "@/redux/slice/auth-slice";
 // import { useAppState } from "@/redux/store";
@@ -496,8 +497,8 @@ function OverviewTab({
   onBuy,
 }: any) {
   const [hideBalance, setHideBalance] = useState(false);
-  const priceColor = tickerIsDown ? "#D50000" : "#0C8F5C";
-  const gainColor = totalGain >= 0 ? "#0C8F5C" : "#D50000";
+  const priceColor = tickerIsDown ? palette.error : palette.brandMid;
+  const gainColor = totalGain >= 0 ? palette.brandMid : palette.error;
   const returnPct = investedValue > 0 ? (totalGain / investedValue) * 100 : 0;
   const mask = (v: string) => (hideBalance ? "****" : v);
 
@@ -791,7 +792,7 @@ function HistoryTab({
         <ThemedText
           style={[
             styles.returnPct,
-            { color: returnsUp ? "#0C8F5C" : "#D50000" },
+            { color: returnsUp ? palette.brandMid : palette.error },
           ]}
         >
           {returnsUp ? "▲" : "▼"} ({returnsUp ? "+" : ""}
@@ -923,7 +924,7 @@ function TxItem({ tx, C }: { tx: any; C: any }) {
       {/* Amount + units/date */}
       <View style={{ alignItems: "flex-end" }}>
         <ThemedText
-          style={[styles.txAmt, { color: amt >= 0 ? "#0C8F5C" : "#D50000" }]}
+          style={[styles.txAmt, { color: amt >= 0 ? palette.brandMid : palette.error }]}
         >
           {amt >= 0 ? "+" : "−"}
           {priceFormatter(Math.abs(amt), 2)}
@@ -975,9 +976,9 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#fff",
+    backgroundColor: palette.white,
   },
-  dividendText: { fontSize: 13, color: "#fff", flex: 1 },
+  dividendText: { fontSize: 13, color: palette.white, flex: 1 },
 
   // Main tabs
   mainTabRow: {
@@ -1046,7 +1047,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginVertical: 30,
     gap: 16,
-    backgroundColor: "#F8FCFA",
+    backgroundColor: palette.brandMintPale,
     marginHorizontal: 16,
     borderRadius: 12,
   },
@@ -1089,20 +1090,20 @@ const styles = StyleSheet.create({
   },
   growthCardTitle: {
     fontSize: 12,
-    color: "#85808A",
+    color: palette.gray350,
     marginBottom: 12,
     marginLeft: 16,
   },
   growthItem: { flex: 1, alignItems: "center", gap: 4 },
-  growthVal: { fontSize: 16, fontWeight: "700", color: "#0B0014" },
-  growthLabel: { fontSize: 13, color: "#85808A" },
+  growthVal: { fontSize: 16, fontWeight: "700", color: palette.ink },
+  growthLabel: { fontSize: 13, color: palette.gray350 },
   growthDivider: { width: StyleSheet.hairlineWidth, alignSelf: "stretch" },
 
   // Sally card
   sallyCard: {
     marginHorizontal: 16,
     borderRadius: 12,
-    backgroundColor: "#F8FCFA",
+    backgroundColor: palette.brandMintPale,
     padding: 16,
     marginBottom: 20,
   },
@@ -1116,24 +1117,24 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#013D25",
+    backgroundColor: palette.brandDeep,
   },
-  sallyHeaderTxt: { fontSize: 13, fontWeight: "600", color: "#013D25" },
+  sallyHeaderTxt: { fontSize: 13, fontWeight: "600", color: palette.brandDeep },
   sallyTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0B0014",
+    color: palette.ink,
     marginBottom: 8,
   },
   sallyBody: { fontSize: 13, lineHeight: 20, color: "#555", marginBottom: 16 },
   sallyBtn: {
     alignSelf: "flex-start",
-    backgroundColor: "#D2F1E4",
+    backgroundColor: palette.brandMint,
     borderRadius: 50,
     paddingHorizontal: 20,
     paddingVertical: 12,
   },
-  sallyBtnTxt: { fontSize: 14, fontWeight: "600", color: "#013D25" },
+  sallyBtnTxt: { fontSize: 14, fontWeight: "600", color: palette.brandDeep },
 
   // Bottom action bar
   actionBar: {
@@ -1150,7 +1151,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  actionBtnText: { fontSize: 16, fontWeight: "600", color: "#D2F1E4" },
+  actionBtnText: { fontSize: 16, fontWeight: "600", color: palette.brandMint },
 
   // History sub-tabs
   subTabRow: {
@@ -1171,7 +1172,7 @@ const styles = StyleSheet.create({
   returnSection: {
     padding: 16,
     marginBottom: 8,
-    backgroundColor: "#F8FCFA",
+    backgroundColor: palette.brandMintPale,
     marginHorizontal: 16,
     borderRadius: 12,
   },

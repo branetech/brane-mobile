@@ -4,6 +4,7 @@ import About from "@/components/portfolio/about";
 import { useTabNavigator } from "@/components/tabs";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { onAddToCheckouts } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
@@ -147,7 +148,7 @@ export default function CompanyDetailScreen() {
               text={inCart ? "Go to Checkout" : "Add to Cart"}
               onPress={handleCheckout}
               backgroundColor={C.primary}
-              textColor='#D2F1E4'
+              textColor={palette.brandMint}
               height={52}
               radius={12}
             />

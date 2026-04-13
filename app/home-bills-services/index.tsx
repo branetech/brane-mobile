@@ -27,6 +27,7 @@ import {
 } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
@@ -502,7 +503,7 @@ const createStyles = (C: (typeof Colors)["light"]) =>
     imageBorderWrap: {
       borderWidth: 1,
       borderColor: "#E6E8EC",
-      backgroundColor: "#FFFFFF",
+      backgroundColor: palette.white,
     },
     providerImage: {
       width: 42,

@@ -1,6 +1,7 @@
 import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -28,9 +29,9 @@ const getStatusStyles = (status?: string, C?: any) => {
     };
   }
   if (key.includes("pending")) {
-    return { bg: "#FFF7E8", color: "#B5760A", text: "Pending" };
+    return { bg: palette.statusPendingBg, color: palette.statusPendingText, text: "Pending" };
   }
-  return { bg: "#FCE4E4", color: "#C53333", text: "Failed" };
+  return { bg: palette.statusFailedBg, color: "#C53333", text: "Failed" };
 };
 
 const formatSignedAmount = (transaction: ITransactionDetail | null) => {

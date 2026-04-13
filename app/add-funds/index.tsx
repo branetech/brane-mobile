@@ -2,6 +2,7 @@ import { BraneRadioButton } from "@/components/brane-radio-button";
 import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View } from "@idimma/rn-widget";
 import { useRouter } from "expo-router";
@@ -31,7 +32,7 @@ export default function FundScreen() {
           selected={selected === "bank"}
           onPress={() => setSelected("bank")}
           size={16}
-          bg={selected === "bank" ? "#FAF6E6" : C.background}
+          bg={selected === "bank" ? palette.fundHighlight : C.background}
           color={C.primary}
         >
           <FundWithBankScren />

@@ -1,3 +1,4 @@
+import { CablePlanModal } from "@/components/bills-utilities/Modals";
 import { BraneButton } from "@/components/brane-button";
 import { FormInput } from "@/components/formInput";
 import { ThemedText } from "@/components/themed-text";
@@ -5,53 +6,114 @@ import BaseRequest, { parseNetworkError } from "@/services";
 import { MOBILE_SERVICE } from "@/services/routes";
 import { showError } from "@/utils/helpers";
 import { ArrowDown2 } from "iconsax-react-native";
-import React from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import { CABLE_IMAGES, type CablePlan, type SelectOption } from "./types";
-import { getCableImageKey } from "./helpers";
+import { getCableImageKey, normalizeCablePlan, normalizeOption, toArray } from "./helpers";
+import { CABLE_IMAGES, type CablePlan, type SelectOption, type UtilityFormData, type UtilityFormRef } from "./types";
 
 type Props = {
-  cableProviders: SelectOption[];
-  cableProvider: string;
-  setCableProvider: (id: string) => void;
-  cardNumber: string;
-  setCardNumber: (v: string) => void;
-  cardError?: string;
-  setCardError: (v: string | undefined) => void;
-  cardHolderName: string;
-  setCardHolderName: (v: string) => void;
-  cablePlans: CablePlan[];
-  selectedCablePlan?: CablePlan;
-  onOpenCablePlanModal: () => void;
+  onReady: (data: UtilityFormData) => void;
 };
 
-export function CableForm({
-  cableProviders,
-  cableProvider,
-  setCableProvider,
-  cardNumber,
-  setCardNumber,
-  cardError,
-  setCardError,
-  cardHolderName,
-  setCardHolderName,
-  cablePlans,
-  selectedCablePlan,
-  onOpenCablePlanModal,
-}: Props) {
+export const CableForm = forwardRef<UtilityFormRef, Props>(({ onReady }, ref) => {
+  // ── State ───────────────────────────────────────────────────────────────────
+  const [cableProviders, setCableProviders] = useState<SelectOption[]>([]);
+  const [cableProvider, setCableProvider] = useState("");
+  const [cablePlans, setCablePlans] = useState<CablePlan[]>([]);
+  const [selectedCablePlanId, setSelectedCablePlanId] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardHolderName, setCardHolderName] = useState("");
+  const [showCablePlanModal, setShowCablePlanModal] = useState(false);
+  const [cardError, setCardError] = useState<string | undefined>();
+
+  // ── Data loading ─────────────────────────────────────────────────────────────
+  const fetchCableProviders = useCallback(async () => {
+    try {
+      const response: any = await BaseRequest.get(MOBILE_SERVICE.CABLE_SERVICE);
+      const list = toArray(response).map(normalizeOption);
+      setCableProviders(list);
+      if (list.length > 0) setCableProvider(list[0].id);
+    } catch {
+      setCableProviders([]);
+    }
+  }, []);
+
+  const fetchCablePlans = useCallback(async (serviceId: string) => {
+    if (!serviceId) {
+      setCablePlans([]);
+      setSelectedCablePlanId("");
+      return;
+    }
+    try {
+      const response: any = await BaseRequest.get(MOBILE_SERVICE.BILLER_CODE(serviceId));
+      const plans = toArray(response).map(normalizeCablePlan).filter((p) => p.amount > 0);
+      setCablePlans(plans);
+      setSelectedCablePlanId(plans.length > 0 ? plans[0].id : "");
+    } catch {
+      setCablePlans([]);
+      setSelectedCablePlanId("");
+    }
+  }, []);
+
+  useEffect(() => { fetchCableProviders(); }, [fetchCableProviders]);
+  useEffect(() => { if (!cableProvider) return; fetchCablePlans(cableProvider); }, [cableProvider, fetchCablePlans]);
+
+  const selectedCablePlan = cablePlans.find((p) => p.id === selectedCablePlanId);
+
+  // ── onReady emission ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    onReady({
+      service: "cable",
+      amountToPay: selectedCablePlan?.amount || 0,
+      transactionTarget: cardNumber,
+      cableProviderId: cableProvider,
+      cardNumber,
+      cardHolderName,
+      selectedCablePlan,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cableProvider, cardNumber, cardHolderName, selectedCablePlan]);
+
+  // ── Validation ───────────────────────────────────────────────────────────────
+  const validate = (): boolean => {
+    setCardError(undefined);
+
+    if (!cableProvider) {
+      setCardError("No cable provider available right now");
+      return false;
+    }
+    if (cardNumber.trim().length < 6) {
+      setCardError("Enter a valid smart card / IUC number");
+      return false;
+    }
+    if (!selectedCablePlan) {
+      setCardError("Select a subscription plan");
+      return false;
+    }
+    return true;
+  };
+
+  useImperativeHandle(ref, () => ({ validate }));
+
+  // ── Handlers ─────────────────────────────────────────────────────────────────
   const handleVerify = async () => {
     if (!cardNumber || cardNumber.length < 6) {
       setCardError("Enter a valid smart card / IUC number");
       return;
     }
     try {
-      const response: any = await BaseRequest.post(
-        MOBILE_SERVICE.VERIFY_CABLE_CARD,
-        { serviceId: cableProvider, billersCode: cardNumber },
-      );
+      const response: any = await BaseRequest.post(MOBILE_SERVICE.VERIFY_CABLE_CARD, {
+        serviceId: cableProvider,
+        billersCode: cardNumber,
+      });
       const details = response?.data || response;
-      const name =
-        details?.customerName || details?.name || details?.customer_name || "";
+      const name = details?.customerName || details?.name || details?.customer_name || "";
       setCardHolderName(String(name));
     } catch (error) {
       const { message } = parseNetworkError(error);
@@ -59,15 +121,14 @@ export function CableForm({
     }
   };
 
+  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <View style={styles.card}>
       <ThemedText style={styles.sectionTitle}>Cable Provider</ThemedText>
 
       <View style={styles.cableGrid}>
         {cableProviders.map((item) => {
-          const imageKey = getCableImageKey(
-            `${item.id} ${item.label} ${item.description || ""}`,
-          );
+          const imageKey = getCableImageKey(`${item.id} ${item.label} ${item.description || ""}`);
           const source = imageKey ? CABLE_IMAGES[imageKey] : undefined;
           return (
             <TouchableOpacity
@@ -79,11 +140,7 @@ export function CableForm({
               onPress={() => setCableProvider(item.id)}
             >
               {source ? (
-                <Image
-                  source={source}
-                  style={styles.cableLogo}
-                  resizeMode="contain"
-                />
+                <Image source={source} style={styles.cableLogo} resizeMode="contain" />
               ) : null}
               <ThemedText
                 style={[
@@ -97,9 +154,7 @@ export function CableForm({
           );
         })}
         {cableProviders.length === 0 && (
-          <ThemedText style={styles.emptyText}>
-            No cable provider available.
-          </ThemedText>
+          <ThemedText style={styles.emptyText}>No cable provider available.</ThemedText>
         )}
       </View>
 
@@ -138,14 +193,12 @@ export function CableForm({
       {cablePlans.length > 0 ? (
         <TouchableOpacity
           style={styles.planSelector}
-          onPress={onOpenCablePlanModal}
+          onPress={() => setShowCablePlanModal(true)}
           activeOpacity={0.8}
         >
           <View style={styles.planSelectorTextWrap}>
             <ThemedText style={styles.planSelectorTitle}>
-              {selectedCablePlan
-                ? selectedCablePlan.label
-                : "Select subscription plan"}
+              {selectedCablePlan ? selectedCablePlan.label : "Select subscription plan"}
             </ThemedText>
             {selectedCablePlan ? (
               <ThemedText style={styles.planSelectorAmount}>
@@ -160,9 +213,22 @@ export function CableForm({
           No subscription plan available for this provider.
         </ThemedText>
       )}
+
+      <CablePlanModal
+        visible={showCablePlanModal}
+        onClose={() => setShowCablePlanModal(false)}
+        cablePlans={cablePlans}
+        selectedCablePlanId={selectedCablePlanId}
+        onSelect={(planId) => {
+          setSelectedCablePlanId(planId);
+          setShowCablePlanModal(false);
+        }}
+      />
     </View>
   );
-}
+});
+
+CableForm.displayName = "CableForm";
 
 const styles = StyleSheet.create({
   card: {

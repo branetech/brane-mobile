@@ -1,8 +1,11 @@
+import { ElectricityProviderModal } from "@/components/bills-utilities/Modals";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import BaseRequest from "@/services";
+import { MOBILE_SERVICE } from "@/services/routes";
 import { ArrowDown2 } from "iconsax-react-native";
-import React from "react";
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from "react";
 import {
     StyleSheet,
     Switch,
@@ -10,54 +13,92 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { normalizeElectricityProviders } from "./helpers";
 import {
     ELECTRICITY_AMOUNTS,
     ELECTRICITY_PRODUCTS,
     type SelectOption,
+    type UtilityFormData,
+    type UtilityFormRef,
 } from "./types";
 
 type Props = {
-  electricityProviders: SelectOption[];
-  selectedElectricityProvider?: SelectOption;
-  electricityProduct: string;
-  setElectricityProduct: (v: string) => void;
-  meterNumber: string;
-  setMeterNumber: (v: string) => void;
-  cardError?: string;
-  setCardError: (v: string | undefined) => void;
-  electricityAccountName: string;
-  amount: string;
-  setAmount: (v: string) => void;
-  amountError?: string;
-  setAmountError: (v: string | undefined) => void;
-  onOpenProviderModal: () => void;
-  addToBeneficiaries: boolean;
-  setAddToBeneficiaries: (value: boolean) => void;
+  onReady: (data: UtilityFormData) => void;
 };
 
-export function ElectricityForm({
-  electricityProviders,
-  selectedElectricityProvider,
-  electricityProduct,
-  setElectricityProduct,
-  meterNumber,
-  setMeterNumber,
-  cardError,
-  setCardError,
-  electricityAccountName,
-  amount,
-  setAmount,
-  amountError,
-  setAmountError,
-  onOpenProviderModal,
-  addToBeneficiaries,
-  setAddToBeneficiaries,
-}: Props) {
+export const ElectricityForm = forwardRef<UtilityFormRef, Props>(({ onReady }, ref) => {
   const scheme = useColorScheme();
   const themeKey: "light" | "dark" = scheme === "dark" ? "dark" : "light";
   const C = Colors[themeKey];
-  const styles = createStyles(C);
+  const styles = createStyles(C as typeof Colors.light);
 
+  // ── State ───────────────────────────────────────────────────────────────────
+  const [electricityProviders, setElectricityProviders] = useState<SelectOption[]>([]);
+  const [electricityProvider, setElectricityProvider] = useState("");
+  const [showProviderModal, setShowProviderModal] = useState(false);
+  const [electricityProduct, setElectricityProduct] = useState(ELECTRICITY_PRODUCTS[0]);
+  const [meterNumber, setMeterNumber] = useState("");
+  const [electricityAccountName, setElectricityAccountName] = useState("");
+  const [amount, setAmount] = useState("");
+  const [addToBeneficiaries, setAddToBeneficiaries] = useState(false);
+  const [cardError, setCardError] = useState<string | undefined>();
+  const [amountError, setAmountError] = useState<string | undefined>();
+
+  // ── Data loading ─────────────────────────────────────────────────────────────
+  const fetchProviders = useCallback(async () => {
+    try {
+      const response: any = await BaseRequest.get(MOBILE_SERVICE.ELECTRICITY_GET_BILLER);
+      const list = normalizeElectricityProviders(response?.data || response);
+      setElectricityProviders(list);
+      if (list.length > 0) setElectricityProvider(list[0].id);
+    } catch {
+      setElectricityProviders([]);
+    }
+  }, []);
+
+  useEffect(() => { fetchProviders(); }, [fetchProviders]);
+
+  const selectedElectricityProvider = electricityProviders.find((p) => p.id === electricityProvider);
+
+  // ── onReady emission ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    onReady({
+      service: "electricity",
+      amountToPay: Number(amount || 0),
+      transactionTarget: meterNumber,
+      electricityProviderId: electricityProvider,
+      electricityProviderLabel: selectedElectricityProvider?.label,
+      electricityProviderDescription: selectedElectricityProvider?.description,
+      meterNumber,
+      electricityProduct,
+      electricityAccountName,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [electricityProvider, meterNumber, electricityProduct, electricityAccountName, amount]);
+
+  // ── Validation ───────────────────────────────────────────────────────────────
+  const validate = (): boolean => {
+    setCardError(undefined);
+    setAmountError(undefined);
+
+    if (!selectedElectricityProvider) {
+      setCardError("No electricity provider available right now");
+      return false;
+    }
+    if (meterNumber.trim().length < 6) {
+      setCardError("Enter a valid meter number");
+      return false;
+    }
+    if (Number(amount) <= 0) {
+      setAmountError("Enter a valid amount");
+      return false;
+    }
+    return true;
+  };
+
+  useImperativeHandle(ref, () => ({ validate }));
+
+  // ── Handlers ─────────────────────────────────────────────────────────────────
   const selectedProductLabel =
     electricityProduct.charAt(0).toUpperCase() + electricityProduct.slice(1);
 
@@ -70,6 +111,7 @@ export function ElectricityForm({
     setCardError(undefined);
   };
 
+
   return (
     <View style={styles.container}>
       <View style={styles.fieldBlock}>
@@ -77,7 +119,7 @@ export function ElectricityForm({
         {electricityProviders.length > 0 ? (
           <TouchableOpacity
             style={styles.selectField}
-            onPress={onOpenProviderModal}
+            onPress={() => setShowProviderModal(true)}
             activeOpacity={0.85}
           >
             <ThemedText
@@ -204,9 +246,22 @@ export function ElectricityForm({
           ios_backgroundColor="#D9D9DE"
         />
       </View>
+
+      <ElectricityProviderModal
+        visible={showProviderModal}
+        onClose={() => setShowProviderModal(false)}
+        providers={electricityProviders}
+        selectedId={electricityProvider}
+        onSelect={(id) => {
+          setElectricityProvider(id);
+          setShowProviderModal(false);
+        }}
+      />
     </View>
   );
-}
+});
+
+ElectricityForm.displayName = "ElectricityForm";
 
 const createStyles = (C: typeof Colors.light) =>
   StyleSheet.create({

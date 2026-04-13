@@ -1,6 +1,7 @@
 import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRouter } from "expo-router";
 import { Add, Minus, SearchNormal1, Send } from "iconsax-react-native";
@@ -251,7 +252,7 @@ const LiveChatModal = ({
                   <ThemedText
                     style={[
                       lc.bubbleText,
-                      { color: msg.sender === "support" ? C.text : "#fff" },
+                      { color: msg.sender === "support" ? C.text : palette.white },
                     ]}
                   >
                     {msg.text}
@@ -299,7 +300,7 @@ const LiveChatModal = ({
               onPress={sendMessage}
               style={[lc.sendBtn, { backgroundColor: GREEN_DARK }]}
             >
-              <Send size={16} color='#fff' />
+              <Send size={16} color={palette.white} />
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -476,7 +477,7 @@ const styles = StyleSheet.create({
   brandText: {
     fontSize: 26,
     fontWeight: "800",
-    color: "#fff",
+    color: palette.white,
     fontStyle: "italic",
   },
   supportLabel: {
@@ -493,11 +494,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  closeX: { color: "#fff", fontSize: 20, lineHeight: 22 },
+  closeX: { color: palette.white, fontSize: 20, lineHeight: 22 },
   heroText: {
     fontSize: 20,
     fontWeight: "800",
-    color: "#fff",
+    color: palette.white,
     marginBottom: 20,
   },
   searchBar: {
@@ -509,7 +510,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
     gap: 10,
   },
-  searchInput: { flex: 1, fontSize: 15, color: "#fff", padding: 0 },
+  searchInput: { flex: 1, fontSize: 15, color: palette.white, padding: 0 },
 
   // Body
   body: {

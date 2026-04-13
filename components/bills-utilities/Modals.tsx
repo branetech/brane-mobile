@@ -6,6 +6,7 @@
  */
 
 import { BraneButton } from "@/components/brane-button";
+
 import type { PaymentOption } from "@/components/payment-method-selector";
 import { ThemedText } from "@/components/themed-text";
 import {
@@ -14,10 +15,14 @@ import {
 } from "@/components/transaction-summary-modal";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import BaseRequest from "@/services";
+import { MOBILE_SERVICE } from "@/services/routes";
 import { useEarnedBracs } from "@/utils/brac";
+import * as Contacts from "expo-contacts";
 import { CloseCircle, SearchNormal1 } from "iconsax-react-native";
-import React from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  Alert,
   Image,
   Modal,
   ScrollView,
@@ -26,17 +31,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { getBettingImageKey, getElectricityImageKey, getTransportImageKey } from "./helpers";
+import { getElectricityImageKey, getTransportImageKey, toArray } from "./helpers";
 import {
-  BETTING_IMAGES,
   BOOST_PRESETS,
   ELECTRICITY_IMAGES,
   NETWORK_IMAGES,
   TRANSPORT_IMAGES,
+  type Beneficiary,
   type CablePlan,
   type DataPlan,
   type SelectOption,
-  type TransportRoute,
+  type TransportRoute
 } from "./types";
 
 // ─── ContactPickerModal ────────────────────────────────────────────────────────
@@ -44,9 +49,7 @@ import {
 type ContactPickerProps = {
   visible: boolean;
   position?: ModalPosition;
-  contactSearch: string;
-  setContactSearch: (v: string) => void;
-  filteredContacts: { name: string; phone: string }[];
+  service: string;
   onClose: () => void;
   onSelect: (phone: string) => void;
 };
@@ -94,7 +97,7 @@ function ModalShell({
         <TouchableOpacity
           activeOpacity={1}
           style={[styles.modalCard, cardStyle]}
-          onPress={() => {}}
+          onPress={() => { }}
         >
           {children}
         </TouchableOpacity>
@@ -106,14 +109,108 @@ function ModalShell({
 export function ContactPickerModal({
   visible,
   position,
-  contactSearch,
-  setContactSearch,
-  filteredContacts,
+  service,
   onClose,
   onSelect,
 }: ContactPickerProps) {
   const scheme = useColorScheme();
   const C = Colors[scheme === "dark" ? "dark" : "light"];
+
+  const [activeTab, setActiveTab] = useState<"contacts" | "beneficiaries">("contacts");
+  const [allContacts, setAllContacts] = useState<{ name: string; phone: string }[]>([]);
+  const [contactSearch, setContactSearch] = useState("");
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
+  const [beneficiarySearch, setBeneficiarySearch] = useState("");
+
+  const filteredBeneficiaries = useMemo(() => {
+    const q = beneficiarySearch.trim().toLowerCase();
+    if (!q) return beneficiaries;
+    return beneficiaries.filter(
+      (item) =>
+        String(item.name || "").toLowerCase().includes(q) ||
+        String(item.phone || "").toLowerCase().includes(q),
+    );
+  }, [beneficiaries, beneficiarySearch]);
+
+  const filteredContacts = useMemo(() => {
+    const q = contactSearch.trim().toLowerCase();
+    if (!q) return allContacts.slice(0, 50);
+    return allContacts
+      .filter((c) => c.name.toLowerCase().includes(q) || c.phone.includes(q))
+      .slice(0, 50);
+  }, [allContacts, contactSearch]);
+
+  const fetchBeneficiaries = useCallback(async () => {
+    const category: "airtime" | "data" = service === "data" ? "data" : "airtime";
+    try {
+      const response: any = await BaseRequest.get(
+        `${MOBILE_SERVICE.BENEFICIARY}?perPage=50&currentPage=0&category=${category}`,
+      );
+      setBeneficiaries(
+        toArray(response).map((item: any, index: number) => ({
+          id: String(item?.id || index),
+          name: String(item?.name || "Unknown"),
+          phone: String(item?.phone || ""),
+          networkProvider: String(item?.networkProvider || item?.serviceId || ""),
+        })),
+      );
+    } catch {
+      setBeneficiaries([]);
+    }
+  }, [service]);
+
+  const loadContacts = useCallback(async () => {
+    const { status } = await Contacts.requestPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission needed",
+        "Allow contacts access to pick a phone number.",
+      );
+      return;
+    }
+    const { data } = await Contacts.getContactsAsync({
+      fields: [Contacts.Fields.PhoneNumbers, Contacts.Fields.Name],
+    });
+    const flat = data
+      .flatMap((c: Contacts.Contact) =>
+        (c.phoneNumbers || []).map((p: Contacts.PhoneNumber) => ({
+          name: c.name || "",
+          phone: (p.number || "").replace(/[\s\-().+]/g, ""),
+        })),
+      )
+      .filter((c: { name: string; phone: string }) => c.phone.length >= 7);
+    setAllContacts(flat);
+    setContactSearch("");
+  }, []);
+
+  // Load data when modal becomes visible or active tab changes
+  useEffect(() => {
+    if (!visible) return;
+    if (activeTab === "contacts" && allContacts.length === 0) {
+      loadContacts();
+    } else if (activeTab === "beneficiaries") {
+      fetchBeneficiaries();
+    }
+  }, [visible, activeTab, loadContacts, fetchBeneficiaries, allContacts.length]);
+
+  // Reset tab + search when modal closes
+  useEffect(() => {
+    if (!visible) {
+      setActiveTab("contacts");
+      setContactSearch("");
+      setBeneficiarySearch("");
+    }
+  }, [visible]);
+
+  const handleSelect = (rawPhone: string) => {
+    const digits = rawPhone.replace(/\D/g, "");
+    const normalized = digits.startsWith("0")
+      ? digits.slice(1)
+      : digits.startsWith("234")
+        ? digits.slice(3)
+        : digits;
+    onSelect(normalized);
+  };
 
   return (
     <ModalShell
@@ -131,6 +228,37 @@ export function ContactPickerModal({
         </TouchableOpacity>
       </View>
 
+      {/* Tab switcher */}
+      <View style={[styles.contactTabRow, { borderBottomColor: C.border }]}>
+        <TouchableOpacity
+          style={styles.contactTab}
+          onPress={() => setActiveTab("contacts")}
+        >
+          <ThemedText
+            style={[styles.contactTabText, { color: activeTab === "contacts" ? C.primary : C.muted }]}
+          >
+            Contacts
+          </ThemedText>
+          {activeTab === "contacts" && (
+            <View style={[styles.contactTabUnderline, { backgroundColor: C.primary }]} />
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.contactTab}
+          onPress={() => setActiveTab("beneficiaries")}
+        >
+          <ThemedText
+            style={[styles.contactTabText, { color: activeTab === "beneficiaries" ? C.primary : C.muted }]}
+          >
+            Beneficiaries
+          </ThemedText>
+          {activeTab === "beneficiaries" && (
+            <View style={[styles.contactTabUnderline, { backgroundColor: C.primary }]} />
+          )}
+        </TouchableOpacity>
+      </View>
+
+      {/* Search bar */}
       <View
         style={[
           styles.contactSearchRow,
@@ -140,62 +268,76 @@ export function ContactPickerModal({
         <SearchNormal1 size={16} color={C.muted} variant='Outline' />
         <TextInput
           style={[styles.searchInput, { color: C.text }]}
-          placeholder='Search contacts'
+          placeholder={activeTab === "contacts" ? "Search contacts" : "Search beneficiaries"}
           placeholderTextColor={C.muted}
-          value={contactSearch}
-          onChangeText={setContactSearch}
+          value={activeTab === "contacts" ? contactSearch : beneficiarySearch}
+          onChangeText={activeTab === "contacts" ? setContactSearch : setBeneficiarySearch}
         />
       </View>
 
-      <ScrollView
-        style={styles.modalList}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps='handled'
-      >
-        {filteredContacts.map((c, idx) => (
-          <TouchableOpacity
-            key={`${c.phone}-${idx}`}
-            style={[styles.contactRow, { borderBottomColor: C.border }]}
-            onPress={() => {
-              const digits = c.phone.replace(/\D/g, "");
-              const normalized = digits.startsWith("0")
-                ? digits.slice(1)
-                : digits.startsWith("234")
-                  ? digits.slice(3)
-                  : digits;
-              onSelect(normalized);
-            }}
-          >
-            <View
-              style={[
-                styles.contactAvatar,
-                { backgroundColor: C.primary + "20" },
-              ]}
+      {/* Contacts list */}
+      {activeTab === "contacts" && (
+        <ScrollView
+          style={styles.modalList}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps='handled'
+        >
+          {filteredContacts.map((c, idx) => (
+            <TouchableOpacity
+              key={`${c.phone}-${idx}`}
+              style={[styles.contactRow, { borderBottomColor: C.border }]}
+              onPress={() => handleSelect(c.phone)}
             >
-              <ThemedText
-                style={[styles.contactAvatarText, { color: C.primary }]}
-              >
-                {(c.name[0] || "?").toUpperCase()}
-              </ThemedText>
-            </View>
-            <View style={{ flex: 1 }}>
-              <ThemedText style={[styles.contactName, { color: C.text }]}>
-                {c.name}
-              </ThemedText>
-              <ThemedText style={[styles.contactPhone, { color: C.muted }]}>
-                {c.phone}
-              </ThemedText>
-            </View>
-          </TouchableOpacity>
-        ))}
-        {filteredContacts.length === 0 ? (
-          <ThemedText
-            style={[styles.emptyText, { padding: 16, color: C.muted }]}
-          >
-            No contacts found
-          </ThemedText>
-        ) : null}
-      </ScrollView>
+              <View style={[styles.contactAvatar, { backgroundColor: C.primary + "20" }]}>
+                <ThemedText style={[styles.contactAvatarText, { color: C.primary }]}>
+                  {(c.name[0] || "?").toUpperCase()}
+                </ThemedText>
+              </View>
+              <View style={{ flex: 1 }}>
+                <ThemedText style={[styles.contactName, { color: C.text }]}>{c.name}</ThemedText>
+                <ThemedText style={[styles.contactPhone, { color: C.muted }]}>{c.phone}</ThemedText>
+              </View>
+            </TouchableOpacity>
+          ))}
+          {filteredContacts.length === 0 && (
+            <ThemedText style={[styles.emptyText, { padding: 16, color: C.muted }]}>
+              No contacts found
+            </ThemedText>
+          )}
+        </ScrollView>
+      )}
+
+      {/* Beneficiaries list */}
+      {activeTab === "beneficiaries" && (
+        <ScrollView
+          style={styles.modalList}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps='handled'
+        >
+          {filteredBeneficiaries.map((b, idx) => (
+            <TouchableOpacity
+              key={`${b.phone}-${idx}`}
+              style={[styles.contactRow, { borderBottomColor: C.border }]}
+              onPress={() => handleSelect(b.phone)}
+            >
+              <View style={[styles.contactAvatar, { backgroundColor: C.primary + "20" }]}>
+                <ThemedText style={[styles.contactAvatarText, { color: C.primary }]}>
+                  {(b.name[0] || "?").toUpperCase()}
+                </ThemedText>
+              </View>
+              <View style={{ flex: 1 }}>
+                <ThemedText style={[styles.contactName, { color: C.text }]}>{b.name}</ThemedText>
+                <ThemedText style={[styles.contactPhone, { color: C.muted }]}>{b.phone}</ThemedText>
+              </View>
+            </TouchableOpacity>
+          ))}
+          {filteredBeneficiaries.length === 0 && (
+            <ThemedText style={[styles.emptyText, { padding: 16, color: C.muted }]}>
+              No beneficiaries found
+            </ThemedText>
+          )}
+        </ScrollView>
+      )}
     </ModalShell>
   );
 }
@@ -364,11 +506,11 @@ export function SummaryModal({
     },
     ...(isAirtime
       ? [
-          {
-            label: "Cash Boost",
-            value: `₦ ${formatMoney(appliedBoost)}`,
-          } as TransactionRow,
-        ]
+        {
+          label: "Cash Boost",
+          value: `₦ ${formatMoney(appliedBoost)}`,
+        } as TransactionRow,
+      ]
       : []),
     { label: "Service Fee", value: "₦ 0.00" },
     {
@@ -393,7 +535,7 @@ export function SummaryModal({
       bracsReward={bracs}
       bracsBoost={appliedBoost}
       rewardBannerLabel={
-        isAirtime ? "Bracs reward + cash boost" : "Bracs reward"
+        isAirtime ? "Bracs + Cash Booster" : "Bracs"
       }
       rewardBannerValue={
         isAirtime
@@ -442,7 +584,7 @@ export function BracsTooltipModal({
         Rebate+ Added Funds
       </ThemedText>
       <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
-        Bracs reward is the bonus you get from every transaction and can be used
+        Bracs are the rebates you get from every transaction and can be used
         for investment.
       </ThemedText>
       <ThemedText style={[styles.bracsTooltipBody, { color: C.text }]}>
@@ -569,7 +711,7 @@ export function DataPlanModal({
               style={[
                 styles.planCategoryTabText,
                 dataPlanCategory === tab.key &&
-                  styles.planCategoryTabTextActive,
+                styles.planCategoryTabTextActive,
               ]}
             >
               {tab.label}
@@ -1097,6 +1239,29 @@ const styles = StyleSheet.create({
   contactAvatarText: { fontSize: 14, fontWeight: "700", color: "#013D25" },
   contactName: { fontSize: 13, color: "#0B0014", fontWeight: "600" },
   contactPhone: { fontSize: 11, color: "#7A7A80", marginTop: 2 },
+  contactTabRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    marginBottom: 12,
+  },
+  contactTab: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: "center",
+    position: "relative",
+  },
+  contactTabText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  contactTabUnderline: {
+    position: "absolute",
+    bottom: -1,
+    left: 0,
+    right: 0,
+    height: 2,
+    borderRadius: 2,
+  },
   // Boost modal
   boostModalCard: {
     backgroundColor: "#FFFFFF",

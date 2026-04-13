@@ -54,7 +54,7 @@ export const HomeCard = () => {
             </View>
            
           </View>
-           <View center>
+           <View center mt={8}>
               {isLoading ? (
                 <ActivityIndicator size='small' color={"#fff"} />
               ) : (
@@ -71,8 +71,8 @@ export const HomeCard = () => {
                 onPress={() => {
                   router.push("/add-funds");
                 }}
-                backgroundColor={C.primary}
-                textColor={C.background}
+                backgroundColor={'#D3EBE1'}
+                textColor={'#013D25'}
                 radius={32}
               />
 
@@ -83,7 +83,6 @@ export const HomeCard = () => {
                 onPress={() => router.push("/wallet")}
                 backgroundColor={"#D2F1E41A"}
                 textColor={"#fff"}
-
                 radius={32}
               />
             </View>

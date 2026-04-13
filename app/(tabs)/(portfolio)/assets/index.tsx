@@ -3,6 +3,7 @@ import { StockItemCard } from "@/components/home/cards";
 import { SearchInput } from "@/components/search-input";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { onAddToCheckouts } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
@@ -422,7 +423,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   badgeText: {
-    color: "#FFFFFF",
+    color: palette.white,
     fontSize: 11,
     fontWeight: "600",
   },

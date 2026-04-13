@@ -3,6 +3,7 @@ import { FormInput, mapFormikProps } from "@/components/formInput";
 import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useFormHandler } from "@/hooks/use-formik";
 import BaseRequest, { parseNetworkError } from "@/services";
@@ -258,12 +259,12 @@ const styles = StyleSheet.create({
   addCardBtn: {
     height: 40,
     borderRadius: 8,
-    backgroundColor: "#013D25",
+    backgroundColor: palette.brandDeep,
     justifyContent: "center",
     alignItems: "center",
   },
   addCardBtnText: {
-    color: "#fff",
+    color: palette.white,
     fontSize: 16,
     fontWeight: "bold",
   },

@@ -3,6 +3,7 @@ import { BraneButton } from "@/components/brane-button";
 import { MyCalendar } from "@/components/calandar";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
@@ -654,7 +655,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#D0D0D0",
+    backgroundColor: palette.gray50,
     alignSelf: "center",
     marginBottom: 16,
   },
@@ -688,7 +689,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  checkmark: { color: "#fff", fontSize: 12, fontWeight: "700" },
+    checkmark: { color: palette.white, fontSize: 12, fontWeight: "700" },
   dateRow: {
     flexDirection: "row",
     alignItems: "center",

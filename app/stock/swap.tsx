@@ -4,6 +4,7 @@ import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
@@ -168,7 +169,7 @@ export default function BracsSwapScreen() {
                 <ThemedText
                   style={[
                     styles.assetTypeText,
-                    { color: selectedAsset === at ? "#fff" : C.muted },
+                    { color: selectedAsset === at ? palette.white : C.muted },
                   ]}
                 >
                   {at}
@@ -365,7 +366,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   balanceLabelText: { fontSize: 12 },
-  balanceAmount: { fontSize: 24, fontWeight: "800", color: "#fff" },
+  balanceAmount: { fontSize: 24, fontWeight: "800", color: palette.white },
   swapBox: {
     borderWidth: 1,
     borderRadius: 12,

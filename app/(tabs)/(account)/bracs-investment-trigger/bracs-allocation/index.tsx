@@ -2,6 +2,7 @@ import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -78,7 +79,7 @@ const SliderCard = ({
         thumbTintColor='#013D25'
       />
 
-      <View style={[sliderStyles.divider, { backgroundColor: "#F7F7F8" }]} />
+      <View style={[sliderStyles.divider, { backgroundColor: palette.surface100 }]} />
     </View>
   );
 };
@@ -247,15 +248,15 @@ export default function BracsAllocationScreen() {
               <Text style={[styles.aiTitle, { color: "#342A3B" }]}>
                 AI Recommended Trades
               </Text>
-              <Text style={[styles.aiDesc, { color: "#85808A" }]}>
+              <Text style={[styles.aiDesc, { color: palette.gray350 }]}>
                 Enable or disable AI recommended trades
               </Text>
             </View>
             <Switch
               value={isAiTradesEnabled}
               onValueChange={setIsAiTradesEnabled}
-              trackColor={{ false: "#E7E6E8", true: "#D2F1E4" }}
-              thumbColor={isAiTradesEnabled ? "#013D25" : "#ACAAAD"}
+              trackColor={{ false: "#E7E6E8", true: palette.brandMint }}
+              thumbColor={isAiTradesEnabled ? palette.brandDeep : "#ACAAAD"}
               ios_backgroundColor='#E7E6E8'
             />
           </View>
@@ -265,8 +266,8 @@ export default function BracsAllocationScreen() {
             <BraneButton
               text='Save Settings'
               onPress={handleSave}
-              backgroundColor={isValid ? "#013D25" : "#AABEB6"}
-              textColor={isValid ? "#D2F1E4" : "#8CA198"}
+              backgroundColor={isValid ? palette.brandDeep : "#AABEB6"}
+              textColor={isValid ? palette.brandMint : "#8CA198"}
               height={50}
               radius={12}
               loading={isLoading}

@@ -2,6 +2,7 @@ import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -87,7 +88,7 @@ const SallyIntroModal = ({
     <Pressable style={styles.modalOverlay} onPress={onClose}>
       <Pressable style={{ width: "100%" }} onPress={() => {}}>
         <LinearGradient
-          colors={["#E7DCB1", "#ffffff"]}
+          colors={["#E7DCB1", palette.white]}
           style={[styles.modalSheet, styles.centeredSheet]}
         >
           <ScrollView
@@ -103,11 +104,11 @@ const SallyIntroModal = ({
               />
             </View>
 
-            <Text style={[styles.introTitle, { color: "#0B0014" }]}>
+            <Text style={[styles.introTitle, { color: palette.ink }]}>
               Let Sally Invest for You
             </Text>
 
-            <Text style={[styles.introDesc, { color: "#404040" }]}>
+            <Text style={[styles.introDesc, { color: palette.gray700 }]}>
               Sally automatically invests your Bracs into diversified assets
               once you reach your set goal. You can modify this anytime.
             </Text>
@@ -190,7 +191,7 @@ const SallyConfigModal = ({
           style={[
             styles.modalSheet,
             styles.centeredSheet,
-            { backgroundColor: "#ffffff" },
+            { backgroundColor: palette.white },
           ]}
           onPress={() => {}}
         >
@@ -206,10 +207,10 @@ const SallyConfigModal = ({
 
           {/* Title */}
           <View style={{ marginTop: 16, marginBottom: 8 }}>
-            <Text style={[styles.configTitle, { color: "#0B0014" }]}>
+            <Text style={[styles.configTitle, { color: palette.ink }]}>
               Sally For You and With You
             </Text>
-            <Text style={[styles.configSubtitle, { color: "#85808A" }]}>
+            <Text style={[styles.configSubtitle, { color: palette.gray350 }]}>
               Set a threshold for how Sally auto invests your Bracs into
               diversified assets.
             </Text>
@@ -218,7 +219,7 @@ const SallyConfigModal = ({
           {/* Slider */}
           <View style={{ marginTop: 32 }}>
             <View style={styles.thresholdRow}>
-              <Text style={[styles.thresholdLabel, { color: "#0B0014" }]}>
+              <Text style={[styles.thresholdLabel, { color: palette.ink }]}>
                 Drag to set threshold
               </Text>
               <InfoCircle size={16} color='#342A3B' />
@@ -252,10 +253,10 @@ const SallyConfigModal = ({
                   step={5}
                   value={threshold}
                   onValueChange={setThreshold}
-                  minimumTrackTintColor='#013D25'
+                  minimumTrackTintColor={palette.brandDeep}
                   maximumTrackTintColor='#E7E6E8'
                   thumbTintColor={
-                    Platform.OS === "android" ? "#013D25" : undefined
+                    Platform.OS === "android" ? palette.brandDeep : undefined
                   }
                 />
               </View>
@@ -296,7 +297,7 @@ const OptionRow = ({
   onRowPress?: () => void;
   C: (typeof Colors)["light"];
 }) => (
-  <View style={[styles.optionRow, { borderBottomColor: "#F7F7F8" }]}>
+  <View style={[styles.optionRow, { borderBottomColor: palette.surface100 }]}>
     <TouchableOpacity
       style={styles.optionLeft}
       onPress={onRowPress}
@@ -311,7 +312,7 @@ const OptionRow = ({
           </View>
         )}
       </View>
-      <Text style={[styles.optionDesc, { color: "#85808A" }]}>
+      <Text style={[styles.optionDesc, { color: palette.gray350 }]}>
         {description}
       </Text>
     </TouchableOpacity>
@@ -319,8 +320,8 @@ const OptionRow = ({
     <Switch
       value={isSelected}
       onValueChange={onToggle}
-      trackColor={{ false: "#E7E6E8", true: "#D2F1E4" }}
-      thumbColor={isSelected ? "#013D25" : "#ACAAAD"}
+      trackColor={{ false: "#E7E6E8", true: palette.brandMint }}
+      thumbColor={isSelected ? palette.brandDeep : "#ACAAAD"}
       ios_backgroundColor='#E7E6E8'
     />
   </View>
@@ -529,7 +530,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 12,
   },
-  comingSoonText: { fontSize: 11, color: "#404040", fontWeight: "500" },
+  comingSoonText: { fontSize: 11, color: palette.gray700, fontWeight: "500" },
 
   // Modal overlay — centered
   modalOverlay: {
@@ -575,8 +576,7 @@ const styles = StyleSheet.create({
   benefitText: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#404040",
-    flexShrink: 1,
+    color: palette.gray700,
   },
 
   // Sally config modal
@@ -603,5 +603,5 @@ const styles = StyleSheet.create({
     width: 60,
     zIndex: 10,
   },
-  tooltipText: { fontSize: 9, color: "#404040", fontWeight: "500" },
+  tooltipText: { fontSize: 9, color: palette.gray700, fontWeight: "500" },
 });

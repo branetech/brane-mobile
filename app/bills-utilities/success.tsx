@@ -1,6 +1,7 @@
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -52,7 +53,7 @@ export default function BillsSuccessScreen() {
           />
           <Path
             d="M64.6393 40.4384L45.3193 59.7584C44.7593 60.3184 43.9993 60.6384 43.1993 60.6384C42.3993 60.6384 41.6393 60.3184 41.0793 59.7584L31.3993 50.0784C30.2393 48.9184 30.2393 46.9984 31.3993 45.8384C32.5593 44.6784 34.4793 44.6784 35.6393 45.8384L43.1993 53.3984L60.3993 36.1984C61.5593 35.0384 63.4793 35.0384 64.6393 36.1984C65.7993 37.3584 65.7993 39.2784 64.6393 40.4384Z"
-            fill="#013D25"
+            fill={palette.brandDeep}
           />
         </Svg>
 
@@ -81,7 +82,7 @@ export default function BillsSuccessScreen() {
             text="Buy Again"
             onPress={() => router.back()}
             backgroundColor={C.primary}
-            textColor="#D2F1E4"
+            textColor={palette.brandMint}
             height={52}
             radius={32}
           />
@@ -92,7 +93,7 @@ export default function BillsSuccessScreen() {
             onPress={() => {
               router.navigate("/(tabs)/utilities" as any);
             }}
-            backgroundColor="#D2F1E4"
+            backgroundColor={palette.brandMint}
             textColor={C.primary}
             height={52}
             radius={32}

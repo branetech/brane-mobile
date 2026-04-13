@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { palette } from "@/constants";
 
 const COLORS = {
   green: "#1a6644",
@@ -17,7 +18,7 @@ const COLORS = {
   text: "#1a1a1a",
   subtext: "#9e9e9e",
   border: "#f0f0f0",
-  white: "#fff",
+  white: palette.white,
 };
 
 type RowItem = {

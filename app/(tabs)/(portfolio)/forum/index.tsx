@@ -3,6 +3,7 @@ import { LearnCard } from "@/components/home/cards";
 import { SearchInput } from "@/components/search-input";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { FORUM_POSTS } from "@/utils";
 import { useRouter } from "expo-router";
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   ctaText: {
-    color: "#D2F1E4",
+    color: palette.brandMint,
     fontSize: 14,
     fontWeight: "700",
   },

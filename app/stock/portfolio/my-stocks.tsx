@@ -1,6 +1,7 @@
 import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { STOCKS_SERVICE } from "@/services/routes";
@@ -109,7 +110,7 @@ export default function MyStocksScreen() {
           router.push(`/portfolio/company/${item.tickerSymbol}` as any)
         }
       >
-        <View style={{ ...styles.tickerBadge, backgroundColor: "#D2F1E4" }}>
+        <View style={{ ...styles.tickerBadge, backgroundColor: palette.brandMint }}>
           <ThemedText style={[styles.tickerText, { color: C.primary }]}>
             {item.tickerSymbol}
           </ThemedText>

@@ -1,6 +1,7 @@
 import { Header } from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -66,21 +67,21 @@ const getServiceColors = (
 ): Record<ServiceFilter, string> => {
   const isDark = scheme === "dark";
   return {
-    all: "#013D25",
-    airtime: isDark ? "#013D2530" : "#D2F1E4",
-    data: isDark ? "#F5A62330" : "#FFF3DB",
-    electricity: isDark ? "#4A90E230" : "#E1F0FF",
-    cable: isDark ? "#E24A4A30" : "#FFE8E8",
-    betting: isDark ? "#9B59B630" : "#EDE1FF",
+    all: palette.brandDeep,
+    airtime: isDark ? palette.brandDeep + "30" : palette.brandMint,
+    data: isDark ? palette.chartOrange + "30" : palette.spendDataBg,
+    electricity: isDark ? palette.chartBlue + "30" : palette.spendElectricBg,
+    cable: isDark ? palette.chartRed + "30" : palette.spendCableBg,
+    betting: isDark ? palette.chartPurple + "30" : palette.spendBettingBg,
   };
 };
 
 const SERVICE_BAR_COLORS: Record<string, string> = {
-  airtime: "#013D25",
-  data: "#F5A623",
-  electricity: "#4A90E2",
-  cable: "#E24A4A",
-  betting: "#9B59B6",
+  airtime: palette.brandDeep,
+  data: palette.chartOrange,
+  electricity: palette.chartBlue,
+  cable: palette.chartRed,
+  betting: palette.chartPurple,
 };
 
 const getServiceColor = (
@@ -90,10 +91,10 @@ const getServiceColor = (
 ): string => {
   const isDark = scheme === "dark";
   if (service === "airtime") return C.primary + "25";
-  if (service === "data") return isDark ? C.primary + "15" : "#FFF3DB";
-  if (service === "electricity") return isDark ? C.primary + "15" : "#E1F0FF";
-  if (service === "cable") return isDark ? C.primary + "15" : "#FFE8E8";
-  if (service === "betting") return isDark ? C.primary + "15" : "#EDE1FF";
+  if (service === "data") return isDark ? C.primary + "15" : palette.spendDataBg;
+  if (service === "electricity") return isDark ? C.primary + "15" : palette.spendElectricBg;
+  if (service === "cable") return isDark ? C.primary + "15" : palette.spendCableBg;
+  if (service === "betting") return isDark ? C.primary + "15" : palette.spendBettingBg;
   return C.primary + "15";
 };
 
@@ -248,7 +249,7 @@ export default function SpendingPatternScreen() {
                 style={{
                   ...styles.summaryCard,
                   backgroundColor:
-                    themeScheme === "dark" ? C.primary + "15" : "#FFF3DB",
+                    themeScheme === "dark" ? C.primary + "15" : palette.spendDataBg,
                   flex: 1,
                 }}
                 gap={4}

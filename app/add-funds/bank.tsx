@@ -2,6 +2,7 @@ import { BankIcon } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
 import { WalletNotFound } from "@/components/wallet-not-found";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppState } from "@/redux/store";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -105,10 +106,10 @@ export function FundWithBankScren() {
           {/* Action icons */}
           <View style={styles.actionsRow}>
             <TouchableOpacity onPress={handleShare} activeOpacity={0.7}>
-              <ExportCurve size={16} color='#AFC9BE' />
+              <ExportCurve size={16} color={palette.cardTeal} />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleCopy} activeOpacity={0.7}>
-              <Copy size={22} color='#AFC9BE' />
+              <Copy size={22} color={palette.cardTeal} />
             </TouchableOpacity>
           </View>
         </View>
@@ -165,14 +166,14 @@ const styles = StyleSheet.create({
     minHeight: 95,
   },
   detailsCol: { gap: 2 },
-  accountName: { fontSize: 13, color: "#AFC9BE", textTransform: "capitalize" },
+  accountName: { fontSize: 13, color: palette.cardTeal, textTransform: "capitalize" },
   accountNumber: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: palette.white,
     marginVertical: 2,
   },
-  bankName: { fontSize: 13, color: "#AFC9BE" },
+  bankName: { fontSize: 13, color: palette.cardTeal },
 
   actionsRow: { flexDirection: "row", gap: 16, alignItems: "center" },
 });

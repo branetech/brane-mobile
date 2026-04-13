@@ -9,6 +9,7 @@ import { useCallback, useState } from "react";
 import { useRouter } from "expo-router";
 import EnterAmount from "@/components/portfolio/enter-amount";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ThemedText } from "@/components/themed-text";
 import { BraneButton } from "@/components/brane-button";
@@ -105,7 +106,7 @@ export default function WithdrawScreen() {
               text='Done'
               onPress={handleDone}
               backgroundColor={C.primary}
-              textColor='#D2F1E4'
+              textColor={palette.brandMint}
               height={52}
               radius={12}
             />

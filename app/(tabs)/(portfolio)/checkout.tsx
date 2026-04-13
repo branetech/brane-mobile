@@ -11,6 +11,7 @@ import { SuccessPage } from "@/components/success-page";
 import { ThemedText } from "@/components/themed-text";
 import { TransactionPinValidator } from "@/components/transaction-pin-validator";
 import { Colors } from "@/constants/colors";
+import { palette } from "@/constants";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { onClearCheckouts } from "@/redux/slice/auth-slice";
 import { useAppState } from "@/redux/store";
@@ -127,8 +128,8 @@ const Checkout = () => {
       showAppLoader({
         message: "Processing Transaction",
         style: { backgroundColor: "rgba(1, 61, 37, .60)" },
-        textStyle: { color: "#FFFFFF" },
-        spinnerColor: "#FFFFFF",
+        textStyle: { color: palette.white },
+        spinnerColor: palette.white,
       });
 
       const { message }: any = await BaseRequest.post(STOCKS_SERVICE.BUY, {
@@ -183,7 +184,7 @@ const Checkout = () => {
                 setErrorMessage("");
               }}
               backgroundColor={C.primary}
-              textColor='#D2F1E4'
+              textColor={palette.brandMint}
               height={52}
               radius={12}
             />
@@ -289,7 +290,7 @@ const Checkout = () => {
             onPress={handleConfirmPayment}
             disabled={isDisabled}
             backgroundColor={C.primary}
-            textColor='#D2F1E4'
+            textColor={palette.brandMint}
             height={48}
             radius={12}
           />
@@ -315,11 +316,11 @@ export default Checkout;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: palette.white,
   },
   scrollView: {
     flex: 1,
-    backgroundColor: "#F7F7F8",
+    backgroundColor: palette.surface100,
   },
   scrollContent: {
     paddingTop: 20,
@@ -337,16 +338,16 @@ const styles = StyleSheet.create({
   totalsCard: {
     marginHorizontal: 16,
     padding: 16,
-    backgroundColor: "#fff",
+    backgroundColor: palette.white,
     borderRadius: 12,
   },
   divider: {
     height: 1,
-    backgroundColor: "#F7F7F8",
+    backgroundColor: palette.surface100,
     marginVertical: 12,
   },
   netPaidLabel: {
-    color: "#0B0014",
+    color: palette.ink,
     fontSize: 12,
   },
 
