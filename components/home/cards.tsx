@@ -257,6 +257,7 @@ export const TransactionLineItem2 = ({
         shadowOpacity: 1,
         shadowRadius: 12,
         elevation: 5,
+        backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
         borderRadius,
         marginBottom: 2,
       }}

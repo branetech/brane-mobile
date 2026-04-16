@@ -104,7 +104,7 @@ export const Transactions = forwardRef((props, ref) => {
 
   const handleTransactionPress = (transactionId: string) => {
     router.push({
-      pathname: "/(tabs)/(transaction)/[details]",
+      pathname: "/transaction-detail/[details]" as any,
       params: { details: transactionId },
     });
   };

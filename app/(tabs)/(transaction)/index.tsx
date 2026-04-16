@@ -4,8 +4,8 @@ import { EmptyState } from "@/components/empty-state";
 import { GroupedTransactions } from "@/components/home/home-transaction/grouped-transaction";
 import { SearchInput } from "@/components/search-input";
 import { ThemedText } from "@/components/themed-text";
-import { Colors } from "@/constants/colors";
 import { palette } from "@/constants";
+import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -15,20 +15,20 @@ import { format, isValid, parseISO } from "date-fns";
 import { useRouter } from "expo-router";
 import { CloseCircle, Setting4 } from "iconsax-react-native";
 import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import {
-    ActivityIndicator,
-    Modal,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Modal,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -319,7 +319,7 @@ export default function TransactionScreen() {
               transactions={transactions}
               onPressTransaction={(id) =>
                 router.push({
-                  pathname: "/(tabs)/(transaction)/[details]" as any,
+                  pathname: "/transaction-detail/[details]" as any,
                   params: { details: id },
                 })
               }

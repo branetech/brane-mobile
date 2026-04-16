@@ -147,7 +147,7 @@ export default function PortfolioScreen() {
         <View style={{ height: 20 }} />
       </ScrollView>
 
-      <BottomNav active='portfolio' />
+      {/* <BottomNav active='portfolio' /> */}
 
       <Modal
         visible={showWithdrawModal}

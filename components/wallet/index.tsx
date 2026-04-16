@@ -228,7 +228,7 @@ export default function WalletScreen() {
               activeOpacity={0.8}
               onPress={() =>
                 router.push({
-                  pathname: "/(tabs)/(transaction)/[details]",
+                  pathname: "/transaction-detail/[details]",
                   params: { details: item.id },
                 })
               }
