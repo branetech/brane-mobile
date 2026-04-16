@@ -621,12 +621,12 @@ export const onTransactionPinValidated = async ({
 }) => {
   setRender("preview");
   setIsLoading(true);
-  showAppLoader({
-    message: "Processing Transaction",
-    style: { backgroundColor: "rgba(1, 61, 37, .60)" },
-    textStyle: { color: "#FFFFFF" },
-    spinnerColor: "#FFFFFF",
-  });
+  // showAppLoader({
+  //   message: "Processing Transaction",
+  //   style: { backgroundColor: "rgba(1, 61, 37, .60)" },
+  //   textStyle: { color: "#FFFFFF" },
+  //   spinnerColor: "#FFFFFF",
+  // });
 
   try {
     const { medium, type, cardId, amount, phone } = formData;
