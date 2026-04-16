@@ -142,8 +142,8 @@ export default function UtilitySelectScreen() {
   }, []);
 
   useEffect(() => {
-    fetchPaymentOptions();
-  }, [fetchPaymentOptions]);
+     setShowPinValidator(true);
+  }, []);
 
   // ── Strategy-pattern payment ──────────────────────────────────────────────────
   const startPayment = async () => {
@@ -153,11 +153,11 @@ export default function UtilitySelectScreen() {
 
     const noopRender = (_: string) => {};
     const goToSuccess = () => {
-      hideAppLoader();
-      router.push({
-        pathname: "/bills-utilities/success" as any,
-        params: { title: "Transaction Successful", message: successDescription },
-      });
+      // hideAppLoader();
+      // router.push({
+      //   pathname: "/bills-utilities/success" as any,
+      //   params: { title: "Transaction Successful", message: successDescription },
+      // });
     };
 
     try {
