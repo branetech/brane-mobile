@@ -29,7 +29,7 @@ type RowItem = {
 
 const passwordRows: RowItem[] = [
   { key: "change", label: "Change password", onPress: () => router.push("/(account)/change-password/reset-password") },
-  { key: "forgot", label: "Forgot password",  onPress: () => router.push("/(auth)/forgot-password") },
+  { key: "forgot", label: "Forgot password",  onPress: () => router.push("/forgot-password") },
 ];
 
 export default function LoginSettingsScreen() {

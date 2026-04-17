@@ -49,12 +49,12 @@ export default function Onboarding() {
 
   const handleCreateAccount = async () => {
     await completeOnboarding();
-    router.replace('/(auth)/signup');
+    router.replace('/signup');
   };
 
   const handleLogin = async () => {
     await completeOnboarding();
-    router.replace('/(auth)/login');
+    router.replace('/login');
   };
 
   return (

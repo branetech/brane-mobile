@@ -30,7 +30,7 @@ export default function Index() {
 
         if (hasRegistered) {
           // Returning user who logged out — skip straight to login
-          router.replace("/(auth)/login");
+          router.replace("/login");
         } else if (!hasSeenFirstSplash) {
           // Brand new install — show splash first
           router.replace("/splash");
@@ -39,7 +39,7 @@ export default function Index() {
           router.replace("/splash/onboard");
         } else {
           // Completed onboarding but never registered
-          router.replace("/(auth)/login");
+          router.replace("/login");
         }
       } finally {
         setIsChecking(false);

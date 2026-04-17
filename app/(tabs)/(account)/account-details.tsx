@@ -224,7 +224,7 @@ export default function AccountDetailsScreen() {
 
       // Navigate to login after success
       setTimeout(() => {
-        router.replace("/(auth)/login");
+        router.replace("/login");
       }, 2000);
     } catch (error) {
       catchError(error);

@@ -54,7 +54,7 @@ export default function DeleteAccountScreen() {
     try {
       await BaseRequest.post(AUTH_SERVICE.DELETE, { otp });
       dispatch(logOut());
-      router.replace("/(auth)/login");
+      router.replace("/login");
     } catch (error) {
       catchError(error);
     } finally {
