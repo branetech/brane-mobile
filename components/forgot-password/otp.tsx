@@ -1,4 +1,5 @@
 import { ThemedText } from "@/components/themed-text";
+import { spacing } from "@/constants";
 import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
@@ -67,7 +68,7 @@ export default function OTP({
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <View flex py={"12%"} px={"6%"} spaced>
+      <View flex py={spacing["4xl"]} px={spacing.safe} spaced>
         <View gap={24}>
           <Back onPress={back} />
           <View gap={8}>

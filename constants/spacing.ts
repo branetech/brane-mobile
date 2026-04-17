@@ -17,6 +17,7 @@ export const spacing = {
   lg:    12,
   xl:    16,
   '2xl': 20,
+  safe: 20,
   '3xl': 24,
   '4xl': 32,
   '5xl': 40,

@@ -8,6 +8,7 @@ import * as yup from "yup";
 import Back from "../back";
 import { BraneButton } from "../brane-button";
 import { FormInput, mapFormikProps } from "../formInput";
+import { spacing } from "@/constants";
 
 interface RegisterProps {
   onSubmitEmail: (data: any) => void;
@@ -49,7 +50,7 @@ export default function ConfirmPassword({
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <View flex py={"12%"} px={"6%"} spaced>
+      <View flex py={spacing["4xl"]} px={spacing.safe} spaced>
         <View gap={24}>
           <Back onPress={back} />
           <View gap={8}>

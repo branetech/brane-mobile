@@ -1,8 +1,8 @@
 import Back from "@/components/back";
 import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
-import { Colors } from "@/constants/colors";
 import { palette } from "@/constants";
+import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest, { catchError } from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -11,11 +11,11 @@ import { View } from "@idimma/rn-widget";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    RefreshControl,
-    StyleSheet,
-    TouchableOpacity,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -108,7 +108,7 @@ export default function StockTransactionScreen() {
         activeOpacity={0.7}
         onPress={() =>
           router.push({
-            pathname: "/transaction/stocks/[details]",
+            pathname: "/(transaction)/stocks/[details]",
             params: { details: String(item?.id || item?._id || "") },
           })
         }
@@ -354,7 +354,7 @@ function DetailRow({
 }: {
   label: string;
   value: string;
-  C: (typeof Colors)["light"];
+  C: any;
 }) {
   return (
     <View style={styles.detailRow}>

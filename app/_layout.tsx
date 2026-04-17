@@ -84,7 +84,7 @@ function RootLayoutContent() {
       >
         <ThemeProvider value={navigationTheme}>
           <Stack screenOptions={{ headerShown: false }} />
-          <StatusBar />
+          <StatusBar animated style="inverted"/>
           <Toaster />
         </ThemeProvider>
       </WidgetProvider>

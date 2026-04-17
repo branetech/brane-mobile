@@ -1,7 +1,7 @@
 import Back from "@/components/back";
 import { ThemedText } from "@/components/themed-text";
-import { Colors } from "@/constants/colors";
 import { palette } from "@/constants";
+import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BaseRequest from "@/services";
 import { TRANSACTION_SERVICE } from "@/services/routes";
@@ -11,11 +11,11 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { InfoCircle } from "iconsax-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    View,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -230,7 +230,7 @@ export default function TransactionDetailScreen() {
 type DetailRowProps = {
   title: string;
   value: string;
-  C: (typeof Colors)["light"];
+  C: any;
 };
 
 function DetailRow({ title, value, C }: DetailRowProps) {

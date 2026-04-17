@@ -1,4 +1,5 @@
 import { ThemedText } from "@/components/themed-text";
+import { spacing } from "@/constants";
 import { useFormHandler } from "@/hooks/use-formik";
 import { View } from "@idimma/rn-widget";
 import { Eye, EyeSlash, Lock } from "iconsax-react-native";
@@ -54,7 +55,7 @@ export default function ResetPassword({
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <View flex py={"12%"} px={"6%"} spaced>
+      <View flex py={spacing["4xl"]} px={spacing.safe} spaced>
         <View gap={24}>
           <Back onPress={onBack} />
           <View gap={8}>

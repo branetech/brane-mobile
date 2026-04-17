@@ -4,10 +4,11 @@ import { PhoneInput } from "@/components/phone-input";
 import { VerifyMethodModal } from "@/components/sign-up/verification-modal";
 import { PassWrd } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
+import { spacing } from "@/constants";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useFormHandler } from "@/hooks/use-formik";
-import { Image, TouchableOpacity, View } from "@idimma/rn-widget";
+import { TouchableOpacity, View } from "@idimma/rn-widget";
 import { router } from "expo-router";
 import { Eye, EyeSlash } from "iconsax-react-native";
 import { useState } from "react";
@@ -88,7 +89,7 @@ export function SignupForm({
   };
 
   return (
-    <View flex px={"6%"}>
+    <View flex px={spacing.safe}>
       <View gap={24}>
         <View gap={8} style={{ alignItems: "center" }}>
           <ThemedText type={"subtitle"}>Create your account</ThemedText>
