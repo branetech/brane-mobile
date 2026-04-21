@@ -8,6 +8,7 @@ import {
   PortfolioCard,
   SectionHeader,
 } from "@/components/portfolio";
+import { EmptyState } from "@/components/empty-state";
 import { WithdrawIcn } from "@/components/svg";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
@@ -18,7 +19,7 @@ import { Currency, FORUM_POSTS } from "@/utils";
 import { priceFormatter } from "@/utils/helpers";
 import { useRouter } from "expo-router";
 import { ArrowRight2 } from "iconsax-react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Modal,
   ScrollView,
@@ -35,7 +36,7 @@ export default function PortfolioScreen() {
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
   const C = Colors[scheme];
-  useRequest(STOCKS_SERVICE.USER_STOCKS, {
+  const { data: userStocks } = useRequest(STOCKS_SERVICE.USER_STOCKS, {
     initialValue: [],
     params: { currentPage: 1, perPage: 400 },
     revalidateIfStale: false,
@@ -51,6 +52,47 @@ export default function PortfolioScreen() {
 
   const [currency, setCurrency] = useState<Currency>("NGN");
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
+
+  const holdings = useMemo(() => {
+    const records = Array.isArray(userStocks)
+      ? userStocks
+      : Array.isArray((userStocks as any)?.data)
+        ? (userStocks as any).data
+        : [];
+
+    const grouped = new Map<
+      string,
+      { title: string; amount: number; returnLabel: string; isPositive: boolean }
+    >();
+
+    records.forEach((item: any) => {
+      const assetClass = String(item?.assetClass || item?.asset_class || "Stocks");
+      const title =
+        assetClass === "fixed-income"
+          ? "Fixed Income"
+          : assetClass.charAt(0).toUpperCase() + assetClass.slice(1);
+      const currentValue = Number(
+        item?.currentValue ||
+          item?.portfolioValue ||
+          item?.totalValue ||
+          Number(item?.currentPrice || 0) * Number(item?.quantity || item?.units || 0),
+      );
+      const gainPct = Number(item?.percentage || item?.changePercent || 0);
+      const current = grouped.get(title) || {
+        title,
+        amount: 0,
+        returnLabel: "0.00%",
+        isPositive: true,
+      };
+
+      current.amount += currentValue;
+      current.returnLabel = `${Math.abs(gainPct).toFixed(2)}%`;
+      current.isPositive = gainPct >= 0;
+      grouped.set(title, current);
+    });
+
+    return Array.from(grouped.values()).filter((item) => item.amount > 0);
+  }, [userStocks]);
 
   const netValue = priceFormatter(amount?.totalStockBalance || 0, 2);
   const dividend = priceFormatter(amount?.dividend || 0, 2);
@@ -95,29 +137,34 @@ export default function PortfolioScreen() {
         <>
           <SectionHeader
             title='Asset Holdings'
-            actionLabel='All Holdings'
+            actionLabel={holdings.length > 0 ? "All Holdings" : undefined}
             onAction={() =>
               router.push("/(tabs)/(portfolio)/my-holdings" as any)
             }
           />
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.holdingsScroll}
-          >
-            <AssetHoldingsCard
-              title='Stocks'
-              amount='₦3220.00'
-              returnLabel='45.05%'
-              isPositive
-            />
-            <AssetHoldingsCard
-              title='ETFs'
-              amount='₦3220.00'
-              returnLabel='2% return'
-              isPositive
-            />
-          </ScrollView>
+          {holdings.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.holdingsScroll}
+            >
+              {holdings.map((holding) => (
+                <AssetHoldingsCard
+                  key={holding.title}
+                  title={holding.title}
+                  amount={priceFormatter(holding.amount, 2)}
+                  returnLabel={holding.returnLabel}
+                  isPositive={holding.isPositive}
+                />
+              ))}
+            </ScrollView>
+          ) : (
+            <EmptyState style={styles.emptyHoldings}>
+              <ThemedText style={{ color: C.muted, textAlign: "center" }}>
+                No asset holdings yet.
+              </ThemedText>
+            </EmptyState>
+          )}
         </>
         {/* )} */}
 
@@ -210,6 +257,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingBottom: 16 },
   holdingsScroll: { marginBottom: 20 },
+  emptyHoldings: { marginBottom: 20, paddingVertical: 16 },
   myHoldingsBtn: {
     flexDirection: "row",
     alignItems: "center",

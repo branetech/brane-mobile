@@ -13,6 +13,7 @@ import {
     hideAppLoader,
     priceFormatter,
     showAppLoader,
+    showError,
     showSuccess,
     toArray,
 } from "@/utils/helpers";
@@ -119,6 +120,11 @@ export default function WithdrawFlow({
   const parsedAmount = useMemo(() => Number(amount || 0), [amount]);
 
   const handleContinueForm = () => {
+    if (balance <= 0) {
+      setAmountError(insufficientBalanceMessage);
+      showError(insufficientBalanceMessage);
+      return;
+    }
     if (!amount || parsedAmount <= 0) {
       setAmountError("Enter a valid amount");
       return;
@@ -412,7 +418,7 @@ export default function WithdrawFlow({
         visible={showPin}
         onClose={() => setShowPin(false)}
         onTransactionPinValidated={submitWithdraw}
-        onResetPin={() => router.push("/account/reset-transaction-pin")}
+        onResetPin={() => router.push("/(tabs)/(account)/reset-transaction-pin" as any)}
         onValidatePin={async (pin) => {
           try {
             await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, { pin });

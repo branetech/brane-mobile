@@ -85,21 +85,28 @@ export function showMessage(
 ) {
   // Dynamically get theme (NO HOOKS)
   let scheme: "light" | "dark" = "light";
-  if (typeof window !== "undefined" && window.__BRANE_SCHEME__) {
-    scheme = window.__BRANE_SCHEME__;
+  const windowObject = typeof window !== "undefined" ? (window as any) : null;
+  if (windowObject?.__BRANE_SCHEME__) {
+    scheme = windowObject.__BRANE_SCHEME__;
   }
   const C = Colors[scheme === "dark" ? "dark" : "light"];
-  let bg = C.background;
-  let color = C.text;
+  let bg: string = C.background;
+  let color: string = C.text;
   if (type === "success") {
     bg = C.primary;
     color = "#fff";
   } else if (type === "error") {
     bg = C.error;
     color = "#fff";
+  } else if (type === "info") {
+    bg = "#0B5FFF";
+    color = "#fff";
+  } else if (type === "warning") {
+    bg = "#B96A00";
+    color = "#fff";
   }
   // @ts-ignore
-  toast[type](description, {
+  (toast[type] as any)(description, {
     duration: 3000,
     style: { backgroundColor: bg, borderRadius: 12 },
     textStyle: { color },

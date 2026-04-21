@@ -51,6 +51,7 @@ type Category = {
   bg: string;
   iconColor: string;
   fullWidth: boolean;
+  disabled?: boolean;
 };
 
 type SearchResult = {
@@ -119,6 +120,7 @@ const CATEGORIES: Category[] = [
     bg: "#E0F1FF",
     iconColor: "#1A2A78",
     fullWidth: true,
+    disabled: true,
   },
 ];
 
@@ -288,7 +290,7 @@ export default function UtiliScreen() {
   }, [query, searchableResults]);
 
   const handlePress = (cat: Category) => {
-    if (cat.service === "government") return;
+    if (cat.disabled) return;
     router.push({
       pathname: "/bills-utilities/select",
       params: { service: cat.service },
@@ -365,6 +367,7 @@ export default function UtiliScreen() {
                 activeOpacity={0.85}
                 style={styles.searchResultRow}
                 onPress={() => handleSearchResultPress(item)}
+                disabled={false}
               >
                 <View style={styles.searchResultIconWrap}>
                   {item.imageSource ? (
@@ -410,8 +413,13 @@ export default function UtiliScreen() {
                 <View key={`row-${idx}`} style={styles.halfRow}>
                   <TouchableOpacity
                     activeOpacity={0.85}
-                    style={[styles.cardHalf, { backgroundColor: left.bg }]}
+                    style={[
+                      styles.cardHalf,
+                      { backgroundColor: left.bg },
+                      left.disabled && styles.disabledCard,
+                    ]}
                     onPress={() => handlePress(left)}
+                    disabled={left.disabled}
                   >
                     <View style={styles.cardIconWrap}>
                       {renderIcon(left.id)}
@@ -419,11 +427,21 @@ export default function UtiliScreen() {
                     <ThemedText style={styles.cardLabel}>
                       {left.title}
                     </ThemedText>
+                    {left.disabled ? (
+                      <ThemedText style={styles.comingSoonText}>
+                        Coming soon
+                      </ThemedText>
+                    ) : null}
                   </TouchableOpacity>
                   <TouchableOpacity
                     activeOpacity={0.85}
-                    style={[styles.cardHalf, { backgroundColor: right.bg }]}
+                    style={[
+                      styles.cardHalf,
+                      { backgroundColor: right.bg },
+                      right.disabled && styles.disabledCard,
+                    ]}
                     onPress={() => handlePress(right)}
+                    disabled={right.disabled}
                   >
                     <View style={styles.cardIconWrap}>
                       {renderIcon(right.id)}
@@ -431,6 +449,11 @@ export default function UtiliScreen() {
                     <ThemedText style={styles.cardLabel}>
                       {right.title}
                     </ThemedText>
+                    {right.disabled ? (
+                      <ThemedText style={styles.comingSoonText}>
+                        Coming soon
+                      </ThemedText>
+                    ) : null}
                   </TouchableOpacity>
                 </View>
               );
@@ -439,11 +462,21 @@ export default function UtiliScreen() {
               <TouchableOpacity
                 key={row.id}
                 activeOpacity={0.85}
-                style={[styles.cardFull, { backgroundColor: row.bg }]}
+                style={[
+                  styles.cardFull,
+                  { backgroundColor: row.bg },
+                  row.disabled && styles.disabledCard,
+                ]}
                 onPress={() => handlePress(row)}
+                disabled={row.disabled}
               >
                 <View style={styles.cardIconWrap}>{renderIcon(row.id)}</View>
                 <ThemedText style={styles.cardLabel}>{row.title}</ThemedText>
+                {row.disabled ? (
+                  <ThemedText style={styles.comingSoonText}>
+                    Coming soon
+                  </ThemedText>
+                ) : null}
               </TouchableOpacity>
             );
           })}
@@ -509,6 +542,15 @@ const styles = StyleSheet.create({
   },
   searchResultSubtitle: {
     fontSize: 11,
+  },
+  disabledCard: {
+    opacity: 0.7,
+  },
+  comingSoonText: {
+    marginTop: 6,
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#013D25",
   },
   emptySearchText: {
     fontSize: 13,

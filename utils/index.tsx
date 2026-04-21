@@ -67,6 +67,7 @@ export interface IUSER {
   locationStatus?: string;
   photoStatus?: string;
   kycDone?: boolean;
+  kycProgress?: number;
   university?: boolean;
   identityKyc?: boolean;
 }

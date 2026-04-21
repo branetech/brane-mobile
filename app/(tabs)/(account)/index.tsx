@@ -29,6 +29,8 @@ export default function AccountScreen() {
     : user?.email
       ? `@${String(user.email).split("@")[0]}`
       : "@user";
+  const kycProgress = Number(user?.kycProgress || 0);
+  const needsKyc = !user?.kycDone;
 
   const header = (
     <RNView style={styles.headerWrapper}>
@@ -81,19 +83,21 @@ export default function AccountScreen() {
                 type='defaultSemiBold'
                 style={[{ fontSize: 13, color: C.text }]}
               >
-                Complete Your KYC
+                {needsKyc ? "Complete Your KYC" : "KYC Complete"}
               </ThemedText>
               <ThemedText
                 style={{ fontSize: 12, color: C.muted, marginTop: 2 }}
               >
-                Complete verification for more seamless experience
+                {needsKyc
+                  ? "Complete verification for more seamless experience"
+                  : "Your verification details are up to date"}
               </ThemedText>
             </View>
             <ThemedText
               type='defaultSemiBold'
               style={{ fontSize: 13, color: C.primary, marginLeft: 8 }}
             >
-              50%
+              {kycProgress}%
             </ThemedText>
           </View>
 
@@ -104,7 +108,7 @@ export default function AccountScreen() {
             <ThemedText
               style={{ fontSize: 13, color: C.primary, fontWeight: "500" }}
             >
-              Complete Verification
+              {needsKyc ? "Complete Verification" : "View Verification"}
             </ThemedText>
             <ArrowRight2 size={16} color={C.primary} />
           </TouchableOpacity>

@@ -7,6 +7,7 @@ import { findKey } from "lodash";
 function parseUserInfo(payload: IUSER): IUSER {
   let user: IUSER | any = {};
   if (typeof payload == "object") user = { ...payload };
+  const hasCompleted = (status: string) => status === "completed";
 
   const photo =
     payload?.identityVerification?.passportPhotographVerification?.status || "";
@@ -22,7 +23,6 @@ function parseUserInfo(payload: IUSER): IUSER {
   const intl =
     payload?.identityVerification?.passportVerification?.status || "";
   const nin = payload?.identityVerification?.ninVerification?.status || "";
-  const hasCompleted = (status: string) => status === "completed";
 
   const identity =
     hasCompleted(nin) ||
@@ -50,14 +50,29 @@ function parseUserInfo(payload: IUSER): IUSER {
   user.location = hasCompleted(location);
   user.hasPhone = !!payload?.phone;
   user.hasUsername = !!payload?.username;
-  user.hasName =
-    !!payload?.firstName && !!payload?.lastName && !!payload?.university;
+  user.hasName = !!payload?.firstName && !!payload?.lastName;
   user.locationStatus = location;
   user.photoStatus = photo;
-  user.hasBanking = user?.beneficiaries && !!user?.beneficiaries?.length;
+  user.hasBanking =
+    hasCompleted(bank) ||
+    !!(payload as any)?.bankName ||
+    !!(payload as any)?.bankCode ||
+    !!(payload as any)?.accountNumber ||
+    !!payload?.beneficiaries?.length;
 
   user.identityKyc = identity && user.hasPhoto && user.hasLocation;
-  user.kycDone = bvn && user.hasName && user.identityKyc && user?.hasBanking; // Fixed typo: identiyKyc -> identityKyc
+  const completedChecks = [
+    user.hasName,
+    user.hasBvn,
+    user.hasIdentity,
+    user.hasPhoto,
+    user.hasLocation,
+    user.hasBanking,
+    user.hasNextOfKin,
+  ].filter(Boolean).length;
+  user.kycProgress = Math.round((completedChecks / 7) * 100);
+  user.kycDone =
+    user.hasBvn && user.hasName && user.identityKyc && user.hasBanking; // Fixed typo: identiyKyc -> identityKyc
   user.name = `${payload?.firstName || ""} ${payload?.lastName || ""}`.trim();
 
   return user as IUSER;

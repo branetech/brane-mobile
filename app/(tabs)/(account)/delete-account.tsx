@@ -32,6 +32,7 @@ export default function DeleteAccountScreen() {
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [otpResetKey, setOtpResetKey] = useState(0);
 
   const onContinue = async () => {
     if (!selectedReason) return;
@@ -56,6 +57,8 @@ export default function DeleteAccountScreen() {
       dispatch(logOut());
       router.replace("/login");
     } catch (error) {
+      setOtp("");
+      setOtpResetKey((prev) => prev + 1);
       catchError(error);
     } finally {
       setLoading(false);
@@ -131,7 +134,7 @@ export default function DeleteAccountScreen() {
             </ThemedText>
 
             <View style={{ marginTop: 20 }}>
-              <OTPInput onComplete={setOtp} />
+              <OTPInput onComplete={setOtp} resetKey={otpResetKey} />
             </View>
 
             <BraneButton

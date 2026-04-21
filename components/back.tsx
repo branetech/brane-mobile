@@ -9,6 +9,17 @@ const Back = ({ onPress }: { onPress?: () => void }) => {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const C = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const handleBack = React.useCallback(() => {
+    if (onPress) {
+      onPress();
+      return;
+    }
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+    router.replace("/(tabs)" as any);
+  }, [onPress, router]);
 
   return (
     <TouchableOpacity
@@ -20,7 +31,7 @@ const Back = ({ onPress }: { onPress?: () => void }) => {
         alignItems: "center",
         backgroundColor: C.inputBg,
       }}
-      onPress={onPress || router.back}
+      onPress={handleBack}
     >
       <ArrowLeft color={C.icon} size={24} />
     </TouchableOpacity>

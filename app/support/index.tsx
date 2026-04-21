@@ -60,9 +60,11 @@ const FAQS: FAQ[] = [
 
 const FAQ_ITEMS = FAQS.map((faq) => faq.q);
 
-const DOC_SUBTEXT = "Learn how to make good use of your bracs for investment";
+const DOC_SUBTEXT = "Learn how to make good use of your Bracs for investment";
 const DOC_BODY =
-  "Lorem ipsum dolor sit amet consectetur. Et vitae eget volutpat libero integer vel tristique nisi. Gravida potenti aliquet ut morbi tristique arcu egestas. Tempor cursus duis quis placerat metus congue phasellus sapien. Ultricies proin ut mattis morbi suspendisse nunc sollicitudin accumsan tortor.";
+  "Bracs help turn your everyday transactions into investment rewards. You can earn Bracs when you buy airtime, pay for utilities, and complete supported payments in the app.";
+const DOC_BODY_2 =
+  "To put your Bracs to work, keep using supported services, track your balance from your portfolio, and complete your KYC details so you can access the full investment experience.";
 
 // ─── FAQ Row ─────────────────────────────────────────────────
 const FAQRow = ({
@@ -144,10 +146,10 @@ const DocumentedSupportModal = ({
             type='subtitle'
             style={[styles.docSubHeader, { color: C.text }]}
           >
-            Another Subheader
+            Getting Started
           </ThemedText>
           <ThemedText style={[styles.docBodyText, { color: C.text }]}>
-            {DOC_BODY}
+            {DOC_BODY_2}
           </ThemedText>
         </ScrollView>
       </SafeAreaView>
@@ -170,7 +172,7 @@ const LiveChatModal = ({
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "1",
-      text: "Thank you for contacting brane customer service",
+      text: "Thank you for contacting Brane customer service",
       sender: "support",
     },
     {
@@ -404,7 +406,7 @@ export default function SupportScreen() {
                   style={styles.docRow}
                 >
                   <ThemedText style={[styles.docTitle, { color: C.text }]}>
-                    How to put my bracks to work
+                    How to put my Bracs to work
                   </ThemedText>
                   <ThemedText style={[styles.docSub, { color: C.muted }]}>
                     {DOC_SUBTEXT}
@@ -529,11 +531,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 18,
     marginBottom: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
   },
   faqHeaderBtn: {
     flexDirection: "row",

@@ -44,13 +44,13 @@ const STATUS_OPTIONS: FilterOption[] = [
 ];
 
 const TYPE_OPTIONS: FilterOption[] = [
-  { label: "Airtime", value: "Airtime" },
-  { label: "Data", value: "Data" },
-  { label: "Stock", value: "Buy Stocks" },
-  { label: "Bracs", value: "Stock Swap" },
-  { label: "Wallet Top-up", value: "Wallet Top Up" },
-  { label: "Wallet Deduction", value: "Wallet Deduction" },
-  { label: "Dividend Withdrawals", value: "Stock Dividend" },
+  { label: "Airtime", value: "airtime" },
+  { label: "Data", value: "data" },
+  { label: "Stock", value: "stock" },
+  { label: "Bracs", value: "swap" },
+  { label: "Wallet Top-up", value: "topup" },
+  { label: "Wallet Deduction", value: "deduction" },
+  { label: "Dividend Withdrawals", value: "dividend" },
 ];
 
 const formatDisplayDate = (dateStr: string) => {
@@ -65,6 +65,39 @@ const formatDisplayDate = (dateStr: string) => {
 
 const toggleItem = (arr: string[], value: string): string[] =>
   arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
+
+const normalizeValue = (value: string) =>
+  String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+const matchesTypeFilter = (transaction: ITransactionDetail, filter: string) => {
+  const normalizedType = normalizeValue(
+    String(
+      transaction?.transactionType ||
+        transaction?.transactionDescription ||
+        transaction?.serviceId ||
+        "",
+    ),
+  );
+
+  switch (filter) {
+    case "airtime":
+      return normalizedType.includes("airtime");
+    case "data":
+      return normalizedType.includes("data");
+    case "stock":
+      return normalizedType.includes("stock") || normalizedType.includes("buy");
+    case "swap":
+      return normalizedType.includes("swap") || normalizedType.includes("brac");
+    case "topup":
+      return normalizedType.includes("topup") || normalizedType.includes("fund");
+    case "deduction":
+      return normalizedType.includes("deduction") || normalizedType.includes("withdraw");
+    case "dividend":
+      return normalizedType.includes("dividend") || normalizedType.includes("return");
+    default:
+      return normalizedType.includes(filter);
+  }
+};
 
 export default function TransactionScreen() {
   const router = useRouter();
@@ -128,6 +161,38 @@ export default function TransactionScreen() {
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
+
+  const visibleTransactions = useMemo(() => {
+    return transactions.filter((transaction) => {
+      const normalizedStatus = normalizeValue(String(transaction?.status || ""));
+      const transactionDateRaw = String(
+        transaction?.createdAt || transaction?.date || "",
+      );
+      const matchesStatus =
+        statusFilters.length === 0 ||
+        statusFilters.some((status) =>
+          normalizedStatus.includes(normalizeValue(status)),
+        );
+      const matchesType =
+        typeFilters.length === 0 ||
+        typeFilters.some((type) => matchesTypeFilter(transaction, type));
+      const matchesSearch =
+        !search.trim() ||
+        normalizeValue(
+          `${transaction?.transactionDescription || ""} ${transaction?.transactionType || ""} ${transaction?.serviceId || ""}`,
+        ).includes(normalizeValue(search));
+      const matchesStart = !startDate || transactionDateRaw >= startDate;
+      const matchesEnd = !endDate || transactionDateRaw <= `${endDate}T23:59:59`;
+
+      return (
+        matchesStatus &&
+        matchesType &&
+        matchesSearch &&
+        matchesStart &&
+        matchesEnd
+      );
+    });
+  }, [endDate, search, startDate, statusFilters, transactions, typeFilters]);
 
   // Open the filter modal — seed temp state from live filters only on a
   // fresh open, not when returning from the date picker.
@@ -302,7 +367,7 @@ export default function TransactionScreen() {
             />
           }
         >
-          {transactions.length < 1 ? (
+          {visibleTransactions.length < 1 ? (
             <View style={styles.emptyContainer}>
               <EmptyState>
                 <ThemedText style={[styles.emptyTitle, { color: C.text }]}>
@@ -316,7 +381,7 @@ export default function TransactionScreen() {
             </View>
           ) : (
             <GroupedTransactions
-              transactions={transactions}
+              transactions={visibleTransactions}
               onPressTransaction={(id) =>
                 router.push({
                   pathname: "/transaction-detail/[details]" as any,

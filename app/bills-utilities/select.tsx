@@ -32,9 +32,10 @@ import {
 } from "@/services/routes";
 import { hideAppLoader } from "@/utils/helpers";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  BackHandler,
   Modal,
   ScrollView,
   StyleSheet,
@@ -141,9 +142,28 @@ export default function UtilitySelectScreen() {
     }
   }, []);
 
-  useEffect(() => {
-     setShowPinValidator(true);
-  }, []);
+  React.useEffect(() => {
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        if (showPinValidator) {
+          setShowPinValidator(false);
+          return true;
+        }
+        if (showSummaryModal) {
+          setShowSummaryModal(false);
+          return true;
+        }
+        if (showBoostModal) {
+          setShowBoostModal(false);
+          return true;
+        }
+        return false;
+      },
+    );
+
+    return () => subscription.remove();
+  }, [showBoostModal, showPinValidator, showSummaryModal]);
 
   // ── Strategy-pattern payment ──────────────────────────────────────────────────
   const startPayment = async () => {
@@ -166,76 +186,84 @@ export default function UtilitySelectScreen() {
       switch (formData.service) {
         case "airtime":
         case "data":
-          await onTransactionPinValidated({
-            transactionType: formData.service,
-            formData: {
-              medium: "wallet",
-              type: formData.network,
-              cardId: "",
-              amount: String(amountToPay),
-              phone: formData.phone,
-            },
-            selectedDataPlan:
-              formData.service === "data"
-                ? { variation_code: formData.selectedDataPlan?.variationCode }
-                : undefined,
-            user: auth?.user,
-            PAYMENT_CALLBACK_URL,
-            router,
-            setRender: noopRender,
-            setIsLoading: setIsSubmitting,
-          });
-          goToSuccess();
+          {
+            const result = await onTransactionPinValidated({
+              transactionType: formData.service,
+              formData: {
+                medium: "wallet",
+                type: formData.network,
+                cardId: "",
+                amount: String(amountToPay),
+                phone: formData.phone,
+              },
+              selectedDataPlan:
+                formData.service === "data"
+                  ? { variation_code: formData.selectedDataPlan?.variationCode }
+                  : undefined,
+              user: auth?.user,
+              PAYMENT_CALLBACK_URL,
+              router,
+              setRender: noopRender,
+              setIsLoading: setIsSubmitting,
+            });
+            if (result !== false) goToSuccess();
+          }
           break;
 
         case "betting":
-          await onTransactionPinBettingValidation({
-            serviceId: formData.bettingProviderId || "",
-            customerId: formData.customerId || "",
-            user: auth?.user,
-            betType: "wallet_funding",
-            amount: String(amountToPay),
-            setRender: noopRender,
-            setIsLoading: setIsSubmitting,
-            variationCode: "",
-            router,
-          });
-          goToSuccess();
+          {
+            const result = await onTransactionPinBettingValidation({
+              serviceId: formData.bettingProviderId || "",
+              customerId: formData.customerId || "",
+              user: auth?.user,
+              betType: "wallet_funding",
+              amount: String(amountToPay),
+              setRender: noopRender,
+              setIsLoading: setIsSubmitting,
+              variationCode: "",
+              router,
+            });
+            if (result !== false) goToSuccess();
+          }
           break;
 
         case "cable":
-          await onTransactionPinCabelValidation({
-            serviceId: formData.cableProviderId || "",
-            billersCode: formData.cardNumber || "",
-            user: auth?.user,
-            amount: String(amountToPay),
-            setRender: noopRender,
-            setIsLoading: setIsSubmitting,
-            variationCode: formData.selectedCablePlan?.variationCode || "",
-            quantity: 1,
-            subscription_type:
-              formData.selectedCablePlan?.subscriptionType || "change",
-            router,
-          });
-          goToSuccess();
+          {
+            const result = await onTransactionPinCabelValidation({
+              serviceId: formData.cableProviderId || "",
+              billersCode: formData.cardNumber || "",
+              user: auth?.user,
+              amount: String(amountToPay),
+              setRender: noopRender,
+              setIsLoading: setIsSubmitting,
+              variationCode: formData.selectedCablePlan?.variationCode || "",
+              quantity: 1,
+              subscription_type:
+                formData.selectedCablePlan?.subscriptionType || "change",
+              router,
+            });
+            if (result !== false) goToSuccess();
+          }
           break;
 
         case "electricity":
-          await onTransactionPinElectricityValidation({
-            serviceId:
-              formData.electricityProviderDescription ||
-              formData.electricityProviderLabel ||
-              "",
-            billersCode: Number(formData.meterNumber),
-            user: auth?.user,
-            amount: String(amountToPay),
-            setRender: noopRender,
-            setIsLoading: setIsSubmitting,
-            variationCode: formData.electricityProduct || "",
-            name: formData.electricityAccountName || "",
-            router,
-          });
-          goToSuccess();
+          {
+            const result = await onTransactionPinElectricityValidation({
+              serviceId:
+                formData.electricityProviderDescription ||
+                formData.electricityProviderLabel ||
+                "",
+              billersCode: Number(formData.meterNumber),
+              user: auth?.user,
+              amount: String(amountToPay),
+              setRender: noopRender,
+              setIsLoading: setIsSubmitting,
+              variationCode: formData.electricityProduct || "",
+              name: formData.electricityAccountName || "",
+              router,
+            });
+            if (result !== false) goToSuccess();
+          }
           break;
 
         case "transportation":

@@ -100,6 +100,11 @@ export const AMOUNT_PRESETS = [
   "50000",
 ];
 
+export const AIRTIME_AMOUNT_LIMITS = {
+  min: 50,
+  max: 50000,
+} as const;
+
 export const NETWORK_ORDER = [
   "mtn",
   "airtel",

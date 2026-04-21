@@ -201,7 +201,7 @@ export default function BracsAllocationScreen() {
           keyboardShouldPersistTaps='handled'
         >
           <Text style={[styles.subtitle, { color: C.muted }]}>
-            Preset your Bracc distribution across available assets. Bracc will
+            Preset your Bracs distribution across available assets. Bracs will
             be{" "}
             <Text style={{ color: C.text, fontWeight: "500" }}>
               distributed in %

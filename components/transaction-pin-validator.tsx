@@ -2,8 +2,9 @@ import { BraneButton } from "@/components/brane-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import BaseRequest from "@/services";
+import BaseRequest, { parseNetworkError } from "@/services";
 import { AUTH_SERVICE } from "@/services/routes";
+import { showError } from "@/utils/helpers";
 import { View } from "@idimma/rn-widget";
 import { ArrowLeft2, FingerCricle } from "iconsax-react-native";
 import React, { useState } from "react";
@@ -15,8 +16,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { set } from 'date-fns';
-
 type Scheme = "light" | "dark";
 
 type TransactionPinValidatorProps = {
@@ -31,6 +30,8 @@ export const TransactionPinValidator = ({
   visible,
   onClose,
   onTransactionPinValidated,
+  onResetPin,
+  onValidatePin,
 }: TransactionPinValidatorProps) => {
   const rawScheme = useColorScheme();
   const scheme: Scheme = rawScheme === "dark" ? "dark" : "light";
@@ -68,10 +69,18 @@ export const TransactionPinValidator = ({
   const validateEnteredPin = async (value: string) => {
     try {
       setIsLoading(true);
-       await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {transactionPin: String(value)});
+      if (onValidatePin) {
+        const isValid = await onValidatePin(value);
+        if (!isValid) throw new Error("Invalid transaction pin");
+      } else {
+        await BaseRequest.post(AUTH_SERVICE.PIN_VALIDATION, {
+          transactionPin: String(value),
+        });
+      }
       setPin([]);
       onTransactionPinValidated();
     } catch (error) {
+      setPin([]);
       setShowInvalid(true);
       const { message } = parseNetworkError(error);
       showError(message || "Invalid transaction pin");

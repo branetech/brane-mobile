@@ -14,9 +14,15 @@ interface OTPProps {
   length?: number;
   onComplete?: (otp: string) => void;
   mode?: "otp" | "pin"; // "otp" for 6-digit with separator, "pin" for 4-digit without
+  resetKey?: string | number;
 }
 
-export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => {
+export const OTPInput = ({
+  length = 6,
+  onComplete,
+  mode = "otp",
+  resetKey,
+}: OTPProps) => {
   const [otpValues, setOtpValues] = useState<string[]>(Array(length).fill(""));
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const inputsRef = useRef<TextInput[]>([]);
@@ -49,16 +55,38 @@ export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => 
 
   const handleChange = useCallback(
     (text: string, index: number) => {
-      const digit = text.slice(-1);
+      const cleanText = text.replace(/\D/g, "");
+      if (!cleanText) {
+        const nextOtp = [...otpValues];
+        nextOtp[index] = "";
+        setOtpValues(nextOtp);
+        return;
+      }
+
+      if (cleanText.length > 1) {
+        const nextOtp = [...otpValues];
+        cleanText
+          .slice(0, length - index)
+          .split("")
+          .forEach((digit, offset) => {
+            nextOtp[index + offset] = digit;
+            popIn(index + offset);
+          });
+        setOtpValues(nextOtp);
+        const nextFocusIndex = Math.min(index + cleanText.length, length - 1);
+        inputsRef.current[nextFocusIndex]?.focus();
+        if (nextOtp.every((d) => d !== "")) onComplete?.(nextOtp.join(""));
+        return;
+      }
+
+      const digit = cleanText.slice(-1);
       const newOtp = [...otpValues];
       newOtp[index] = digit;
       setOtpValues(newOtp);
 
-      if (digit) {
-        popIn(index);
-        if (index < length - 1) {
-          inputsRef.current[index + 1]?.focus();
-        }
+      popIn(index);
+      if (index < length - 1) {
+        inputsRef.current[index + 1]?.focus();
       }
 
       if (newOtp.every((d) => d !== "")) {
@@ -67,6 +95,11 @@ export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => 
     },
     [otpValues, length, onComplete, popIn],
   );
+
+  React.useEffect(() => {
+    setOtpValues(Array(length).fill(""));
+    setFocusedIndex(null);
+  }, [length, resetKey]);
 
   const handleKeyPress = useCallback(
     (e: any, index: number) => {
@@ -132,11 +165,9 @@ export const OTPInput = ({ length = 6, onComplete, mode = "otp" }: OTPProps) => 
             focused && {
               backgroundColor: C.inputBg,
               borderColor: C.primary,
-              shadowColor: C.primary,
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.3,
-              shadowRadius: 8,
-              elevation: 5,
+              shadowOpacity: 0,
+              shadowRadius: 0,
+              elevation: 0,
             },
             { transform: [{ scale: scaleAnims[index] }] },
           ]}
@@ -197,12 +228,12 @@ const styles = StyleSheet.create({
   },
   group: {
     flexDirection: "row",
-    gap: 10,
+    gap: 8,
   },
   separator: {
     fontSize: 22,
     fontWeight: "300",
-    marginHorizontal: 8,
+    marginHorizontal: 6,
     marginBottom: 2,
   },
   cell: {

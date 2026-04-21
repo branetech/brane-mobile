@@ -84,7 +84,7 @@ export default function ChangePINScreen() {
   }, [password, goToStep]);
 
   const handleChangePin = useCallback(async () => {
-    if (currentPin.length >= 6 || newPin.length >= 6 || confirmPin.length >= 6) return;
+    if (currentPin.length < 6 || newPin.length < 6 || confirmPin.length < 6) return;
     if (newPin !== confirmPin) return;
     if (newPin === currentPin) return;
     if (!password) return;
@@ -220,9 +220,9 @@ export default function ChangePINScreen() {
                 text="Change PIN"
                 onPress={handleChangePin}
                 disabled={
-                  currentPin.length >= 6 ||
-                  newPin.length >= 6 ||
-                  confirmPin.length >= 6 ||
+                  currentPin.length < 6 ||
+                  newPin.length < 6 ||
+                  confirmPin.length < 6 ||
                   newPin !== confirmPin ||
                   newPin === currentPin ||
                   loading

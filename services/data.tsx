@@ -31,6 +31,7 @@ export const usePostBvn = (
   verificationType: any,
   dob?: any,
 ) => {
+  const dispatch = useDispatch();
   const fetchData = async (data: any, serialNumber: any) => {
     setIsLoading(true);
     try {
@@ -38,6 +39,13 @@ export const usePostBvn = (
         serialNumber,
         verificationType,
       });
+      const updatedUser = (await BaseRequest.get(AUTH_SERVICE.PROFILE)) as any;
+      dispatch(setUser(updatedUser));
+      showSuccess(
+        verificationType === "nin"
+          ? "NIN verified successfully"
+          : "Identity verification completed successfully",
+      );
       setSuccessMessage(true);
       return true;
     } catch (error: any) {
@@ -370,6 +378,7 @@ export const onTransactionPinCabelValidation = async ({
     const { message } = parseNetworkError(error);
     if (String(message).includes("insufficient")) onShowInsufficientFunds();
     showError(message);
+    return false;
   } finally {
     setIsLoading(false);
     hideAppLoader();
@@ -430,7 +439,7 @@ export const onTransactionPinElectricityValidation = async ({
     if (message === "Insufficient wallet balance") onShowInsufficientFunds();
     setShowErrorModal(true);
     showError(message);
-    return null;
+    return false;
   } finally {
     setIsLoading(false);
     hideAppLoader();
@@ -489,7 +498,7 @@ export const onTransactionPinBettingValidation = async ({
     if (message === "Insufficient wallet balance") onShowInsufficientFunds();
     setShowErrorModal(true);
     showError(message);
-    return null;
+    return false;
   } finally {
     setIsLoading(false);
     hideAppLoader();
@@ -703,6 +712,7 @@ export const onTransactionPinValidated = async ({
     const { message } = parseNetworkError(error);
     if (message === "Insufficient wallet balance") onShowInsufficientFunds();
     showError(message);
+    return false;
   } finally {
     setIsLoading(false);
     hideAppLoader();

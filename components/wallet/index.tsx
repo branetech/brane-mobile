@@ -12,6 +12,7 @@ import {
   formatDate,
   parseTransaction,
   priceFormatter,
+  showError,
   toArray,
 } from "@/utils/helpers";
 import { ITransactionDetail } from "@/utils/index";
@@ -110,6 +111,10 @@ export default function WalletScreen() {
   }, [fetchData]);
 
   const handleWithdrawModalOpen = () => {
+    if (balance <= 0) {
+      showError("Your wallet balance is empty. Fund your wallet before withdrawing.");
+      return;
+    }
     setShowWithdrawModal(true);
   };
 
@@ -280,6 +285,12 @@ export default function WalletScreen() {
                 style={styles.modalOption}
                 onPress={() => {
                   setShowWithdrawModal(false);
+                  if (balance <= 0) {
+                    showError(
+                      "Your wallet balance is empty. Fund your wallet before withdrawing.",
+                    );
+                    return;
+                  }
                   router.push("/send-money");
                 }}
                 activeOpacity={0.7}

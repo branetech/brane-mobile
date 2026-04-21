@@ -33,6 +33,7 @@ export default function ChangeUsernameScreen() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [otpResetKey, setOtpResetKey] = useState(0);
 
   const onResend = async () => {
     try {
@@ -50,6 +51,8 @@ export default function ChangeUsernameScreen() {
       await BaseRequest.post(AUTH_SERVICE.RESET_USERNAME, { otp });
       setStage(2);
     } catch (error) {
+      setOtp("");
+      setOtpResetKey((prev) => prev + 1);
       catchError(error);
     } finally {
       setLoading(false);
@@ -88,7 +91,7 @@ export default function ChangeUsernameScreen() {
                 Enter the 6-digit code sent to your email/phone.
               </ThemedText>
               <View style={{ marginTop: 16 }}>
-                <OTPInput onComplete={setOtp} />
+                <OTPInput onComplete={setOtp} resetKey={otpResetKey} />
               </View>
               <BraneButton
                 text='Proceed'

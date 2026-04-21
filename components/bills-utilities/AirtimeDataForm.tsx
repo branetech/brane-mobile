@@ -34,6 +34,7 @@ import {
 import { cleanNetworkLabel, getNetworkImageKey, normalizeDataPlan, normalizeOption, toArray } from "./helpers";
 import {
   AMOUNT_PRESETS,
+  AIRTIME_AMOUNT_LIMITS,
   type DataPlan,
   NETWORK_IMAGES,
   NETWORK_ORDER,
@@ -164,6 +165,21 @@ const AirtimeDataForm = forwardRef<UtilityFormRef, Props>(({
     if (service === "airtime" && Number(amount) <= 0) {
       setAmountError("Enter a valid amount");
       return false;
+    }
+    if (service === "airtime") {
+      const parsedAmount = Number(amount);
+      if (parsedAmount < AIRTIME_AMOUNT_LIMITS.min) {
+        setAmountError(
+          `Minimum airtime amount is ₦${AIRTIME_AMOUNT_LIMITS.min.toLocaleString("en-NG")}`,
+        );
+        return false;
+      }
+      if (parsedAmount > AIRTIME_AMOUNT_LIMITS.max) {
+        setAmountError(
+          `Maximum airtime amount is ₦${AIRTIME_AMOUNT_LIMITS.max.toLocaleString("en-NG")}`,
+        );
+        return false;
+      }
     }
     if (service === "data" && !selectedDataPlan) {
       setAmountError("Select a data plan");

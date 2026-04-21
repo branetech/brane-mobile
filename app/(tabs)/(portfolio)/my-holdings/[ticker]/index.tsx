@@ -805,7 +805,7 @@ function HistoryTab({
             { label: "Holdings", value: String(unitsHeld) },
             { label: "Invested", value: startDate },
             { label: "Dividends", value: String(Math.round(dividends)) },
-            { label: "Transactions", value: startDate },
+            { label: "Transactions", value: String(txCount) },
           ].map(({ label, value }, i, arr) => (
             <React.Fragment key={label}>
               <View
