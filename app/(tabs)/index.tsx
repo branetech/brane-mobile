@@ -1,3 +1,4 @@
+import { BraneButton } from "@/components/brane-button";
 import { HomeHeader } from "@/components/home";
 import { HomeCard, Learning, Quick } from "@/components/home/home-card";
 import { Transactions } from "@/components/home/home-transaction";
@@ -5,8 +6,8 @@ import { NewUserOnboardingModal } from "@/components/new-user-onboarding-modal";
 import { Colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { setShowNewUserModal } from "@/redux/slice/auth-slice";
-import { useCallback, useState, useRef } from "react";
-import { RefreshControl, StyleSheet } from "react-native";
+import { useCallback, useRef, useState } from "react";
+import { RefreshControl, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,7 +34,7 @@ export default function HomeScreen() {
     }
   }, []);
 
-  const handleCloseModal = () => {
+    const handleCloseModal = () => {
     dispatch(setShowNewUserModal(false));
   };
 
@@ -51,6 +52,7 @@ export default function HomeScreen() {
         <Quick />
         <Transactions ref={transactionsRef} />
         <Learning />
+        
       </ScrollView>
       <NewUserOnboardingModal
         visible={showNewUserModal}

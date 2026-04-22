@@ -94,6 +94,12 @@ export const palette = {
 
   // ── Misc Surfaces ─────────────────────────────────────────────────────────────
   fundHighlight: '#FAF6E6', // fund source selection background
+
+  // Added missing palette properties
+  greenBtn: '#13C965',
+  textMuted: '#85808A',
+  selectedBorder: '#09734C',
+  selectedBg: '#D2F1E4',
 } as const;
 
 export type PaletteColor = keyof typeof palette;

@@ -16,14 +16,14 @@ import { useRouter } from "expo-router";
 import { Camera, TickCircle, Trash } from "iconsax-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  View as RNView,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
+    ActivityIndicator,
+    Modal,
+    Pressable,
+    View as RNView,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
@@ -571,7 +571,9 @@ export default function AccountDetailsScreen() {
                   our.{" "}
                   <TouchableOpacity
                     style={{ marginTop: 16 }}
-                    onPress={() => router.push("/(account)/privacy-policy")}
+                    onPress={() =>
+                      router.push("/(tabs)/(account)/privacy-policy")
+                    }
                   >
                     <ThemedText style={{ color: C.primary, fontSize: 12 }}>
                       Privacy Policy
