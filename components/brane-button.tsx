@@ -6,12 +6,11 @@ import {
     StyleSheet,
     TouchableOpacity,
     View,
-    ViewStyle,
 } from "react-native";
 
 interface BtnProps {
   onPress: (event: GestureResponderEvent) => void;
-  style?: ViewStyle;
+  style?: any;
   disabled?: boolean;
   width?: DimensionValue;
   height?: DimensionValue;
@@ -56,7 +55,7 @@ export const BraneButton = ({
         style,
         {
           width: width ?? "100%",
-          height: height ?? 42,
+          height: height ?? 48,
           borderRadius: radius ?? 8,
           backgroundColor: buttonBackgroundColor,
           opacity: isDisabled && !loading ? 0.4 : 1,

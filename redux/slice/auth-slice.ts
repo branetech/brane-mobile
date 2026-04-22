@@ -99,6 +99,8 @@ export interface Auth {
   showSupportChat: boolean;
   showBalance: boolean;
   onboardingStepsCompleted: string[];
+  surveyModalCompleted: boolean;
+  surveyModalLastDismissed: string | null;
 }
 
 interface AssetCheckout {
@@ -147,6 +149,8 @@ const initialState: Auth = {
   showSupportChat: false,
   showBalance: false,
   onboardingStepsCompleted: [],
+  surveyModalCompleted: false,
+  surveyModalLastDismissed: null,
 };
 
 const { reducer, actions } = createSlice({
@@ -272,6 +276,15 @@ const { reducer, actions } = createSlice({
     setShowBalance: (state, action) => {
       state.showBalance = action.payload;
     },
+    setSurveyModal: (state, action) => {
+      const { completed, lastDismissed } = action.payload;
+      if (completed !== undefined) {
+        state.surveyModalCompleted = completed;
+      }
+      if (lastDismissed !== undefined) {
+        state.surveyModalLastDismissed = lastDismissed;
+      }
+    },
   },
 });
 
@@ -295,6 +308,7 @@ export const {
   setShowNewUserModal,
   setShowSupportChat,
   setShowBalance,
+  setSurveyModal,
   onRemoveFromCheckouts,
   onClearCheckouts,
   onAddToCheckouts,
