@@ -17,7 +17,6 @@ export default function IdentityVerificationScreen() {
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const { user: userFromRedux } = useAppState();
   const user = getUserFromState(userFromRedux);
-  console.log("User KYC Status:", user?.firstName);
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: C.background }]}>
       <View style={styles.header}>

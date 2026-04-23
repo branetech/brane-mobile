@@ -117,18 +117,23 @@ export default function UtilitySelectScreen() {
     try {
       const walletRes: any = await BaseRequest.get(
         TRANSACTION_SERVICE.BALANCE,
-      ).catch(() => null);
+      ).catch((error) => {
+        console.error("Error fetching wallet balance:", error);
+        return null;
+      });
+
       const balance = Number(
         walletRes?.data?.balance ??
           walletRes?.data?.data?.balance ??
           walletRes?.data ??
           0,
       );
+
       setWalletBalance(balance);
       const options: PaymentOption[] = [
         {
           id: "brane_wallet",
-          label: `Brane Wallet \u2013 \u20A6 ${formatMoney(balance)}`,
+          label: `Brane Wallet   ${formatMoney(balance)}`,
           icon: "B",
         },
       ];
@@ -136,11 +141,16 @@ export default function UtilitySelectScreen() {
       setPaymentId((prev) =>
         options.some((item) => item.id === prev) ? prev : options[0]?.id || "",
       );
-    } catch {
+    } catch (error) {
+      console.error("Error in fetchPaymentOptions:", error);
       setWalletBalance(undefined);
       setPaymentOptions([]);
     }
   }, []);
+
+  React.useEffect(() => {
+    fetchPaymentOptions();
+  }, [fetchPaymentOptions]);
 
   React.useEffect(() => {
     const subscription = BackHandler.addEventListener(
@@ -171,14 +181,15 @@ export default function UtilitySelectScreen() {
     setShowPinValidator(false);
     setShowPaying(true);
 
-    const noopRender = (_: string) => {
-      
-    };
+    const noopRender = (_: string) => {};
     const goToSuccess = () => {
       hideAppLoader();
       router.push({
         pathname: "/bills-utilities/success" as any,
-        params: { title: "Transaction Successful", message: successDescription },
+        params: {
+          title: "Transaction Successful",
+          message: successDescription,
+        },
       });
     };
 
@@ -284,7 +295,7 @@ export default function UtilitySelectScreen() {
       }
     } catch {
       // handled by service helpers via toast
-    }finally{
+    } finally {
       setShowPaying(false);
     }
   };
@@ -352,10 +363,10 @@ export default function UtilitySelectScreen() {
       </View>
 
       {/* Loading overlay */}
-      <Modal visible={isSubmitting} transparent animationType="fade">
+      <Modal visible={isSubmitting} transparent animationType='fade'>
         <View style={styles.loadingOverlay}>
           <View style={styles.loadingCard}>
-            <ActivityIndicator size="large" color={C.primary} />
+            <ActivityIndicator size='large' color={C.primary} />
             <ThemedText style={styles.loadingText}>Processing...</ThemedText>
           </View>
         </View>

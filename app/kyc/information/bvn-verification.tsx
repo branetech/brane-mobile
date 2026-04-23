@@ -21,7 +21,6 @@ export default function BvnVerificationScreen() {
   const C = Colors[scheme === "dark" ? "dark" : "light"];
   const [isLoading, setIsLoading] = useState(false);
   const {user} = useAppState();
-  console.log(user)
   const { form, isDisabled } = useFormHandler({
     initialValues: {
       bvn: "",

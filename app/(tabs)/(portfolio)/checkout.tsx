@@ -197,7 +197,7 @@ const Checkout = () => {
   // ── Main checkout screen ───────────────────────────────────
 
   return (
-    <View style={[styles.root, { backgroundColor: C.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: C.background }]}>
       <TransactionPinValidator
         visible={render === "validate-pin"}
         onClose={() => setRender("")}
@@ -304,7 +304,7 @@ const Checkout = () => {
           }}
         />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -253,6 +253,7 @@ const StockBreakdownDetails: React.FC<StockBreakdownDetailsProps> = ({
     },
   );
 
+
   const {
     companyName,
     currentPrice,
@@ -336,14 +337,14 @@ const StockBreakdownDetails: React.FC<StockBreakdownDetailsProps> = ({
 
   const onDelete = () => {
     dispatch(onRemoveFromCheckouts(tickerSymbol));
-    if (!hasMore) router.replace("/portfolio");
+    if (!hasMore) router.replace("/portfolio" as any);
   };
 
   const isLoading = isStockLoading || isBreakdownLoading;
 
   const totalCharge = breakdown?.allCharges || 0;
-  const stockPrice = breakdown?.currentStockPrice || 0;
-  const netPayable = stockPrice + totalCharge;
+  const stockPrice = stock?.price || 0;
+  const netPayable =  Number(totalCharge) + Number(stockPrice);
   const price = priceFormatter((stockPrice || 0) as number, 2);
 
   if (isLoading) return <StockPurchaseCardSkeleton />;
