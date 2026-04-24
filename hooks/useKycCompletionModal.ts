@@ -1,33 +1,43 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { InteractionManager } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { setSurveyModal } from '@/redux/slice/auth-slice';
-import { getTodayISODate, shouldShowOncePerDayModal } from '@/utils/modal-helpers';
+import { setSurveyModal } from "@/redux/slice/auth-slice";
+import {
+  getTodayISODate,
+  shouldShowOncePerDayModal,
+} from "@/utils/modal-helpers";
+import { useCallback, useEffect, useState } from "react";
+import { InteractionManager } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 export const useSurveyModal = () => {
   const dispatch = useDispatch();
 
-  const surveyModalCompleted = useSelector((state: any) => state.auth.surveyModalCompleted);
-  const surveyModalLastDismissed = useSelector((state: any) => state.auth.surveyModalLastDismissed);
+  const surveyModalCompleted = useSelector(
+    (state: any) => state.auth.surveyModalCompleted,
+  );
+  const surveyModalLastDismissed = useSelector(
+    (state: any) => state.auth.surveyModalLastDismissed,
+  );
 
   const [shouldShow, setShouldShow] = useState(false);
 
-//   const [hasShownThisSession, setHasShownThisSession] = useState(false);
+  //   const [hasShownThisSession, setHasShownThisSession] = useState(false);
 
-// useEffect(() => {
-//   const task = InteractionManager.runAfterInteractions(() => {
-//     if (!surveyModalCompleted && !hasShownThisSession) {
-//       setShouldShow(true);
-//       setHasShownThisSession(true);
-//     }
-//   });
+  // useEffect(() => {
+  //   const task = InteractionManager.runAfterInteractions(() => {
+  //     if (!surveyModalCompleted && !hasShownThisSession) {
+  //       setShouldShow(true);
+  //       setHasShownThisSession(true);
+  //     }
+  //   });
 
-//   return () => task.cancel();
-// }, [surveyModalCompleted, hasShownThisSession]);
+  //   return () => task.cancel();
+  // }, [surveyModalCompleted, hasShownThisSession]);
 
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
-      const show = shouldShowOncePerDayModal(surveyModalCompleted, surveyModalLastDismissed);
+      const show = shouldShowOncePerDayModal(
+        surveyModalCompleted,
+        surveyModalLastDismissed,
+      );
       setShouldShow(show);
     });
 
@@ -35,7 +45,9 @@ export const useSurveyModal = () => {
   }, [surveyModalCompleted, surveyModalLastDismissed]);
 
   const markAsCompleted = useCallback(() => {
-    dispatch(setSurveyModal({ completed: true, lastDismissed: getTodayISODate() }));
+    dispatch(
+      setSurveyModal({ completed: true, lastDismissed: getTodayISODate() }),
+    );
     setShouldShow(false);
   }, [dispatch]);
 
